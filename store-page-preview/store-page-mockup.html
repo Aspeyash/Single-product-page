@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZYMARG Store Page — Visual Mockup (Desktop / Tablet / Mobile)</title>
+
+<!--
+  ============================================================================
+  STATIC VISUAL MOCKUP — SELF-CONTAINED FILE
+  ============================================================================
+  This is a single-file, self-contained HTML reconstruction of the CURRENT
+  rendered output of templates/store.php (ZYMARG_Store_Page_1.21.3.zip),
+  built for visual review only. It is NOT the plugin source and is not meant
+  to be installed on WordPress — just open it in any browser.
+
+  Every section, class name, and DOM structure in the previewed page is
+  copied exactly from templates/store.php, includes/premium-sections.php,
+  and their partials. PHP conditionals/loops have been resolved with
+  representative sample data so the page renders standalone. All plugin CSS
+  (zymarg-tokens.css, store-tailwind.css, store-page.css) is embedded
+  directly in this file — no external files required (aside from the
+  optional CDN font, which has a system-font fallback, and the placeholder
+  images from placehold.co, which need an internet connection to load).
+
+  WHY AN <iframe> IS USED FOR THE PREVIEW:
+  The real page markup is injected into an <iframe> (via srcdoc) instead of
+  being placed directly in this document. This is required for the Desktop/
+  Tablet/Mobile switcher below to work correctly: CSS media queries
+  (sm:/md:/lg: breakpoints) evaluate against the actual rendered width of
+  the element they live in — an iframe is its own independent browsing
+  context with its own "viewport", so resizing the iframe genuinely changes
+  which responsive rules apply, exactly like resizing a real browser window.
+  A plain <div> with max-width would NOT trigger the breakpoints correctly,
+  since the media queries would still see the outer page's full width.
+
+  The Desktop/Tablet/Mobile toolbar itself is NOT part of the real plugin —
+  it exists only in this mockup file for previewing convenience.
+  ============================================================================
+-->
+
+<style id="zy-shared-css">
+/* =============================================================================
+   1) ZYMARG DESIGN TOKENS — zymarg-tokens.css (embedded verbatim, trimmed to
+      the values actually used by this page)
+   ============================================================================= */
+:root {
+  --zym-color-primary:       #9500A5;
+  --zym-color-secondary:     #BD00D1;
+  --zym-color-accent:        #FEA9FF;
+  --zym-color-dark:          #36003D;
+  --zym-color-text:          #534152;
+  --zym-color-border:        #D8BFD3;
+  --zym-color-surface:       #FFFFFF;
+  --zym-color-bg:            #FAF5FB;
+  --zym-color-surface-alt:   #F8F9FF;
+  --zym-color-container:     #EAEDFF;
+  --zym-font:                'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* =============================================================================
+   2) Tailwind v4 pre-compiled utilities used by store.php (subset, embedded)
+      Source: assets/css/store-tailwind.css
+   ============================================================================= */
+*,:before,:after{box-sizing:border-box;border:0 solid;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%;line-height:1.5;font-family:var(--font-sans,"Inter Variable",ui-sans-serif,system-ui,sans-serif)}
+h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}
+a{color:inherit;text-decoration:inherit}
+b,strong{font-weight:bolder}
+img,svg,video{vertical-align:middle;display:block}
+img,video{max-width:100%;height:auto}
+button,input,select,textarea{font:inherit;color:inherit;background-color:transparent;border-radius:0}
+ol,ul{list-style:none}
+button{cursor:pointer;appearance:button}
+
+.sr-only{clip-path:inset(50%);white-space:nowrap;border-width:0;width:1px;height:1px;margin:-1px;padding:0;position:absolute;overflow:hidden}
+.pointer-events-none{pointer-events:none}
+.absolute{position:absolute} .fixed{position:fixed} .relative{position:relative} .static{position:static} .sticky{position:sticky}
+.inset-0{inset:0} .inset-x-0{inset-inline:0}
+.-top-9{top:-2.25rem} .top-0{top:0} .left-1\/2{left:50%}
+.z-50{z-index:50}
+.mx-4{margin-inline:1rem} .mx-auto{margin-inline:auto}
+.-mt-16{margin-top:-4rem} .mt-0\.5{margin-top:.125rem} .mt-1{margin-top:.25rem} .mt-2{margin-top:.5rem} .mt-3{margin-top:.75rem} .mt-4{margin-top:1rem} .mt-5{margin-top:1.25rem} .mt-6{margin-top:1.5rem}
+.ml-auto{margin-left:auto}
+.block{display:block} .flex{display:flex} .grid{display:grid} .hidden{display:none} .inline{display:inline} .inline-flex{display:inline-flex}
+.h-2{height:.5rem} .h-3{height:.75rem} .h-3\.5{height:.875rem} .h-4{height:1rem} .h-5{height:1.25rem} .h-6{height:1.5rem} .h-9{height:2.25rem} .h-10{height:2.5rem} .h-16{height:4rem} .h-20{height:5rem} .h-56{height:14rem} .h-full{height:100%}
+.w-3{width:.75rem} .w-3\.5{width:.875rem} .w-4{width:1rem} .w-5{width:1.25rem} .w-6{width:1.5rem} .w-8{width:2rem} .w-9{width:2.25rem} .w-10{width:2.5rem} .w-16{width:4rem} .w-20{width:5rem} .w-full{width:100%}
+.max-w-3xl{max-width:48rem} .max-w-7xl{max-width:80rem}
+.min-w-0{min-width:0}
+.flex-1{flex:1 1 0%} .shrink-0{flex-shrink:0}
+.-translate-x-1\/2{transform:translateX(-50%)} .-translate-y-full{transform:translateY(-100%)}
+.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.flex-col{flex-direction:column} .flex-wrap{flex-wrap:wrap}
+.items-center{align-items:center} .items-end{align-items:flex-end} .items-start{align-items:flex-start}
+.justify-between{justify-content:space-between} .justify-center{justify-content:center}
+.gap-1{gap:.25rem} .gap-1\.5{gap:.375rem} .gap-2{gap:.5rem} .gap-2\.5{gap:.625rem} .gap-3{gap:.75rem} .gap-4{gap:1rem} .gap-5{gap:1.25rem} .gap-6{gap:1.5rem} .gap-8{gap:2rem}
+.space-y-2\.5>*+*{margin-top:.625rem} .space-y-4>*+*{margin-top:1rem}
+.gap-x-2{column-gap:.5rem} .gap-x-5{column-gap:1.25rem} .gap-y-1{row-gap:.25rem} .gap-y-2{row-gap:.5rem}
+.truncate{text-overflow:ellipsis;white-space:nowrap;overflow:hidden}
+.overflow-hidden{overflow:hidden}
+.rounded-2xl{border-radius:1rem} .rounded-full{border-radius:9999px} .rounded-lg{border-radius:.5rem} .rounded-xl{border-radius:.75rem}
+.border{border-width:1px;border-style:solid}
+.border-zy-border{border-color:var(--color-zy-border)} .border-zy-primary{border-color:var(--color-zy-primary)}
+.bg-zy-alt{background-color:var(--color-zy-alt)} .bg-zy-container{background-color:var(--color-zy-container)} .bg-zy-primary{background-color:var(--color-zy-primary)} .bg-zy-surface{background-color:var(--color-zy-surface)}
+.bg-zy-surface\/95{background-color:rgba(255,255,255,.95)}
+.bg-gradient-to-t{background-image:linear-gradient(to top,var(--tw-gradient-stops))}
+.from-zy-dark\/80{--tw-gradient-from:rgba(54,0,61,.8);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to,rgba(54,0,61,0))}
+.via-transparent{--tw-gradient-stops:var(--tw-gradient-from),transparent,var(--tw-gradient-to,rgba(54,0,61,0))}
+.text-zy-gradient{background:linear-gradient(135deg,#9500a5 0%,#bd00d1 60%,#fea9ff 130%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.object-cover{object-fit:cover}
+.p-2{padding:.5rem} .p-2\.5{padding:.625rem} .p-3\.5{padding:.875rem} .p-5{padding:1.25rem} .p-6{padding:1.5rem}
+.px-2{padding-inline:.5rem} .px-2\.5{padding-inline:.625rem} .px-3{padding-inline:.75rem} .px-4{padding-inline:1rem} .px-5{padding-inline:1.25rem} .px-6{padding-inline:1.5rem}
+.py-0\.5{padding-block:.125rem} .py-1{padding-block:.25rem} .py-2{padding-block:.5rem} .py-2\.5{padding-block:.625rem} .py-12{padding-block:3rem} .py-16{padding-block:4rem}
+.pt-2{padding-top:.5rem} .pt-10{padding-top:2.5rem} .pt-12{padding-top:3rem} .pt-14{padding-top:3.5rem}
+.pb-1\.5{padding-bottom:.375rem} .pb-16{padding-bottom:4rem}
+.text-center{text-align:center} .text-right{text-align:right}
+.text-2xl{font-size:1.5rem;line-height:2rem} .text-3xl{font-size:1.875rem;line-height:2.25rem} .text-5xl{font-size:3rem;line-height:1} .text-sm{font-size:.875rem;line-height:1.25rem} .text-xl{font-size:1.25rem;line-height:1.75rem} .text-xs{font-size:.75rem;line-height:1rem}
+.text-\[10px\]{font-size:10px} .text-\[11px\]{font-size:11px}
+.leading-none{line-height:1} .leading-relaxed{line-height:1.625}
+.font-bold{font-weight:700} .font-extrabold{font-weight:800} .font-medium{font-weight:500} .font-semibold{font-weight:600}
+.tracking-\[0\.2em\]{letter-spacing:.2em} .tracking-tight{letter-spacing:-.025em} .tracking-wide{letter-spacing:.025em} .tracking-widest{letter-spacing:.1em}
+.whitespace-nowrap{white-space:nowrap}
+.uppercase{text-transform:uppercase}
+.text-amber-400{color:#f6c453} .text-white{color:#fff}
+.text-zy-body\/60{color:rgba(83,65,82,.6)} .text-zy-body\/70{color:rgba(83,65,82,.7)} .text-zy-body\/80{color:rgba(83,65,82,.8)}
+.text-zy-border{color:var(--color-zy-border)} .text-zy-dark{color:var(--color-zy-dark)} .text-zy-primary{color:var(--color-zy-primary)} .text-zy-secondary{color:var(--color-zy-secondary)}
+.opacity-60{opacity:.6}
+.mix-blend-multiply{mix-blend-mode:multiply}
+.shadow-lg{box-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1)}
+.shadow-xl{box-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1)}
+.ring-4{box-shadow:0 0 0 4px var(--tw-ring-color,currentColor)} .ring-zy-surface{--tw-ring-color:#fff}
+.backdrop-blur{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.transition{transition-property:color,background-color,border-color,opacity,box-shadow,transform;transition-duration:.15s}
+.transition-transform{transition-property:transform;transition-duration:.15s}
+.duration-300{transition-duration:.3s}
+.ease-in-out{transition-timing-function:cubic-bezier(.4,0,.2,1)}
+.bg-zy-gradient{background:linear-gradient(135deg,#9500a5 0%,#bd00d1 60%,#fea9ff 130%)}
+@media (hover:hover){
+  .group:hover .group-hover\:scale-105{transform:scale(1.05)}
+  .group:hover .group-hover\:text-zy-primary{color:var(--color-zy-primary)}
+  .hover\:-translate-y-0\.5:hover{transform:translateY(-.125rem)}
+  .hover\:-translate-y-1:hover{transform:translateY(-.25rem)}
+  .hover\:border-zy-primary:hover{border-color:var(--color-zy-primary)}
+  .hover\:bg-zy-container:hover{background-color:var(--color-zy-container)}
+  .hover\:text-zy-primary:hover{color:var(--color-zy-primary)}
+  .hover\:text-zy-secondary:hover{color:var(--color-zy-secondary)}
+  .hover\:opacity-90:hover{opacity:.9}
+  .hover\:opacity-95:hover{opacity:.95}
+  .hover\:shadow-lg:hover{box-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1)}
+  .hover\:shadow-xl:hover{box-shadow:0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1)}
+}
+.focus\:outline-none:focus{outline:none}
+.focus-visible\:ring-2:focus-visible{box-shadow:0 0 0 2px var(--tw-ring-color,currentColor)}
+.focus-visible\:ring-zy-accent:focus-visible{--tw-ring-color:var(--color-zy-accent)}
+.focus-visible\:ring-zy-secondary:focus-visible{--tw-ring-color:var(--color-zy-secondary)}
+
+/* Responsive utilities — sm 640px / md 768px / lg 1024px (same breakpoints as store.php) */
+@media (min-width:640px){
+  .sm\:-mt-20{margin-top:-5rem} .sm\:block{display:block} .sm\:h-12{height:3rem} .sm\:h-24{height:6rem} .sm\:h-72{height:18rem}
+  .sm\:w-12{width:3rem} .sm\:w-24{width:6rem} .sm\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .sm\:p-7{padding:1.75rem} .sm\:p-8{padding:2rem} .sm\:px-6{padding-inline:1.5rem}
+  .sm\:text-2xl{font-size:1.5rem;line-height:2rem} .sm\:text-sm{font-size:.875rem;line-height:1.25rem} .sm\:text-xs{font-size:.75rem;line-height:1rem}
+}
+@media (min-width:768px){
+  .md\:block{display:block} .md\:hidden{display:none} .md\:flex-none{flex:none} .md\:flex-row{flex-direction:row} .md\:items-center{align-items:center}
+}
+@media (min-width:1024px){
+  .lg\:sticky{position:sticky} .lg\:top-20{top:5rem} .lg\:col-span-2{grid-column:span 2/span 2}
+  .lg\:h-80{height:20rem} .lg\:w-64{width:16rem}
+  .lg\:grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))} .lg\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .lg\:flex-row{flex-direction:row} .lg\:px-8{padding-inline:2rem} .lg\:text-3xl{font-size:1.875rem;line-height:2.25rem}
+}
+
+/* =============================================================================
+   3) Store Page component styles — store-page.css (embedded verbatim, trimmed
+      of internals not visible in this static mockup — search dropdown result
+      rows, quick-view drawer, etc. — kept everything affecting visible layout)
+   ============================================================================= */
+#sticky-header p,#top p,#products-layout-container p{margin-top:0;margin-bottom:0}
+body{
+  --brand:#9500A5; --brand-dark:#36003D; --brand-light:#FEA9FF; --brand-ring:rgba(149,0,165,.15);
+  --bg:#FAF5FB; --surface:#FFFFFF; --border:#D8BFD3; --border-focus:#9500A5;
+  --text:#36003D; --text-muted:#7a5e79; --text-hint:#a08fa0;
+  margin:0; background:#fff;
+  --color-zy-primary:   #9500A5;
+  --color-zy-secondary: #BD00D1;
+  --color-zy-accent:    #FEA9FF;
+  --color-zy-dark:      #36003D;
+  --color-zy-body:      #534152;
+  --color-zy-border:    #D8BFD3;
+  --color-zy-bg:        #FAF5FB;
+  --color-zy-surface:   #FFFFFF;
+  --color-zy-alt:       #F8F9FF;
+  --color-zy-container: #EAEDFF;
+  font-family: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+}
+.aura-search{width:100%;max-width:560px;position:relative}
+.aura-search__field{position:relative;display:flex;align-items:center}
+.aura-search__icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none;display:flex}
+.aura-search__icon svg{width:18px;height:18px;stroke-width:2}
+#aura-input{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:10px 44px 10px 46px;font-family:'Inter',sans-serif;font-size:14px;color:var(--text);outline:none;box-shadow:0 2px 8px rgba(53,0,61,.06)}
+#aura-input::placeholder{color:var(--text-hint)}
+#aura-clear{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-hint);display:none;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%}
+#aura-clear svg{width:14px;height:14px;stroke-width:2.5}
+.aura-error-bar{display:none;background:rgba(224,75,74,.10);color:#8c2020;border-radius:8px;padding:8px 12px;font-size:12px;margin-top:8px}
+.aura-pills{display:none;flex-wrap:wrap;gap:6px;margin-top:10px}
+.zy-header-chat-btn{display:inline-flex;align-items:center;justify-content:center;padding:.5rem}
+.zy-header-chat-btn__icon{display:block;width:1.25rem;height:1.25rem;flex-shrink:0}
+.zy-header-chat-btn__label{display:none}
+@media (min-width:640px){
+  .zy-header-chat-btn{padding:.5rem 1rem;font-size:.875rem;font-weight:600}
+  .zy-header-chat-btn__icon{display:none}
+  .zy-header-chat-btn__label{display:inline}
+}
+.zsp-premium{margin-left:auto;margin-right:auto;max-width:80rem;padding-left:1rem;padding-right:1rem;padding-top:3rem;box-sizing:border-box}
+@media (min-width:640px){.zsp-premium{padding-left:1.5rem;padding-right:1.5rem}}
+@media (min-width:1024px){.zsp-premium{padding-left:2rem;padding-right:2rem}}
+.zsp-premium__head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:.75rem}
+.zsp-premium-grid{margin-top:1.5rem}
+.sidebar-cats-drawer{margin-top:.75rem;border:1px solid var(--border);border-radius:1rem;background:var(--surface);box-shadow:0 4px 16px 0 rgba(0,0,0,.07);overflow:hidden}
+.sidebar-cats-drawer--always-open{max-height:540px;opacity:1}
+.sidebar-cats-drawer__list{padding:.75rem;max-height:540px;overflow-y:auto}
+.zy-sidebar-cat.is-active{background:var(--brand)!important;box-shadow:0 4px 14px rgba(149,0,165,.25)!important}
+.zy-sidebar-cat.is-active span{color:#fff!important}
+.zy-infinite-loader-area{min-height:60px;pointer-events:none}
+.zy-infinite-loader{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(12px);z-index:9999;display:inline-flex;align-items:center;gap:12px;padding:11px 22px;color:#131b2e;background:linear-gradient(180deg,rgba(255,255,255,.88),rgba(255,255,255,.76));border-radius:999px;font-size:13px;font-weight:600;opacity:0;visibility:hidden}
+/* Simple placeholder product card styling — real cards come from the
+   Product Grid engine's card templates at runtime; not part of this plugin. */
+.zy-product-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (min-width:768px){.zy-product-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (min-width:1024px){.zy-product-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.zy-product-card{
+  background:var(--surface); border:1px dashed var(--border); border-radius:16px;
+  padding:24px 14px; font-size:12px; color:var(--text-muted); text-align:center;
+  display:flex; align-items:center; justify-content:center; min-height:140px;
+  line-height:1.5;
+}
+@media (max-width:640px){
+  .zy-infinite-loader{bottom:70px;padding:10px 18px;font-size:12px;gap:10px}
+}
+</style>
+
+<style>
+/* =============================================================================
+   MOCKUP-ONLY: Desktop / Tablet / Mobile switcher toolbar + iframe frame
+   (Not part of the real plugin — this CSS only styles the switcher chrome.)
+   ============================================================================= */
+html, body { margin: 0; }
+body { font-family: "Inter Variable", ui-sans-serif, system-ui, sans-serif; }
+#zy-mockup-toolbar{
+  position: sticky;
+  top: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #1f1329;
+  color: #fff;
+  font-size: 13px;
+  flex-wrap: wrap;
+}
+#zy-mockup-toolbar .zy-mt-label{ font-weight: 600; opacity: .8; margin-right: 4px; }
+#zy-mockup-toolbar button{
+  appearance: none;
+  border: 1.5px solid rgba(255,255,255,.25);
+  background: rgba(255,255,255,.06);
+  color: #fff;
+  padding: 7px 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+  font-family: inherit;
+}
+#zy-mockup-toolbar button:hover{ background: rgba(255,255,255,.14); }
+#zy-mockup-toolbar button.is-active{
+  background: linear-gradient(135deg, #9500A5 0%, #BD00D1 60%, #FEA9FF 130%);
+  border-color: transparent;
+}
+#zy-mockup-toolbar .zy-mt-width{ opacity: .65; font-size: 12px; margin-left: 6px; }
+#zy-mockup-outer{ background: #ece6f0; min-height: 100vh; padding: 24px 12px 40px; box-sizing: border-box; }
+#zy-mockup-viewport{
+  margin: 0 auto;
+  background: #fff;
+  width: 100%;
+  max-width: 100%;
+  transition: max-width .25s ease;
+  overflow: hidden;
+}
+#zy-mockup-viewport.is-tablet{
+  max-width: 834px;
+  border-left: 6px solid #1f1329;
+  border-right: 6px solid #1f1329;
+  border-radius: 18px;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.06), 0 20px 60px rgba(0,0,0,.18);
+}
+#zy-mockup-viewport.is-mobile{
+  max-width: 390px;
+  border-left: 6px solid #1f1329;
+  border-right: 6px solid #1f1329;
+  border-radius: 28px;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.06), 0 20px 60px rgba(0,0,0,.18);
+}
+#zy-frame{
+  width: 100%;
+  display: block;
+  border: 0;
+  overflow: hidden;
+  background: #fff;
+}
+</style>
+</head>
+<body>
+
+<!-- ================= MOCKUP-ONLY TOOLBAR ================= -->
+<div id="zy-mockup-toolbar">
+  <span class="zy-mt-label">Preview:</span>
+  <button type="button" data-zy-view="desktop" class="is-active">🖥️ Desktop</button>
+  <button type="button" data-zy-view="tablet">📱 Tablet</button>
+  <button type="button" data-zy-view="mobile">📱 Mobile</button>
+  <span class="zy-mt-width" id="zy-mt-width">1440px+ (fluid)</span>
+</div>
+
+<div id="zy-mockup-outer">
+  <div id="zy-mockup-viewport">
+    <iframe id="zy-frame" title="ZYMARG Store Page preview" scrolling="no"></iframe>
+  </div>
+</div>
+
+<!-- ============================================================
+     REAL PAGE MARKUP — kept inert in a <template> and injected into the
+     iframe above via JS. This is the exact structure from templates/
+     store.php, includes/premium-sections.php, and their partials.
+     Sections that are conditional in the real plugin (sidebar categories,
+     Premium Flash Sale / Featured Items, Reviews, Store Story) are shown
+     here in their "populated" state so the full layout is visible at once.
+     Product grids show placeholder cards because real cards are rendered
+     by a separate plugin (Product Grid engine + Template Pack) at runtime.
+============================================================ -->
+<template id="zy-page-body">
+
+<header id="sticky-header"
+  class="fixed inset-x-0 top-0 z-50 bg-zy-surface/95 shadow-lg backdrop-blur transition-transform duration-300 ease-in-out"
+  aria-label="Store quick navigation" style="position:relative;">
+  <div class="mx-auto flex max-w-7xl items-center gap-3 px-4 py-2.5 sm:px-6 lg:px-8">
+
+    <div class="flex min-w-0 items-center gap-2.5">
+      <span class="block relative h-9 w-9 shrink-0 overflow-hidden rounded-xl bg-zy-gradient shadow-lg" aria-hidden="true" data-store-logo>
+        <img src="https://placehold.co/80x80" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;" alt="Aurora Craft Co." />
+      </span>
+      <div class="min-w-0 flex flex-col gap-2">
+        <span class="flex items-center gap-1 truncate text-sm font-bold text-zy-dark leading-none" data-store-name>
+          Aurora Craft Co.
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#9500A5" aria-label="Verified" role="img"><path d="M9 12l2 2 4-4m5 2a9 9 0 11-18 0 9 9 0 0118 0z" fill="none" stroke="#9500A5" stroke-width="1.8"/></svg>
+        </span>
+        <span class="block truncate text-xs text-zy-body/70 leading-none" data-sticky-meta>
+          4.8 ★ · 1,204 followers
+        </span>
+      </div>
+    </div>
+
+    <div class="flex-1 flex justify-center mx-4 hidden sm:block">
+      <div class="aura-search" id="aura-search-root">
+        <form role="search" onsubmit="return false;" style="width:100%;margin:0;padding:0;">
+        <div class="aura-search__field">
+          <span class="aura-search__icon" aria-hidden="true">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+          </span>
+          <input type="text" id="aura-input"
+            placeholder="Search inside Aurora Craft Co.'s store…"
+            autocomplete="off"
+            aria-label="Search products"
+            aria-haspopup="listbox" aria-expanded="false" aria-controls="aura-dropdown" role="combobox">
+          <button id="aura-clear" type="button" aria-label="Clear search">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+          <div id="aura-dropdown" role="listbox" aria-label="Search results"></div>
+        </div>
+        </form>
+        <div class="aura-error-bar" id="aura-error">
+          ⚠ Could not reach the store API. Check your Store ID and that the Dokan REST API is enabled.
+        </div>
+        <div class="aura-pills" id="aura-pills" style="display:none;"></div>
+      </div>
+    </div>
+
+    <div class="ml-auto flex items-center gap-2">
+      <button type="button" data-chat-btn data-seller-id="42" aria-label="Chat with seller"
+        class="zy-header-chat-btn rounded-xl border border-zy-border bg-zy-surface text-zy-dark transition duration-300 ease-in-out hover:bg-zy-container focus:outline-none focus-visible:ring-2 focus-visible:ring-zy-secondary">
+        <svg class="zy-header-chat-btn__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 0 1 1.037-.443 48.282 48.282 0 0 0 5.68-.494c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z"/>
+        </svg>
+        <span class="zy-header-chat-btn__label">Chat</span>
+      </button>
+      <button type="button" data-follow-btn
+        class="rounded-xl px-4 py-2 text-sm font-semibold shadow-lg transition duration-300 ease-in-out hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-zy-accent bg-zy-gradient text-white"
+        aria-pressed="false">
+        <span data-follow-label>Follow</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+<section aria-labelledby="store-name" data-hero-section>
+  <div class="relative h-56 w-full overflow-hidden sm:h-72 lg:h-80">
+    <img src="https://placehold.co/1600x400" alt="Aurora Craft Co. store cover" class="h-full w-full object-cover" fetchpriority="high" data-store-cover />
+    <div class="absolute inset-0 bg-zy-gradient opacity-60 mix-blend-multiply" aria-hidden="true"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-zy-dark/80 via-transparent" aria-hidden="true"></div>
+  </div>
+
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="relative -mt-16 rounded-2xl bg-zy-surface p-5 shadow-xl sm:-mt-20 sm:p-7" data-store-card>
+      <div class="flex flex-col gap-5 md:flex-row md:items-center">
+
+        <div class="flex items-start gap-4">
+          <span class="block relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-zy-gradient shadow-xl ring-4 ring-zy-surface sm:h-24 sm:w-24"
+            aria-label="Aurora Craft Co. logo" data-store-logo>
+            <img src="https://placehold.co/160x160" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;" alt="Aurora Craft Co." />
+          </span>
+          <div class="md:hidden">
+            <h1 class="flex flex-wrap items-center gap-1.5 text-xl font-extrabold tracking-tight text-zy-dark" data-store-name>
+              Aurora Craft Co.
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="#9500A5" aria-label="Verified" role="img"><path d="M9 12l2 2 4-4m5 2a9 9 0 11-18 0 9 9 0 0118 0z" fill="none" stroke="#9500A5" stroke-width="1.8"/></svg>
+            </h1>
+            <p class="mt-0.5 text-sm text-zy-body/80">Handmade home goods, made to last.</p>
+          </div>
+        </div>
+
+        <div class="min-w-0 flex-1">
+          <div class="hidden md:block">
+            <h1 id="store-name" class="flex items-center gap-2 text-2xl font-extrabold tracking-tight text-zy-dark lg:text-3xl" data-store-name>
+              Aurora Craft Co.
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="#9500A5" aria-label="Verified" role="img"><path d="M9 12l2 2 4-4m5 2a9 9 0 11-18 0 9 9 0 0118 0z" fill="none" stroke="#9500A5" stroke-width="1.8"/></svg>
+              <span class="rounded-full bg-zy-container px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-zy-primary">Official Store</span>
+            </h1>
+            <p class="mt-1 text-zy-body/80">Handmade home goods, made to last.</p>
+          </div>
+
+          <dl class="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
+            <div class="flex items-center gap-1.5">
+              <svg class="h-4 w-4 text-zy-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/></svg>
+              <dt class="sr-only">Location</dt>
+              <dd data-store-location>Dhaka, Bangladesh</dd>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <svg class="h-4 w-4 text-zy-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"/></svg>
+              <dt class="sr-only">Followers</dt>
+              <dd data-store-followers><strong class="font-semibold text-zy-dark">1,204</strong> followers</dd>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <svg class="h-4 w-4 text-amber-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z" clip-rule="evenodd"/></svg>
+              <dt class="sr-only">Rating</dt>
+              <dd data-store-rating><strong class="font-semibold text-zy-dark">4.8</strong> (312 ratings)</dd>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <svg class="h-4 w-4 text-zy-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"/></svg>
+              <dt class="sr-only">Member since</dt>
+              <dd data-store-since>Since 2023</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div class="flex shrink-0 items-center gap-2.5" role="group" aria-label="Store actions">
+          <button type="button" data-follow-btn
+            class="flex-1 rounded-xl px-6 py-2.5 text-sm font-semibold shadow-lg transition duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl hover:opacity-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-zy-accent md:flex-none bg-zy-gradient text-white"
+            aria-pressed="false">
+            <span data-follow-label>Follow</span>
+          </button>
+          <button type="button" data-chat-btn data-seller-id="42"
+            class="rounded-xl border border-zy-border bg-zy-surface px-5 py-2.5 text-sm font-semibold text-zy-dark transition duration-300 ease-in-out hover:-translate-y-1 hover:bg-zy-container hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-zy-secondary">
+            Chat
+          </button>
+          <span class="relative inline-flex">
+          <button type="button" aria-label="Share this store" data-share-btn
+            data-share-url="https://example.com/store/aurora-craft-co/" data-share-title="Aurora Craft Co."
+            class="rounded-xl border border-zy-border bg-zy-surface p-2.5 text-zy-dark transition duration-300 ease-in-out hover:-translate-y-1 hover:bg-zy-container hover:shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-zy-secondary">
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z"/></svg>
+          </button>
+          <span data-share-note hidden
+            class="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-zy-primary px-2.5 py-1 text-xs font-semibold text-white shadow-lg"></span>
+          <span data-share-status class="sr-only" aria-live="polite"></span>
+          </span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="zy-flash-sale" aria-labelledby="zy-flash-sale-heading" class="zsp-premium">
+  <div class="zsp-premium__head flex flex-wrap items-end justify-between gap-3">
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-[0.2em] text-zy-secondary">Limited Time</p>
+      <h2 id="zy-flash-sale-heading" class="sr-only">Flash Sale</h2>
+    </div>
+    <span class="rounded-full bg-zy-gradient px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white">On now</span>
+  </div>
+  <div class="zsp-premium-grid">
+    <div class="zy-product-grid">
+      <div class="zy-product-card">Product card<br>(flash template, w/ countdown + stock bar)</div>
+      <div class="zy-product-card">Product card<br>(flash template, w/ countdown + stock bar)</div>
+      <div class="zy-product-card">Product card<br>(flash template, w/ countdown + stock bar)</div>
+      <div class="zy-product-card">Product card<br>(flash template, w/ countdown + stock bar)</div>
+    </div>
+  </div>
+</section>
+
+<section id="zy-featured-items" aria-labelledby="zy-featured-items-heading" class="zsp-premium">
+  <div class="zsp-premium__head flex flex-wrap items-end justify-between gap-3">
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-[0.2em] text-zy-secondary">Handpicked</p>
+      <h2 id="zy-featured-items-heading" class="sr-only">Featured Items</h2>
+    </div>
+  </div>
+  <div class="zsp-premium-grid">
+    <div class="zy-product-grid">
+      <div class="zy-product-card">Product card<br>('zymarg' branded template)</div>
+      <div class="zy-product-card">Product card<br>('zymarg' branded template)</div>
+      <div class="zy-product-card">Product card<br>('zymarg' branded template)</div>
+      <div class="zy-product-card">Product card<br>('zymarg' branded template)</div>
+    </div>
+  </div>
+</section>
+
+<div id="products-layout-container" class="mx-auto max-w-7xl px-4 pt-12 sm:px-6 lg:px-8">
+  <div class="flex flex-col lg:flex-row gap-8">
+
+    <aside class="w-full lg:w-64 shrink-0">
+      <div class="lg:sticky lg:top-20">
+        <p class="text-xs font-semibold uppercase tracking-[0.2em] text-zy-secondary">Shop by Category</p>
+
+        <div id="sidebar-cats-drawer" class="sidebar-cats-drawer sidebar-cats-drawer--always-open">
+          <ul class="sidebar-cats-drawer__list grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-1">
+
+            <li>
+              <a href="#" data-cat-name="Ceramics" data-cat-slug="ceramics" data-cat-id="12"
+                class="zy-sidebar-cat group flex items-center gap-3 rounded-2xl bg-zy-surface p-2 shadow-lg transition duration-300 ease-in-out hover:bg-zy-container hover:-translate-y-0.5 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-zy-secondary">
+                <img src="https://placehold.co/96x96" alt="Ceramics category" class="h-10 w-10 sm:h-12 sm:w-12 rounded-xl object-cover transition-transform duration-300 ease-in-out group-hover:scale-105" loading="lazy" />
+                <div class="min-w-0 flex flex-col gap-2">
+                  <span class="block text-xs sm:text-sm font-semibold text-zy-dark group-hover:text-zy-primary truncate leading-none">Ceramics</span>
+                  <span class="block text-[10px] sm:text-xs text-zy-body/70 leading-none">24 products</span>
+                </div>
+              </a>
+            </li>
+
+            <li>
+              <a href="#" data-cat-name="Textiles" data-cat-slug="textiles" data-cat-id="13"
+                class="zy-sidebar-cat group flex items-center gap-3 rounded-2xl bg-zy-surface p-2 shadow-lg transition duration-300 ease-in-out hover:bg-zy-container hover:-translate-y-0.5 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-zy-secondary">
+                <span class="flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-xl bg-zy-alt text-sm font-bold uppercase text-zy-body/60 transition-transform duration-300 ease-in-out group-hover:scale-105" aria-hidden="true">T</span>
+                <div class="min-w-0 flex flex-col gap-2">
+                  <span class="block text-xs sm:text-sm font-semibold text-zy-dark group-hover:text-zy-primary truncate leading-none">Textiles</span>
+                  <span class="block text-[10px] sm:text-xs text-zy-body/70 leading-none">17 products</span>
+                </div>
+              </a>
+            </li>
+
+            <li>
+              <a href="#" data-cat-name="Lighting" data-cat-slug="lighting" data-cat-id="14"
+                class="zy-sidebar-cat group flex items-center gap-3 rounded-2xl bg-zy-surface p-2 shadow-lg transition duration-300 ease-in-out hover:bg-zy-container hover:-translate-y-0.5 hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-zy-secondary">
+                <span class="flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-xl bg-zy-alt text-sm font-bold uppercase text-zy-body/60 transition-transform duration-300 ease-in-out group-hover:scale-105" aria-hidden="true">L</span>
+                <div class="min-w-0 flex flex-col gap-2">
+                  <span class="block text-xs sm:text-sm font-semibold text-zy-dark group-hover:text-zy-primary truncate leading-none">Lighting</span>
+                  <span class="block text-[10px] sm:text-xs text-zy-body/70 leading-none">9 products</span>
+                </div>
+              </a>
+            </li>
+
+          </ul>
+        </div>
+
+      </div>
+    </aside>
+
+    <section id="products" aria-labelledby="products-heading" class="flex-1 min-w-0">
+      <div class="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-[0.2em] text-zy-secondary">All Products</p>
+          <h2 id="products-heading" class="sr-only">Products in store</h2>
+        </div>
+        <label class="flex items-center gap-2 text-sm">
+          <span class="text-zy-body/70">Sort</span>
+          <select data-sort-select class="rounded-xl border border-zy-border bg-zy-surface px-3 py-2 text-sm font-medium text-zy-dark shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-zy-secondary">
+            <option value="popular">Most Popular</option>
+            <option value="newest">Newest</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="rating">Top Rated</option>
+          </select>
+        </label>
+      </div>
+
+      <div id="product-grid" class="zy-product-grid mt-6">
+        <div class="zy-product-card">Product card</div>
+        <div class="zy-product-card">Product card</div>
+        <div class="zy-product-card">Product card</div>
+        <div class="zy-product-card">Product card</div>
+        <div class="zy-product-card">Product card</div>
+        <div class="zy-product-card">Product card</div>
+        <div class="zy-product-card">Product card</div>
+        <div class="zy-product-card">Product card</div>
+      </div>
+
+      <div class="zy-infinite-loader-area">
+        <div id="zy-infinite-loader" class="zy-infinite-loader" role="status" aria-live="polite" aria-atomic="true"></div>
+      </div>
+
+      <div id="zy-scroll-sentinel" aria-hidden="true" style="width:100%;height:2px;"></div>
+      <p id="zy-scroll-a11y" class="sr-only" aria-live="polite"></p>
+    </section>
+
+  </div>
+</div>
+
+<section aria-labelledby="reviews-heading" class="mx-auto max-w-7xl px-4 pt-14 pb-16 sm:px-6 lg:px-8">
+  <p class="text-xs font-semibold uppercase tracking-[0.2em] text-zy-secondary">Customer Reviews</p>
+  <h2 id="reviews-heading" class="mt-2 text-xl font-bold tracking-tight text-zy-dark sm:text-2xl">What buyers are saying</h2>
+
+  <div class="mt-6 grid gap-6 lg:grid-cols-3">
+
+    <div class="rounded-2xl bg-zy-surface p-6 shadow-lg">
+      <div class="flex items-end gap-3">
+        <p class="text-5xl font-extrabold text-zy-dark" data-reviews-score>4.8</p>
+        <div class="pb-1.5">
+          <div class="flex text-amber-400" aria-label="4.8 out of 5 stars">
+            <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z" clip-rule="evenodd"/></svg>
+            <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z" clip-rule="evenodd"/></svg>
+            <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z" clip-rule="evenodd"/></svg>
+            <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z" clip-rule="evenodd"/></svg>
+            <svg class="h-4 w-4 text-zy-border" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z" clip-rule="evenodd"/></svg>
+          </div>
+          <p class="mt-1 text-xs text-zy-body/70" data-reviews-count>312 ratings</p>
+        </div>
+      </div>
+      <dl class="mt-5 space-y-2.5">
+        <div class="flex items-center gap-3 text-xs">
+          <dt class="w-8 font-medium text-zy-dark">5 ★</dt>
+          <dd class="h-2 flex-1 overflow-hidden rounded-full bg-zy-container"><div class="h-full rounded-full bg-zy-gradient" style="width:78%"></div></dd>
+          <span class="w-10 text-right text-zy-body/70" title="243 reviews">78%</span>
+        </div>
+        <div class="flex items-center gap-3 text-xs">
+          <dt class="w-8 font-medium text-zy-dark">4 ★</dt>
+          <dd class="h-2 flex-1 overflow-hidden rounded-full bg-zy-container"><div class="h-full rounded-full bg-zy-gradient" style="width:14%"></div></dd>
+          <span class="w-10 text-right text-zy-body/70" title="44 reviews">14%</span>
+        </div>
+        <div class="flex items-center gap-3 text-xs">
+          <dt class="w-8 font-medium text-zy-dark">3 ★</dt>
+          <dd class="h-2 flex-1 overflow-hidden rounded-full bg-zy-container"><div class="h-full rounded-full bg-zy-gradient" style="width:5%"></div></dd>
+          <span class="w-10 text-right text-zy-body/70" title="16 reviews">5%</span>
+        </div>
+        <div class="flex items-center gap-3 text-xs">
+          <dt class="w-8 font-medium text-zy-dark">2 ★</dt>
+          <dd class="h-2 flex-1 overflow-hidden rounded-full bg-zy-container"><div class="h-full rounded-full bg-zy-gradient" style="width:2%"></div></dd>
+          <span class="w-10 text-right text-zy-body/70" title="6 reviews">2%</span>
+        </div>
+        <div class="flex items-center gap-3 text-xs">
+          <dt class="w-8 font-medium text-zy-dark">1 ★</dt>
+          <dd class="h-2 flex-1 overflow-hidden rounded-full bg-zy-container"><div class="h-full rounded-full bg-zy-gradient" style="width:1%"></div></dd>
+          <span class="w-10 text-right text-zy-body/70" title="3 reviews">1%</span>
+        </div>
+      </dl>
+    </div>
+
+    <div class="space-y-4 lg:col-span-2" data-reviews-list data-reviews-page="1" data-reviews-total="312" data-store-id="42">
+
+      <article class="rounded-2xl bg-zy-surface p-5 shadow-lg" data-review-id="901">
+        <div class="flex items-start gap-3">
+          <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-zy-container text-sm font-bold text-zy-primary" aria-hidden="true">RK</span>
+          <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+              <p class="text-sm font-semibold text-zy-dark">Rina K.</p>
+              <span class="rounded-full bg-zy-container px-2 py-0.5 text-[10px] font-semibold text-zy-primary">Verified Purchase</span>
+              <time class="text-xs text-zy-body/60">2 weeks ago</time>
+            </div>
+            <p class="mt-0.5 truncate text-xs text-zy-body/70">
+              <a class="transition hover:text-zy-primary" href="#">Handwoven Ceramic Vase</a>
+            </p>
+            <div class="mt-1 flex text-amber-400" aria-label="5 out of 5 stars">
+              <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z"/></svg>
+              <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z"/></svg>
+              <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z"/></svg>
+              <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z"/></svg>
+              <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z"/></svg>
+            </div>
+            <p class="mt-2 text-sm font-semibold text-zy-dark">Beautiful craftsmanship</p>
+            <p class="mt-2 text-sm leading-relaxed">Exactly as pictured, arrived well packaged, and the seller responded to my question within the hour.</p>
+            <div class="mt-3 rounded-2xl bg-zy-alt p-3.5">
+              <p class="flex items-center gap-1.5 text-xs font-bold text-zy-primary">
+                <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"/></svg>
+                Reply from Aurora Craft Co.
+              </p>
+              <p class="mt-1 text-sm">Thank you so much, Rina! 💜</p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <nav class="flex items-center justify-between gap-3 pt-2" aria-label="Review pages">
+        <span></span>
+        <span class="text-xs text-zy-body/70">Page 1 of 26</span>
+        <a class="rounded-full border border-zy-border px-5 py-2.5 text-sm font-semibold text-zy-dark transition hover:border-zy-primary hover:text-zy-primary" href="#" rel="next">Older reviews →</a>
+      </nav>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="story-heading" class="mx-auto max-w-7xl px-4 pt-10 pb-16 sm:px-6 lg:px-8">
+  <div class="rounded-2xl bg-zy-surface p-6 shadow-lg sm:p-8">
+    <p class="text-xs font-semibold uppercase tracking-[0.2em] text-zy-secondary">Our Story</p>
+    <h2 id="story-heading" class="mt-2 text-xl font-bold tracking-tight text-zy-dark sm:text-2xl">From a small studio to a marketplace favorite</h2>
+    <p class="mt-3 max-w-3xl leading-relaxed" data-store-desc>We started Aurora Craft Co. in 2023 with a single potter's wheel and a love for slow, handmade objects.</p>
+    <p data-story-more class="mt-3 hidden max-w-3xl leading-relaxed">Today our small team of five artisans still hand-throws, glazes, and packs every piece that leaves our studio — no factories, no shortcuts.</p>
+    <button type="button" data-story-toggle aria-expanded="false"
+      class="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-zy-primary transition duration-300 ease-in-out hover:text-zy-secondary focus:outline-none focus-visible:ring-2 focus-visible:ring-zy-secondary rounded-xl">
+      <span data-story-label>Read More</span>
+      <svg data-story-chevron class="h-4 w-4 transition-transform duration-300 ease-in-out" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg>
+    </button>
+  </div>
+</section>
+
+</main>
+
+</template>
+
+<!-- ================= MOCKUP-ONLY SWITCHER + IFRAME INJECTION SCRIPT ================= -->
+<script>
+(function () {
+  var toolbar   = document.getElementById('zy-mockup-toolbar');
+  var viewport  = document.getElementById('zy-mockup-viewport');
+  var widthTag  = document.getElementById('zy-mt-width');
+  var buttons   = toolbar.querySelectorAll('button[data-zy-view]');
+  var frame     = document.getElementById('zy-frame');
+  var cssText   = document.getElementById('zy-shared-css').textContent;
+  var bodyHTML  = document.getElementById('zy-page-body').innerHTML;
+
+  var widths = {
+    desktop: '1440px+ (fluid)',
+    tablet:  '834px (iPad-style)',
+    mobile:  '390px (iPhone-style)'
+  };
+
+  // Build the full standalone document that goes inside the iframe. This
+  // gives the preview its OWN browsing context, so its CSS media queries
+  // (sm:/md:/lg:) evaluate against the iframe's real rendered width —
+  // exactly like a real browser window at that size — rather than the
+  // width of the outer mockup page.
+  var frameDoc =
+    '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">' +
+    '<meta name="viewport" content="width=device-width, initial-scale=1.0">' +
+    '<link rel="preconnect" href="https://cdn.jsdelivr.net">' +
+    '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/inter@5/index.min.css">' +
+    '<style>' + cssText + '</style>' +
+    '</head><body>' + bodyHTML + '</body></html>';
+
+  function fitIframeHeight() {
+    try {
+      var doc = frame.contentDocument;
+      if (!doc || !doc.documentElement) return;
+      var h = Math.max(doc.documentElement.scrollHeight, doc.body ? doc.body.scrollHeight : 0);
+      frame.style.height = h + 'px';
+    } catch (e) { /* no-op */ }
+  }
+
+  frame.addEventListener('load', function () {
+    fitIframeHeight();
+    try {
+      var doc = frame.contentDocument;
+      if (window.ResizeObserver && doc && doc.body) {
+        var ro = new ResizeObserver(function () { fitIframeHeight(); });
+        ro.observe(doc.body);
+      }
+      // Images (placehold.co) load asynchronously and can change height —
+      // re-fit once each finishes loading.
+      var imgs = doc.querySelectorAll('img');
+      imgs.forEach(function (img) {
+        img.addEventListener('load', fitIframeHeight);
+      });
+    } catch (e) { /* no-op */ }
+    // A few delayed re-checks cover any late webfont/layout shifts.
+    setTimeout(fitIframeHeight, 150);
+    setTimeout(fitIframeHeight, 500);
+    setTimeout(fitIframeHeight, 1200);
+  });
+
+  frame.srcdoc = frameDoc;
+
+  function setView(view) {
+    viewport.classList.remove('is-tablet', 'is-mobile');
+    if (view === 'tablet') viewport.classList.add('is-tablet');
+    if (view === 'mobile') viewport.classList.add('is-mobile');
+    widthTag.textContent = widths[view] || '';
+    buttons.forEach(function (btn) {
+      btn.classList.toggle('is-active', btn.getAttribute('data-zy-view') === view);
+    });
+    // Width just changed via CSS max-width on the wrapper — the iframe's
+    // rendered width changes too, which reflows its internal media queries.
+    // Re-measure height a few times as that reflow (and any image reflow)
+    // settles.
+    setTimeout(fitIframeHeight, 50);
+    setTimeout(fitIframeHeight, 300);
+  }
+
+  buttons.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      setView(btn.getAttribute('data-zy-view'));
+    });
+  });
+
+  window.addEventListener('resize', fitIframeHeight);
+})();
+</script>
+
+</body>
+</html>
