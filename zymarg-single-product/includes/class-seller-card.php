@@ -5,6 +5,32 @@
  * Uses Dokan Pro store data when available.
  * Falls back to WP user data (product author) when Dokan is absent.
  *
+ * Chat button integration (v2.4.7) — ZSP side of the same contract the
+ * ZYMARG Store Page plugin already implements against the ZYMARG
+ * Communication plugin (see Store Page's class-chat.php):
+ *
+ *   - This plugin renders [data-chat-btn data-seller-id="{vendor_user_id}"]
+ *     when the ZYMARG Communication plugin is active and the shopper is
+ *     logged in. `data-seller-id` is the vendor's WP user ID — the same
+ *     value StoreChatService::openForStore() falls back to treating a
+ *     'store' context id as when no `zymarg_comm_marketplace_resolve_vendor`
+ *     filter overrides it, so no filter is required for this to resolve
+ *     correctly out of the box.
+ *   - The Communication plugin's live-chat.js listens for clicks on any
+ *     [data-chat-btn] on the page (document-level delegation, bound once)
+ *     and opens/creates the buyer<->vendor conversation via
+ *     POST /marketplace/store-chat, automatically resolving to whichever
+ *     vendor's product is currently being viewed.
+ *   - Communication only enqueues its chat JS for logged-in users, so a
+ *     logged-out shopper gets a plain login link (redirecting back to this
+ *     product) instead of a dead button.
+ *   - When Communication is not active at all, behaviour is unchanged from
+ *     pre-2.4.7: the legacy `chat_url` option / Dokan store `#chat` anchor.
+ *   - Detected via defined( 'ZYMARG_COMM_VERSION' ), not
+ *     ZYMARG_COMM_API_NAMESPACE — that constant is never defined by the
+ *     Communication plugin (checked against v1.33.0 source), so any future
+ *     code should not rely on it either.
+ *
  * @package ZymargSingleProduct
  */
 
@@ -34,7 +60,13 @@ class Seller_Card {
 
 		$show_visit = Options::get( 'show_visit_store' );
 		$show_chat  = Options::get( 'show_chat_btn' );
-		$chat_url   = Options::get( 'chat_url', '' );
+
+		// v2.4.7 - when the ZYMARG Communication plugin is active, the chat
+		// button is wired against its [data-chat-btn] contract instead of the
+		// legacy chat_url/Dokan-anchor link. See class docblock above.
+		$comm_active = self::is_comm_active();
+
+		$chat_url = Options::get( 'chat_url', '' );
 
 		// If no chat URL configured, try Dokan store URL with #chat.
 		if ( ! $chat_url && $data['store_url'] ) {
@@ -120,7 +152,31 @@ class Seller_Card {
 						</a>
 					<?php endif; ?>
 
-					<?php if ( $show_chat && $chat_url ) : ?>
+					<?php if ( $show_chat && $comm_active ) : ?>
+						<?php if ( is_user_logged_in() ) : ?>
+							<button type="button"
+								data-chat-btn
+								data-seller-id="<?php echo esc_attr( $data['vendor_user_id'] ); ?>"
+								class="zymarg-sp-seller-card__btn zymarg-sp-seller-card__btn--chat">
+								<?php // v1.1.16 - emoji glyph to match the design mockup (the old inline SVG inherited the button's purple). ?>
+								<span class="zymarg-sp-seller-card__btn-emoji" aria-hidden="true">&#128172;</span>
+								<?php esc_html_e( 'Chat', 'zymarg-single-product' ); ?>
+							</button>
+						<?php else : ?>
+							<?php
+							// v2.4.7 - Communication only enqueues its chat JS for
+							// logged-in users, so a logged-out shopper is sent to log
+							// in and returned to this exact product afterward, rather
+							// than clicking a button that silently does nothing.
+							$login_url = wp_login_url( get_permalink( $product->get_id() ) );
+							?>
+							<a href="<?php echo esc_url( $login_url ); ?>"
+								class="zymarg-sp-seller-card__btn zymarg-sp-seller-card__btn--chat">
+								<span class="zymarg-sp-seller-card__btn-emoji" aria-hidden="true">&#128172;</span>
+								<?php esc_html_e( 'Chat', 'zymarg-single-product' ); ?>
+							</a>
+						<?php endif; ?>
+					<?php elseif ( $show_chat && $chat_url ) : ?>
 						<a href="<?php echo esc_url( $chat_url ); ?>"
 							class="zymarg-sp-seller-card__btn zymarg-sp-seller-card__btn--chat">
 							<?php // v1.1.16 - emoji glyph to match the design mockup (the old inline SVG inherited the button's purple). ?>
@@ -175,7 +231,13 @@ class Seller_Card {
 				$product_count = (int) ( $counts->publish ?? 0 );
 			}
 
-			return compact( 'name', 'avatar', 'verified', 'store_url', 'rating', 'rating_count', 'product_count' );
+			// v2.4.7 - the vendor's WP user ID, exposed so the chat button can
+			// pass it straight through as data-seller-id. This is $author_id,
+			// unchanged, but named for what the Communication plugin does with
+			// it rather than for how it was looked up.
+			$vendor_user_id = $author_id;
+
+			return compact( 'name', 'avatar', 'verified', 'store_url', 'rating', 'rating_count', 'product_count', 'vendor_user_id' );
 		}
 
 		// ── WP User fallback ─────────────────────────────────────────────────
@@ -185,14 +247,31 @@ class Seller_Card {
 		}
 
 		return [
-			'name'          => $user->display_name,
-			'avatar'        => get_avatar_url( $author_id, [ 'size' => 80 ] ),
-			'verified'      => false,
-			'store_url'     => '',
-			'rating'        => 0,
-			'rating_count'  => 0,
-			'product_count' => 0,
+			'name'           => $user->display_name,
+			'avatar'         => get_avatar_url( $author_id, [ 'size' => 80 ] ),
+			'verified'       => false,
+			'store_url'      => '',
+			'rating'         => 0,
+			'rating_count'   => 0,
+			'product_count'  => 0,
+			'vendor_user_id' => $author_id,
 		];
+	}
+
+	/**
+	 * Whether the ZYMARG Communication plugin is active on this site.
+	 *
+	 * Detected via ZYMARG_COMM_VERSION, which the plugin's main file defines
+	 * unconditionally on load. NOT ZYMARG_COMM_API_NAMESPACE — that constant
+	 * does not exist anywhere in the Communication plugin's source (verified
+	 * against v1.33.0), so checking it always resolves to false. The ZYMARG
+	 * Store Page plugin's ZYMARG_SP_Chat::is_comm_active() currently checks
+	 * that constant and should be corrected the same way in a future change.
+	 *
+	 * @return bool
+	 */
+	private static function is_comm_active(): bool {
+		return defined( 'ZYMARG_COMM_VERSION' );
 	}
 
 	// ── Helpers ───────────────────────────────────────────────────────────────

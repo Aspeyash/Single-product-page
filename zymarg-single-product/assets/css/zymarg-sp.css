@@ -390,7 +390,8 @@ svg.zymarg-sp-star--empty, .zymarg-sp-star--empty svg { fill: var(--zymarg-borde
 .zymarg-sp-seller-card__btn--chat { background: transparent; color: var(--zymarg-dark-purple); border: 1.5px solid var(--zymarg-border); }
 [data-theme="dark"] .zymarg-sp-seller-card__btn--chat { color: #fea9ff; }
 .zymarg-sp-seller-card__btn--chat:hover { background: var(--zymarg-primary-light); border-color: var(--zymarg-primary); }
-/* v1.1.16 - seller buttons are <a> tags; block theme hover underlines. */
+/* v1.1.16 - seller buttons are <a> tags (or a <button> since v2.4.7 for the
+   Communication-wired chat action); block theme hover underlines either way. */
 .zymarg-single-product .zymarg-sp-seller-card__btn,
 .zymarg-single-product .zymarg-sp-seller-card__btn:hover,
 .zymarg-single-product .zymarg-sp-seller-card__btn:focus,

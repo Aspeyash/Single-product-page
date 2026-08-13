@@ -970,7 +970,7 @@ class Admin {
 					$this->field_toggle( 'show_seller_card',  __( 'Show seller card section', 'zymarg-single-product' ), $o );
 					$this->field_toggle( 'show_visit_store',  __( 'Show "Visit Store" button', 'zymarg-single-product' ), $o );
 					$this->field_toggle( 'show_chat_btn',     __( 'Show "Chat" button', 'zymarg-single-product' ), $o );
-					$this->field_text(   'chat_url',          __( 'Chat URL (leave blank for Dokan auto)', 'zymarg-single-product' ), $o );
+					$this->field_text(   'chat_url',          __( 'Chat URL (leave blank for Dokan auto)', 'zymarg-single-product' ), $o, __( 'Only used when the ZYMARG Communication plugin is not active. When Communication is active, the Chat button opens its live-chat popup directly against this product\'s vendor instead.', 'zymarg-single-product' ) );
 					?>
 				</div>
 
