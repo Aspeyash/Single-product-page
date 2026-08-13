@@ -1,0 +1,837 @@
+/**
+ * ZYMARG Store Listing  --  store-listing.css
+ *
+ * The marketplace store directory at /store-listing/.
+ *
+ * Card design 06 ("Split"): banner left, content right, stacking to banner
+ * on top below 720px.
+ *
+ * EVERY colour, radius, shadow, spacing step and type size here is a
+ * --zym-* token. There is not one hardcoded colour in this file apart from
+ * white text sitting on the brand gradient, which has no token.
+ *
+ * Because it is tokens all the way down, dark mode costs nothing here: the
+ * day the token file gains [data-theme="dark"] values, this whole page
+ * follows automatically with no change to this stylesheet.
+ *
+ * Prefix: .zsl-  (Zymarg Store Listing)
+ *
+ * @package ZYMARG_Store_Page
+ */
+
+/* ==========================================================================
+   1. Page shell
+   ========================================================================== */
+
+.zsl {
+	background: var(--zym-color-bg);
+	color: var(--zym-color-text);
+	font-family: var(--zym-font);
+	padding-bottom: var(--zym-space-13);
+}
+
+.zsl__inner {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 0 var(--zym-space-8);
+}
+
+/* ==========================================================================
+   2. Header
+   ========================================================================== */
+
+/* A tight band, not a hero. The visible title was removed because the
+   search field and the sort dropdown directly beneath it already say what
+   this page is. The <h1> still exists in the markup for screen readers and
+   search engines -- it is just not painted. */
+
+.zsl-head {
+	background: var(--zym-gradient);
+	color: #FFFFFF;
+	padding: var(--zym-space-7) 0;
+	margin-bottom: var(--zym-space-9);
+}
+
+.zsl-head__sub {
+	margin: 0 auto;
+	font-size: var(--zym-font-size-sm);
+	line-height: 1.45;
+	opacity: 0.95;
+	max-width: 70ch;
+	text-align: center;
+}
+
+/* Two deliberate lines rather than one long wrap. Each half is its own
+   block so the break happens at the sentence, not wherever the viewport
+   width lands, and both halves stay centred. */
+.zsl-head__line {
+	display: block;
+}
+
+/* ==========================================================================
+   3. Controls  --  search + sort
+   ========================================================================== */
+
+/* The count used to be a sibling of the field group with space-between
+   holding them apart, which threw the whole width of the page between the
+   Search button and the count on a wide screen. The count now lives inside
+   the group as a fourth field, so the row packs from the left and the four
+   items stay visually related. */
+
+.zsl-controls {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--zym-space-7);
+	align-items: flex-end;
+	justify-content: flex-start;
+	margin-bottom: var(--zym-space-9);
+}
+
+.zsl-controls__group {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--zym-space-5);
+	align-items: center;
+	/* Fill the container instead of shrink-wrapping to content, which left
+	   the row hugging the left half of a wide screen with dead space to the
+	   right of the sort dropdown. */
+	width: 100%;
+}
+
+.zsl-controls__field {
+	min-width: 0;
+}
+
+/* The search field is the one elastic item in the row: it takes every pixel
+   the button, count and dropdown do not need, so the group always reaches
+   the right edge at any viewport width. The 220px floor makes the row wrap
+   on a narrow tablet rather than crushing the input to nothing. */
+.zsl-controls__field--search {
+	flex: 1 1 auto;
+	min-width: 220px;
+}
+
+.zsl-search { width: 100%; }
+
+/* Desktop reading order: search, submit, count, sort. `order` does the
+   rearranging so the DOM keeps its logical sequence -- each label still
+   precedes its own field for a screen reader, and tab order stays
+   search -> sort -> submit however the row is painted. */
+.zsl-controls__field--search { order: 1; }
+.zsl-controls__field--submit { order: 2; }
+.zsl-controls__field--count  { order: 3; }
+.zsl-controls__field--sort   { order: 4; }
+
+/* SORT BY is centred over its dropdown rather than left-aligned like
+   SEARCH STORES: it captions a narrow control at the end of the row, and
+   centring ties the two together. */
+.zsl-controls__field--sort .zsl-label {
+	text-align: center;
+}
+
+/* Every field is label-on-top + a 44px control. Giving the count the same
+   44px box means all four bottoms and centres line up without any per-field
+   nudging, on any row height. */
+.zsl-controls__field--count .zsl-count {
+	/* Centred with line-height, NOT display:flex. Flex would make
+	   <strong>128</strong> and " stores" two separate flex items and drop
+	   the whitespace between them, rendering "128stores". */
+	min-height: 44px;
+	line-height: 44px;
+	margin: 0;
+	padding-left: var(--zym-space-3);
+	white-space: nowrap;
+}
+
+.zsl-label {
+	display: block;
+	margin-bottom: var(--zym-space-2);
+	font-size: var(--zym-font-size-xs);
+	font-weight: var(--zym-font-weight-semibold);
+	letter-spacing: var(--zym-tracking-normal);
+	text-transform: uppercase;
+	color: var(--zym-color-neutral-text);
+}
+
+.zsl-search {
+	position: relative;
+	display: flex;
+	align-items: center;
+}
+
+.zsl-search__icon {
+	position: absolute;
+	left: var(--zym-space-5);
+	color: var(--zym-color-neutral-text);
+	pointer-events: none;
+}
+
+.zsl-search__input {
+	width: 100%;
+	font-family: inherit;
+	/* 16px, not 15px: anything smaller makes iOS Safari zoom the whole
+	   page the moment the field is focused. */
+	font-size: var(--zym-font-size-md);
+	color: var(--zym-color-dark);
+	background: var(--zym-color-surface);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-input, 14px);
+	min-height: 44px;
+	padding: 0 var(--zym-space-8) 0 44px;
+	/* The floor lives on the field wrapper now; keeping 260px here as well
+	   would stop the input ever shrinking inside its own flex item. */
+	min-width: 0;
+	transition: border-color var(--zym-motion-input) var(--zym-ease),
+		box-shadow var(--zym-motion-input) var(--zym-ease);
+}
+
+.zsl-search__input::placeholder { color: var(--zym-color-neutral-text); }
+
+.zsl-search__input:focus {
+	outline: none;
+	border-color: var(--zym-color-primary);
+	box-shadow: var(--zym-focus-ring);
+}
+
+.zsl-select {
+	font-family: inherit;
+	font-size: var(--zym-font-size-md);
+	color: var(--zym-color-dark);
+	background: var(--zym-color-surface);
+	border: 1px solid var(--zym-color-border);
+	/* Matches the search input beside it -- the two sit in the same row, so
+	   they must share a radius. */
+	border-radius: var(--zym-radius-input, 14px);
+	min-height: 44px;
+	padding: 0 var(--zym-space-8);
+	/* Wide enough that the longest option ("Store name A-Z") sits inside the
+	   control without the native arrow crowding it. */
+	min-width: 180px;
+	cursor: pointer;
+}
+
+.zsl-select:focus {
+	outline: none;
+	border-color: var(--zym-color-primary);
+	box-shadow: var(--zym-focus-ring);
+}
+
+.zsl-count {
+	margin: 0;
+	font-size: var(--zym-font-size-sm);
+	color: var(--zym-color-neutral-text);
+}
+
+.zsl-count strong {
+	color: var(--zym-color-dark);
+	font-weight: var(--zym-font-weight-semibold);
+}
+
+/* ==========================================================================
+   4. Grid
+   ========================================================================== */
+
+.zsl-grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--zym-space-8);
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+/* ==========================================================================
+   5. The card  (design 06 -- Split)
+   ========================================================================== */
+
+.zsl-card {
+	display: grid;
+	grid-template-columns: 210px 1fr;
+	background: var(--zym-color-surface);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-card);
+	box-shadow: var(--zym-shadow-card);
+	overflow: hidden;
+	transition: transform var(--zym-motion-standard) var(--zym-ease),
+		box-shadow var(--zym-motion-standard) var(--zym-ease);
+}
+
+.zsl-card:hover {
+	transform: translateY(-4px);
+	box-shadow: var(--zym-shadow-card-hover);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.zsl-card,
+	.zsl-card:hover { transition: none; transform: none; }
+}
+
+/* --- banner column ------------------------------------------------------ */
+
+.zsl-card__media {
+	position: relative;
+	background: var(--zym-gradient);
+	min-height: 230px;
+}
+
+.zsl-card__media img {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+.zsl-card__logo {
+	position: absolute;
+	left: var(--zym-space-7);
+	bottom: var(--zym-space-7);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 56px;
+	height: 56px;
+	overflow: hidden;
+	border-radius: var(--zym-radius-image-small, 12px);
+	background: var(--zym-color-surface);
+	color: var(--zym-color-primary);
+	font-size: var(--zym-font-size-lg);
+	font-weight: var(--zym-font-weight-extrabold);
+	box-shadow: var(--zym-shadow-btn);
+}
+
+.zsl-card__logo img {
+	position: static;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+/* --- content column ----------------------------------------------------- */
+
+.zsl-card__body {
+	padding: var(--zym-space-8);
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+
+.zsl-card__nameline {
+	display: flex;
+	align-items: center;
+	gap: var(--zym-space-3);
+	flex-wrap: wrap;
+}
+
+.zsl-card__name {
+	margin: 0;
+	font-size: var(--zym-font-size-lg);
+	font-weight: var(--zym-font-weight-bold);
+	color: var(--zym-color-dark);
+	letter-spacing: -0.01em;
+}
+
+.zsl-card__name a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.zsl-card__name a:hover { text-decoration: underline; }
+
+.zsl-card__name a:focus-visible {
+	outline: none;
+	box-shadow: var(--zym-focus-ring);
+	border-radius: var(--zym-radius-chip);
+}
+
+/* The shared badge helper sizes the tick through a class name, so the
+   size lives here rather than being repeated in PHP. */
+.zsl-tick {
+	width: 20px;
+	height: 20px;
+	flex: none;
+	color: var(--zym-color-secondary);
+}
+
+.zsl-card__badges {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--zym-space-2);
+	align-items: center;
+	margin-top: var(--zym-space-5);
+}
+
+.zsl-card__badges:empty { display: none; margin-top: 0; }
+
+/* The badge pills come from the shared helper, which styles them with
+   Tailwind utility classes. If the Tailwind browser build is slow or fails
+   to load, those spans would paint as hard-edged rectangles. Pinning the
+   radius here keeps them pill-shaped no matter what, and costs nothing when
+   Tailwind does load. */
+.zsl-card__badges > span {
+	border-radius: var(--zym-radius-pill);
+}
+
+.zsl-pill {
+	display: inline-flex;
+	align-items: center;
+	height: 22px;
+	padding: 0 10px;
+	border-radius: var(--zym-radius-pill);
+	font-size: var(--zym-font-size-xxs);
+	font-weight: var(--zym-font-weight-extrabold);
+	letter-spacing: var(--zym-tracking-normal);
+	text-transform: uppercase;
+	white-space: nowrap;
+}
+
+.zsl-pill--vacation {
+	background: var(--zym-color-neutral-bg);
+	color: var(--zym-color-neutral-text);
+}
+
+.zsl-card__tagline {
+	margin: var(--zym-space-5) 0 0;
+	font-size: var(--zym-font-size-sm);
+	line-height: 1.5;
+	color: var(--zym-color-text);
+}
+
+/* --- vacation note ------------------------------------------------------ */
+
+.zsl-card__vacation {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--zym-space-3);
+	margin-top: var(--zym-space-7);
+	padding: var(--zym-space-5);
+	border-radius: var(--zym-radius-chip);
+	background: var(--zym-color-neutral-bg);
+	color: var(--zym-color-neutral-text);
+	font-size: var(--zym-font-size-xs);
+	line-height: 1.5;
+}
+
+.zsl-card__vacation svg { flex: none; margin-top: 1px; }
+
+.zsl-card__vacation strong {
+	color: var(--zym-color-dark);
+	font-weight: var(--zym-font-weight-semibold);
+}
+
+.zsl-card--vacation .zsl-card__media {
+	filter: grayscale(0.7);
+	opacity: 0.8;
+}
+
+/* --- meta --------------------------------------------------------------- */
+
+.zsl-card__meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--zym-space-5) var(--zym-space-7);
+	margin-top: var(--zym-space-7);
+	font-size: var(--zym-font-size-xs);
+	color: var(--zym-color-neutral-text);
+}
+
+.zsl-card__meta span {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.zsl-card__meta strong {
+	color: var(--zym-color-dark);
+	font-weight: var(--zym-font-weight-semibold);
+}
+
+.zsl-card__meta svg {
+	color: var(--zym-color-secondary);
+	flex: none;
+}
+
+.zsl-card__response {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 3px 10px;
+	border-radius: var(--zym-radius-pill);
+	background: var(--zym-color-success-bg);
+	color: var(--zym-color-success-text);
+	font-size: var(--zym-font-size-xs);
+	font-weight: var(--zym-font-weight-semibold);
+}
+
+.zsl-card__response svg { color: currentColor; }
+
+/* --- actions ------------------------------------------------------------ */
+
+.zsl-card__actions {
+	display: flex;
+	gap: var(--zym-space-5);
+	margin-top: auto;
+	padding-top: var(--zym-space-8);
+}
+
+.zsl-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--zym-space-3);
+	min-height: 40px;
+	padding: 0 var(--zym-space-8);
+	border: 0;
+	border-radius: var(--zym-radius-button);
+	font-family: inherit;
+	font-size: var(--zym-font-size-sm);
+	font-weight: var(--zym-font-weight-semibold);
+	cursor: pointer;
+	text-decoration: none;
+	white-space: nowrap;
+	transition: transform var(--zym-motion-fast) var(--zym-ease),
+		box-shadow var(--zym-motion-fast) var(--zym-ease),
+		background var(--zym-motion-fast) var(--zym-ease);
+}
+
+.zsl-btn:focus-visible {
+	outline: none;
+	box-shadow: var(--zym-focus-ring);
+}
+
+.zsl-btn:active { transform: translateY(1px); }
+
+.zsl-btn--primary {
+	background: var(--zym-gradient);
+	color: #FFFFFF;
+	box-shadow: var(--zym-shadow-btn);
+}
+
+.zsl-btn--primary:hover {
+	color: #FFFFFF;
+	box-shadow: var(--zym-shadow-card-hover);
+}
+
+.zsl-btn--follow {
+	background: transparent;
+	border: 1px solid var(--zym-color-border);
+	color: var(--zym-color-dark);
+}
+
+.zsl-btn--follow:hover { background: var(--zym-color-surface-alt); }
+
+.zsl-btn--follow[aria-pressed="true"] {
+	background: var(--zym-color-container);
+	border-color: var(--zym-color-primary);
+	color: var(--zym-color-primary);
+}
+
+.zsl-btn--follow[aria-pressed="true"] .zsl-icon--plus { display: none; }
+.zsl-btn--follow[aria-pressed="false"] .zsl-icon--check { display: none; }
+
+.zsl-btn.is-busy { opacity: 0.6; pointer-events: none; }
+
+/* ==========================================================================
+   6. Empty state
+   ========================================================================== */
+
+.zsl-empty {
+	text-align: center;
+	padding: var(--zym-space-13) var(--zym-space-8);
+	background: var(--zym-color-surface);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-card);
+}
+
+.zsl-empty__title {
+	margin: 0 0 var(--zym-space-5);
+	font-size: var(--zym-font-size-lg);
+	font-weight: var(--zym-font-weight-bold);
+	color: var(--zym-color-dark);
+}
+
+.zsl-empty__text {
+	margin: 0 0 var(--zym-space-8);
+	font-size: var(--zym-font-size-sm);
+	color: var(--zym-color-neutral-text);
+}
+
+/* ==========================================================================
+   7. Pagination
+   ========================================================================== */
+
+.zsl-pager {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--zym-space-3);
+	justify-content: center;
+	align-items: center;
+	margin-top: var(--zym-space-11);
+}
+
+.zsl-pager__link {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 44px;
+	min-height: 44px;
+	padding: 0 var(--zym-space-5);
+	border: 1px solid var(--zym-color-border);
+	/* Same radius as .zsl-btn so pager buttons and card buttons agree. */
+	border-radius: var(--zym-radius-button, 12px);
+	background: var(--zym-color-surface);
+	color: var(--zym-color-dark);
+	font-size: var(--zym-font-size-sm);
+	font-weight: var(--zym-font-weight-semibold);
+	text-decoration: none;
+}
+
+.zsl-pager__link:hover {
+	background: var(--zym-color-surface-alt);
+	color: var(--zym-color-dark);
+}
+
+.zsl-pager__link:focus-visible {
+	outline: none;
+	box-shadow: var(--zym-focus-ring);
+}
+
+.zsl-pager__link[aria-current="page"] {
+	background: var(--zym-gradient);
+	border-color: transparent;
+	color: #FFFFFF;
+}
+
+/* ==========================================================================
+   8. Screen-reader helper
+   ========================================================================== */
+
+.zsl-sr {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+/* ==========================================================================
+   9. Mobile
+
+   One card per row with the banner on top, and every tap target at 44px.
+   ========================================================================== */
+
+@media (max-width: 720px) {
+	.zsl-card { grid-template-columns: 1fr; }
+	.zsl-card__media { min-height: 150px; }
+	.zsl-card__actions .zsl-btn { flex: 1; min-height: 44px; }
+}
+
+@media (max-width: 560px) {
+	.zsl__inner { padding: 0 var(--zym-space-7); }
+	.zsl-head { padding: var(--zym-space-6) 0; margin-bottom: var(--zym-space-8); }
+	.zsl-head__sub { font-size: var(--zym-font-size-xs); }
+
+	/* One tight row on a phone.
+
+	   The two field labels are hidden VISUALLY but kept in the DOM. A
+	   sighted user has the magnifier icon, the placeholder and the selected
+	   sort value to go on, so the words are redundant and cost two whole
+	   lines of vertical space. A screen reader has none of those cues, so
+	   deleting the labels outright would leave the fields unnamed. */
+
+	.zsl-controls {
+		align-items: stretch;
+		gap: var(--zym-space-3);
+		margin-bottom: var(--zym-space-8);
+	}
+
+	.zsl-controls__group {
+		width: 100%;
+		flex-wrap: nowrap;
+		gap: var(--zym-space-2);
+		align-items: center;
+	}
+
+	/* One row, four items, in the requested order: sort, count, search,
+	   submit. `order` does the rearranging so the DOM keeps its logical
+	   sequence -- the label still precedes its field for a screen reader
+	   and tabbing still runs search -> sort -> submit. */
+
+	/* min-width:0 is what actually lets a flex item shrink -- without it it
+	   refuses to go below its content width and the row wraps anyway. */
+	.zsl-controls__field {
+		min-width: 0;
+		flex: 0 0 auto;
+	}
+
+	.zsl-controls__field--sort   { order: 1; flex: 0 0 auto; }
+	/* flex-shrink:0: the count is short and factual, so clipping it to
+	   "128 ..." to save 20px is a bad trade. Pressure goes to the search
+	   field instead. */
+	.zsl-controls__field--count  { order: 2; flex: 0 0 auto; max-width: 45%; }
+	/* Overrides the 220px desktop floor, which would otherwise force this
+	   row to wrap on a phone. The 60px basis stops the input demanding its
+	   intrinsic width before it will shrink. */
+	.zsl-controls__field--search { order: 3; flex: 1 1 60px; min-width: 60px; }
+	.zsl-controls__field--submit { order: 4; }
+
+	/* The count drops its 44px alignment box here -- there are no labels
+	   left to align against -- and is allowed to ellipsis, because the
+	   "N stores matching "query"" wording can get long on a phone. */
+	.zsl-controls__field--count .zsl-count {
+		display: block;
+		min-height: 0;
+		line-height: 1.3;
+		padding-left: 0;
+		font-size: var(--zym-font-size-xs);
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.zsl-label {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+		clip-path: inset(50%);
+		white-space: nowrap;
+		border: 0;
+	}
+
+	.zsl-search,
+	.zsl-search__input { width: 100%; min-width: 0; }
+
+	/* The magnifier inside the field is dropped on a phone. The submit
+	   button beside it is now an icon-only magnifier, so keeping both would
+	   show the same glyph twice, and removing this one hands ~26px straight
+	   back to the text. font-size stays 16px so iOS does not zoom on focus. */
+	.zsl-search__icon { display: none; }
+	.zsl-search__input { padding: 0 var(--zym-space-4); }
+
+	/* Arrow-only sort control.
+
+	   Truncating the value to "Most pr..." was worse than useless: ~100px
+	   spent on a word fragment. The chevron alone says "there is a menu
+	   here", and the full labels are one tap away in the OS picker, where
+	   they are actually legible.
+
+	   appearance:none drops the platform arrow so the chevron can be drawn
+	   as a centred background image at an exact size. The value is hidden
+	   with a transparent fill rather than font-size:0 because iOS zooms the
+	   page when a form control computes under 16px. */
+	.zsl-select {
+		-webkit-appearance: none;
+		appearance: none;
+		width: 44px;
+		min-width: 44px;
+		max-width: 44px;
+		padding: 0;
+		color: transparent;
+		-webkit-text-fill-color: transparent;
+		text-shadow: none;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23646970' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+		background-repeat: no-repeat;
+		background-position: center;
+		background-size: 14px 14px;
+	}
+
+	/* Some engines inherit that transparent fill into the open picker, which
+	   would leave it blank. Paint the options back explicitly. */
+	.zsl-select option {
+		color: var(--zym-color-dark);
+		-webkit-text-fill-color: var(--zym-color-dark);
+		font-size: var(--zym-font-size-md);
+	}
+
+	/* Icon-only submit. The word "Search" is the single biggest space cost
+	   in the row and the magnifier says the same thing; the .zsl-sr span
+	   inside the button keeps it named for assistive tech. 44px square
+	   preserves the minimum tap target. */
+	.zsl-controls__group .zsl-btn--submit {
+		flex: 0 0 auto;
+		width: 44px;
+		min-width: 44px;
+		min-height: 44px;
+		padding: 0;
+		gap: 0;
+	}
+
+	.zsl-controls__group .zsl-btn--submit .zsl-btn__text { display: none; }
+
+	.zsl-card__body { padding: var(--zym-space-7); }
+}
+
+
+/* -------------------------------------------------------------------------
+   Infinite scroll
+   -------------------------------------------------------------------------
+   The numbered pager is hidden by JavaScript, not by CSS. If the script never
+   runs the pager must stay visible, so nothing here may hide it.
+   ------------------------------------------------------------------------- */
+
+.zsl-infinite {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.75rem;
+	padding: 2rem 1rem;
+	text-align: center;
+}
+
+.zsl-infinite[hidden] {
+	display: none;
+}
+
+.zsl-infinite__text {
+	margin: 0;
+	font-size: 0.9rem;
+	color: var(--zym-color-text, #55505a);
+	opacity: 0.75;
+}
+
+.zsl-infinite.is-error .zsl-infinite__text {
+	color: #b3261e;
+	opacity: 1;
+}
+
+.zsl-infinite.is-done .zsl-infinite__text {
+	font-weight: 600;
+	opacity: 0.6;
+}
+
+.zsl-infinite__spinner {
+	width: 26px;
+	height: 26px;
+	border-radius: 50%;
+	border: 2.5px solid var(--zym-color-border, #e5dfe8);
+	border-top-color: var(--zym-color-primary, #9500a5);
+	animation: zsl-spin 0.7s linear infinite;
+	display: none;
+}
+
+.zsl-infinite.is-busy .zsl-infinite__spinner {
+	display: block;
+}
+
+.zsl-infinite__retry[hidden] {
+	display: none;
+}
+
+@keyframes zsl-spin {
+	to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.zsl-infinite__spinner {
+		animation-duration: 2.4s;
+	}
+}
