@@ -1,0 +1,1360 @@
+/* ============================================================
+   ZYMARG Single Product — Frontend CSS v1.1.6
+   Exact visual from ZYMARG_Single_Product.html
+   All selectors scoped under .zymarg-single-product
+   ============================================================ */
+
+/* ── Brand Tokens (inherit from theme if present, else own) ── */
+.zymarg-single-product {
+  --zymarg-primary: #9500a5;
+  --zymarg-primary-hover: #bd00d1;
+  --zymarg-primary-light: #fea9ff;
+  --zymarg-dark-purple: #6b0077;
+  --zymarg-surface: #ffffff;
+  --zymarg-surface-alt: #f8f9fa;
+  --zymarg-text: #1a1a2e;
+  --zymarg-text-muted: #6c757d;
+  --zymarg-border: #dee2e6;
+  --zymarg-success: #28a745;
+  --zymarg-warning: #ffc107;
+  --zymarg-error: #dc3545;
+  --zymarg-radius-sm: 8px;
+  --zymarg-radius-md: 12px;
+  --zymarg-radius-lg: 20px;
+  --zymarg-shadow: 0 4px 20px rgba(149,0,165,.1);
+  --zymarg-grad-primary: linear-gradient(135deg,#9500a5 0%,#bd00d1 100%);
+  --zymarg-grad-soft: linear-gradient(135deg,#fea9ff 0%,#bd00d1 100%);
+  --zymarg-grad-dark: linear-gradient(135deg,#1a1a2e 0%,#9500a5 100%);
+}
+
+[data-theme="dark"] .zymarg-single-product {
+  --zymarg-primary: #bd00d1;
+  --zymarg-primary-light: #9500a5;
+  --zymarg-surface: #1a1a2e;
+  --zymarg-surface-alt: #2d2d44;
+  --zymarg-text: #e8e8e8;
+  --zymarg-text-muted: #a0a0a0;
+  --zymarg-border: #3d3d5c;
+}
+
+.zymarg-single-product *,
+.zymarg-single-product *::before,
+.zymarg-single-product *::after {
+  box-sizing: border-box;
+}
+
+/* v2.2.1 - typography is applied to this plugin's own children rather than to
+   the wrapper itself, so that engine grid sections are left out of it. The
+   Product Grid engine and the Template Pack declare no font-family anywhere,
+   which means card text inherits whatever the nearest ancestor sets. While that
+   ancestor was .zymarg-single-product, cards on a product page rendered in
+   'Segoe UI' at line-height 1.6 while the same cards elsewhere on the site used
+   the theme font: identical px sizes that read as different sizes, because two
+   typefaces differ in x-height and width at the same point size.
+   Note that reverting or unsetting the property on the section could not fix
+   this - both fall back to inheriting, and the value being inherited was the
+   problem. The declaration has to be kept off the common ancestor. */
+.zymarg-single-product > *:not(.zymarg-sp-grid-section--engine) {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: var(--zymarg-text);
+  line-height: 1.6;
+}
+
+.zymarg-single-product img { max-width: 100%; }
+.zymarg-single-product button { font-family: inherit; cursor: pointer; }
+.zymarg-single-product .container { max-width: 100%; margin: 0 auto; padding: 0 24px; }
+.zymarg-single-product section { margin-bottom: 32px; }
+
+/* ── Breadcrumbs ─────────────────────────────────────────── */
+.zymarg-sp-breadcrumbs { padding: 16px 0 0; }
+.zymarg-sp-breadcrumbs__list { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; font-size: .85rem; padding: 0; margin: 0; }
+.zymarg-sp-breadcrumbs__item { display: flex; align-items: center; gap: 6px; }
+.zymarg-sp-breadcrumbs__sep { color: var(--zymarg-text-muted); }
+.zymarg-sp-breadcrumbs__item a { color: var(--zymarg-primary); text-decoration: none; }
+.zymarg-sp-breadcrumbs__item a:hover { color: var(--zymarg-primary-hover); text-decoration: underline; }
+.zymarg-sp-breadcrumbs__item--current { color: var(--zymarg-text-muted); }
+
+/* ── Product Section — 3 col desktop ────────────────────── */
+.product-section {
+  display: grid;
+  grid-template-columns: minmax(420px,1.2fr) 1fr 320px;
+  gap: 24px;
+  background: var(--zymarg-surface);
+  border-radius: var(--zymarg-radius-md);
+  box-shadow: var(--zymarg-shadow);
+  padding: 24px;
+  margin-top: 16px;
+}
+
+/* ── Gallery ─────────────────────────────────────────────── */
+.gallery-wrap { display: flex; flex-direction: row-reverse; gap: 12px; }
+.gallery-main {
+  position: relative;
+  border-radius: var(--zymarg-radius-md);
+  overflow: hidden;
+  aspect-ratio: 1;
+  background: var(--zymarg-grad-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+.gallery-main img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.gallery-badge {
+  position: absolute; top: 12px; left: 12px;
+  background: var(--zymarg-error); color: #fff;
+  font-size: .75rem; font-weight: 700;
+  padding: 4px 12px;
+  border-radius: var(--zymarg-radius-lg);
+  pointer-events: none;
+}
+.gallery-badge--right { left: auto; right: 12px; }
+/* v2.4.4 - flat/transparent, no circle: sits directly on the product photo.
+   Icon state (idle outline / active filled) is swapped via aria-pressed,
+   same mechanism as the ZYMARG WC Product Grid card hearts, instead of a
+   background-color fill. */
+.gallery-wish {
+  position: absolute; top: 12px; right: 12px;
+  background: none; border: none; box-shadow: none; padding: 0;
+  color: var(--zymarg-text);
+  width: 38px; height: 38px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: color .2s, transform .2s;
+}
+.gallery-wish:hover { color: var(--zymarg-primary); transform: scale(1.08); }
+.gallery-wish .zymarg-sp-wish__icon-active { display: none; }
+.gallery-wish[aria-pressed="true"] .zymarg-sp-wish__icon-idle { display: none; }
+.gallery-wish[aria-pressed="true"] .zymarg-sp-wish__icon-active { display: inline-flex; }
+.gallery-wish[aria-pressed="true"] { color: var(--zymarg-primary); }
+.zymarg-sp-gallery__counter {
+  position: absolute; bottom: 10px; right: 10px;
+  background: rgba(0,0,0,.45); color: #fff;
+  font-size: .75rem; padding: 3px 10px;
+  border-radius: var(--zymarg-radius-lg);
+}
+.gallery-thumbs { display: flex; flex-direction: column; gap: 10px; }
+.thumb {
+  width: var(--thumb-size, 72px);
+  height: var(--thumb-size, 72px);
+  border-radius: var(--zymarg-radius-sm);
+  border: 2px solid var(--zymarg-border);
+  background: var(--zymarg-surface-alt);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; transition: .2s; padding: 0;
+}
+.thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.thumb.active, .thumb:hover { border-color: var(--zymarg-primary); }
+
+/* Zoom overlay */
+.zymarg-sp-zoom { cursor: zoom-in; }
+.zymarg-sp-zoom-active { transform: scale(1.5); transform-origin: var(--zoom-x,50%) var(--zoom-y,50%); transition: transform .1s; }
+
+/* ── Product Info ─────────────────────────────────────────── */
+.product-title { font-size: 1.5rem; font-weight: 700; color: var(--zymarg-dark-purple); margin: 0 0 6px; }
+[data-theme="dark"] .product-title { color: var(--zymarg-text); }
+.rating-row { display: flex; align-items: center; gap: 10px; font-size: .85rem; margin-bottom: 12px; flex-wrap: wrap; }
+.rating-row a { color: var(--zymarg-primary); text-decoration: none; }
+/* v1.1.16 - themes re-underline links on hover/focus; keep the row clean. */
+.zymarg-single-product .rating-row a:hover,
+.zymarg-single-product .rating-row a:focus,
+.zymarg-single-product .rating-row a:active { text-decoration: none !important; }
+
+/* v1.1.18 - product categories row */
+.product-cats { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; font-size: .82rem; margin-bottom: 12px; color: var(--zymarg-text-muted); }
+.product-cats__label { font-weight: 600; color: var(--zymarg-text); }
+.product-cats__list { display: inline; }
+.product-cats a { color: var(--zymarg-primary); text-decoration: none; }
+.product-cats a:hover, .product-cats a:focus { color: var(--zymarg-primary-hover); text-decoration: none; }
+.product-cats .sep { color: var(--zymarg-text-muted); }
+.zymarg-sp-sold-count { color: var(--zymarg-text-muted); }
+
+/* WC star rating override */
+.zymarg-single-product .star-rating span::before { color: var(--zymarg-warning); }
+
+/* Self-contained star rating (v1.1.0) - no dependency on the WC star font */
+.zymarg-sp-stars { position: relative; display: inline-block; font-family: Arial, sans-serif; font-size: 1rem; line-height: 1; letter-spacing: 2px; color: var(--zymarg-border); white-space: nowrap; }
+.zymarg-sp-stars::before { content: "★★★★★"; }
+.zymarg-sp-stars__fill { position: absolute; top: 0; left: 0; height: 100%; overflow: hidden; white-space: nowrap; color: var(--zymarg-warning); }
+.zymarg-sp-stars__fill::before { content: "★★★★★"; }
+
+/* ── Price row ───────────────────────────────────────────── */
+.price-row {
+  display: flex; align-items: baseline; gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid var(--zymarg-border);
+  border-bottom: 1px solid var(--zymarg-border);
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+/* v2.2.2 - scoped to .price-row. wc_price() emits .woocommerce-Price-amount,
+   and the Product Grid engine builds its card prices with wc_price() too, so
+   while this rule was scoped only to the page wrapper it also matched the
+   amount span nested inside every engine card's .zymarg-wcpg__price-current.
+   The Template Pack's 14px never competed: this rule targets the inner span,
+   a different element, so there was no conflict to lose - card prices simply
+   rendered at 1.9rem/800 in brand purple. This plugin's own prices all sit
+   inside .price-row, so the narrower scope keeps them and releases the cards. */
+.zymarg-single-product .price-row .woocommerce-Price-amount { font-size: 1.9rem; font-weight: 800; color: var(--zymarg-primary); }
+.zymarg-single-product .price-row del .woocommerce-Price-amount { font-size: 1rem; font-weight: 400; color: var(--zymarg-text-muted); }
+.zymarg-sp-price__from-prefix { font-size: 1rem; font-weight: 400; color: var(--zymarg-text-muted); margin-right: 4px; }
+.zymarg-sp-price__range-sep { margin: 0 6px; color: var(--zymarg-text-muted); font-size: 1.4rem; }
+.zymarg-sp-price-block__heading { font-size: .78rem; font-weight: 700; color: var(--zymarg-primary); text-transform: uppercase; letter-spacing: .04em; margin: 0 0 4px; }
+.zymarg-sp-price__save-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: var(--zymarg-primary-light); color: var(--zymarg-dark-purple);
+  font-size: .7rem; font-weight: 600; line-height: 1.4;
+  padding: 2px 7px; border-radius: var(--zymarg-radius-sm);
+}
+/* v1.1.8 — badge must not inherit the 1.9rem/800 global amount rule */
+.zymarg-single-product .zymarg-sp-price__save-badge .woocommerce-Price-amount {
+  font-size: inherit; font-weight: 600; color: inherit;
+}
+/* v1.1.10 - was `color:#fff` on a near-white background, which hid the badge text */
+[data-theme="dark"] .zymarg-sp-price__save-badge { color: #ff8a94; background: rgba(220, 53, 69, .22); }
+.zymarg-sp-price__hint { font-size: .8rem; color: var(--zymarg-primary); margin: 6px 0 0; }
+.zymarg-sp-price__skeleton {
+  height: 2.2rem; width: 140px;
+  background: linear-gradient(90deg, var(--zymarg-border) 25%, var(--zymarg-surface-alt) 50%, var(--zymarg-border) 75%);
+  background-size: 200% 100%;
+  animation: zymarg-shimmer 1.4s infinite;
+  border-radius: var(--zymarg-radius-sm);
+  margin-bottom: 6px;
+}
+@keyframes zymarg-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+/* Price animations */
+.zymarg-sp-price--anim-fade [data-price-wrapper] { animation: zymarg-fade-in .3s ease; }
+.zymarg-sp-price--anim-slide [data-price-wrapper] { animation: zymarg-slide-up .3s ease; }
+@keyframes zymarg-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes zymarg-slide-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+/* ── Short description ───────────────────────────────────── */
+.short-desc { font-size: .9rem; color: var(--zymarg-text-muted); margin-bottom: 16px; }
+
+/* ── Swatches ────────────────────────────────────────────── */
+.zymarg-sp-variation-label { font-size: .85rem; font-weight: 700; margin-bottom: 8px; }
+.zymarg-sp-variation-label span { color: var(--zymarg-text-muted); font-weight: 400; }
+.zymarg-sp-swatches { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+.zymarg-sp-clear-link { font-size: .8rem; color: var(--zymarg-text-muted); cursor: pointer; text-decoration: underline; margin-bottom: 8px; display: inline-block; }
+.zymarg-sp-clear-link:hover { color: var(--zymarg-primary); }
+
+/* Color swatches */
+.swatch-img {
+  width: 56px; height: 56px;
+  border-radius: var(--zymarg-radius-sm);
+  border: 2px solid var(--zymarg-border);
+  overflow: hidden; transition: .2s;
+  display: flex; align-items: center; justify-content: center; padding: 0;
+}
+.swatch-img.active { border-color: var(--zymarg-primary); box-shadow: 0 0 0 3px var(--zymarg-primary-light); }
+.swatch-img:hover  { border-color: var(--zymarg-primary); }
+.swatch-img img    { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+
+/* Swatch shapes */
+.zymarg-sp-swatches.swatch-shape--circle .swatch-img { border-radius: 50%; }
+.zymarg-sp-swatches.swatch-shape--square .swatch-img { border-radius: 0; }
+
+/* OOS states */
+.swatch-img.oos--blur    { opacity: .4; filter: blur(1px); }
+.swatch-img.oos--crossout { position: relative; }
+.swatch-img.oos--crossout::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to bottom right, transparent calc(50% - 1px), red, transparent calc(50% + 1px)); }
+.swatch-img.oos--hide    { display: none; }
+
+/* Tooltip */
+.zymarg-sp-tooltip {
+  position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+  background: rgba(0,0,0,.8); color: #fff; font-size: .72rem;
+  padding: 4px 8px; border-radius: 6px; white-space: nowrap;
+  pointer-events: none; z-index: 10; opacity: 0; transition: opacity .15s;
+}
+.zymarg-sp-tooltip.tooltip--bottom { bottom: auto; top: calc(100% + 8px); }
+.swatch-img:hover .zymarg-sp-tooltip { opacity: 1; }
+
+/* Label swatches */
+.swatch-size {
+  padding: 8px 16px;
+  border-radius: var(--zymarg-radius-sm);
+  border: 2px solid var(--zymarg-border);
+  background: var(--zymarg-surface); color: var(--zymarg-text);
+  font-size: .85rem; font-weight: 600; transition: .2s;
+}
+.swatch-size.active { border-color: var(--zymarg-primary); background: var(--zymarg-primary); color: #fff; }
+.swatch-size:disabled { opacity: .4; cursor: not-allowed; text-decoration: line-through; }
+
+/* WC native select hidden */
+.zymarg-single-product .variations select { display: none !important; }
+.zymarg-single-product .variations_form .variations tr { display: block; margin-bottom: 12px; }
+.zymarg-single-product .variations_form .variations th.label,
+.zymarg-single-product .variations_form .variations td.label { display: none; } /* v1.0.8 #3 — hide native WC variation label (WC renders it in th.label); our swatch heading is the single label + selected value */
+.zymarg-single-product .variations_form .variations td.value { display: block; padding: 0; }
+.zymarg-single-product .variations_form .reset_variations { display: none !important; } /* v1.0.8 #4 — our per-attribute Clear link replaces WC's global reset (removes the duplicate Clear) */
+.zymarg-single-product .single_variation_wrap .woocommerce-variation-price { display: none; } /* price handled by our block */
+/* v2.4.1 - collapse WooCommerce's own variation summary block entirely.
+   .single_variation sits at the end of the variations slot, directly between
+   the swatches and the price row. On every swatch click Woo's
+   add-to-cart-variation.js does, 300ms later:
+       if ( form.$singleVariation.text().trim() ) { …slideDown( 200 ) }
+       else                                       { …show() }
+   and slideUp( 200 ) on the reset path. It branches on TEXT CONTENT, not on
+   visibility - and the two rules above hide the price and availability with
+   display:none, which removes them visually but leaves their text in the DOM.
+   So .text().trim() was never empty, Woo always animated, and the block took
+   up real height for the length of the animation before settling back: a
+   ~200ms downward shove of everything below the swatches on every click.
+   Hiding the container with !important makes both slideUp and slideDown
+   layout no-ops, because jQuery writes an inline display / height and inline
+   style loses to !important. This is the same guard already used on
+   .woocommerce-variation-add-to-cart and .reset_variations, which Woo also
+   calls .show() on and which is why they never caused this.
+   Nothing is lost: this plugin renders its own price, availability and Add to
+   Cart, and the found_variation / show_variation events still fire, so the
+   price block, gallery and swatch state keep updating exactly as before. */
+.zymarg-single-product .single_variation_wrap .single_variation { display: none !important; }
+
+/* ── Buy Box ─────────────────────────────────────────────── */
+.buy-box {
+  border: 1px solid var(--zymarg-border);
+  border-radius: var(--zymarg-radius-md);
+  padding: 20px;
+  background: var(--zymarg-surface);
+  height: fit-content;
+}
+.sold-by { font-size: .85rem; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--zymarg-border); }
+.sold-by span { color: var(--zymarg-text-muted); }
+.sold-by a { color: var(--zymarg-primary); font-weight: 700; text-decoration: none; }
+.sold-by a:hover { color: var(--zymarg-primary-hover); text-decoration: underline; }
+.trust-list { list-style: none; font-size: .8rem; color: var(--zymarg-text-muted); display: grid; gap: 5px; margin: 0 0 12px; padding: 0 0 12px; border-bottom: 1px solid var(--zymarg-border); }
+.trust-list li::before { content: "✓ "; color: var(--zymarg-success); font-weight: 700; }
+.stock-status { font-size: .9rem; font-weight: 700; color: var(--zymarg-success); margin-bottom: 4px; }
+.stock-low { color: var(--zymarg-warning); }
+.zymarg-sp-dot { font-size: .7rem; }
+.zymarg-sp-dot--red { color: var(--zymarg-error); }
+.delivery-info { font-size: .82rem; color: var(--zymarg-text-muted); margin-bottom: 14px; }
+.delivery-info strong { color: var(--zymarg-text); }
+.ship-return { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--zymarg-border); font-size: .82rem; }
+.ship-return h3 { font-size: .85rem; font-weight: 700; margin-bottom: 6px; color: var(--zymarg-text); }
+.ship-return p { color: var(--zymarg-text-muted); margin-bottom: 8px; }
+.ship-return strong { color: var(--zymarg-text); }
+.qty-label { font-size: .85rem; font-weight: 700; margin-bottom: 8px; }
+.qty-stepper {
+  display: flex; align-items: center;
+  border: 2px solid var(--zymarg-border);
+  border-radius: var(--zymarg-radius-sm);
+  overflow: hidden; width: 100%; margin-bottom: 16px;
+}
+/* v1.1.8 — buttons share the input's surface colour (no grey block) */
+.zymarg-sp-qty-btn { width: 48px; height: 42px; border: none; background: var(--zymarg-surface); color: var(--zymarg-primary); font-size: 1.2rem; font-weight: 700; flex-shrink: 0; transition: .15s; cursor: pointer; }
+.zymarg-sp-qty-btn:hover:not(:disabled) { background: var(--zymarg-primary-light); }
+.zymarg-sp-qty-btn:focus-visible { background: var(--zymarg-primary-light); outline: none; }
+.zymarg-sp-qty-btn:active:not(:disabled) { background: var(--zymarg-primary); color: #fff; }
+.zymarg-sp-qty-input { flex: 1; min-width: 0; height: 42px; border: none; text-align: center; font-size: 1rem; font-weight: 700; background: var(--zymarg-surface); color: var(--zymarg-text); outline: none; }
+.btn { display: block; width: 100%; padding: 13px; border-radius: var(--zymarg-radius-lg); font-size: .95rem; font-weight: 700; border: none; transition: .25s; margin-bottom: 10px; text-align: center; }
+.btn-cart { background: var(--zymarg-grad-primary); color: #fff; }
+.btn-cart:hover:not(:disabled) { filter: brightness(1.15); box-shadow: var(--zymarg-shadow); }
+.btn-cart:disabled { opacity: .6; cursor: not-allowed; }
+.btn-buy { background: var(--zymarg-surface); color: var(--zymarg-primary); border: 2px solid var(--zymarg-primary); }
+.btn-buy:hover { background: var(--zymarg-primary); color: #fff; }
+.secure-note { text-align: center; font-size: .75rem; color: var(--zymarg-text-muted); margin-top: 6px; }
+
+/* ── Seller card ─────────────────────────────────────────── */
+.card { background: var(--zymarg-surface); border-radius: var(--zymarg-radius-md); box-shadow: var(--zymarg-shadow); padding: 24px; }
+.zymarg-sp-seller-card { padding: 16px; border: 1px solid var(--zymarg-border); border-radius: var(--zymarg-radius-md); background: var(--zymarg-surface); box-shadow: var(--zymarg-shadow); margin-bottom: 32px; }
+.zymarg-sp-seller-card__inner { display: flex; align-items: center; gap: 16px; }
+.zymarg-sp-seller-card__avatar { position: relative; flex-shrink: 0; }
+.zymarg-sp-seller-card__avatar-img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 1px solid var(--zymarg-border); box-shadow: var(--zymarg-shadow); }
+.zymarg-sp-seller-card__avatar-initials { width: 80px; height: 80px; border-radius: 50%; background: var(--zymarg-grad-primary); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.7rem; font-weight: 800; box-shadow: var(--zymarg-shadow); }
+.zymarg-sp-seller-card__verified { position: absolute; bottom: 0; right: 0; transform: translate(25%,25%); background: var(--zymarg-primary); color: #fff; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--zymarg-surface); box-shadow: var(--zymarg-shadow); }
+.zymarg-sp-seller-card__info { flex: 1; min-width: 0; }
+.zymarg-sp-seller-card__name-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.zymarg-sp-seller-card__name { font-weight: 800; font-size: 1.35rem; color: var(--zymarg-dark-purple); overflow-wrap: anywhere; }
+[data-theme="dark"] .zymarg-sp-seller-card__name { color: var(--zymarg-text); }
+.zymarg-sp-seller-card__label { font-size: .8rem; color: var(--zymarg-text-muted); }
+/* v1.1.15 - rating + product count live on one line inside __meta. */
+.zymarg-sp-seller-card__meta { display: flex; align-items: center; flex-wrap: nowrap; gap: 8px; margin-top: 6px; font-size: .9rem; min-width: 0; }
+.zymarg-sp-seller-card__rating { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.zymarg-sp-seller-card__stars { display: inline-flex; align-items: center; gap: 1px; }
+.zymarg-sp-seller-card__star-single { display: none; } /* mobile only */
+.zymarg-sp-seller-card__rating-val { font-weight: 700; }
+.zymarg-sp-seller-card__rating-count { color: var(--zymarg-text-muted); }
+.zymarg-sp-seller-card__sep { color: var(--zymarg-text-muted); }
+.zymarg-sp-seller-card__stats { color: var(--zymarg-text-muted); white-space: nowrap; }
+/* v1.1.15 - render_stars() puts these classes on the <svg> itself, so the old
+   descendant selectors (.zymarg-sp-star svg) never matched and no stars showed. */
+svg.zymarg-sp-star, .zymarg-sp-star svg { width: 18px; height: 18px; fill: var(--zymarg-warning); flex-shrink: 0; }
+svg.zymarg-sp-star--empty, .zymarg-sp-star--empty svg { fill: var(--zymarg-border); }
+.zymarg-sp-seller-card__actions { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; width: 130px; }
+.zymarg-sp-seller-card__btn { width: 100%; padding: 9px 14px; border-radius: var(--zymarg-radius-md); font-size: .85rem; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px; transition: .3s; border: none; cursor: pointer; text-decoration: none; }
+.zymarg-sp-seller-card__btn--visit { background: var(--zymarg-surface-alt); color: var(--zymarg-primary); border: 1px solid var(--zymarg-primary-light); }
+.zymarg-sp-seller-card__btn--visit:hover { background: var(--zymarg-primary); color: #fff; }
+.zymarg-sp-seller-card__btn--chat { background: transparent; color: var(--zymarg-dark-purple); border: 1.5px solid var(--zymarg-border); }
+[data-theme="dark"] .zymarg-sp-seller-card__btn--chat { color: #fea9ff; }
+.zymarg-sp-seller-card__btn--chat:hover { background: var(--zymarg-primary-light); border-color: var(--zymarg-primary); }
+/* v1.1.16 - seller buttons are <a> tags; block theme hover underlines. */
+.zymarg-single-product .zymarg-sp-seller-card__btn,
+.zymarg-single-product .zymarg-sp-seller-card__btn:hover,
+.zymarg-single-product .zymarg-sp-seller-card__btn:focus,
+.zymarg-single-product .zymarg-sp-seller-card__btn:active { text-decoration: none !important; }
+.zymarg-sp-seller-card__btn-emoji { font-size: 1rem; line-height: 1; font-style: normal; }
+
+/* ── Accordions ──────────────────────────────────────────── */
+.acc { border: 1px solid var(--zymarg-border); border-radius: var(--zymarg-radius-md); background: var(--zymarg-surface); box-shadow: var(--zymarg-shadow); margin-bottom: 14px; overflow: hidden; }
+.acc summary { list-style: none; display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 16px 20px; font-size: 1.05rem; font-weight: 800; color: var(--zymarg-primary); background: var(--zymarg-surface); user-select: none; }
+.acc summary::-webkit-details-marker { display: none; }
+.acc summary::after { content: "−"; font-size: 1.4rem; color: var(--zymarg-primary); line-height: 1; }
+.acc:not([open]) summary::after { content: "+"; }
+.acc[open] summary { border-bottom: 1px solid var(--zymarg-border); }
+.acc-body { padding: 20px; font-size: .92rem; }
+/* v1.1.16 - JS slide animation drives the height; keep the panel clipped. */
+.acc[data-zsp-animating] { overflow: hidden; }
+.acc summary::after { transition: transform .25s ease; }
+.acc[open] summary::after { transform: rotate(180deg); }
+.acc-body h3 { font-size: 1rem; font-weight: 800; margin: 20px 0 10px; color: var(--zymarg-dark-purple); }
+[data-theme="dark"] .acc-body h3 { color: var(--zymarg-text); }
+.spec-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+.spec-table td { padding: 10px 14px; border: 1px solid var(--zymarg-border); }
+.spec-table td:first-child { background: var(--zymarg-surface-alt); font-weight: 600; width: 35%; }
+
+/* ── Grid sections ───────────────────────────────────────── */
+.zymarg-sp-grid-section { margin-bottom: 32px; }
+
+/* ── Sticky mobile bar ───────────────────────────────────── */
+/* v1.0.11 #1 — The sticky bar is rendered OUTSIDE .zymarg-single-product, so the
+   brand tokens declared on that wrapper never cascade here; every var(--zymarg-*)
+   resolved to nothing, leaving the bar and its buttons transparent/unstyled.
+   Re-declare the token set (+ dark override + box-sizing) on .sticky-bar so the
+   existing sticky-bar rules below paint exactly like the mockup. */
+.sticky-bar, .sticky-bar * { box-sizing: border-box; }
+.sticky-bar {
+  --zymarg-primary: #9500a5;
+  --zymarg-primary-hover: #bd00d1;
+  --zymarg-primary-light: #fea9ff;
+  --zymarg-dark-purple: #6b0077;
+  --zymarg-surface: #ffffff;
+  --zymarg-surface-alt: #f8f9fa;
+  --zymarg-text: #1a1a2e;
+  --zymarg-text-muted: #6c757d;
+  --zymarg-border: #dee2e6;
+  --zymarg-radius-sm: 8px;
+  --zymarg-radius-md: 12px;
+  --zymarg-radius-lg: 20px;
+  --zymarg-shadow: 0 4px 20px rgba(149,0,165,.1);
+  --zymarg-grad-primary: linear-gradient(135deg,#9500a5 0%,#bd00d1 100%);
+}
+[data-theme="dark"] .sticky-bar {
+  --zymarg-primary: #bd00d1;
+  --zymarg-primary-light: #9500a5;
+  --zymarg-surface: #1a1a2e;
+  --zymarg-surface-alt: #2d2d44;
+  --zymarg-text: #e8e8e8;
+  --zymarg-text-muted: #a0a0a0;
+  --zymarg-border: #3d3d5c;
+}
+.sticky-bar { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: var(--zymarg-surface); box-shadow: 0 -4px 20px rgba(149,0,165,.15); padding: 10px 12px; gap: 8px; z-index: 100; border-top: 1px solid var(--zymarg-border); align-items: center; }
+.sticky-bar .btn { margin: 0; padding: 12px 8px; font-size: .85rem; flex: 1 1 0; width: auto; min-width: 0; white-space: nowrap; }
+.sticky-bar .qty-stepper { margin: 0; width: auto; flex: 0 0 auto; }
+.sticky-bar .zymarg-sp-qty-btn { width: 28px; height: 40px; font-size: 1rem; flex: 0 0 auto; background: var(--zymarg-surface); color: var(--zymarg-primary); }
+.sticky-bar .zymarg-sp-qty-btn:hover:not(:disabled) { background: var(--zymarg-primary-light); }
+.sticky-bar .zymarg-sp-qty-btn:active:not(:disabled) { background: var(--zymarg-primary); color: #fff; }
+.sticky-bar .zymarg-sp-qty-input { width: 48px; min-width: 48px; flex: 0 0 auto; text-align: center; }
+
+/* Purchase gating (variable products, v1.1.0) */
+.qty-stepper.zsp-gated { opacity: .5; }
+.zymarg-sp-qty-btn:disabled, .zymarg-sp-qty-input:disabled { cursor: not-allowed; }
+.btn:disabled { opacity: .55; cursor: not-allowed; }
+
+/* ── Toast notification ──────────────────────────────────── */
+.zymarg-sp-toast {
+  position: fixed; bottom: 80px; right: 20px;
+  background: var(--zymarg-text); color: var(--zymarg-surface);
+  padding: 12px 20px; border-radius: var(--zymarg-radius-md);
+  font-size: .9rem; font-weight: 600;
+  box-shadow: 0 8px 24px rgba(0,0,0,.2);
+  z-index: 200; opacity: 0; pointer-events: none;
+  transform: translateY(10px);
+  transition: opacity .3s, transform .3s;
+  max-width: 320px;
+}
+.zymarg-sp-toast.is-visible { opacity: 1; transform: none; pointer-events: auto; }
+
+/* ── Lightbox ────────────────────────────────────────────── */
+.zymarg-sp-lightbox { position: fixed; inset: 0; background: rgba(0,0,0,.9); z-index: 300; display: flex; align-items: center; justify-content: center; }
+.zymarg-sp-lightbox[hidden] { display: none; }
+.zymarg-sp-lightbox__img-wrap { max-width: 90vw; max-height: 90vh; }
+.zymarg-sp-lightbox__img { max-width: 90vw; max-height: 90vh; object-fit: contain; display: block; }
+.zymarg-sp-lightbox__close { position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,.15); color: #fff; border: none; width: 44px; height: 44px; border-radius: 50%; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.zymarg-sp-lightbox__close:hover { background: rgba(255,255,255,.3); }
+.zymarg-sp-lightbox__nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,.15); color: #fff; border: none; width: 48px; height: 48px; border-radius: 50%; font-size: 1.5rem; cursor: pointer; }
+.zymarg-sp-lightbox__nav:hover { background: rgba(255,255,255,.3); }
+.zymarg-sp-lightbox__nav--prev { left: 16px; }
+.zymarg-sp-lightbox__nav--next { right: 16px; }
+
+/* ── Tablet: 2-col product section ──────────────────────── */
+@media (max-width: 1024px) {
+  .zymarg-single-product .container { max-width: 98%; padding: 0; margin: 0 auto; }
+  .zymarg-sp-breadcrumbs { padding-left: 16px; padding-right: 16px; }
+  .product-section, .card { border-radius: 0; }
+  .product-section { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "gallery gallery" "info buybox"; } /* v1.0.10 #1 — minmax(0,...) stops the grid track being inflated to the thumbnail row's min-content width */
+  .col-gallery { grid-area: gallery; }
+  .col-info    { grid-area: info; }
+  .col-buybox  { grid-area: buybox; }
+  .gallery-wrap { flex-direction: column; }
+  .gallery-thumbs { flex-direction: row; }
+  .gallery-main { max-height: 420px; aspect-ratio: auto; min-height: 320px; }
+}
+
+/* ── Mobile: stacked + sticky bar ───────────────────────── */
+@media (max-width: 640px) {
+  .product-section { grid-template-columns: minmax(0, 1fr); grid-template-areas: "gallery" "info" "buybox"; padding: 16px; gap: 0; } /* v1.1.8 — mobile only: remove the 24px section gap */ /* v1.0.10 #1 — minmax(0,1fr): 1fr's implicit auto-minimum let the column grow to the 16-thumb min-content and drag the whole gallery past the viewport */
+  /* v2.4.0 - the v2.2.2 mobile rule that lived here targeted
+     .price-row .woocommerce-Price-amount at 1.5rem. Its selector was correct
+     after v2.2.2, but the top-level rule
+     .zymarg-single-product .zymarg-sp-price-current .woocommerce-Price-amount
+     carries the same specificity (0-3-0) and appears later in this file, and
+     a media query adds no specificity - so this rule always lost and the
+     mobile price never changed size. Responsive price sizing is now handled
+     by the v2.4.0 block at the end of this file, which sizes
+     .zymarg-sp-price-current itself rather than the inner amount span. */
+
+  /* v1.1.19 - mobile typography: smaller title, tighter rows above the price. */
+  .product-title { font-size: 1.15rem; line-height: 1.3; margin-bottom: 4px; }
+  .rating-row { margin-bottom: 4px; }
+  .product-cats { margin-bottom: 4px; }
+  .price-row { margin-top: 8px; }
+
+
+  .sticky-bar { display: flex; }
+  body { padding-bottom: 74px; }
+  .buy-box .btn, .buy-box .qty-label, .buy-box .qty-stepper { display: none; }
+  /* v1.1.15 - compact seller card: tighter edges, one-line meta, 2-line name */
+  .zymarg-sp-seller-card { padding: 10px 8px; }
+  .zymarg-sp-seller-card__inner { flex-wrap: nowrap; gap: 10px; }
+  .zymarg-sp-seller-card__avatar-img,
+  .zymarg-sp-seller-card__avatar-initials { width: 48px; height: 48px; font-size: 1rem; }
+  .zymarg-sp-seller-card__verified { width: 18px; height: 18px; }
+  .zymarg-sp-seller-card__verified svg { width: 12px; height: 12px; }
+  .zymarg-sp-seller-card__name-row { margin-bottom: 2px; }
+  .zymarg-sp-seller-card__name {
+    font-size: .92rem;
+    line-height: 1.25;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .zymarg-sp-seller-card__meta { gap: 5px; margin-top: 3px; font-size: .78rem; }
+  .zymarg-sp-seller-card__rating { gap: 4px; }
+  .zymarg-sp-seller-card__stars { display: none; }
+  .zymarg-sp-seller-card__star-single { display: inline-block; }
+  svg.zymarg-sp-seller-card__star-single { width: 14px; height: 14px; }
+  .zymarg-sp-seller-card__actions { width: 76px; gap: 6px; }
+  .zymarg-sp-seller-card__btn { padding: 5px 4px; font-size: .68rem; gap: 4px; }
+  .zymarg-sp-seller-card__btn svg { width: 12px; height: 12px; }
+  .zymarg-sp-seller-card__btn-emoji { font-size: .8rem; }
+
+  /* v1.1.10 - mobile only: close the empty gap between the site header and the content */
+  .zymarg-sp-breadcrumbs { padding-top: 0; }
+  .product-section { margin-top: 0; }
+
+  /* v1.1.11 - mobile only: slim padding around the accordion bodies (reviews block) */
+  .acc-body { padding: 8px; }
+}
+
+
+/* ==========================================================================
+   Native swatches (WSE_* → native port)  — v1.0.2
+   ========================================================================== */
+
+.zymarg-sp-swatch-wrap {
+	--zsp-swatch-size: 44px;
+	margin: 0 0 18px;
+}
+.zymarg-sp-swatch-heading {
+	display: flex;
+	align-items: baseline;
+	gap: 8px;
+	margin: 0 0 8px;
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--zymarg-text); /* v1.1.15 - was #1f2937, invisible in dark mode */
+}
+/* v1.1.21 - the attribute-row stock readout was removed. Woo's native
+   availability line stays hidden so stock is not repeated under the swatches;
+   swatch disabled states and the disabled Add to Cart / Buy Now buttons
+   already communicate it. */
+.zymarg-single-product .woocommerce-variation-availability { display: none; }
+
+.zymarg-sp-swatch-selected-val {
+	font-weight: 400;
+	color: var(--zymarg-text-muted); /* v1.1.10 */
+}
+.zymarg-sp-select-hidden {
+	position: absolute !important;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+.zymarg-sp-swatch-fieldset {
+	border: 0;
+	padding: 0;
+	margin: 0;
+}
+.zymarg-sp-swatches {
+	list-style: none;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin: 0;
+	padding: 0;
+}
+
+/* ── Swatch item base ── */
+.zymarg-sp-swatch {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	box-sizing: border-box;
+	border: 2px solid #e5e7eb;
+	background: #fff;
+	transition: border-color .15s ease, box-shadow .15s ease, transform .1s ease;
+	outline: none;
+}
+.zymarg-sp-swatch:hover { border-color: var(--zymarg-text-muted); } /* v1.1.10 */
+.zymarg-sp-swatch:focus-visible {
+	box-shadow: 0 0 0 3px rgba(37, 99, 235, .35);
+	border-color: #2563eb;
+}
+.zymarg-sp-swatch.selected { /* v1.0.11 #2 — simple thin brand-colour border; dropped the heavy 2px inset ring */
+	border-color: var(--zymarg-primary);
+	box-shadow: none;
+}
+
+/* ── Color ── */
+.zymarg-sp-swatch--color {
+	width: var(--zsp-swatch-size);
+	height: var(--zsp-swatch-size);
+	padding: 3px;
+	border-radius: 10px;
+}
+.zymarg-sp-swatch-color-inner {
+	display: block;
+	width: 100%;
+	height: 100%;
+	border-radius: inherit;
+	background-color: var(--zsp-swatch-color, #e0e0e0);
+	border: 1px solid rgba(0, 0, 0, .08);
+}
+
+/* ── Image ── */
+.zymarg-sp-swatch--image {
+	width: var(--zsp-swatch-size);
+	height: var(--zsp-swatch-size);
+	padding: 2px;
+	border-radius: 10px;
+	overflow: hidden;
+}
+.zymarg-sp-swatch-image-inner,
+.zymarg-sp-swatch-image-inner img {
+	width: 100%;
+	height: 100%;
+	border-radius: inherit;
+	object-fit: cover;
+	display: block;
+}
+
+/* ── Label / Button ── */
+.zymarg-sp-swatch--label,
+.zymarg-sp-swatch--button {
+	min-width: var(--zsp-swatch-size);
+	height: auto;
+	padding: 10px 16px;
+	border-radius: 8px;
+	font-size: 14px;
+	font-weight: 500;
+	color: #1f2937;
+	line-height: 1;
+}
+.zymarg-sp-swatch--button {
+	border-radius: 6px;
+	background: #f9fafb;
+}
+.zymarg-sp-swatch--label.selected,
+.zymarg-sp-swatch--button.selected {
+	/* v1.1.10 - inverts with the theme instead of staying near-black */
+	background: var(--zymarg-text);
+	color: var(--zymarg-surface);
+}
+
+/* ── Shapes ── */
+.zsp-shape--circle .zymarg-sp-swatch--color,
+.zsp-shape--circle .zymarg-sp-swatch--image { border-radius: 50%; }
+.zsp-shape--circle .zymarg-sp-swatch--color .zymarg-sp-swatch-color-inner,
+.zsp-shape--circle .zymarg-sp-swatch--image .zymarg-sp-swatch-image-inner { border-radius: 50%; }
+.zsp-shape--square .zymarg-sp-swatch--color,
+.zsp-shape--square .zymarg-sp-swatch--image,
+.zsp-shape--square .zymarg-sp-swatch--label,
+.zsp-shape--square .zymarg-sp-swatch--button { border-radius: 0; }
+.zsp-shape--rounded .zymarg-sp-swatch--color,
+.zsp-shape--rounded .zymarg-sp-swatch--image { border-radius: 10px; }
+
+/* ── Selected check ── */
+.zymarg-sp-swatch-check {
+	position: absolute;
+	top: -6px;
+	right: -6px;
+	display: none;
+	align-items: center;
+	justify-content: center;
+	width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	background: var(--zymarg-text); /* v1.1.10 */
+	color: var(--zymarg-surface);
+}
+.zymarg-sp-swatch.selected .zymarg-sp-swatch-check { display: none; } /* v1.0.11 #2 — selected tick removed */
+.zymarg-sp-swatch--label .zymarg-sp-swatch-check,
+.zymarg-sp-swatch--button .zymarg-sp-swatch-check { display: none !important; }
+
+/* ── Out-of-stock behaviors ── */
+.zsp-oos--blur .zymarg-sp-swatch.disabled {
+	opacity: .45;
+	filter: blur(.4px) grayscale(.4);
+	cursor: not-allowed;
+}
+.zsp-oos--crossout .zymarg-sp-swatch.disabled {
+	cursor: not-allowed;
+	opacity: .7;
+}
+.zsp-oos--crossout .zymarg-sp-swatch.disabled::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(to top left, transparent calc(50% - 1px), #ef4444 50%, transparent calc(50% + 1px));
+	border-radius: inherit;
+	pointer-events: none;
+}
+.zsp-oos--hide .zymarg-sp-swatch.disabled { display: none; }
+
+/* ── Tooltip ── */
+.zymarg-sp-swatch-tip {
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%) translateY(-4px);
+	bottom: calc(100% + 8px);
+	z-index: 5;
+	padding: 4px 8px;
+	border-radius: 6px;
+	background: var(--zymarg-text); /* v1.1.10 */
+	color: var(--zymarg-surface);
+	font-size: 12px;
+	white-space: nowrap;
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity .12s ease, transform .12s ease;
+	pointer-events: none;
+}
+.zymarg-sp-swatches:not(.zsp-has-tooltip) .zymarg-sp-swatch-tip { display: none; }
+.zsp-tooltip--bottom .zymarg-sp-swatch-tip {
+	bottom: auto;
+	top: calc(100% + 8px);
+	transform: translateX(-50%) translateY(4px);
+}
+/* v1.0.8 #2 — show the hover tooltip only on real mouse pointers (hover + fine pointer). Touch devices report a coarse pointer and never trigger it, so the label text no longer sticks/shows around image swatches after a tap. */
+@media (hover: hover) and (pointer: fine) {
+	.zsp-has-tooltip .zymarg-sp-swatch:hover .zymarg-sp-swatch-tip {
+		opacity: 1;
+		visibility: visible;
+		transform: translateX(-50%) translateY(0);
+	}
+}
+.zsp-has-tooltip .zymarg-sp-swatch:focus-visible .zymarg-sp-swatch-tip {
+	opacity: 1;
+	visibility: visible;
+	transform: translateX(-50%) translateY(0);
+}
+
+/* Clear link removed in v1.1.0 - deselect by clicking the selected swatch again. */
+
+/* ==========================================================================
+   Price block — current inline + old subscript
+   ========================================================================== */
+
+/* v1.1.8 — heading keeps its own line; price, old price and badge share the next row */
+.zymarg-sp-price-block {
+	display: flex;
+	align-items: baseline;
+	flex-wrap: wrap;
+	/* v2.4.0 - row-gap keeps the heading / hint lines apart; column-gap is the
+	   space between the price pair and the Save badge, tightened 10px -> 4px. */
+	gap: 6px 4px;
+}
+.zymarg-sp-price-block > .zymarg-sp-price-block__heading,
+.zymarg-sp-price-block > .zymarg-sp-price__hint,
+.zymarg-sp-price-block > .zymarg-sp-price__skeleton {
+	flex: 0 0 100%;
+	width: 100%;
+}
+.zymarg-sp-price-block__heading { margin: 0; }
+.zymarg-sp-price-block__price {
+	display: flex;
+	align-items: center; /* v2.4.3 - was baseline; centres the old price against the current price at every size */
+	flex-wrap: wrap;
+	/* v2.4.0 - current price to old price, tightened 8px -> 3px. */
+	gap: 3px;
+}
+.zymarg-sp-price-current {
+	font-size: 24px;
+	font-weight: 700; /* v2.4.3 - was 600; true bold per user request */
+	color: var(--zymarg-primary); /* v1.1.10 - brand token so dark mode resolves */
+	line-height: 1.15;
+	letter-spacing: -.01em;
+}
+.zymarg-single-product .zymarg-sp-price-current .woocommerce-Price-amount {
+	font-size: inherit;
+	font-weight: inherit;
+	color: inherit;
+}
+.zymarg-sp-price-was {
+	position: relative;
+	font-size: 15px;
+	font-weight: 500;
+	color: var(--zymarg-text-muted); /* v1.1.10 */
+	line-height: 1.15;
+	text-decoration: none;
+}
+.zymarg-single-product .zymarg-sp-price-was .woocommerce-Price-amount {
+	font-size: inherit;
+	font-weight: inherit;
+	color: inherit;
+}
+/* v1.1.8 — neutralise the UA <sub> shift so the old price sits on the same baseline */
+.zymarg-sp-price-was sub {
+	position: static;
+	bottom: 0;
+	vertical-align: baseline;
+	font-size: inherit;
+	line-height: inherit;
+}
+/* v1.1.8 — native decoration: the browser centres line-through on the glyphs,
+   thickness and underline offset stay under our control */
+.zsp-oldstyle--strikethrough .zymarg-sp-price-was {
+	text-decoration: line-through;
+	text-decoration-thickness: 1px;
+	text-decoration-color: currentColor;
+	text-decoration-skip-ink: none;
+}
+.zsp-oldstyle--underline .zymarg-sp-price-was {
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-decoration-color: currentColor;
+	text-underline-offset: 1px;
+	text-decoration-skip-ink: none;
+}
+.zsp-oldstyle--strikethrough .zymarg-sp-price-was sub,
+.zsp-oldstyle--underline .zymarg-sp-price-was sub { text-decoration: inherit; }
+.zymarg-sp-price__range-sep { margin: 0 4px; color: var(--zymarg-text-muted); } /* v1.1.10 */
+.zymarg-sp-price__from-prefix { font-size: 14px; color: var(--zymarg-text-muted); font-weight: 500; } /* v1.1.10 */
+/* v1.1.8 — savings sits inline with the price instead of on its own line */
+.zymarg-sp-price-savings,
+.zymarg-sp-price-block__savings {
+	display: inline-flex;
+	align-items: center;
+	/* v2.4.0 - .zymarg-sp-price-block aligns its children on the baseline, which
+	   sat the badge's text baseline on the price baseline and pushed the badge
+	   box low. align-self centres the badge against the price line instead. */
+	align-self: center;
+	margin-top: 0;
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--zymarg-error); /* v1.1.10 */
+	line-height: 1.4;
+}
+.zymarg-sp-price__save-badge {
+	display: inline-flex;
+	align-items: center;
+	/* v2.4.0 - the badge's inner parts ("Save", the amount, "(", the percent,
+	   ")") are each their own flex item, so this gap applies four times over.
+	   Tightened 4px -> 2px. nowrap keeps the badge on one line. */
+	gap: 2px;
+	white-space: nowrap;
+	padding: 2px 6px;
+	border-radius: 4px;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 1.4;
+	/* v1.1.10 - translucent tint of the error token works on light and dark surfaces */
+	color: var(--zymarg-error);
+	background: rgba(220, 53, 69, .10);
+	background: color-mix(in srgb, var(--zymarg-error) 12%, transparent);
+}
+
+/* Price change animations (variation select) */
+@keyframes zspPriceFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes zspPriceSlide { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+.zsp-price-anim--fade .zymarg-sp-price-current { animation: zspPriceFade .28s ease; }
+.zsp-price-anim--slide .zymarg-sp-price-current { animation: zspPriceSlide .28s ease; }
+
+/* ==========================================================================
+   Product video (gallery trigger + overlay)
+   ========================================================================== */
+
+.zymarg-sp-video-trigger {
+	position: absolute;
+	left: 12px;
+	bottom: 12px;
+	z-index: 4;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 8px 12px;
+	border: 0;
+	border-radius: 999px;
+	background: rgba(17, 24, 39, .82);
+	color: #fff;
+	font-size: 13px;
+	font-weight: 600;
+	cursor: pointer;
+	backdrop-filter: blur(4px);
+}
+.zymarg-sp-video-trigger:hover { background: rgba(17, 24, 39, .95); }
+.zymarg-sp-video-trigger svg { display: block; }
+
+.zymarg-sp-video-overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 99999;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 24px;
+	background: rgba(0, 0, 0, .82);
+}
+.zymarg-sp-video-overlay[hidden] { display: none; }
+.zymarg-sp-video-overlay__inner {
+	position: relative;
+	width: min(960px, 100%);
+	aspect-ratio: 16 / 9;
+	background: #000;
+	border-radius: 10px;
+	overflow: hidden;
+}
+.zymarg-sp-video-overlay__player,
+.zymarg-sp-video-overlay__player iframe,
+.zymarg-sp-video-overlay__player video {
+	width: 100%;
+	height: 100%;
+	display: block;
+	border: 0;
+}
+.zymarg-sp-video-overlay__close {
+	position: absolute;
+	top: 16px;
+	right: 20px;
+	z-index: 2;
+	width: 40px;
+	height: 40px;
+	border: 0;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, .15);
+	color: #fff;
+	font-size: 26px;
+	line-height: 1;
+	cursor: pointer;
+}
+.zymarg-sp-video-overlay__close:hover { background: rgba(255, 255, 255, .3); }
+
+/* Admin term-meta image preview (attribute term screens) */
+.zsp-image-preview {
+	display: block;
+	max-width: 80px;
+	height: auto;
+	margin-bottom: 8px;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+}
+.zsp-image-preview.hidden { display: none; }
+
+/* ==========================================================================
+   Gallery thumbnails — scrollable rail, hidden scrollbar (v1.0.3)
+   ========================================================================== */
+.gallery-thumbs {
+  /* v1.1.6 - count now inherited from the .gallery-wrap inline var so admin's gallery_max_thumbs drives every breakpoint */
+  flex-wrap: nowrap;
+  align-self: flex-start;
+  scroll-behavior: smooth;
+  scrollbar-width: none;      /* Firefox */
+  -ms-overflow-style: none;   /* IE / old Edge */
+}
+.gallery-thumbs::-webkit-scrollbar { width: 0; height: 0; display: none; }
+.gallery-thumbs .thumb { flex: 0 0 auto; }
+
+/* Vertical rail (desktop / column layout): cap at N thumbs then scroll down. */
+.gallery-thumbs {
+  max-height: calc(var(--thumb-visible) * var(--thumb-size, 72px) + (var(--thumb-visible) - 1) * 10px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Horizontal rail (tablet / mobile row layout): scroll sideways instead. */
+@media (max-width: 1024px) {
+  .gallery-thumbs {
+    max-height: none;
+    max-width: 100%;
+    align-self: stretch;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+}
+
+/* ==========================================================================
+   Gallery main image — force 1:1 square, crop any source ratio (v1.0.4/1.0.5)
+   ========================================================================== */
+.gallery-main {
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  background: transparent; /* v1.0.5 #2 — remove purple placeholder tint */
+}
+.gallery-main img,
+.gallery-main .zymarg-sp-gallery__main-img,
+.gallery-main .zymarg-sp-gallery__no-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+@media (max-width: 1024px) {
+  .gallery-main {
+    aspect-ratio: 1 / 1;
+    max-height: none;
+    min-height: 0;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Swatches — horizontal scroll on mobile, hidden scrollbar (v1.0.5 #6)
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .zymarg-sp-swatch-wrap,
+  .zymarg-sp-swatch-fieldset { min-width: 0; max-width: 100%; }
+  .zymarg-sp-swatches {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .zymarg-sp-swatches > .zymarg-sp-swatch { flex: 0 0 auto; }
+}
+
+/* --------------------------------------------------------------------------
+   Gallery thumbnails — mobile horizontal scroll fix (v1.0.6 #1)
+   Constrain the rail to viewport width so 16+ thumbs scroll sideways instead
+   of breaking the page. Flex children need min-width:0 to allow overflow.
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .col-gallery,
+  .gallery-wrap { min-width: 0; max-width: 100%; }
+  .gallery-wrap { flex-direction: column; }
+  .gallery-thumbs {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    max-height: none;
+    align-self: stretch;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .gallery-thumbs::-webkit-scrollbar { width: 0; height: 0; display: none; }
+  .gallery-thumbs .thumb { flex: 0 0 auto; }
+}
+
+/* --------------------------------------------------------------------------
+   Tablet only — gallery uses 60% width of its parent, centered (v1.0.6 #2)
+   -------------------------------------------------------------------------- */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .col-gallery {
+    width: 60%;
+    max-width: 60%;
+    justify-self: center;
+    margin-inline: auto;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   v1.0.7 — Remove duplicate variation Add to Cart (#2) + selected value (#4)
+   -------------------------------------------------------------------------- */
+
+/* #2 — Hide WooCommerce's native variation quantity + Add to Cart button that
+   rides along with the variations form. The buy-box column provides the real
+   quantity stepper / ATC / Buy Now. Hidden inputs stay in the DOM (display:none
+   does not remove them) so WooCommerce's variation JS keeps working. */
+.zymarg-single-product .variations_form .woocommerce-variation-add-to-cart { display: none !important; }
+
+/* #4 — Show the selected value beside the attribute label, e.g. "Color: Red".
+   The value span is populated by zymarg-sp-swatches.js (reflectWrap). */
+.zymarg-sp-swatch-heading { gap: 0; }
+.zymarg-sp-swatch-selected-val:not(:empty)::before { content: ":\00a0"; }
+
+/* --------------------------------------------------------------------------
+   v1.0.9 #1 — Mobile gallery: bulletproof thumbnail horizontal scroll.
+   Bug: products with many thumbnails (10-15) widened the whole gallery column
+   past the mobile viewport instead of the rail scrolling sideways. Products
+   with 2-3 thumbnails looked fine (their rail never exceeded the width).
+   Root cause: the column-flex .gallery-wrap had no explicit width on mobile,
+   so it was sized by its content; a long nowrap thumbnail row therefore grew
+   the column. Fix: give the gallery column + wrap a definite width:100% and
+   ensure every ancestor in the chain can shrink (min-width:0) so the
+   .gallery-thumbs scroll container is properly bounded to the viewport.
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .col-gallery {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+  .gallery-wrap {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+  .gallery-main { min-width: 0; }
+  .gallery-thumbs {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   v1.1.2 - Dedicated TABLET gallery layout (own control; default vertical-left)
+   Drives the tablet band (641-1024px) by the .gallery-tablet--* class instead
+   of the generic max-width:1024 column/row behavior. Desktop + mobile untouched.
+   -------------------------------------------------------------------------- */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .gallery-wrap.gallery-tablet--vertical-left  { flex-direction: row-reverse; }
+  .gallery-wrap.gallery-tablet--vertical-right { flex-direction: row; }
+  /* v1.1.4 - compact, centered tablet gallery: main image honors the 5-thumb rail */
+  .gallery-wrap.gallery-tablet--vertical-left,
+  .gallery-wrap.gallery-tablet--vertical-right {
+    --thumb-visible: 5 !important; /* v1.1.6 - beat the inline var inherited from .gallery-wrap */
+    justify-content: center;
+    align-items: flex-start;
+  }
+  .gallery-wrap.gallery-tablet--vertical-left  .gallery-main,
+  .gallery-wrap.gallery-tablet--vertical-right .gallery-main {
+    flex: 0 0 auto;
+    width: auto;
+    height: calc(var(--thumb-visible) * var(--thumb-size, 72px) + (var(--thumb-visible) - 1) * 10px);
+    aspect-ratio: 1 / 1;
+    max-height: none;
+    min-height: 0;
+  }
+  .gallery-wrap.gallery-tablet--vertical-left  .gallery-thumbs,
+  .gallery-wrap.gallery-tablet--vertical-right .gallery-thumbs {
+    --thumb-visible: 5; /* v1.1.5 - set on the rail itself; base .gallery-thumbs declares 6 directly, which beats the wrap's inherited value */
+    flex-direction: column;
+    align-self: flex-start;
+    max-height: calc(var(--thumb-visible) * var(--thumb-size, 72px) + (var(--thumb-visible) - 1) * 10px);
+    max-width: none;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+  /* v1.1.5 - stacked tablet: 6-thumb rail (scrolls horizontally), main tracks that width */
+  .gallery-wrap.gallery-tablet--stacked {
+    flex-direction: column;
+    align-items: center;
+    --thumb-visible: 6 !important; /* v1.1.6 - beat the inline var inherited from .gallery-wrap */
+  }
+  .gallery-wrap.gallery-tablet--stacked .gallery-main {
+    flex: 0 0 auto;
+    width: calc(var(--thumb-visible) * var(--thumb-size, 72px) + (var(--thumb-visible) - 1) * 10px);
+    max-width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    margin-inline: auto;
+  }
+  .gallery-wrap.gallery-tablet--stacked .gallery-thumbs {
+    --thumb-visible: 6;
+    flex-direction: row;
+    max-width: calc(var(--thumb-visible) * var(--thumb-size, 72px) + (var(--thumb-visible) - 1) * 10px);
+    margin-inline: auto;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+  .gallery-wrap.gallery-tablet--grid    { flex-direction: column; }
+  .gallery-wrap.gallery-tablet--grid .gallery-thumbs { flex-direction: row; flex-wrap: wrap; }
+}
+
+/* --------------------------------------------------------------------------
+   v1.1.2 - Per-device thumbnail visibility toggles (Desktop / Tablet / Mobile)
+   -------------------------------------------------------------------------- */
+@media (min-width: 1025px) {
+  .gallery-wrap.zsp-hide-thumbs-desktop .gallery-thumbs { display: none !important; }
+}
+@media (min-width: 641px) and (max-width: 1024px) {
+  .gallery-wrap.zsp-hide-thumbs-tablet .gallery-thumbs { display: none !important; }
+}
+@media (max-width: 640px) {
+  .gallery-wrap.zsp-hide-thumbs-mobile .gallery-thumbs { display: none !important; }
+}
+
+/* --------------------------------------------------------------------------
+   v1.1.3 - Tablet vertical layouts use FULL gallery width
+   The v1.0.6 tablet rule caps .col-gallery to 60% centered, which suits the
+   stacked/grid tablet layouts but squeezes the main image when the thumbnail
+   strip sits beside it. For vertical-left / vertical-right on tablet, restore
+   full column width so the main image is not shrunk.
+   -------------------------------------------------------------------------- */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .col-gallery:has(.gallery-tablet--vertical-left),
+  .col-gallery:has(.gallery-tablet--vertical-right),
+  .col-gallery:has(.gallery-tablet--stacked) {
+    width: 100%;
+    max-width: 100%;
+    justify-self: stretch;
+    margin-inline: 0;
+  }
+}
+
+/* -- Engine grid section headings (v2.2.0) ------------------------------- */
+/* Owned by this plugin, not the engine, so a heading disappears together   */
+/* with an empty grid. Variant A: brand purple heading and link.            */
+
+.zymarg-sp-grid-section--engine .zymarg-sp-section-head {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	margin: 0 0 16px;
+}
+
+/* min-width:0 is what allows the ellipsis to engage inside a flex row. */
+.zymarg-sp-section-head__title {
+	flex: 1 1 auto;
+	min-width: 0;
+	margin: 0;
+	font-size: 28px;
+	line-height: 1.25;
+	font-weight: 700;
+	color: #9500a5;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.zymarg-sp-section-head__link {
+	flex: 0 0 auto;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	white-space: nowrap;
+	font-size: 14px;
+	font-weight: 600;
+	color: #9500a5;
+	text-decoration: none;
+	transition: color .18s ease, gap .18s ease;
+}
+
+/* Never underlined, in any state - themes often re-add this on hover. */
+.zymarg-sp-section-head__link:link,
+.zymarg-sp-section-head__link:visited,
+.zymarg-sp-section-head__link:hover,
+.zymarg-sp-section-head__link:focus,
+.zymarg-sp-section-head__link:active {
+	text-decoration: none;
+	box-shadow: none;
+}
+
+.zymarg-sp-section-head__link:hover {
+	color: #bd00d1;
+	gap: 10px;
+}
+
+/* Keyboard focus stays visible even though hover has no underline. */
+.zymarg-sp-section-head__link:focus-visible {
+	outline: 2px solid #bd00d1;
+	outline-offset: 3px;
+	border-radius: 3px;
+}
+
+.zymarg-sp-section-head__arw {
+	font-size: 1.05em;
+	line-height: 1;
+	display: inline-block;
+	transform: translateY(.5px);
+}
+
+@media (max-width: 1024px) {
+	.zymarg-sp-section-head__title { font-size: 22px; }
+	.zymarg-sp-section-head__link  { font-size: 13px; }
+}
+
+@media (max-width: 600px) {
+	.zymarg-sp-grid-section--engine .zymarg-sp-section-head { gap: 10px; }
+	.zymarg-sp-section-head__title { font-size: 19px; }
+	.zymarg-sp-section-head__txt   { display: none; }
+	.zymarg-sp-section-head__arw   { font-size: 20px; }
+}
+
+/* --------------------------------------------------------------------------
+   v2.3.0 - Mobile block order.
+   Default mobile sequence is Gallery > Swatches > Price > Title > Rating.
+   .col-info is a grid area holding these as direct children in source order
+   title, rating, cats, price, short-desc, swatches. Turning it into a flex
+   column lets two negative `order` values lift the swatches and the price
+   above the title; every other child stays at the default order 0 and so
+   keeps its source order. No DOM movement, so no reorder flash on load, and
+   desktop / tablet are untouched.
+   Simple products render an empty variations slot, which carries no box of
+   its own, so their order collapses to Gallery > Price > Title > Rating.
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .zymarg-single-product .col-info { display: flex; flex-direction: column; }
+  .zymarg-single-product .col-info > .zymarg-sp-variations-slot { order: -2; }
+  .zymarg-single-product .col-info > .price-row { order: -1; }
+  /* v2.4.3 - mobile only: WooCommerce's own form.cart margin left a gap below
+     the variations/swatches form; removed entirely on mobile per user request. */
+  .zymarg-single-product .variations_form.cart { margin: 0; }
+}
+
+/* --------------------------------------------------------------------------
+   v2.4.0 - Responsive price sizing
+   The desktop size stays where it was (.zymarg-sp-price-current, 24px). These
+   rules carry specificity 0-2-0 against that rule's 0-1-0, so they win on
+   specificity rather than on source order and cannot be silently outranked by
+   a later top-level rule the way the old mobile rule was.
+   Sizes: 24 / 22 / 20px current, 15 / 14 / 13px old, badge 12 / 11.5 / 11px.
+   On mobile the title is 1.15rem (about 18px), so a 20px price still reads as
+   the stronger element without overpowering the product name.
+   -------------------------------------------------------------------------- */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .zymarg-single-product .zymarg-sp-price-current { font-size: 22px; }
+  .zymarg-single-product .zymarg-sp-price-was { font-size: 14px; }
+  .zymarg-single-product .zymarg-sp-price__save-badge { font-size: 11.5px; }
+  .zymarg-single-product .zymarg-sp-price__from-prefix { font-size: 13px; }
+}
+@media (max-width: 640px) {
+  .zymarg-single-product .zymarg-sp-price-current { font-size: 20px; }
+  .zymarg-single-product .zymarg-sp-price-was { font-size: 13px; }
+  .zymarg-single-product .zymarg-sp-price__save-badge { font-size: 11px; padding: 2px 5px; }
+  .zymarg-single-product .zymarg-sp-price__from-prefix { font-size: 12px; }
+  /* the whole row sits tighter on a narrow screen */
+  .zymarg-single-product .zymarg-sp-price-block { gap: 4px 4px; }
+  .zymarg-single-product .price-row { padding: 10px 0; }
+}
