@@ -4,7 +4,7 @@ Tags: woocommerce, single product, template, swatches, buy now, reviews
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.0
-Stable tag: 2.4.6
+Stable tag: 2.4.7
 WC requires at least: 8.0
 WC tested up to: 9.9
 License: GPL-2.0-or-later
@@ -43,6 +43,12 @@ Key features:
 3. Go to Single Product in the WordPress admin menu to configure settings
 
 == Changelog ==
+
+= 2.4.7 =
+* Added: the seller card's "Chat" button now connects directly to the ZYMARG Communication plugin when it is active. It renders as `[data-chat-btn data-seller-id="{vendor_user_id}"]`, the same contract the ZYMARG Store Page plugin already implements - Communication's own live-chat.js listens for clicks on this attribute anywhere on the page and opens (or creates) the buyer/vendor conversation via `POST /marketplace/store-chat`, automatically resolving to whichever vendor's product the shopper is currently viewing. No configuration required: the vendor user ID is the same post-author ID this plugin already reads for the seller card's name, avatar and rating.
+* Added: logged-out shoppers see a "Chat" link that sends them to log in and returns them to the exact product they were viewing, instead of a button with no effect - the Communication plugin only loads its chat JS for logged-in visitors.
+* Unchanged: sites without the Communication plugin active keep the previous behaviour exactly - the `chat_url` setting (or the Dokan store `#chat` anchor when left blank).
+* Changed: the "Chat URL" admin field now clarifies it is only used as that fallback.
 
 = 2.4.6 =
 * Fixed: this plugin's global PHP constants (ZYMARG_SP_VERSION, ZYMARG_SP_FILE, ZYMARG_SP_PATH, ZYMARG_SP_URL, ZYMARG_SP_BASENAME, ZYMARG_SP_ASSETS, ZYMARG_SP_TPL_PATH) were identically named to constants defined by the separate "ZYMARG Store Page" plugin, because both plugins independently used "SP" as shorthand ("Single Product" here, "Store Page" there). With both plugins active on the same site, whichever plugin's main file loaded first silently won each constant, and the other plugin's file path / asset URL / version string silently pointed at the wrong plugin - CSS and JS 404s and version-string mismatches, with no visible error. All 7 constants are renamed to a unique ZYMARG_SNGL_* prefix, each now also guarded with if ( ! defined() ) as defense-in-depth against any future third plugin picking the same name.
