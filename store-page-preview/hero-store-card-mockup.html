@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZYMARG Hero + Store Card — Redesign Mockup</title>
+
+<!--
+  ============================================================================
+  HERO + STORE CARD — REDESIGN MOCKUP (NEW component, not a reproduction)
+  ============================================================================
+  This is a PROPOSED redesign of the Hero Store Card discussed in chat. It is
+  NOT the current plugin markup — it's new code being shown for your visual
+  approval before anything is implemented in the real plugin.
+
+  WHAT CHANGED vs. the current plugin (summary — full list also in chat reply):
+  1. The card is now an absolutely-positioned CHILD of the banner image
+     container (bottom-anchored), instead of a sibling div pulled up with a
+     negative margin. It can never exceed the banner's height.
+  2. bg-zy-surface (solid white) + shadow-xl removed -> replaced with a
+     glass/frosted effect (backdrop-filter blur). LOCKED to Style A (blur +
+     soft border + inner highlight) per confirmed decision — Style B removed.
+  3. Text color flipped from dark-on-white to white-with-shadow, since the
+     card no longer has an opaque background and sits directly over a photo.
+  4. NEW: Online/Offline indicator (dot + label). Intended to be driven by
+     Dokan's seller "enable selling" / "disable selling" state once wired to
+     real data. Toggleable below for comparison (this is the only remaining
+     toggle — style/logo decisions are locked).
+  5. NEW: Review count as its OWN stat, separate from the average Rating
+     (previously combined into a single "4.4 (5 ratings)" string).
+  6. NEW: Products count stat (did not exist on the card before at all).
+  7. Fully reflowed per breakpoint per your layout spec:
+       - Desktop: single row, right-aligned stats + actions cluster.
+       - Tablet: 4-column row — logo | name+status | stats | actions
+         (stats promoted OUT of the name/status column into its own column,
+         positioned before the actions column, per confirmed layout change).
+       - Mobile: 2-row layout, tightened vertical gap between the rows
+         per confirmed spacing change.
+     Logo sizing on tablet LOCKED to "Normal" (fixed rounded-square, matches
+     mobile/desktop) — the "Stretched" variant was compared and rejected.
+  8. UNCHANGED, exactly as today: Follow / Chat / Share button colors,
+     styles, and behavior — only their position and padding/sizing changed.
+
+  WHY AN <iframe> IS USED FOR THE DEVICE PREVIEW:
+  Same reason as the earlier store-page mockup — an iframe is its own
+  independent browsing context, so its CSS media queries evaluate against
+  its real rendered width, exactly like resizing a real browser window.
+  ============================================================================
+-->
+
+<style>
+html, body { margin: 0; }
+body { font-family: "Inter Variable", ui-sans-serif, system-ui, sans-serif; background: #f3eef6; }
+
+/* ================= Toolbar (mockup-only chrome) ================= */
+#zy-toolbar{
+  position: sticky; top: 0; z-index: 99999;
+  background: #1f1329; color: #fff;
+  padding: 12px 16px; display: flex; flex-wrap: wrap; gap: 18px; align-items: center;
+  font-size: 13px;
+}
+.zy-tgroup{ display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+.zy-tgroup-label{ font-weight:700; opacity:.7; margin-right:2px; font-size:11px; text-transform:uppercase; letter-spacing:.06em; }
+#zy-toolbar button{
+  appearance:none; border:1.5px solid rgba(255,255,255,.22); background:rgba(255,255,255,.06);
+  color:#fff; padding:6px 13px; border-radius:999px; font-size:12.5px; font-weight:600;
+  cursor:pointer; transition:background .15s,border-color .15s; font-family:inherit;
+}
+#zy-toolbar button:hover{ background:rgba(255,255,255,.15); }
+#zy-toolbar button.is-active{
+  background: linear-gradient(135deg, #9500A5 0%, #BD00D1 60%, #FEA9FF 130%);
+  border-color: transparent;
+}
+
+/* ================= Legend / notes (mockup-only chrome) ================= */
+#zy-legend{
+  max-width: 900px; margin: 22px auto 0; padding: 0 16px 8px;
+  font-size: 13.5px; line-height: 1.6; color: #3a2f45;
+}
+#zy-legend h2{ font-size: 15px; margin: 18px 0 6px; color:#36003D; }
+#zy-legend ul{ margin: 0 0 4px; padding-left: 20px; }
+#zy-legend code{ background:#eee3f2; padding:1px 5px; border-radius:5px; font-size:12.5px; }
+
+/* ================= Device frame chrome (mockup-only) ================= */
+#zy-outer{ background:#ece6f0; padding:24px 12px 8px; box-sizing:border-box; }
+#zy-viewport{
+  margin:0 auto; background:#fff; width:100%; max-width:100%;
+  transition:max-width .25s ease; overflow:hidden;
+}
+#zy-viewport.is-tablet{
+  max-width:834px; border-left:6px solid #1f1329; border-right:6px solid #1f1329;
+  border-radius:18px; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 20px 60px rgba(0,0,0,.18);
+}
+#zy-viewport.is-mobile{
+  max-width:390px; border-left:6px solid #1f1329; border-right:6px solid #1f1329;
+  border-radius:28px; box-shadow:0 0 0 1px rgba(0,0,0,.06), 0 20px 60px rgba(0,0,0,.18);
+}
+#zy-frame{ width:100%; display:block; border:0; background:#fff; }
+#zy-caption{ text-align:center; font-size:12px; color:#7a6a82; margin:10px 0 26px; }
+</style>
+</head>
+<body>
+
+<div id="zy-toolbar">
+  <div class="zy-tgroup">
+    <span class="zy-tgroup-label">Device</span>
+    <button type="button" data-group="device" data-value="desktop" class="is-active">🖥️ Desktop</button>
+    <button type="button" data-group="device" data-value="tablet">📱 Tablet</button>
+    <button type="button" data-group="device" data-value="mobile">📱 Mobile</button>
+  </div>
+  <div class="zy-tgroup">
+    <span class="zy-tgroup-label">Seller Status</span>
+    <button type="button" data-group="status" data-value="online" class="is-active">🟢 Online</button>
+    <button type="button" data-group="status" data-value="offline">⚪ Offline</button>
+  </div>
+  <div class="zy-tgroup">
+    <span class="zy-tgroup-label" style="opacity:.5;">Locked</span>
+    <span style="opacity:.55;font-size:12px;">Glass Style A · Tablet Logo Normal — confirmed, no longer toggleable</span>
+  </div>
+</div>
+
+<div id="zy-outer">
+  <div id="zy-viewport">
+    <iframe id="zy-frame" title="Hero + Store Card preview" scrolling="no"></iframe>
+  </div>
+  <p id="zy-caption">Live preview — use the toolbar above to switch device size and compare style options.</p>
+</div>
+
+<div id="zy-legend">
+  <h2>Confirmed / Locked decisions</h2>
+  <ul>
+    <li>Glass style: <strong>A — blur + soft border + inner highlight</strong> (Style B removed from this build).</li>
+    <li>Tablet logo: <strong>Normal</strong> fixed rounded-square size (Stretched variant rejected).</li>
+    <li>Tablet layout: the stats column (Followers/Rating/Reviews/Products) is repositioned OUT of the
+      name/status column into its <strong>own column, placed before the actions column</strong> —
+      so the row now reads: Logo → Name+Status → Stats → Actions.</li>
+    <li>Mobile: vertical gap between the two rows (identity row / stats+actions row) has been
+      tightened for a denser layout.</li>
+  </ul>
+  <h2>What's NEW (did not exist on the card before today)</h2>
+  <ul>
+    <li>Online / Offline seller status indicator — intended to reflect Dokan's "enable selling / disable selling" setting.</li>
+    <li>Review count shown as its own stat (previously merged into the rating text).</li>
+    <li>Products count stat — did not exist on the card at all.</li>
+    <li>Glass/frosted card style — replaces the solid white card.</li>
+    <li>Card is now positioned <em>inside</em> the banner and constrained to never exceed its height.</li>
+  </ul>
+  <h2>What's UNCHANGED</h2>
+  <ul>
+    <li>Follow / Chat / Share button colors, styles, and click behavior — only position/padding changed.</li>
+    <li>Store logo, store name, follower count, and average rating value — same data points as today.</li>
+  </ul>
+</div>
+
+<!-- ============================================================
+     REAL PREVIEW MARKUP (goes into the iframe)
+============================================================ -->
+<template id="zy-page-body">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin:0; font-family: "Inter Variable", ui-sans-serif, system-ui, sans-serif; }
+  img, svg { display:block; }
+
+  /* ---------- Banner (full-bleed, simulated photo — CSS only) ---------- */
+  .zy-hero-banner{
+    position:relative;
+    width:100%;
+    overflow:hidden;
+    height:224px;
+    background:
+      radial-gradient(circle at 78% 18%, rgba(255,255,255,.35) 0, rgba(255,255,255,0) 22%),
+      linear-gradient(180deg,#141b3d 0%,#232c5e 20%,#3c3777 42%,#6a3f86 62%,#9c5b95 80%,#cf93ae 100%);
+  }
+  @media (min-width:640px){ .zy-hero-banner{ height:288px; } }
+  @media (min-width:1024px){ .zy-hero-banner{ height:320px; } }
+  .zy-hero-banner__peaks{
+    position:absolute; left:0; right:0; bottom:0; height:46%;
+    background:#0d1230;
+    opacity:.55;
+    clip-path: polygon(0% 100%,0% 55%,10% 70%,18% 40%,27% 62%,35% 30%,45% 58%,55% 22%,64% 52%,74% 34%,83% 60%,92% 38%,100% 58%,100% 100%);
+  }
+  .zy-hero-banner__tint{ position:absolute; inset:0; background:linear-gradient(135deg,#9500A5 0%,#BD00D1 60%,#FEA9FF 130%); opacity:.28; mix-blend-mode:multiply; }
+  .zy-hero-banner__shade{ position:absolute; inset:0; background:linear-gradient(to top, rgba(20,6,26,.75), transparent 55%); }
+
+  /* ---------- Card wrap: absolutely positioned INSIDE the banner ---------- */
+  .zy-hc-wrap{
+    position:absolute; left:0; right:0; bottom:10px; z-index:2;
+  }
+  @media (min-width:640px){ .zy-hc-wrap{ bottom:14px; } }
+  @media (min-width:1024px){ .zy-hc-wrap{ bottom:18px; } }
+  .zy-hc-inner{ margin:0 auto; max-width:1280px; padding:0 16px; }
+  @media (min-width:640px){ .zy-hc-inner{ padding:0 24px; } }
+  @media (min-width:1024px){ .zy-hc-inner{ padding:0 32px; } }
+
+  /* ---------- The glass card itself ---------- */
+  .zy-hc-card{
+    border-radius:16px;
+    color:#fff;
+    text-shadow: 0 1px 4px rgba(0,0,0,.4);
+    padding:10px 12px;
+    max-height: 100%;
+    overflow: hidden;
+  }
+  @media (min-width:640px){ .zy-hc-card{ padding:14px; border-radius:18px; } }
+  @media (min-width:1024px){ .zy-hc-card{ padding:16px 24px; border-radius:20px; } }
+
+  .zy-hc-card.glass-a{
+    background: rgba(255,255,255,.16);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    backdrop-filter: blur(18px) saturate(160%);
+    border: 1px solid rgba(255,255,255,.35);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.45), 0 10px 30px rgba(0,0,0,.28);
+  }
+  .zy-hc-card.glass-b{
+    background: rgba(255,255,255,.10);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    border: none;
+    box-shadow: none;
+  }
+
+  /* ---------- Row / layout skeleton ---------- */
+  .zy-hc-row{ display:flex; align-items:center; gap:10px; }
+
+  .zy-hc-logo{
+    flex-shrink:0;
+    width:44px; height:44px;
+    border-radius:12px;
+    overflow:hidden;
+    background:linear-gradient(135deg,#9500A5,#BD00D1,#FEA9FF);
+    box-shadow: 0 0 0 2px rgba(255,255,255,.5);
+    display:flex; align-items:center; justify-content:center;
+    color:#fff; font-weight:800; font-size:16px;
+    text-shadow: 0 1px 3px rgba(0,0,0,.35);
+  }
+  /* Self-contained CSS avatar (initial letter on gradient) - matches the
+     real plugin's own fallback behavior for stores with no uploaded photo,
+     and avoids depending on an external image request for this mockup. */
+  .zy-hc-logo img{ width:100%; height:100%; object-fit:cover; display:none; }
+
+  .zy-hc-name{
+    font-weight:800; font-size:13px; line-height:1.18;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+    margin:0;
+  }
+  .zy-hc-status{ font-size:10px; font-weight:600; margin-top:3px; opacity:.95; }
+  .zy-hc-status--online, .zy-hc-status--offline{ display:flex; align-items:center; gap:5px; }
+  .zy-hc-status-dot{ width:7px; height:7px; border-radius:50%; flex-shrink:0; box-shadow:0 0 0 2px rgba(255,255,255,.25); }
+  /* Only ONE of these two spans is ever visible at a time - controlled purely
+     by which class (.status-online / .status-offline) is on the card. */
+  .zy-hc-status--offline{ display:none; }
+  .status-offline .zy-hc-status--online{ display:none; }
+  .status-offline .zy-hc-status--offline{ display:flex; }
+  .zy-hc-status--online .zy-hc-status-dot{ background:#3ddc7a; }
+  .zy-hc-status--offline .zy-hc-status-dot{ background:#b7b0bd; }
+
+  .zy-hc-stats{ display:flex; align-items:center; gap:8px; flex-wrap:nowrap; flex-shrink:1; min-width:0; }
+  .zy-hc-stat{ text-align:center; line-height:1.05; flex-shrink:0; }
+  .zy-hc-stat b{ display:block; font-size:11px; font-weight:800; }
+  .zy-hc-stat span{ display:block; font-size:7px; font-weight:600; text-transform:uppercase; letter-spacing:.02em; opacity:.85; margin-top:1px; white-space:nowrap; }
+
+  .zy-hc-actions{ display:flex; align-items:center; gap:5px; flex-shrink:0; }
+  /* Buttons: SAME colors/styles as the existing plugin buttons — only size/padding tuned per breakpoint. */
+  .zy-hc-btn-follow{
+    border-radius:9px; font-weight:700; white-space:nowrap;
+    background: linear-gradient(135deg,#9500A5 0%,#BD00D1 60%,#FEA9FF 130%);
+    color:#fff; border:none; text-shadow:none;
+    padding:6px 11px; font-size:10.5px;
+  }
+  .zy-hc-btn-chat{
+    border-radius:9px; font-weight:700; white-space:nowrap;
+    background:#fff; color:#36003D; border:1px solid #D8BFD3; text-shadow:none;
+    padding:6px 10px; font-size:10.5px;
+  }
+  .zy-hc-btn-share{
+    border-radius:9px; background:#fff; color:#36003D; border:1px solid #D8BFD3;
+    width:26px; height:26px; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  }
+  .zy-hc-btn-share svg{ width:13px; height:13px; }
+
+  .zy-hc-identity{ min-width:0; flex:1; }
+
+  /* ================= MOBILE (default / base styles) ================= */
+  .zy-hc-row{ flex-wrap:wrap; }
+  .zy-hc-toprow{ display:flex; align-items:flex-start; gap:9px; width:100%; }
+  /* Tightened vertical gap between the identity row and the stats+actions
+     row, per confirmed spacing change (was 8px). */
+  .zy-hc-bottomrow{ display:flex; align-items:center; gap:8px; width:100%; margin-top:4px; }
+  .zy-hc-actions{ margin-left:auto; flex-shrink:0; }
+  .zy-hc-stats-tablet-slot{ display:none; }
+
+  /* ================= TABLET (>=640px): 4 columns — logo | name+status | stats | actions ================= */
+  @media (min-width:640px){
+    .zy-hc-row{ flex-wrap:nowrap; align-items:center; }
+    .zy-hc-toprow{ width:auto; align-items:center; flex:0 1 auto; min-width:0; }
+    .zy-hc-logo{ width:64px; height:64px; align-self:center; }
+    .zy-hc-name{ font-size:15px; }
+    .zy-hc-status{ font-size:11px; margin-top:4px; }
+
+    /* Stats now render ONLY inside the dedicated tablet column, placed
+       before the actions column (relocated there by JS). */
+    .zy-hc-bottomrow{ display:none; }
+
+    .zy-hc-identity{ display:flex; flex-direction:column; justify-content:center; gap:2px; padding:2px 0; min-width:0; }
+
+    .zy-hc-stats-tablet-slot{
+      display:flex; align-items:center; gap:14px;
+      flex:0 1 auto; margin-left:auto; padding:0 6px;
+    }
+    .zy-hc-stats-tablet-slot .zy-hc-stats{ gap:14px; }
+    .zy-hc-stat b{ font-size:13px; }
+    .zy-hc-stat span{ font-size:9px; }
+
+    .zy-hc-actions{ margin-left:14px; gap:8px; align-self:center; flex-shrink:0; }
+    .zy-hc-btn-follow{ padding:8px 18px; font-size:12.5px; }
+    .zy-hc-btn-chat{ padding:8px 16px; font-size:12.5px; }
+    .zy-hc-btn-share{ width:34px; height:34px; }
+    .zy-hc-btn-share svg{ width:16px; height:16px; }
+
+    /* Tablet logo LOCKED to Normal — fixed rounded-square size, matches
+       mobile/desktop identity treatment. */
+    .zy-hc-logo{ width:64px; height:64px; border-radius:14px; align-self:center; margin:0; font-size:22px; }
+  }
+
+  /* ================= DESKTOP (>=1024px): single row, right-aligned cluster ================= */
+  @media (min-width:1024px){
+    .zy-hc-logo{ width:60px; height:60px; }
+    .zy-hc-name{ font-size:19px; -webkit-line-clamp:2; }
+    .zy-hc-status{ font-size:12px; }
+    .zy-hc-stats--cluster{ display:flex; }
+    .zy-hc-identity{ flex: 0 1 auto; }
+
+    /* The row now holds toprow (logo+identity) and bottomrow (stats+actions)
+       side by side as ONE single row - this is the bug fix: bottomrow was
+       left display:none from the tablet rule above and never re-enabled. */
+    .zy-hc-row{ align-items:center; flex-wrap:nowrap; }
+    .zy-hc-toprow{ width:auto; flex:0 0 auto; }
+    .zy-hc-bottomrow{
+      display:flex; width:auto; flex:1 1 auto; margin-top:0;
+      align-items:center; overflow:visible;
+    }
+    .zy-hc-stats--cluster{ margin-left:auto; gap:20px; }
+    .zy-hc-actions{ margin-left:20px; gap:10px; }
+    .zy-hc-btn-follow{ padding:9px 22px; font-size:13px; border-radius:11px; }
+    .zy-hc-btn-chat{ padding:9px 19px; font-size:13px; border-radius:11px; }
+    .zy-hc-btn-share{ width:38px; height:38px; border-radius:11px; }
+    .zy-hc-btn-share svg{ width:17px; height:17px; }
+    .zy-hc-stat b{ font-size:14px; }
+    .zy-hc-stat span{ font-size:9.5px; }
+
+    /* Logo stretch/normal toggle is tablet-only per spec — desktop always uses fixed logo size regardless of toggle. */
+    .logo-stretch .zy-hc-logo, .logo-normal .zy-hc-logo{ width:60px; height:60px; margin:0; border-radius:14px; font-size:20px; }
+  }
+
+  /* Context strip below the banner, purely for orientation in this scoped mockup. */
+  .zy-below-context{
+    background:#f3eef6; color:#8a7a92; font-size:12px; text-align:center;
+    padding:18px 12px; border-top:1px dashed #d9c9e0;
+  }
+</style>
+
+<div class="zy-hero-banner">
+  <div class="zy-hero-banner__peaks"></div>
+  <div class="zy-hero-banner__tint"></div>
+  <div class="zy-hero-banner__shade"></div>
+
+  <div class="zy-hc-wrap">
+    <div class="zy-hc-inner">
+      <div class="zy-hc-card glass-a logo-normal" id="zy-hc-card">
+        <div class="zy-hc-row">
+
+          <div class="zy-hc-toprow">
+            <div class="zy-hc-logo" aria-label="Aurora Craft &amp; Co. Handmade Studio logo">
+              A
+            </div>
+
+            <div class="zy-hc-identity">
+              <p class="zy-hc-name">Aurora Craft &amp; Co. Handmade Studio</p>
+              <div class="zy-hc-status">
+                <span class="zy-hc-status--online">
+                  <span class="zy-hc-status-dot"></span> Online
+                </span>
+                <span class="zy-hc-status--offline">
+                  <span class="zy-hc-status-dot"></span> Offline
+                </span>
+              </div>
+              <!-- Tablet stats block now lives in its OWN column (relocated
+                   here by JS at tablet width, back into .zy-hc-bottomrow at
+                   mobile/desktop width) - it is no longer a 3rd row nested
+                   inside this identity column. This is just the ORIGINAL
+                   home node before JS moves it; kept here so mobile/desktop
+                   layout (which reads this same node) always has a valid
+                   starting position. -->
+            </div>
+          </div>
+
+          <!-- Tablet-only stats column (placed BEFORE the actions column). -->
+          <div class="zy-hc-stats-tablet-slot" style="display:none;" id="zy-hc-stats-tablet-slot"></div>
+
+          <!-- Mobile: 2nd row (stats + actions together). Desktop: right-aligned cluster. Relocated away on tablet. -->
+          <div class="zy-hc-bottomrow">
+            <div class="zy-hc-stats zy-hc-stats--cluster" id="zy-hc-stats-node">
+              <div class="zy-hc-stat"><b>128</b><span>Followers</span></div>
+              <div class="zy-hc-stat"><b>4.4</b><span>Rating</span></div>
+              <div class="zy-hc-stat"><b>5</b><span>Reviews</span></div>
+              <div class="zy-hc-stat"><b>42</b><span>Products</span></div>
+            </div>
+
+            <div class="zy-hc-actions" id="zy-hc-actions-node">
+              <button type="button" class="zy-hc-btn-follow">Follow</button>
+              <button type="button" class="zy-hc-btn-chat">Chat</button>
+              <button type="button" class="zy-hc-btn-share" aria-label="Share this store">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Tablet-only actions column (4th column, buttons stay ONLY here; not duplicated) -->
+          <div class="zy-hc-actions" style="display:none;" id="zy-hc-actions-tablet-slot"></div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="zy-below-context">
+  ↓ Rest of the store page continues below (products, categories, reviews, etc.) — not shown in this scoped mockup.
+</div>
+
+<script>
+  // Tablet layout needs its OWN 4-column row: logo | name+status | stats |
+  // actions. The stats block and the actions block both live, by default, in
+  // the mobile/desktop "bottomrow" node. Rather than duplicate the
+  // interactive buttons and the stats numbers in markup (bad for a real
+  // implementation - two copies of the same data would drift), we relocate
+  // the SAME nodes into their tablet-only slots via JS, and relocate them
+  // back into the bottomrow when leaving tablet width. Order of insertion
+  // matters: stats slot is appended to the row BEFORE the actions slot, so
+  // stats always render before actions, per the confirmed column order.
+  (function () {
+    var statsNode     = document.getElementById('zy-hc-stats-node');
+    var actionsNode   = document.getElementById('zy-hc-actions-node');
+    var statsSlot     = document.getElementById('zy-hc-stats-tablet-slot');
+    var actionsSlot   = document.getElementById('zy-hc-actions-tablet-slot');
+    var bottomRow     = document.querySelector('.zy-hc-bottomrow');
+
+    function place() {
+      var w = document.documentElement.clientWidth;
+      var isTablet = w >= 640 && w < 1024;
+      if (isTablet) {
+        if (statsNode.parentNode !== statsSlot) statsSlot.appendChild(statsNode);
+        if (actionsNode.parentNode !== actionsSlot) actionsSlot.appendChild(actionsNode);
+        statsSlot.style.display = 'flex';
+        actionsSlot.style.display = 'flex';
+      } else {
+        // Re-insert stats first, then actions, to preserve the original
+        // bottomrow markup order (stats before actions) at mobile/desktop.
+        if (statsNode.parentNode !== bottomRow) bottomRow.appendChild(statsNode);
+        if (actionsNode.parentNode !== bottomRow) bottomRow.appendChild(actionsNode);
+        statsSlot.style.display = 'none';
+        actionsSlot.style.display = 'none';
+      }
+    }
+    place();
+    window.addEventListener('resize', place);
+  })();
+</script>
+</template>
+
+<script>
+(function () {
+  var frame    = document.getElementById('zy-frame');
+  var viewport = document.getElementById('zy-viewport');
+  var bodyHTML = document.getElementById('zy-page-body').innerHTML;
+
+  var state = { device: 'desktop', status: 'online' };
+
+  var frameDoc =
+    '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
+    '<meta name="viewport" content="width=device-width, initial-scale=1.0">' +
+    '<link rel="preconnect" href="https://cdn.jsdelivr.net">' +
+    '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/inter@5/index.min.css">' +
+    '</head><body>' + bodyHTML + '</body></html>';
+
+  function fitHeight() {
+    try {
+      var doc = frame.contentDocument;
+      if (!doc || !doc.documentElement) return;
+      var h = Math.max(doc.documentElement.scrollHeight, doc.body ? doc.body.scrollHeight : 0);
+      frame.style.height = h + 'px';
+    } catch (e) {}
+  }
+
+  function applyState() {
+    try {
+      var doc  = frame.contentDocument;
+      var card = doc.getElementById('zy-hc-card');
+      if (!card) return;
+      // Glass style and tablet logo mode are locked (glass-a / logo-normal,
+      // set directly in the markup) - only seller status remains toggleable.
+      card.classList.remove('status-online', 'status-offline');
+      card.classList.add('status-' + state.status);
+    } catch (e) {}
+    setTimeout(fitHeight, 30);
+  }
+
+  frame.addEventListener('load', function () {
+    fitHeight();
+    applyState();
+    try {
+      var doc = frame.contentDocument;
+      if (window.ResizeObserver && doc && doc.body) {
+        new ResizeObserver(fitHeight).observe(doc.body);
+      }
+      doc.querySelectorAll('img').forEach(function (img) {
+        img.addEventListener('load', fitHeight);
+      });
+    } catch (e) {}
+    setTimeout(fitHeight, 150);
+    setTimeout(fitHeight, 500);
+  });
+
+  frame.srcdoc = frameDoc;
+
+  var widths = { desktop: 'is-desktop', tablet: 'is-tablet', mobile: 'is-mobile' };
+
+  document.querySelectorAll('#zy-toolbar button').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var group = btn.getAttribute('data-group');
+      var value = btn.getAttribute('data-value');
+      state[group] = value;
+
+      document.querySelectorAll('#zy-toolbar button[data-group="' + group + '"]').forEach(function (b) {
+        b.classList.toggle('is-active', b === btn);
+      });
+
+      if (group === 'device') {
+        viewport.classList.remove('is-tablet', 'is-mobile');
+        if (value === 'tablet') viewport.classList.add('is-tablet');
+        if (value === 'mobile') viewport.classList.add('is-mobile');
+        setTimeout(fitHeight, 60);
+        setTimeout(fitHeight, 300);
+      } else {
+        applyState();
+      }
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
