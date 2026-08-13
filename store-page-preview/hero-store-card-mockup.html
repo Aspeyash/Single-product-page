@@ -291,8 +291,15 @@ body { font-family: "Inter Variable", ui-sans-serif, system-ui, sans-serif; back
 
   /* ================= TABLET (>=640px): 4 columns — logo | name+status | stats | actions ================= */
   @media (min-width:640px){
-    .zy-hc-row{ flex-wrap:nowrap; align-items:center; }
-    .zy-hc-toprow{ width:auto; align-items:center; flex:0 1 auto; min-width:0; }
+    /* Extremely tight gap between columns per confirmed adjustment
+       (was 10px inherited from the base .zy-hc-row rule). */
+    .zy-hc-row{ flex-wrap:nowrap; align-items:center; gap:6px; }
+
+    /* FIX: column 2 (logo+name/status) now GROWS to fill all available
+       width in the row (flex:1 1 auto, was 0 1 auto which let it shrink to
+       content and left a huge empty gap before the stats/buttons). This is
+       what gives it "maximum width" as requested. */
+    .zy-hc-toprow{ width:auto; align-items:center; flex:1 1 auto; min-width:0; }
     .zy-hc-logo{ width:64px; height:64px; align-self:center; }
     .zy-hc-name{ font-size:15px; }
     .zy-hc-status{ font-size:11px; margin-top:4px; }
@@ -301,17 +308,21 @@ body { font-family: "Inter Variable", ui-sans-serif, system-ui, sans-serif; back
        before the actions column (relocated there by JS). */
     .zy-hc-bottomrow{ display:none; }
 
-    .zy-hc-identity{ display:flex; flex-direction:column; justify-content:center; gap:2px; padding:2px 0; min-width:0; }
+    .zy-hc-identity{ display:flex; flex-direction:column; justify-content:center; gap:2px; padding:2px 0; min-width:0; flex:1; }
 
+    /* Stats + actions columns now sit flush against column 2's right edge -
+       no more margin-left:auto (that was reserving all the leftover space
+       as a gap instead of letting column 2 claim it). Both columns keep
+       flex-shrink:0 so their own content never gets squeezed. */
     .zy-hc-stats-tablet-slot{
-      display:flex; align-items:center; gap:14px;
-      flex:0 1 auto; margin-left:auto; padding:0 6px;
+      display:flex; align-items:center; gap:12px;
+      flex:0 0 auto; padding:0 4px;
     }
-    .zy-hc-stats-tablet-slot .zy-hc-stats{ gap:14px; }
+    .zy-hc-stats-tablet-slot .zy-hc-stats{ gap:12px; }
     .zy-hc-stat b{ font-size:13px; }
     .zy-hc-stat span{ font-size:9px; }
 
-    .zy-hc-actions{ margin-left:14px; gap:8px; align-self:center; flex-shrink:0; }
+    .zy-hc-actions{ margin-left:0; gap:6px; align-self:center; flex-shrink:0; }
     .zy-hc-btn-follow{ padding:8px 18px; font-size:12.5px; }
     .zy-hc-btn-chat{ padding:8px 16px; font-size:12.5px; }
     .zy-hc-btn-share{ width:34px; height:34px; }
