@@ -1,0 +1,161 @@
+/*
+ * Sidebar menu branding for ZYMARG Store Page.
+ *
+ * DELIBERATE, DOCUMENTED EXCEPTION TO THE SCOPING RULE.
+ *
+ * Every other admin stylesheet this plugin ships is scoped to .zymarg-sp-admin
+ * because the plugin must never restyle wp-admin chrome. This one file is the
+ * exception, requested explicitly: the top-level sidebar item should read as
+ * ours.
+ *
+ * It is kept safe by being scoped to a single ID that only exists because we
+ * registered that menu -- #toplevel_page_zymarg-store-page. It cannot touch
+ * any other menu item, any other plugin, or the front end.
+ *
+ * Token doc 2.15 still applies to everything else: the sidebar follows the
+ * user's admin colour scheme and we do not fight it beyond our own item.
+ *
+ * No token is redefined here. Only --zym-gradient and --zym-color-surface are
+ * consumed, which is why zymarg-tokens.css is a hard dependency of this file.
+ */
+
+/* -------------------------------------------------------------------------
+ * The item carries the brand gradient AT REST, not only when current.
+ *
+ * The old design (v1.21.1 and earlier) sat the branded "Z on gradient tile"
+ * icon inside core's default dark bar, which meant the label was scheme grey
+ * and only the icon was branded -- half-finished. The item is now branded
+ * permanently: gradient bar, surface-white glyph, surface-white label.
+ *
+ * Why the label is surface colour and not brand purple: at rest the sidebar
+ * is near-black in the default scheme, and #9500A5 on near-black fails
+ * contrast badly. Brand accent #FEA9FF is reserved as a gradient endpoint
+ * (token doc 2.x) and must not become a text colour. Putting the gradient
+ * behind the whole item and the label in surface white satisfies both the
+ * brand rules and contrast.
+ * ---------------------------------------------------------------------- */
+
+/*
+ * NOTE ON SELECTOR SHAPE.
+ *
+ * The Media Optimizer reference scopes every rule to `> a.wp-has-submenu`.
+ * That works there because Media Optimizer registers many submenus (Status,
+ * Bulk, Settings, Features, Video, Posting, Offload, Help) so WordPress
+ * always paints the `wp-has-submenu` class onto the top-level <a>.
+ *
+ * Store Page registers exactly ONE submenu ("Settings") whose slug is the
+ * same as the parent slug. That is the standard WP pattern for single-page
+ * plugins, and in that configuration WordPress can render the item WITHOUT
+ * the `wp-has-submenu` class on the anchor -- so the reference selector
+ * silently stopped matching, the gradient never painted, and only the icon
+ * (which uses .wp-menu-image, not the anchor class) flipped correctly.
+ *
+ * `> a` matches whether or not that class is applied. Nothing else lives
+ * directly under `#toplevel_page_zymarg-store-page > a`, so the scope is
+ * still exactly one element and can still not reach any other menu item.
+ */
+
+#toplevel_page_zymarg-store-page > a,
+#toplevel_page_zymarg-store-page.wp-has-current-submenu > a,
+#toplevel_page_zymarg-store-page.current > a,
+#toplevel_page_zymarg-store-page > a:hover,
+#toplevel_page_zymarg-store-page > a:focus {
+	position: relative;
+	/* Never change the gradient angle between states (token doc 2.x). */
+	background: var(--zym-gradient);
+	color: var(--zym-color-surface);
+}
+
+/* Core paints the label per admin colour scheme and wins on specificity for
+ * the inner span, so the label is set explicitly in every state. */
+#toplevel_page_zymarg-store-page > a .wp-menu-name,
+#toplevel_page_zymarg-store-page.wp-has-current-submenu > a .wp-menu-name,
+#toplevel_page_zymarg-store-page.current > a .wp-menu-name,
+#toplevel_page_zymarg-store-page > a:hover .wp-menu-name,
+#toplevel_page_zymarg-store-page > a:focus .wp-menu-name {
+	color: var(--zym-color-surface);
+}
+
+/* Keep the focus ring visible on the gradient. Keyboard users first. */
+#toplevel_page_zymarg-store-page > a:focus-visible {
+	box-shadow: var(--zym-focus-ring);
+	outline: none;
+}
+
+/* -------------------------------------------------------------------------
+ * Core's own decorative arrow.
+ *
+ * WordPress prints a .wp-menu-arrow inside every top-level item that has a
+ * submenu. It is normally invisible because it is painted in the sidebar's own
+ * background colour -- but once we put a gradient behind it, it stopped
+ * matching and appeared as a second, unrelated glyph. It carries no meaning
+ * and no label, so it goes.
+ * ---------------------------------------------------------------------- */
+
+#toplevel_page_zymarg-store-page .wp-menu-arrow,
+#toplevel_page_zymarg-store-page .wp-menu-arrow div {
+	display: none;
+}
+
+/* -------------------------------------------------------------------------
+ * The icon.
+ *
+ * WordPress renders a data-URI menu icon as a BACKGROUND IMAGE. Two things
+ * follow from that:
+ *
+ *   1. CSS animation inside a background-image SVG does not run. The
+ *      Discovery Spark can therefore never animate here, and token doc 3.7
+ *      rule 3 is explicit that a static Spark is a bug. So the Spark is not
+ *      used in the sidebar at all -- this is a plain storefront glyph.
+ *   2. `fill="currentColor"` has no colour to inherit inside a background
+ *      image, so it renders as black. The shipped SVG carries a real colour.
+ *
+ * Where mask-image is supported we drop core's background image and paint
+ * the same glyph with surface white instead, so it stays legible on the
+ * gradient bar. Where it is not supported the plain grey glyph from PHP
+ * simply shows, which looks native.
+ * ---------------------------------------------------------------------- */
+
+@supports ((mask-image: none) or (-webkit-mask-image: none)) {
+	#toplevel_page_zymarg-store-page .wp-menu-image {
+		/* Beats the inline style WordPress core prints on this element. */
+		background-image: none !important;
+	}
+
+	/* Core also prints a <br> inside .wp-menu-image. Harmless until we add a
+	 * pseudo-element beside it, when it can nudge the glyph off centre. */
+	#toplevel_page_zymarg-store-page .wp-menu-image br {
+		display: none;
+	}
+
+	/* Centre with flexbox and let core keep owning the cell size. This is
+	 * correct at any height, in the collapsed sidebar, and on the responsive
+	 * mobile menu, because nothing here depends on a fixed number. Core's own
+	 * padding on this element is zeroed so it cannot offset the centring. */
+	#toplevel_page_zymarg-store-page .wp-menu-image {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0;
+	}
+
+	#toplevel_page_zymarg-store-page .wp-menu-image::before {
+		content: "";
+		display: block;
+		width: 20px;
+		height: 20px;
+		margin: 0;
+		padding: 0;
+		/* The item is gradient at rest now, so a gradient glyph would vanish
+		 * into it. The glyph is surface colour in every state. */
+		background: var(--zym-color-surface);
+		-webkit-mask: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20d%3D%22M3%202h14l1%204H2z%22%2F%3E%3Cpath%20d%3D%22M3%207h14v10h-5v-6H8v6H3z%22%2F%3E%3C%2Fsvg%3E") no-repeat center / 20px 20px;
+		mask: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20d%3D%22M3%202h14l1%204H2z%22%2F%3E%3Cpath%20d%3D%22M3%207h14v10h-5v-6H8v6H3z%22%2F%3E%3C%2Fsvg%3E") no-repeat center / 20px 20px;
+	}
+
+	/* Core dims inactive menu icons. Ours carries brand colour, so dimming
+	 * it just makes it look broken. */
+	#toplevel_page_zymarg-store-page .wp-menu-image {
+		opacity: 1;
+	}
+}

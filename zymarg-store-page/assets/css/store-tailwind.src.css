@@ -1,0 +1,48 @@
+/*
+ * SOURCE for assets/css/store-tailwind.css -- do not enqueue this file.
+ *
+ * Rebuild after adding Tailwind utilities to any template:
+ *
+ *   bun add tailwindcss @tailwindcss/cli
+ *   bunx @tailwindcss/cli -i assets/css/store-tailwind.src.css \
+ *     -o assets/css/store-tailwind.css --minify
+ *
+ * The @theme block below is copied verbatim from templates/store.php so the
+ * compiled output matches what the browser build produced at runtime. Keep the
+ * two in step if either changes.
+ */
+@import "tailwindcss";
+
+/* Scan every surface that can emit a utility class. */
+@source "/projects/sandbox/storepage/zymarg-store-page/templates/**/*.php";
+@source "/projects/sandbox/storepage/zymarg-store-page/includes/**/*.php";
+@source "/projects/sandbox/storepage/zymarg-store-page/assets/js/**/*.js";
+
+/* Verbatim from templates/store.php so the compiled output is identical to
+   what the browser build was generating at runtime. */
+@theme {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --color-zy-primary:   #9500A5;
+  --color-zy-secondary: #BD00D1;
+  --color-zy-accent:    #FEA9FF;
+  --color-zy-dark:      #36003D;
+  --color-zy-body:      #534152;
+  --color-zy-border:    #D8BFD3;
+  --color-zy-bg:        #FAF5FB;
+  --color-zy-surface:   #FFFFFF;
+  --color-zy-alt:       #F8F9FF;
+  --color-zy-container: #EAEDFF;
+}
+@utility bg-zy-gradient {
+  background: linear-gradient(135deg, #9500A5 0%, #BD00D1 60%, #FEA9FF 130%);
+}
+@utility text-zy-gradient {
+  background: linear-gradient(135deg, #9500A5 0%, #BD00D1 60%, #FEA9FF 130%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+@utility scrollbar-hide {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}

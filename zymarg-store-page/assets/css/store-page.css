@@ -1,0 +1,1966 @@
+/* =============================================================================
+   ZYMARG Store Page — Design Tokens & Component Styles  v1.3.3
+   Added: search-banner, quick-view drawer, updated aura-view-all behavior; Phase 7 mobile chat button
+   ============================================================================= */
+
+/* ── Theme paragraph reset — scoped to our plugin only ─────────────────────────
+   Astra (and many other WordPress themes) inject p { margin-bottom: 1em } which
+   creates unwanted gaps between stacked text lines inside our components.
+   We reset margin and line-height on ALL p tags that live anywhere inside our
+   plugin's output so theme styles can never bleed in. This selector is specific
+   enough to win the cascade without using !important.
+   ─────────────────────────────────────────────────────────────────────────── */
+#sticky-header p,
+#top p,
+#products-layout-container p {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+/* ── Design tokens ──────────────────────────────────────────────────────────── */
+:root {
+  --brand:        #9500A5;
+  --brand-dark:   #36003D;
+  --brand-light:  #FEA9FF;
+  --brand-ring:   rgba(149, 0, 165, 0.15);
+  --bg:           #FAF5FB;
+  --surface:      #FFFFFF;
+  --border:       #D8BFD3;
+  --border-focus: #9500A5;
+  --text:         #36003D;
+  --text-muted:   #7a5e79;
+  --text-hint:    #a08fa0;
+  --tag-sale-bg:  rgba(149,0,165,0.10);
+  --tag-sale-fg:  #7b0090;
+  --tag-new-bg:   rgba(29,158,117,0.10);
+  --tag-new-fg:   #0a5e46;
+  --tag-low-bg:   rgba(224,75,74,0.10);
+  --tag-low-fg:   #8c2020;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   AURA STUDIO SEARCH BAR (unchanged from v1.1.5)
+   ══════════════════════════════════════════════════════════════════════════════ */
+.aura-search {
+  width: 100%;
+  max-width: 560px;
+  position: relative;
+}
+
+.aura-search__field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.aura-search__icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+  display: flex;
+}
+
+.aura-search__icon svg { width: 18px; height: 18px; stroke-width: 2; }
+
+#aura-input {
+  width: 100%;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 10px 44px 10px 46px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.18s, box-shadow 0.18s;
+  box-shadow: 0 2px 8px rgba(53,0,61,0.06);
+}
+
+#aura-input:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 4px var(--brand-ring), 0 2px 8px rgba(53,0,61,0.06);
+}
+
+#aura-input::placeholder { color: var(--text-hint); }
+
+#aura-clear {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-hint);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  transition: background 0.12s, color 0.12s;
+}
+
+#aura-clear:hover { background: var(--bg); color: var(--text); }
+#aura-clear svg   { width: 14px; height: 14px; stroke-width: 2.5; }
+
+#aura-dropdown {
+  display: none;
+  position: absolute;
+  left: 0; right: 0;
+  top: calc(100% + 8px);
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  z-index: 9999;
+  box-shadow: 0 12px 32px rgba(53,0,61,0.13), 0 2px 6px rgba(53,0,61,0.06);
+  max-height: 420px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+#aura-dropdown::-webkit-scrollbar       { width: 4px; }
+#aura-dropdown::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+.aura-cat-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-hint);
+  padding: 10px 16px 4px;
+}
+
+.aura-result-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background 0.1s;
+  text-decoration: none;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+
+.aura-result-row:hover,
+.aura-result-row.is-active { background: var(--bg); }
+
+.aura-result-thumb {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: var(--bg);
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+}
+
+.aura-result-thumb--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-hint);
+}
+
+.aura-result-thumb--placeholder svg { width: 20px; height: 20px; stroke-width: 1.5; }
+
+.aura-result-info  { flex: 1; min-width: 0; }
+
+.aura-result-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.aura-result-name mark {
+  background: none;
+  color: var(--brand);
+  font-weight: 600;
+}
+
+.aura-result-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.aura-result-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.aura-price      { font-size: 13px; font-weight: 600; color: var(--brand); }
+.aura-old-price  { font-size: 11px; color: var(--text-hint); text-decoration: line-through; }
+
+.aura-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 99px;
+}
+
+.aura-badge--sale { background: var(--tag-sale-bg); color: var(--tag-sale-fg); }
+.aura-badge--new  { background: var(--tag-new-bg);  color: var(--tag-new-fg);  }
+.aura-badge--low  { background: var(--tag-low-bg);  color: var(--tag-low-fg);  }
+.aura-badge--out  { background: #f0f0f0; color: #888; }
+
+.aura-result-row + .aura-result-row { border-top: 1px solid var(--bg); }
+
+.aura-state {
+  padding: 20px 16px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-muted);
+  background: transparent;
+}
+
+.aura-state svg {
+  width: 28px; height: 28px;
+  stroke-width: 1.5;
+  color: var(--border);
+  display: block;
+  margin: 0 auto 8px;
+}
+.aura-state .zymarg-spark__svg {
+  width: 48px; height: 48px;
+}
+
+.aura-state__cta-text {
+  margin: 12px 0 8px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.aura-state__cta-btn {
+  display: inline-block;
+  padding: 7px 18px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--brand, #9500A5);
+  border: 1.5px solid var(--brand, #9500A5);
+  border-radius: 999px;
+  text-decoration: none;
+  transition: background 0.12s, color 0.12s;
+}
+.aura-state__cta-btn:hover {
+  background: var(--brand, #9500A5);
+  color: #fff;
+}
+
+.aura-spinner {
+  display: inline-block;
+  width: 30px; height: 30px;
+  border: 2px solid var(--border);
+  border-top-color: var(--brand);
+  border-radius: 50%;
+  animation: aura-spin 0.65s linear infinite;
+  vertical-align: middle;
+  background: transparent;
+}
+
+#aura-dropdown.is-loading {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  /* Reset overflow so the browser doesn't paint a white scroll container
+     behind the spinner — overflow:hidden/auto creates a paint context that
+     makes the background visible even when set to transparent */
+  overflow: visible;
+  max-height: none;
+}
+
+#aura-dropdown.is-loading .aura-state {
+  background: transparent;
+}
+
+@keyframes aura-spin { to { transform: rotate(360deg); } }
+
+/* Loading bar shown as overlay at top of dropdown while previous results stay visible */
+.aura-loading-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 16px;
+  background: transparent;
+}
+
+.aura-dropdown-footer {
+  border-top: 1px solid var(--bg);
+  padding: 8px 16px;
+  font-size: 10px;
+  color: var(--text-hint);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.aura-dropdown-footer kbd {
+  font-family: 'Inter', monospace;
+  font-size: 9px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 5px;
+  color: var(--text-muted);
+}
+
+/* Updated: now a <button> that filters the grid instead of an <a> that navigates */
+.aura-view-all {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--brand);
+  text-align: center;
+  border-top: 1px solid var(--bg);
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+  background: none;
+  cursor: pointer;
+  transition: background 0.1s;
+  font-family: 'Inter', sans-serif;
+}
+
+.aura-view-all:hover { background: var(--bg); }
+
+.aura-error-bar {
+  display: none;
+  background: var(--tag-low-bg);
+  color: var(--tag-low-fg);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+.aura-pills {
+  display: none;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.aura-pill {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 12px;
+  border-radius: 99px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: border-color 0.12s, color 0.12s, background 0.12s;
+  font-family: 'Inter', sans-serif;
+}
+
+.aura-pill:hover {
+  border-color: var(--brand);
+  color: var(--brand);
+  background: var(--bg);
+}
+
+.aura-pill.is-active {
+  border-color: var(--brand);
+  background: var(--brand);
+  color: #fff;
+}
+
+/* Sidebar category active state */
+.zy-sidebar-cat.is-active {
+  background: var(--brand) !important;
+  box-shadow: 0 4px 14px rgba(149,0,165,0.25) !important;
+}
+.zy-sidebar-cat.is-active span {
+  color: #fff !important;
+}
+.zy-sidebar-cat.is-active img {
+  outline: 2px solid rgba(255,255,255,0.6);
+}
+
+.aura-pill--more {
+  border-style: dashed;
+  color: var(--brand);
+  border-color: var(--brand);
+  background: transparent;
+}
+
+.aura-pill--more:hover {
+  background: var(--bg);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   SEARCH BANNER — shown above the product grid while search is active  (NEW)
+   ══════════════════════════════════════════════════════════════════════════════ */
+.aura-search-banner {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 10px 16px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.aura-search-banner__text {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.aura-search-banner__text svg {
+  flex-shrink: 0;
+  color: var(--brand);
+}
+
+.aura-search-banner__text strong {
+  color: var(--text);
+}
+
+.aura-search-banner__clear {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--brand);
+  background: none;
+  border: 1px solid var(--brand-light);
+  border-radius: 8px;
+  padding: 4px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.12s;
+  font-family: 'Inter', sans-serif;
+}
+
+.aura-search-banner__clear:hover {
+  background: var(--brand-ring);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   QUICK-VIEW DRAWER  (NEW)
+   Slide-in panel from the right; user stays on the store page
+   ══════════════════════════════════════════════════════════════════════════════ */
+.zy-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 6, 30, 0.55);
+  z-index: 10000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.zy-drawer-overlay.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ── Centered Modal ─────────────────────────────────────────────────────── */
+.zy-drawer {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -48%) scale(0.96);
+  width: min(900px, 94vw);
+  max-height: 90vh;
+  background: #fff;
+  z-index: 10001;
+  border-radius: 24px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform 0.32s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.28s ease;
+  box-shadow:
+    0 32px 80px rgba(104, 51, 234, 0.18),
+    0 8px 24px rgba(0, 0, 0, 0.10);
+}
+
+.zy-drawer.is-open {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ── Inner layout: image left, info right ───────────────────────────────── */
+.zy-drawer__inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 520px;
+  max-height: 90vh;
+}
+
+/* ── Close button ───────────────────────────────────────────────────────── */
+.zy-drawer__close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #131b2e;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+  transition: background 0.15s, transform 0.15s;
+}
+
+.zy-drawer__close:hover {
+  background: #fff;
+  transform: scale(1.08);
+}
+
+/* ── Image Slider arrows and dots ───────────────────────────────────────── */
+.zy-slider__arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.88);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #131b2e;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+  transition: background 0.15s, transform 0.15s;
+}
+
+.zy-slider__arrow:hover {
+  background: #fff;
+  transform: translateY(-50%) scale(1.08);
+}
+
+.zy-slider__arrow--prev { left: 12px; }
+.zy-slider__arrow--next { right: 12px; }
+
+.zy-slider__dots {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  z-index: 5;
+}
+
+.zy-slider__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255,255,255,0.5);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  padding: 0;
+}
+
+.zy-slider__dot.is-active {
+  background: #fff;
+  transform: scale(1.3);
+}
+
+.zy-drawer__img-wrap {
+  position: relative;
+  background: #f4f0fb;
+  overflow: hidden;
+  min-height: 400px;
+}
+
+.zy-slider {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.zy-slider__slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+
+.zy-slider__slide.is-active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.zy-drawer__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.zy-drawer__discount-badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 99px;
+  letter-spacing: 0.04em;
+}
+
+/* ── Info side ──────────────────────────────────────────────────────────── */
+.zy-drawer__info {
+  padding: 40px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #e8e3f0 transparent;
+}
+
+.zy-drawer__info::-webkit-scrollbar       { width: 4px; }
+.zy-drawer__info::-webkit-scrollbar-thumb { background: #e8e3f0; border-radius: 4px; }
+
+.zy-drawer__cat {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #6833EA;
+  margin: 0;
+}
+
+.zy-drawer__name {
+  font-size: 22px;
+  font-weight: 700;
+  color: #131b2e;
+  line-height: 1.3;
+  margin: 0;
+}
+
+.zy-drawer__stars {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.zy-drawer__rating-val {
+  margin-left: 6px;
+  font-size: 12px;
+  color: #534152;
+}
+
+.zy-drawer__pricing {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 14px 0;
+  border-top: 1px solid #f0ebfa;
+  border-bottom: 1px solid #f0ebfa;
+}
+
+.zy-drawer__price {
+  font-size: 26px;
+  font-weight: 800;
+  color: #131b2e;
+}
+
+.zy-drawer__old-price {
+  font-size: 15px;
+  color: #a89db0;
+  text-decoration: line-through;
+}
+
+.zy-drawer__stock {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.zy-drawer__stock--in  { color: #0a5e46; }
+.zy-drawer__stock--out { color: #8c2020; }
+
+.zy-drawer__desc {
+  font-size: 13px;
+  line-height: 1.7;
+  color: #534152;
+  margin: 0;
+  flex: 1;
+}
+
+.zy-drawer__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.zy-drawer__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 13px 20px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.15s, transform 0.1s, background 0.15s;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+  border: none;
+  letter-spacing: 0.01em;
+}
+
+.zy-drawer__btn:active { transform: scale(0.98); }
+
+.zy-drawer__btn--primary {
+  background: linear-gradient(135deg, #6833EA, #8558f5);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(104, 51, 234, 0.28);
+}
+
+.zy-drawer__btn--primary:hover { opacity: 0.92; }
+
+.zy-drawer__btn--secondary {
+  background: #f4f0fb;
+  color: #534152;
+  border: 1px solid #e8e3f0;
+}
+
+.zy-drawer__btn--secondary:hover {
+  background: #ede8f7;
+  color: #131b2e;
+}
+
+.zy-drawer__loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 300px;
+  font-size: 14px;
+  color: #534152;
+}
+
+/* ── Mobile: stack vertically ───────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .zy-drawer {
+    width: 100vw;
+    max-height: 92vh;
+    bottom: 0;
+    top: auto;
+    left: 0;
+    right: 0;
+    transform: translateY(100%);
+    border-radius: 24px 24px 0 0;
+    opacity: 1;
+  }
+
+  .zy-drawer.is-open {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .zy-drawer__inner {
+    grid-template-columns: 1fr;
+    max-height: 92vh;
+    overflow-y: auto;
+  }
+
+  .zy-drawer__img-wrap {
+    min-height: 260px;
+    height: 260px;
+  }
+
+  .zy-drawer__info {
+    padding: 24px 20px 32px;
+  }
+}
+
+/* ── Scrollbar hide utility ──────────────────────────────────────────────────── */
+.scrollbar-hide { scrollbar-width: none; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+
+/* ── Sidebar category scrollable drawer ──────────────────────────────────── */
+.sidebar-cats-drawer {
+  margin-top: 0.75rem;
+  border: 1px solid var(--zy-border, #e5e7eb);
+  border-radius: 1rem;
+  background: var(--zy-surface, #ffffff);
+  box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.07);
+  overflow: hidden;
+  /* Toggle-driven state (collapsed by default, revealed by JS) */
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.25s ease;
+}
+
+.sidebar-cats-drawer.is-open {
+  max-height: 540px; /* 50% bigger than original 360px */
+  opacity: 1;
+}
+
+/* Always-visible variant — no toggle needed */
+.sidebar-cats-drawer--always-open {
+  max-height: 540px; /* 50% bigger than original 360px */
+  opacity: 1;
+}
+
+.sidebar-cats-drawer__list {
+  padding: 0.75rem;
+  max-height: 540px; /* 50% bigger than original 360px */
+  overflow-y: auto;
+  /* Custom thin scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: var(--zy-border, #d1d5db) transparent;
+}
+
+.sidebar-cats-drawer__list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar-cats-drawer__list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-cats-drawer__list::-webkit-scrollbar-thumb {
+  background-color: var(--zy-border, #d1d5db);
+  border-radius: 99px;
+}
+
+/* ==========================================================================
+   ZYMARG Discovery Spark™ — Design System CSS
+   Do NOT modify paths, tokens, keyframes, offsets, or timings.
+   ========================================================================== */
+
+.zymarg-spark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+
+  /* Brand Identity Tokens */
+  --zds-spark-purple: #6833EA;
+  --zds-spark-gold: #FFD166;
+  --zds-spark-offset: 0.7px;
+}
+
+/* Design System Size Matrix Modifiers */
+.zymarg-spark--sm  { --zds-spark-offset: 0.55px; width: 20px; height: 20px; }
+.zymarg-spark--md  { --zds-spark-offset: 0.70px; width: 24px; height: 24px; }
+.zymarg-spark--lg  { --zds-spark-offset: 0.90px; width: 32px; height: 32px; }
+.zymarg-spark--xl  { --zds-spark-offset: 1.20px; width: 48px; height: 48px; }
+.zymarg-spark--xxl { --zds-spark-offset: 1.50px; width: 60px; height: 60px; }
+
+.zymarg-spark__svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Sequential pulse, even thirds: accent → companion → hero */
+@keyframes zymarg-spark-lens--accent {
+  0%, 0%      { opacity: 0;    transform: scale(0.90); filter: drop-shadow(0 0 0px rgba(104,51,234,0)); }
+  8.3%, 25%   { opacity: 0.95; transform: scale(1.03); filter: drop-shadow(0 0 1.5px rgba(104,51,234,0.25)); }
+  33.3%, 100% { opacity: 0;    transform: scale(0.90); filter: drop-shadow(0 0 0px rgba(104,51,234,0)); }
+}
+
+@keyframes zymarg-spark-lens--companion {
+  0%, 33.3%    { opacity: 0;    transform: scale(0.90); filter: drop-shadow(0 0 0px rgba(104,51,234,0)); }
+  41.6%, 58.3% { opacity: 0.95; transform: scale(1.03); filter: drop-shadow(0 0 1.5px rgba(104,51,234,0.25)); }
+  66.6%, 100%  { opacity: 0;    transform: scale(0.90); filter: drop-shadow(0 0 0px rgba(104,51,234,0)); }
+}
+
+@keyframes zymarg-spark-lens--hero {
+  0%, 66.6%   { opacity: 0;    transform: scale(0.90); filter: drop-shadow(0 0 0px rgba(104,51,234,0)); }
+  75%, 91.6%  { opacity: 0.95; transform: scale(1.03); filter: drop-shadow(0 0 1.5px rgba(104,51,234,0.25)); }
+  100%, 100%  { opacity: 0;    transform: scale(0.90); filter: drop-shadow(0 0 0px rgba(104,51,234,0)); }
+}
+
+.zymarg-spark-item--purple {
+  fill: var(--zds-spark-purple);
+  transform: translate(var(--zds-spark-offset), var(--zds-spark-offset));
+}
+
+.zymarg-spark-item--gold {
+  fill: var(--zds-spark-gold);
+  animation: none !important;
+}
+
+/* Origins centered on each shape's own geometric center (in-place pulse) */
+.zymarg-spark-group--accent .zymarg-spark-item--purple {
+  animation: zymarg-spark-lens--accent 0.20s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+  transform-origin: 9.68px 7.8px;
+}
+.zymarg-spark-group--companion .zymarg-spark-item--purple {
+  animation: zymarg-spark-lens--companion 0.40s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+  transform-origin: 8.3px 15.04px;
+}
+.zymarg-spark-group--hero .zymarg-spark-item--purple {
+  animation: zymarg-spark-lens--hero 0.40s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+  transform-origin: 13.16px 11.9px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zymarg-spark-item--purple { animation: none !important; opacity: 0.7; }
+}
+
+/* ==========================================================================
+   ZYMARG Infinite Scroll Loader — Frosted Glass Pill
+   ========================================================================== */
+
+/* Loader area is just a spacer in the DOM flow — the pill itself floats */
+.zy-infinite-loader-area {
+  min-height: 60px; /* reserves space so sentinel stays below products */
+  pointer-events: none;
+}
+
+.zy-infinite-loader {
+  /* Float fixed at bottom-center of the viewport */
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(12px);
+  z-index: 9999;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 11px 22px;
+  overflow: hidden;
+  white-space: nowrap;
+
+  color: #131b2e;
+  background: linear-gradient(180deg, rgba(255,255,255,0.88), rgba(255,255,255,0.76));
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  border: 1px solid rgba(104, 51, 234, 0.10);
+  border-radius: 999px;
+
+  box-shadow:
+    0 12px 32px rgba(104, 51, 234, 0.08),
+    0 4px 12px rgba(0, 0, 0, 0.03),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0;
+
+  opacity: 0;
+  visibility: hidden;
+  /* keep translateX(-50%) always so centering stays intact */
+  transform: translateX(-50%) translateY(12px);
+
+  transition:
+    opacity 400ms ease,
+    visibility 400ms ease,
+    transform 400ms ease;
+}
+
+.zy-infinite-loader.is-loading {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Finished state */
+.zy-infinite-loader.is-finished {
+  color: var(--zy-secondary, #582A9F);
+  background: linear-gradient(180deg, rgba(255,255,255,0.88), rgba(255,255,255,0.76));
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(104, 51, 234, 0.12);
+  box-shadow:
+    0 12px 32px rgba(104, 51, 234, 0.08),
+    0 4px 12px rgba(0, 0, 0, 0.03),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+  animation: none;
+}
+
+/* Animated dots */
+.zy-loader-dots {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.zy-loader-dots span {
+  width: 7px;
+  height: 7px;
+  background: #6833EA;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(104, 51, 234, 0.28);
+  animation: zy-dot-pulse 1.4s infinite ease-in-out;
+}
+
+.zy-loader-dots span:nth-child(2) { animation-delay: 180ms; }
+.zy-loader-dots span:nth-child(3) { animation-delay: 360ms; }
+
+/* Wave label animation */
+.zy-loader-label {
+  display: inline-block;
+  white-space: nowrap;
+  animation: zy-loader-wave 1.9s ease-in-out infinite;
+}
+
+/* Finished checkmark icon */
+.zy-finished-icon {
+  display: grid;
+  width: 21px;
+  height: 21px;
+  place-items: center;
+  color: #fff;
+  background: var(--zy-primary, #6833EA);
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+/* Text dots ". . ." synced to the same 1.4s pulse rhythm */
+.zy-text-dots {
+  display: inline-flex;
+  gap: 3px;
+  margin-left: 1px;
+}
+
+.zy-text-dots span {
+  opacity: 0.45;
+  animation: zy-dot-pulse 1.4s infinite ease-in-out;
+}
+
+.zy-text-dots span:nth-child(2) { animation-delay: 180ms; }
+.zy-text-dots span:nth-child(3) { animation-delay: 360ms; }
+
+/* Keyframes */
+@keyframes zy-dot-pulse {
+  0%, 80%, 100% { transform: scale(0.75); opacity: 0.45; }
+  40%            { transform: scale(1);    opacity: 1; }
+}
+
+@keyframes zy-loader-wave {
+  0%   { transform: translateY(0);    opacity: 0.82; }
+  25%  { transform: translateY(-1px); opacity: 1; }
+  50%  { transform: translateY(-2px); opacity: 1; }
+  75%  { transform: translateY(-1px); opacity: 1; }
+  100% { transform: translateY(0);    opacity: 0.82; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zy-infinite-loader,
+  .zy-loader-dots span,
+  .zy-loader-label {
+    animation: none !important;
+  }
+  .zy-infinite-loader.is-loading {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Mobile adjustments */
+@media (max-width: 640px) {
+  .zy-infinite-loader {
+    bottom: 70px;
+    padding: 10px 18px;
+    font-size: 12px;
+    gap: 10px;
+  }
+  .zy-loader-dots span {
+    width: 6px;
+    height: 6px;
+  }
+}
+
+/* Safe zone for mobile browsers with bottom nav bars */
+@supports (bottom: env(safe-area-inset-bottom)) {
+  .zy-infinite-loader {
+    bottom: calc(24px + env(safe-area-inset-bottom));
+  }
+  @media (max-width: 640px) {
+    .zy-infinite-loader {
+      bottom: 70px;
+    }
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   MOBILE SEARCH SHEET  v1.1  —  drops from top, exact AURA styling
+   Active only on mobile (< 640 px). JS also guards openSheet() on width.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Backdrop ─────────────────────────────────────────────────────────── */
+#zsp-mobile-search-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(54, 0, 61, 0.45);
+  z-index: 10010;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.24s ease;
+}
+#zsp-mobile-search-backdrop.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ── Sheet panel — slides DOWN from the top ───────────────────────────── */
+#zsp-mobile-search-sheet {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10011;
+  background: none;
+  padding: 0;
+  box-shadow: none;
+  transform: translateY(-110%);
+  transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+}
+#zsp-mobile-search-sheet.is-open {
+  transform: translateY(0);
+}
+
+/* ── Search wrap ──────────────────────────────────────────────────────── */
+.zsp-sheet__search-wrap {
+  position: relative;
+  padding: 0 8px;
+}
+
+/* ── Field ────────────────────────────────────────────────────────────── */
+.zsp-sheet__field {
+  display: flex;
+  align-items: center;
+  background: var(--surface, #fff);
+  border: 1.5px solid var(--border, #D8BFD3);
+  border-radius: 14px;
+  padding: 0 12px 0 14px;
+  height: 50px;
+  transition: border-color .15s ease, box-shadow .15s ease;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+}
+.zsp-sheet__field:focus-within {
+  border-color: var(--border-focus, #9500A5);
+  box-shadow: 0 0 0 4px var(--brand-ring, rgba(149,0,165,0.15));
+}
+
+/* ── Search icon ──────────────────────────────────────────────────────── */
+.zsp-sheet__field .aura-search__icon {
+  position: static;
+  transform: none;
+  top: auto;
+  left: auto;
+  width: 18px;
+  height: 18px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  margin-right: 10px;
+  display: flex;
+  pointer-events: none;
+}
+.zsp-sheet__field .aura-search__icon svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2;
+}
+
+/* ── Input ────────────────────────────────────────────────────────────── */
+.zsp-sheet__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  font-size: max(15px, 16px);
+  font-weight: 400;
+  font-family: 'Inter', system-ui, sans-serif;
+  line-height: 1.4;
+  height: 100%;
+  color: var(--text, #36003D);
+  padding: 0;
+  box-sizing: border-box;
+}
+.zsp-sheet__input::placeholder { color: var(--text-hint, #a08fa0); opacity: 1; }
+.zsp-sheet__input::-webkit-search-decoration,
+.zsp-sheet__input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
+
+/* High-specificity override — defeat Astra / theme CSS on input[type=search] */
+#zsp-mobile-search-sheet .zsp-sheet__field .zsp-sheet__input,
+input.zsp-sheet__input[type="search"] {
+  font-family:    'Inter', system-ui, sans-serif !important;
+  font-size:      max(15px, 16px)               !important;
+  font-weight:    400                            !important;
+  line-height:    1.4                            !important;
+  padding-top:    0                              !important;
+  padding-bottom: 0                              !important;
+  padding-left:   0                              !important;
+  padding-right:  0                              !important;
+  color:          var(--text, #36003D)           !important;
+  background:     transparent                    !important;
+  border:         0                              !important;
+  outline:        none                           !important;
+  box-shadow:     none                           !important;
+  margin:         0                              !important;
+  min-height:     0                              !important;
+  height:         100%                           !important;
+  -webkit-appearance: none                       !important;
+  appearance:     none                           !important;
+}
+
+/* ── Clear button ─────────────────────────────────────────────────────── */
+.zsp-sheet__clear {
+  position: static;
+  transform: none;
+  top: auto;
+  right: auto;
+  background: var(--bg, #FAF5FB);
+  border: none;
+  cursor: pointer;
+  color: var(--text-hint, #a08fa0);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: background 0.12s, color 0.12s;
+}
+.zsp-sheet__clear:hover { background: var(--bg, #FAF5FB); color: var(--text, #36003D); }
+.zsp-sheet__clear svg   { width: 14px; height: 14px; stroke-width: 2.5; }
+
+/* ── Dropdown ─────────────────────────────────────────────────────────── */
+.zsp-sheet__dropdown {
+  display: none;
+  position: absolute;
+  left: 8px; right: 8px;
+  top: calc(100% + 0px);
+  background: var(--surface, #fff);
+  border: 1.5px solid var(--border, #D8BFD3);
+  border-radius: 14px;
+  overflow: hidden;
+  z-index: 1;
+  box-shadow: 0 12px 32px rgba(53,0,61,0.13), 0 2px 6px rgba(53,0,61,0.06);
+  max-height: 75vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border, #D8BFD3) transparent;
+}
+.zsp-sheet__dropdown::-webkit-scrollbar       { width: 4px; }
+.zsp-sheet__dropdown::-webkit-scrollbar-thumb { background: var(--border, #D8BFD3); border-radius: 4px; }
+
+.zsp-progress-line {
+  height: 2px;
+  width: 100%;
+  background: var(--border, #D8BFD3);
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+.zsp-progress-line::after {
+  content: '';
+  position: absolute;
+  left: -40%;
+  top: 0;
+  height: 100%;
+  width: 40%;
+  background: var(--brand, #9500A5);
+  border-radius: 2px;
+  animation: zsp-progress 0.9s ease-in-out infinite;
+}
+@keyframes zsp-progress {
+  0%   { left: -40%; }
+  100% { left: 100%; }
+}
+
+/* ── Recent searches ──────────────────────────────────────────────────── */
+.zsp-recent { padding: 0; }
+
+.zsp-recent__row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px 4px;
+}
+
+.zsp-recent__icon {
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+  background-color: var(--brand, #9500A5);
+  opacity: 0.75;
+  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='9'/><path d='M12 7v5l3 2'/></svg>") no-repeat center / contain;
+          mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='9'/><path d='M12 7v5l3 2'/></svg>") no-repeat center / contain;
+}
+
+.zsp-recent__label {
+  font-family: 'Inter', sans-serif;
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted, #7a5e79);
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.zsp-recent__clear {
+  font-size: 10px;
+  color: var(--text-muted, #7a5e79);
+  text-decoration: none;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  opacity: 0.7;
+  margin-left: auto;
+}
+.zsp-recent__clear:hover { color: var(--brand, #9500A5); opacity: 1; }
+
+.zsp-recent__pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 4px 16px 12px;
+  max-height: calc(2 * (26px + 6px));
+  overflow: hidden;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.zsp-recent__pills::-webkit-scrollbar { display: none; }
+
+.zsp-recent__pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 12px;
+  background: var(--bg, #FAF5FB);
+  color: var(--brand, #9500A5);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+  white-space: nowrap;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: background .12s ease, color .12s ease, border-color .12s ease;
+  line-height: 1;
+  flex-shrink: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+}
+.zsp-recent__pill:hover {
+  background: var(--brand, #9500A5);
+  color: #fff;
+  border-color: var(--brand, #9500A5);
+}
+.zsp-recent__pill:focus-visible {
+  box-shadow: 0 0 0 3px var(--brand-ring, rgba(149,0,165,0.15));
+}
+
+/* ── State messages ───────────────────────────────────────────────────── */
+.zsp-sheet-state {
+  padding: 20px 16px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-muted, #7a5e79);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.zsp-sheet-spinner {
+  display: inline-block;
+  width: 16px; height: 16px;
+  border: 2px solid var(--border, #D8BFD3);
+  border-top-color: var(--brand, #9500A5);
+  border-radius: 50%;
+  animation: zsp-spin 0.65s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes zsp-spin { to { transform: rotate(360deg); } }
+
+/* ── Result rows — identical to .aura-result-row ─────────────────────── */
+.zsp-result-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background 0.1s;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+.zsp-result-row:hover,
+.zsp-result-row.is-active { background: var(--bg, #FAF5FB); }
+.zsp-result-row + .zsp-result-row { border-top: 1px solid var(--bg, #FAF5FB); }
+
+.zsp-result-thumb {
+  width: 42px; height: 42px;
+  border-radius: 8px;
+  object-fit: cover;
+  background: var(--bg, #FAF5FB);
+  flex-shrink: 0;
+  border: 1px solid var(--border, #D8BFD3);
+}
+.zsp-result-thumb--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-hint, #a08fa0);
+}
+
+.zsp-result-info  { flex: 1; min-width: 0; }
+.zsp-result-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text, #36003D);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.zsp-result-name mark {
+  background: none;
+  color: var(--brand, #9500A5);
+  font-weight: 600;
+}
+.zsp-result-cat {
+  font-size: 11px;
+  color: var(--text-muted, #7a5e79);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.zsp-result-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.zsp-result-price     { font-size: 13px; font-weight: 600; color: var(--brand, #9500A5); }
+.zsp-result-old-price { font-size: 11px; color: var(--text-hint, #a08fa0); text-decoration: line-through; }
+
+/* ── "See all results" — identical to .aura-view-all ─────────────────── */
+.zsp-sheet-view-all {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--brand, #9500A5);
+  text-align: center;
+  border-top: 1px solid var(--bg, #FAF5FB);
+  border-left: none; border-right: none; border-bottom: none;
+  background: none;
+  cursor: pointer;
+  transition: background 0.1s;
+  font-family: 'Inter', sans-serif;
+}
+.zsp-sheet-view-all:hover { background: var(--bg, #FAF5FB); }
+
+/* ── Category pills inside the sheet ─────────────────────────────────── */
+.zsp-sheet__pills {
+  margin-top: 10px;
+  /* aura-pills already provides flex-wrap, gap, display:none base */
+}
+
+/* ── Category group labels and badges inside the sheet dropdown ───────── */
+/* .aura-cat-label and .aura-badge are global — no extra rules needed;    */
+/* the sheet dropdown inherits them correctly.                             */
+
+/* ── Screen-reader-only status element ───────────────────────────────── */
+.zsp-sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Desktop: hide everything — sticky AURA bar is used instead ───────── */
+@media (min-width: 640px) {
+  #zsp-mobile-search-sheet,
+  #zsp-mobile-search-backdrop { display: none !important; }
+}
+
+/* =============================================================================
+   PHASE 7 — Mobile Chat Button Polish  v1.3.3 (chat popup removed)
+============================================================================= */
+
+/* ── Chat Button Styles ──────────────────────────────────────────────────────
+   Header [data-chat-btn] is visible on all screen sizes.
+   - Mobile (<sm): icon-only square button.
+   - sm+: text label only.
+============================================================================= */
+.zy-header-chat-btn {
+  /* Mobile: compact square icon button */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem; /* 8px — same visual weight as the Follow button on mobile */
+}
+
+.zy-header-chat-btn__icon {
+  display: block;
+  width: 1.25rem;  /* 20px */
+  height: 1.25rem;
+  flex-shrink: 0;
+}
+
+.zy-header-chat-btn__label {
+  display: none; /* hidden on mobile */
+}
+
+@media (min-width: 640px) { /* sm breakpoint */
+  .zy-header-chat-btn {
+    padding: 0.5rem 1rem; /* px-4 py-2 — matches original */
+    font-size: 0.875rem;  /* text-sm */
+    font-weight: 600;     /* font-semibold */
+  }
+
+  .zy-header-chat-btn__icon {
+    display: none; /* hide icon on sm+, show label instead */
+  }
+
+  .zy-header-chat-btn__label {
+    display: inline; /* show text label on sm+ */
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   PREMIUM SECTIONS — real layout, not Tailwind                     v1.18.3
+
+   The Flash Sale and Featured Items sections used to take their width and
+   padding from Tailwind utilities (mx-auto max-w-7xl px-4 pt-12 ...). This
+   page loads Tailwind's browser build, which is a JIT compiler: it downloads,
+   scans the DOM, and only then generates CSS. Until that finishes, max-w-7xl
+   does not exist, so the section rendered full-bleed and the card grid
+   stretched across the entire page before snapping into place.
+
+   On a second visit the compiler is cached and applies almost immediately,
+   which is why the fault looked intermittent and "fixed itself after a
+   reload". This sheet is plain CSS enqueued on wp_enqueue_scripts, so it is
+   in the <head> and in force before the first pixel.
+
+   The Tailwind classes are still on the markup and are harmless: they resolve
+   to the same values once the compiler catches up.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.zsp-premium {
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 80rem;      /* Tailwind max-w-7xl */
+	padding-left: 1rem;    /* px-4 */
+	padding-right: 1rem;
+	padding-top: 3rem;     /* pt-12 */
+	box-sizing: border-box;
+}
+
+@media (min-width: 640px) {
+	.zsp-premium {
+		padding-left: 1.5rem;  /* sm:px-6 */
+		padding-right: 1.5rem;
+	}
+}
+
+@media (min-width: 1024px) {
+	.zsp-premium {
+		padding-left: 2rem;    /* lg:px-8 */
+		padding-right: 2rem;
+	}
+}
+
+.zsp-premium__head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 0.75rem;
+}
+
+/*
+ * The grid itself belongs to the Product Grid engine. Only the top margin is
+ * set here -- anything more would fight the engine's own stylesheet and go
+ * stale the moment it ships a new layout.
+ */
+.zsp-premium-grid {
+	margin-top: 1.5rem;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   PRODUCT GRID — FIRST-PAINT SAFETY NET                            v1.18.4
+
+   Every rule below is wrapped in :where(), which has ZERO specificity. The
+   moment the Product Grid engine's frontend.css and the card template's own
+   style.css load, they override all of this without needing !important or a
+   heavier selector. Nothing here competes with them.
+
+   Why it exists. The engine registers its stylesheets on wp_enqueue_scripts
+   but enqueues them from inside its render routine, and this plugin renders
+   from inside a template — after wp_head() has been sent. 1.18.2 enqueues
+   them early to avoid that, but if anything prevents that from taking effect
+   the consequence is severe rather than cosmetic: with no grid rules a card
+   becomes a full-width block, and with no image rules its <img> renders at
+   natural resolution. One product then fills the whole screen until the real
+   CSS arrives.
+
+   A fallback that merely looks approximately right is worth far more here
+   than a correct stylesheet that arrives late, so these are the two things
+   that actually cause the damage: the grid, and the image box.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+:where(.zymarg-wcpg__grid) {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 8px;
+}
+
+@media (min-width: 768px) {
+	:where(.zymarg-wcpg__grid--cols-3) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+	:where(.zymarg-wcpg__grid--cols-4),
+	:where(.zymarg-wcpg__grid--cols-5),
+	:where(.zymarg-wcpg__grid--cols-6) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1024px) {
+	:where(.zymarg-wcpg__grid--cols-1) { grid-template-columns: minmax(0, 1fr); }
+	:where(.zymarg-wcpg__grid--cols-2) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	:where(.zymarg-wcpg__grid--cols-3) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+	:where(.zymarg-wcpg__grid--cols-4) { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+	:where(.zymarg-wcpg__grid--cols-5) { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+	:where(.zymarg-wcpg__grid--cols-6) { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+}
+
+/*
+ * The image box. This is what stops a single product filling the viewport:
+ * without it the <img> is laid out at its natural pixel size, which on a
+ * 2000px product photo is exactly the reported symptom.
+ */
+:where(.zymarg-zc__image-wrap) {
+	position: relative;
+	aspect-ratio: 1 / 1;
+	overflow: hidden;
+}
+
+/*
+ * The image link is an <a>, which is display:inline by default. Without
+ * forcing it to a filling block the image below has no definite parent height
+ * to resolve height:100% against, so it escapes to its natural size -- the
+ * single-giant-card symptom. The card's own CSS sets this; the safety net has
+ * to as well or it only half-works.
+ */
+:where(.zymarg-zc__image-link) {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+:where(.zymarg-zc__image) {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+
+/* Belt and braces for any card template, present or future. */
+:where(.zymarg-wcpg__card) img {
+	max-width: 100%;
+	height: auto;
+}
+
+
+/* =============================================================================
+   ZYMARG Hero Store Card — v2 redesign
+   Card moved inside the banner (bottom-anchored, capped to banner height),
+   glass/frosted style (locked "Style A": blur + soft border + inner
+   highlight), Online/Offline status, Reviews + Products stats added.
+   Layout confirmed via visual mockup review:
+     - Desktop (>=1024px): single row, right-aligned stats+actions cluster.
+     - Tablet (640-1023px): 3 columns — logo+identity (max width) | stats | actions.
+     - Mobile (<640px): 2 rows — identity row, then stats+actions row
+       (tightened vertical gap between the two rows).
+   Follow / Chat / Share button colors and behavior are UNCHANGED from the
+   original .flex.shrink-0 button markup — only position/sizing changed.
+   ============================================================================= */
+.zsp-hc-wrap{
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 10px;
+  z-index: 2;
+}
+@media (min-width: 640px) { .zsp-hc-wrap { bottom: 14px; } }
+@media (min-width: 1024px) { .zsp-hc-wrap { bottom: 18px; } }
+
+.zsp-hc-inner{
+  margin: 0 auto;
+  max-width: 80rem; /* matches max-w-7xl used by the rest of the page */
+  padding: 0 1rem;
+}
+@media (min-width: 640px) { .zsp-hc-inner { padding: 0 1.5rem; } }
+@media (min-width: 1024px) { .zsp-hc-inner { padding: 0 2rem; } }
+
+.zsp-hc-card{
+  border-radius: 16px;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, .4);
+  padding: 10px 12px;
+  max-height: 100%;
+  overflow: hidden;
+  background: rgba(255, 255, 255, .16);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, .35);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .45), 0 10px 30px rgba(0, 0, 0, .28);
+}
+@media (min-width: 640px) { .zsp-hc-card { padding: 14px; border-radius: 18px; } }
+@media (min-width: 1024px) { .zsp-hc-card { padding: 16px 24px; border-radius: 20px; } }
+
+.zsp-hc-row{ display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+.zsp-hc-toprow{ display: flex; align-items: flex-start; gap: 9px; width: 100%; }
+
+.zsp-hc-logo{
+  position: relative; /* REQUIRED: store-page.js injects an absolutely
+    positioned <img> (top:0;left:0) into this element when Dokan's async
+    store API returns a gravatar for a store that started as a letter
+    avatar — without a positioned ancestor here, that image would escape
+    the logo box entirely instead of filling it. */
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #9500A5, #BD00D1, #FEA9FF);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, .5);
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, .35);
+}
+.zsp-hc-logo img{ width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.zsp-hc-identity{ min-width: 0; flex: 1; }
+
+.zsp-hc-name{
+  font-weight: 800;
+  font-size: 13px;
+  line-height: 1.18;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+
+.zsp-hc-status{
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 600;
+  margin-top: 3px;
+  opacity: .95;
+}
+.zsp-hc-status-dot{
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, .25);
+}
+.zsp-hc-status.is-online .zsp-hc-status-dot{ background: #3ddc7a; }
+.zsp-hc-status.is-offline .zsp-hc-status-dot{ background: #b7b0bd; }
+
+/* Stats + actions share one "slot" that JS relocates to different DOM
+   positions per breakpoint is NOT used here — the same markup order works
+   at every breakpoint via pure CSS (mobile/desktop: stats+actions stay
+   together as a 2nd row/right cluster; tablet: this slot becomes its own
+   flex row placed after the identity column, so stats render before
+   actions automatically because the actions div comes after the stats div
+   in the markup). */
+.zsp-hc-stats-slot{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 4px;
+  flex-wrap: nowrap;
+}
+
+.zsp-hc-stats{ display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; flex-shrink: 1; min-width: 0; }
+.zsp-hc-stat{ text-align: center; line-height: 1.05; flex-shrink: 0; }
+.zsp-hc-stat b{ display: block; font-size: 11px; font-weight: 800; }
+.zsp-hc-stat span{ display: block; font-size: 7px; font-weight: 600; text-transform: uppercase; letter-spacing: .02em; opacity: .85; margin-top: 1px; white-space: nowrap; }
+
+.zsp-hc-actions{ display: flex; align-items: center; gap: 5px; flex-shrink: 0; margin-left: auto; }
+
+/* Buttons — SAME colors/behavior as the plugin's existing Follow/Chat/Share
+   buttons (bg-zy-gradient primary, white+border secondary), only size and
+   padding tuned per breakpoint for the new card layout. */
+.zsp-hc-btn-follow{
+  border-radius: 9px;
+  font-weight: 700;
+  white-space: nowrap;
+  background: linear-gradient(135deg, #9500A5 0%, #BD00D1 60%, #FEA9FF 130%);
+  color: #fff;
+  border: none;
+  text-shadow: none;
+  padding: 6px 11px;
+  font-size: 10.5px;
+  cursor: pointer;
+  transition: opacity .3s ease-in-out, transform .3s ease-in-out, box-shadow .3s ease-in-out;
+}
+.zsp-hc-btn-follow:hover{ opacity: .9; }
+.zsp-hc-btn-follow.is-following{
+  background: #fff;
+  color: #9500A5;
+  border: 1px solid #9500A5;
+  text-shadow: none;
+}
+.zsp-hc-btn-chat{
+  border-radius: 9px;
+  font-weight: 700;
+  white-space: nowrap;
+  background: #fff;
+  color: #36003D;
+  border: 1px solid #D8BFD3;
+  text-shadow: none;
+  padding: 6px 10px;
+  font-size: 10.5px;
+  cursor: pointer;
+  transition: background .3s ease-in-out, transform .3s ease-in-out, box-shadow .3s ease-in-out;
+}
+.zsp-hc-btn-chat:hover{ background: #EAEDFF; }
+.zsp-hc-btn-share{
+  border-radius: 9px;
+  background: #fff;
+  color: #36003D;
+  border: 1px solid #D8BFD3;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: background .3s ease-in-out, transform .3s ease-in-out, box-shadow .3s ease-in-out;
+}
+.zsp-hc-btn-share:hover{ background: #EAEDFF; }
+.zsp-hc-btn-share svg{ width: 13px; height: 13px; }
+
+/* ================= TABLET (>=640px): 3 columns —
+   logo+identity (max width) | stats | actions ================= */
+@media (min-width: 640px) {
+  .zsp-hc-row{ flex-wrap: nowrap; align-items: center; gap: 6px; }
+
+  /* Column 1+2 (logo + name/status) grows to fill all available row
+     width, giving it maximum width as confirmed. */
+  .zsp-hc-toprow{ width: auto; align-items: center; flex: 1 1 auto; min-width: 0; }
+  .zsp-hc-logo{ width: 64px; height: 64px; font-size: 22px; }
+  .zsp-hc-name{ font-size: 15px; }
+  .zsp-hc-status{ font-size: 11px; margin-top: 4px; }
+  .zsp-hc-identity{ display: flex; flex-direction: column; justify-content: center; gap: 2px; padding: 2px 0; min-width: 0; flex: 1; }
+
+  .zsp-hc-stats-slot{ width: auto; margin-top: 0; flex: 0 0 auto; }
+  .zsp-hc-stats{ gap: 12px; }
+  .zsp-hc-stat b{ font-size: 13px; }
+  .zsp-hc-stat span{ font-size: 9px; }
+
+  .zsp-hc-actions{ margin-left: 14px; gap: 8px; }
+  .zsp-hc-btn-follow{ padding: 8px 18px; font-size: 12.5px; }
+  .zsp-hc-btn-chat{ padding: 8px 16px; font-size: 12.5px; }
+  .zsp-hc-btn-share{ width: 34px; height: 34px; }
+  .zsp-hc-btn-share svg{ width: 16px; height: 16px; }
+}
+
+/* ================= DESKTOP (>=1024px): single row,
+   right-aligned stats+actions cluster ================= */
+@media (min-width: 1024px) {
+  .zsp-hc-logo{ width: 60px; height: 60px; }
+  .zsp-hc-name{ font-size: 19px; -webkit-line-clamp: 2; }
+  .zsp-hc-status{ font-size: 12px; }
+  .zsp-hc-identity{ flex: 0 1 auto; }
+  .zsp-hc-toprow{ flex: 0 0 auto; width: auto; }
+
+  .zsp-hc-stats-slot{ margin-left: auto; flex: 0 1 auto; }
+  .zsp-hc-stats{ gap: 20px; }
+  .zsp-hc-stat b{ font-size: 14px; }
+  .zsp-hc-stat span{ font-size: 9.5px; }
+
+  .zsp-hc-actions{ margin-left: 20px; gap: 10px; }
+  .zsp-hc-btn-follow{ padding: 9px 22px; font-size: 13px; border-radius: 11px; }
+  .zsp-hc-btn-chat{ padding: 9px 19px; font-size: 13px; border-radius: 11px; }
+  .zsp-hc-btn-share{ width: 38px; height: 38px; border-radius: 11px; }
+  .zsp-hc-btn-share svg{ width: 17px; height: 17px; }
+}

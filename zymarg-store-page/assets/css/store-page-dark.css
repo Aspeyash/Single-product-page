@@ -1,0 +1,111 @@
+/**
+ * Store page — dark mode overlay.
+ *
+ * SEPARATE FILE ON PURPOSE. store-page.css and templates/store.php are the
+ * customer-approved originals and must never be edited again (see the
+ * v1.14.0 regression). Every rule here is inside a dark-mode selector, so in
+ * light mode this file is completely inert. Deleting it restores v1.15.3
+ * exactly.
+ *
+ * Selectors use html[data-theme=...] rather than [data-theme=...] because
+ * Tailwind's browser build injects its :root vars at runtime; specificity
+ * has to win, since document order cannot be relied on.
+ *
+ * Values come from the theme (tokens/dark.css), so this page tracks the same
+ * source as the rest of the site.
+ */
+
+html[data-theme="dark"] {
+	/* Tailwind @theme palette from templates/store.php (drives 92 zy- classes). */
+	--color-zy-primary:   var(--color-primary, #f0b0ff);
+	--color-zy-secondary: var(--color-primary-tint, #e29bff);
+	--color-zy-accent:    var(--color-primary-fixed, #ffd6fb);
+	--color-zy-dark:      var(--color-text-body, #e8e2ec);
+	--color-zy-body:      var(--color-text-muted, #c3b6c6);
+	--color-zy-border:    var(--color-outline-variant, #4d444c);
+	--color-zy-bg:        var(--color-surface-lowest, #0d0a10);
+	--color-zy-surface:   var(--color-surface, #15111a);
+	--color-zy-alt:       var(--color-surface-low, #1c1622);
+	--color-zy-container: var(--color-surface-container, #211b28);
+
+	/* Local :root palette from store-page.css. */
+	--brand:        var(--color-primary, #f0b0ff);
+	--brand-dark:   var(--color-text-body, #e8e2ec);
+	--brand-light:  var(--color-primary-fixed, #ffd6fb);
+	--bg:           var(--color-surface-lowest, #0d0a10);
+	--surface:      var(--color-surface, #15111a);
+	--border:       var(--color-outline-variant, #4d444c);
+	--border-focus: var(--color-primary, #f0b0ff);
+	--text:         var(--color-text-body, #e8e2ec);
+	--text-muted:   var(--color-text-muted, #c3b6c6);
+	--text-hint:    var(--color-outline, #9a8c98);
+
+	/* --brand-ring holds a COLOUR, never a shadow. See v1.14.0 regression. */
+	--brand-ring:   rgba(240, 176, 255, 0.22);
+
+	--tag-sale-bg:  rgba(240, 176, 255, 0.16);
+	--tag-sale-fg:  #f0b0ff;
+	--tag-new-bg:   rgba(111, 220, 160, 0.16);
+	--tag-new-fg:   #6fdca0;
+	--tag-low-bg:   rgba(242, 117, 107, 0.16);
+	--tag-low-fg:   #f2756b;
+}
+
+/* Hardcoded white surfaces that are not driven by a variable. */
+html[data-theme="dark"] .zy-drawer__close:hover,
+html[data-theme="dark"] .zy-slider__arrow:hover {
+	background: var(--color-surface-high, #2c2533);
+}
+
+html[data-theme="dark"] .zy-slider__dot.is-active {
+	background: var(--color-primary, #f0b0ff);
+}
+
+/* Auto mode: follow the operating system. */
+@media (prefers-color-scheme: dark) {
+	html[data-theme="auto"] {
+		/* Tailwind @theme palette from templates/store.php (drives 92 zy- classes). */
+		--color-zy-primary:   var(--color-primary, #f0b0ff);
+		--color-zy-secondary: var(--color-primary-tint, #e29bff);
+		--color-zy-accent:    var(--color-primary-fixed, #ffd6fb);
+		--color-zy-dark:      var(--color-text-body, #e8e2ec);
+		--color-zy-body:      var(--color-text-muted, #c3b6c6);
+		--color-zy-border:    var(--color-outline-variant, #4d444c);
+		--color-zy-bg:        var(--color-surface-lowest, #0d0a10);
+		--color-zy-surface:   var(--color-surface, #15111a);
+		--color-zy-alt:       var(--color-surface-low, #1c1622);
+		--color-zy-container: var(--color-surface-container, #211b28);
+
+		/* Local :root palette from store-page.css. */
+		--brand:        var(--color-primary, #f0b0ff);
+		--brand-dark:   var(--color-text-body, #e8e2ec);
+		--brand-light:  var(--color-primary-fixed, #ffd6fb);
+		--bg:           var(--color-surface-lowest, #0d0a10);
+		--surface:      var(--color-surface, #15111a);
+		--border:       var(--color-outline-variant, #4d444c);
+		--border-focus: var(--color-primary, #f0b0ff);
+		--text:         var(--color-text-body, #e8e2ec);
+		--text-muted:   var(--color-text-muted, #c3b6c6);
+		--text-hint:    var(--color-outline, #9a8c98);
+
+		/* --brand-ring holds a COLOUR, never a shadow. See v1.14.0 regression. */
+		--brand-ring:   rgba(240, 176, 255, 0.22);
+
+		--tag-sale-bg:  rgba(240, 176, 255, 0.16);
+		--tag-sale-fg:  #f0b0ff;
+		--tag-new-bg:   rgba(111, 220, 160, 0.16);
+		--tag-new-fg:   #6fdca0;
+		--tag-low-bg:   rgba(242, 117, 107, 0.16);
+		--tag-low-fg:   #f2756b;
+	}
+
+	/* Hardcoded white surfaces that are not driven by a variable. */
+	html[data-theme="auto"] .zy-drawer__close:hover,
+	html[data-theme="auto"] .zy-slider__arrow:hover {
+		background: var(--color-surface-high, #2c2533);
+	}
+
+	html[data-theme="auto"] .zy-slider__dot.is-active {
+		background: var(--color-primary, #f0b0ff);
+	}
+}

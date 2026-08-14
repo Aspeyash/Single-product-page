@@ -1,0 +1,351 @@
+/**
+ * ZYMARG Store Page — Marketplace Flash Sale page chrome.
+ *
+ * Page frame only: the hero band, the content width and the two states the
+ * template can show when there is no grid.
+ *
+ * Deliberately contains NO card styling. The cards on this page are the
+ * Template Pack's 'flash' card, and the Product Grid engine loads that card's
+ * own style.css from beside its template. Anything here that styled a card
+ * would fight that sheet and would go stale the moment Template Pack ships a
+ * new design — which is the one thing this page is built to avoid.
+ *
+ * Written entirely in --zym-* tokens with literal fallbacks, so dark mode is
+ * inherited from zymarg-tokens.css rather than re-declared.
+ *
+ * ── HOW THE HERO CONTROLS WORK (1.20.0) ──────────────────────────────────
+ *
+ * Every value an administrator can change is read through a --zfs-* custom
+ * property WITH THE SHIPPED VALUE AS ITS FALLBACK:
+ *
+ *     font-size: var( --zfs-title-size, clamp(28px, 5vw, 44px) );
+ *
+ * ZYMARG_SP_Flash_Hero::declarations() emits a property ONLY when its control
+ * has been moved off its default, so on an untouched install none of these
+ * variables is ever defined and every fallback applies. That is what makes the
+ * rendered page identical to 1.19.3 until somebody deliberately changes
+ * something, and it is why the fallbacks here must stay in sync with the
+ * 'default' values in that class's CONTROLS registry.
+ *
+ * Do not move these numbers into :root. A defined-but-default variable would
+ * defeat the whole arrangement: the emitter could no longer tell "untouched"
+ * from "set to the same value", and there would be an inline override on every
+ * page view to reason about.
+ */
+
+.zfs {
+	background: var(--zym-color-bg, #faf5fb);
+}
+
+/* ── Hero band ─────────────────────────────────────────────────────────── */
+
+.zfs__head {
+	position: relative;
+	overflow: hidden;
+	background: linear-gradient(
+		var(--zfs-grad-angle, 135deg),
+		var(--zfs-grad-from, #9500a5) 0%,
+		var(--zfs-grad-via, #bd00d1) 60%,
+		var(--zfs-grad-to, #fea9ff) 130%
+	);
+	color: var(--zfs-head-text, #fff);
+
+	/*
+	 * A floor, not a height. Unset by default, so the band is exactly as tall
+	 * as its padding plus its text — the shipped behaviour.
+	 */
+	min-height: var(--zfs-head-min, 0px);
+
+	/* Rounds the bottom corners only: the top meets the site header. */
+	border-radius: 0 0 var(--zfs-head-radius, 0px) var(--zfs-head-radius, 0px);
+
+	/*
+	 * Vertical centring matters only once Minimum Height gives the band spare
+	 * space to centre within. With no min-height there is none, so this is a
+	 * no-op and is therefore safe to apply unconditionally rather than behind a
+	 * modifier class. The inner block keeps its `margin: 0 auto` for horizontal
+	 * centring and stretches to full width first, so the box it produces is the
+	 * same one the previous block layout produced.
+	 */
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.zfs__head-inner {
+	position: relative;
+	z-index: 2;
+	margin: 0 auto;
+	width: 100%;
+	max-width: var(--zfs-head-max, 1280px);
+	padding:
+		calc(48px * var(--zfs-head-pad-scale, 1))
+		16px
+		calc(52px * var(--zfs-head-pad-scale, 1));
+}
+
+@media (min-width: 640px) {
+	.zfs__head-inner {
+		padding-left: 24px;
+		padding-right: 24px;
+	}
+}
+
+@media (min-width: 1024px) {
+	.zfs__head-inner {
+		padding-left: 32px;
+		padding-right: 32px;
+	}
+}
+
+.zfs__head--center .zfs__head-inner {
+	text-align: center;
+}
+
+/* A centred subtitle needs its 62ch measure centred too, not left-hugging. */
+.zfs__head--center .zfs__sub {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+/* ── Background image ──────────────────────────────────────────────────── */
+
+/*
+ * A real <img>, not a background-image: this is the page's LCP element, and a
+ * background cannot be found by the preload scanner, cannot carry
+ * fetchpriority and cannot have a srcset.
+ */
+.zfs__bg {
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	/* Decorative. The heading carries the meaning. */
+	pointer-events: none;
+}
+
+.zfs__overlay {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	background: rgb(0 0 0 / var(--zfs-overlay-opacity, 0));
+	pointer-events: none;
+}
+
+/* ── Hero text ─────────────────────────────────────────────────────────── */
+
+.zfs__eyebrow {
+	margin: 0 0 6px;
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.2em;
+	text-transform: uppercase;
+	opacity: 0.9;
+}
+
+.zfs__title {
+	margin: 0;
+	font-size: var(--zfs-title-size, clamp(28px, 5vw, 44px));
+	font-weight: 800;
+	line-height: 1.1;
+	color: var(--zfs-head-text, #fff);
+}
+
+.zfs__sub {
+	margin: 10px 0 0;
+	max-width: 62ch;
+	font-size: var(--zfs-sub-size, 15px);
+	line-height: 1.5;
+	opacity: 0.92;
+}
+
+/* ── Countdown and deal-count chips ────────────────────────────────────── */
+
+.zfs__meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin: 16px 0 0;
+}
+
+.zfs__head--center .zfs__meta {
+	justify-content: center;
+}
+
+.zfs__chip {
+	display: inline-flex;
+	align-items: baseline;
+	gap: 6px;
+	padding: 6px 14px;
+	border-radius: 999px;
+	/*
+	 * Translucent white rather than a token colour: the chip sits on a gradient
+	 * the admin can change to anything, so it has to tint whatever is behind it
+	 * instead of assuming a purple backdrop.
+	 */
+	background: rgb(255 255 255 / 0.16);
+	color: inherit;
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1.4;
+}
+
+.zfs__chip-label {
+	opacity: 0.8;
+	font-weight: 500;
+}
+
+.zfs__chip--timer time {
+	/* Tabular figures stop the countdown jittering as the digits change. */
+	font-variant-numeric: tabular-nums;
+}
+
+/* ── Call to action ────────────────────────────────────────────────────── */
+
+.zfs__cta {
+	display: inline-block;
+	margin: 20px 0 0;
+	padding: 12px 26px;
+	border-radius: 999px;
+	background: #fff;
+	color: var(--zym-color-dark, #36003d);
+	font-size: 15px;
+	font-weight: 700;
+	text-decoration: none;
+	transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.zfs__cta:hover,
+.zfs__cta:focus-visible {
+	transform: translateY(-1px);
+	box-shadow: 0 8px 24px rgb(0 0 0 / 0.18);
+	color: var(--zym-color-dark, #36003d);
+}
+
+.zfs__cta:focus-visible {
+	outline: 2px solid #fff;
+	outline-offset: 3px;
+}
+
+/* ── Multi-slide hero ──────────────────────────────────────────────────── */
+
+/*
+ * A scroll-snap track, not a scripted carousel. It swipes on touch, scrolls
+ * with the keyboard, degrades to a plain stack when scroll-snap is unsupported,
+ * and adds no JavaScript to a page whose weight budget is already spent on
+ * product cards.
+ */
+.zfs__slides {
+	display: flex;
+	overflow-x: auto;
+	scroll-snap-type: x mandatory;
+	scrollbar-width: none;
+}
+
+.zfs__slides::-webkit-scrollbar {
+	display: none;
+}
+
+.zfs__slides > .zfs__head {
+	flex: 0 0 100%;
+	scroll-snap-align: start;
+}
+
+/* ── Body ──────────────────────────────────────────────────────────────── */
+
+.zfs__body {
+	margin: 0 auto;
+	max-width: 1280px;
+	padding: 28px 16px 64px;
+}
+
+@media (min-width: 640px) {
+	.zfs__body {
+		padding-left: 24px;
+		padding-right: 24px;
+	}
+}
+
+@media (min-width: 1024px) {
+	.zfs__body {
+		padding-left: 32px;
+		padding-right: 32px;
+	}
+}
+
+/* ── States ────────────────────────────────────────────────────────────── */
+
+.zfs__empty {
+	margin: 0;
+	padding: 56px 24px;
+	border: 1px dashed var(--zym-color-border, #d8bfd3);
+	border-radius: 16px;
+	background: var(--zym-color-surface, #fff);
+	color: var(--zym-color-text, #534152);
+	font-size: 16px;
+	text-align: center;
+}
+
+/*
+ * Administrator-only diagnostics. Styled as a notice rather than as an empty
+ * state on purpose: it reports a configuration problem, not an absence of
+ * products, and the two must not be mistaken for one another.
+ */
+.zfs__notice {
+	margin: 0 0 20px;
+	padding: 16px 18px;
+	border: 1px solid var(--zym-color-border, #d8bfd3);
+	border-left: 4px solid #b3261e;
+	border-radius: 12px;
+	background: var(--zym-color-surface, #fff);
+	color: var(--zym-color-text, #534152);
+	font-size: 14px;
+	line-height: 1.55;
+}
+
+.zfs__notice--warn {
+	border-left-color: #bd00d1;
+}
+
+.zfs__notice p {
+	margin: 0;
+}
+
+.zfs__notice p + p {
+	margin-top: 6px;
+}
+
+.zfs__notice-title {
+	font-weight: 700;
+	color: var(--zym-color-dark, #36003d);
+}
+
+/* ── Custom design wrapper ─────────────────────────────────────────────── */
+
+/*
+ * The container for a pasted design. Deliberately almost styleless: the whole
+ * point is that the author's own CSS decides how it looks. Only the containment
+ * that stops their layout escaping is set here.
+ */
+.zfs-custom {
+	position: relative;
+	overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.zfs * {
+		animation-duration: 0.01ms !important;
+		transition-duration: 0.01ms !important;
+	}
+
+	.zfs__slides {
+		scroll-behavior: auto;
+	}
+
+	.zfs__cta:hover,
+	.zfs__cta:focus-visible {
+		transform: none;
+	}
+}

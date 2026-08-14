@@ -1,0 +1,872 @@
+/**
+ * ZYMARG Store Page -- admin settings screen.
+ *
+ * Every value here comes from a --zym-* token. There are no raw colours,
+ * sizes, or shadows in this file.
+ *
+ * SCOPING
+ * -------
+ * All component rules are scoped to .zymarg-sp-admin, and every class uses the
+ * zsp- prefix. The Vendor Dashboard plugin owns .zymarg-admin / .zvd-*, so a
+ * separate scope keeps the two plugins from ever styling each other's screens
+ * when both are active on the same site.
+ *
+ * The #adminmenu block is the one exception -- the WordPress sidebar lives
+ * outside our wrapper, so those rules are keyed to this plugin's own menu ID.
+ *
+ * @package ZYMARG_Store_Page
+ */
+
+/* ===========================================================================
+ * SIDEBAR MENU BRANDING
+ * Scoped to this plugin's menu item only; the rest of wp-admin is untouched.
+ * ======================================================================== */
+
+#adminmenu #toplevel_page_zymarg-store-page > a,
+#adminmenu #toplevel_page_zymarg-store-page > a .wp-menu-name {
+	color: var(--zym-color-accent);
+	font-weight: var(--zym-font-weight-bold);
+	letter-spacing: var(--zym-tracking-normal);
+}
+
+#adminmenu #toplevel_page_zymarg-store-page > a:hover,
+#adminmenu #toplevel_page_zymarg-store-page.current > a,
+#adminmenu #toplevel_page_zymarg-store-page.wp-has-current-submenu > a {
+	background: var(--zym-gradient);
+	color: var(--zym-color-surface);
+}
+
+#adminmenu #toplevel_page_zymarg-store-page > a:hover .wp-menu-name,
+#adminmenu #toplevel_page_zymarg-store-page.current > a .wp-menu-name,
+#adminmenu #toplevel_page_zymarg-store-page.wp-has-current-submenu > a .wp-menu-name {
+	color: var(--zym-color-surface);
+}
+
+#adminmenu #toplevel_page_zymarg-store-page .wp-submenu {
+	background: var(--zym-color-dark);
+	border-left: 3px solid var(--zym-color-primary);
+}
+
+#adminmenu #toplevel_page_zymarg-store-page .wp-submenu a {
+	color: var(--zym-color-border);
+	font-weight: var(--zym-font-weight-medium);
+}
+
+#adminmenu #toplevel_page_zymarg-store-page .wp-submenu a:hover,
+#adminmenu #toplevel_page_zymarg-store-page .wp-submenu .current a {
+	color: var(--zym-color-accent);
+	background: color-mix(in srgb, var(--zym-color-primary) 25%, transparent);
+}
+
+#adminmenu #toplevel_page_zymarg-store-page .wp-menu-arrow div {
+	background: var(--zym-color-primary);
+}
+
+/* ===========================================================================
+ * SHELL
+ * ======================================================================== */
+
+.zymarg-sp-admin,
+.zymarg-sp-admin *,
+.zymarg-sp-admin *::before,
+.zymarg-sp-admin *::after {
+	box-sizing: border-box;
+}
+
+.zymarg-sp-admin {
+	/* No font-family override: wp-admin screens keep the WordPress UI font.
+	   Inter is reserved for the front end. */
+	color: var(--zym-color-dark);
+	margin: var(--zym-space-7) var(--zym-space-8) var(--zym-space-12) 0;
+}
+
+/* ===========================================================================
+ * HEADER
+ * ======================================================================== */
+
+/* One header per screen, identical on every ZYMARG screen.
+   Surface card -- NOT a full-bleed gradient bar. */
+.zsp-header {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--zym-space-5);
+	flex-wrap: wrap;
+	padding: 22px 26px;
+	margin-bottom: 18px;
+	background: var(--zym-color-surface);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-card);
+	box-shadow: var(--zym-shadow-surface);
+	overflow: hidden;
+}
+
+/* 3px gradient strip across the top edge. Never a full-bleed gradient bar. */
+.zsp-header::before {
+	content: "";
+	position: absolute;
+	inset: 0 0 auto 0;
+	height: 3px;
+	background: var(--zym-gradient);
+}
+
+.zsp-header__left {
+	display: flex;
+	align-items: center;
+	gap: var(--zym-space-5);
+	flex-wrap: wrap;
+	min-width: 0;
+}
+
+/* The Spark renders at 44x44 directly on white, with no container or tint.
+   Sized with width/height -- never transform: scale, which would leave the
+   lens offset behind. */
+.zsp-header__mark {
+	width: 44px;
+	height: 44px;
+	flex-shrink: 0;
+}
+
+.zsp-header__text { min-width: 0; }
+
+/* Wordmark: solid primary. Never gradient-filled text. */
+.zsp-wordmark {
+	margin: 0;
+	padding: 0;
+	font-size: 22px;
+	font-weight: var(--zym-font-weight-bold);
+	letter-spacing: -0.01em;
+	color: var(--zym-color-primary);
+	line-height: 1.5;
+}
+
+.zsp-subtitle {
+	margin: 0;
+	font-size: 13px;
+	font-weight: 400;
+	color: var(--zym-color-neutral-text);
+	line-height: 1.5;
+}
+
+.zsp-header__right {
+	display: flex;
+	align-items: center;
+	gap: var(--zym-space-3);
+	margin-left: auto;
+	flex-shrink: 0;
+}
+
+/* Version badge: gradient pill, number only, always right-aligned. */
+.zsp-badge {
+	display: inline-block;
+	padding: 6px var(--zym-space-5);
+	background: var(--zym-gradient);
+	color: var(--zym-color-surface);
+	font-size: var(--zym-font-size-xs);
+	font-weight: var(--zym-font-weight-bold);
+	letter-spacing: 0.04em;
+	border-radius: var(--zym-radius-pill);
+	box-shadow: 0 2px 6px color-mix(in srgb, var(--zym-color-primary) 20%, transparent);
+	white-space: nowrap;
+}
+
+/* ===========================================================================
+ * LAYOUT
+ * ======================================================================== */
+
+.zsp-layout {
+	display: flex;
+	gap: var(--zym-space-9);
+	flex-wrap: wrap;
+}
+
+.zsp-main {
+	flex: 2;
+	min-width: 320px;
+}
+
+.zsp-aside {
+	flex: 1;
+	min-width: 270px;
+	display: flex;
+	flex-direction: column;
+	gap: var(--zym-space-8);
+}
+
+/* ===========================================================================
+ * CARDS
+ * ======================================================================== */
+
+.zsp-card {
+	background: var(--zym-color-surface);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-card);
+	overflow: hidden;
+	margin-bottom: var(--zym-space-8);
+	box-shadow: var(--zym-shadow-surface);
+}
+
+.zsp-card--flush { margin-bottom: 0; }
+
+.zsp-card__head {
+	display: flex;
+	align-items: center;
+	gap: var(--zym-space-4);
+	padding: var(--zym-space-6) var(--zym-space-8);
+	border-bottom: 1px solid var(--zym-color-border);
+	background: var(--zym-color-bg);
+}
+
+.zsp-card__icon {
+	width: var(--zym-space-11);
+	height: var(--zym-space-11);
+	border-radius: var(--zym-radius-chip);
+	background: var(--zym-gradient);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.zsp-card__icon svg {
+	width: 16px;
+	height: 16px;
+	stroke: var(--zym-color-surface);
+	fill: none;
+	stroke-width: 2;
+}
+
+.zsp-card__head h2 {
+	margin: 0;
+	padding: 0;
+	font-size: var(--zym-font-size-sm);
+	font-weight: var(--zym-font-weight-bold);
+	color: var(--zym-color-dark);
+}
+
+.zsp-card__body { padding: var(--zym-space-8); }
+.zsp-card__body--tight { padding: var(--zym-space-6) var(--zym-space-8); }
+.zsp-card__body--tighter { padding: var(--zym-space-3) var(--zym-space-8); }
+
+/* ===========================================================================
+ * SECTIONS + FIELDS
+ * ======================================================================== */
+
+.zsp-divider {
+	height: 1px;
+	background: var(--zym-color-divider);
+	margin: var(--zym-space-8) 0;
+}
+
+.zsp-section-label {
+	font-size: var(--zym-font-size-xs);
+	font-weight: var(--zym-font-weight-bold);
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: var(--zym-color-primary);
+	margin: 0 0 var(--zym-space-7);
+}
+
+.zsp-field { margin-bottom: var(--zym-space-10); }
+
+.zsp-label {
+	display: block;
+	font-size: 13px;
+	font-weight: var(--zym-font-weight-semibold);
+	color: var(--zym-color-dark);
+	margin-bottom: var(--zym-space-3);
+}
+
+.zsp-field-desc {
+	font-size: var(--zym-font-size-xs);
+	color: var(--zym-color-neutral-text);
+	margin: var(--zym-space-2) 0 0;
+	line-height: 1.6;
+}
+
+/*
+ * The Flash Sale hero panel introduced url inputs, selects and textareas. They
+ * are added to the existing selector groups rather than given their own rules,
+ * so there is one definition of what a control on this screen looks like and no
+ * chance of two of them drifting apart.
+ */
+.zymarg-sp-admin input[type="number"],
+.zymarg-sp-admin input[type="text"],
+.zymarg-sp-admin input[type="url"],
+.zymarg-sp-admin select,
+.zymarg-sp-admin textarea {
+	padding: var(--zym-space-3) var(--zym-space-5);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-control);
+	background: var(--zym-color-surface);
+	font-size: var(--zym-font-size-sm);
+	color: var(--zym-color-dark);
+	min-height: var(--zym-space-11);
+	box-shadow: none;
+	outline: none;
+	transition: border-color var(--zym-motion-input) var(--zym-ease),
+		box-shadow var(--zym-motion-input) var(--zym-ease);
+}
+
+.zymarg-sp-admin input[type="number"] { width: 100px; }
+.zsp-input--wide { width: 100%; max-width: 300px; }
+
+.zymarg-sp-admin input[type="number"]:focus,
+.zymarg-sp-admin input[type="text"]:focus,
+.zymarg-sp-admin input[type="url"]:focus,
+.zymarg-sp-admin select:focus,
+.zymarg-sp-admin textarea:focus {
+	border-color: var(--zym-color-primary);
+	box-shadow: var(--zym-focus-ring);
+}
+
+/* A textarea sizes by rows, so the control min-height would fight it. */
+.zymarg-sp-admin textarea {
+	min-height: 0;
+	line-height: 1.6;
+	resize: vertical;
+}
+
+/* ===========================================================================
+ * TOGGLE
+ * 44x24 track with an 18px knob and 20px of travel, per the spec.
+ * ======================================================================== */
+
+.zsp-toggle-wrap {
+	display: flex;
+	align-items: center;
+	gap: var(--zym-space-5);
+}
+
+.zsp-toggle {
+	position: relative;
+	display: inline-block;
+	width: 44px;
+	height: 24px;
+	flex-shrink: 0;
+}
+
+.zsp-toggle input {
+	position: absolute;
+	opacity: 0;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	cursor: pointer;
+}
+
+.zsp-toggle__slider {
+	position: absolute;
+	inset: 0;
+	background: var(--zym-color-border);
+	border-radius: var(--zym-radius-pill);
+	cursor: pointer;
+	transition: background var(--zym-motion-input) var(--zym-ease);
+}
+
+.zsp-toggle__slider::before {
+	content: "";
+	position: absolute;
+	width: 18px;
+	height: 18px;
+	top: 3px;
+	left: 3px;
+	border-radius: var(--zym-radius-pill);
+	background: var(--zym-color-surface);
+	box-shadow: var(--zym-shadow-surface);
+	transition: transform var(--zym-motion-input) var(--zym-ease);
+}
+
+.zsp-toggle input:checked + .zsp-toggle__slider {
+	background: var(--zym-gradient);
+}
+
+.zsp-toggle input:checked + .zsp-toggle__slider::before {
+	transform: translateX(20px);
+}
+
+/* The focus ring is re-tinted to the brand, never removed. */
+.zsp-toggle input:focus-visible + .zsp-toggle__slider {
+	box-shadow: var(--zym-focus-ring);
+}
+
+/* State is never signalled by colour alone -- this label carries the word. */
+.zsp-toggle-state {
+	font-size: 13px;
+	color: var(--zym-color-text);
+	font-weight: var(--zym-font-weight-semibold);
+}
+
+/* ===========================================================================
+ * BUTTONS
+ * ======================================================================== */
+
+.zsp-save-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--zym-space-3);
+	background: var(--zym-gradient);
+	color: var(--zym-color-surface);
+	border: none;
+	border-radius: var(--zym-radius-control);
+	padding: var(--zym-space-5) var(--zym-space-10);
+	min-height: var(--zym-space-11);
+	font-size: 13px;
+	font-weight: var(--zym-font-weight-semibold);
+	letter-spacing: 0.02em;
+	cursor: pointer;
+	box-shadow: var(--zym-shadow-btn);
+	transition: box-shadow var(--zym-motion-standard) var(--zym-ease),
+		transform var(--zym-motion-fast) var(--zym-ease);
+}
+
+.zsp-save-btn:hover {
+	/* The gradient angle never changes on hover -- only the lift. */
+	box-shadow: var(--zym-shadow-btn-hover);
+	transform: translateY(-1px);
+}
+
+.zsp-save-btn:focus-visible {
+	box-shadow: var(--zym-shadow-btn), var(--zym-focus-ring);
+	outline: none;
+}
+
+.zsp-save-btn[disabled] {
+	opacity: 0.6;
+	cursor: progress;
+	transform: none;
+}
+
+.zsp-save-btn svg {
+	width: 16px;
+	height: 16px;
+	stroke: var(--zym-color-surface);
+	fill: none;
+	stroke-width: 2.5;
+}
+
+.zsp-save-row {
+	display: flex;
+	align-items: center;
+	gap: var(--zym-space-6);
+	flex-wrap: wrap;
+}
+
+/* ===========================================================================
+ * AJAX SAVE FEEDBACK
+ * Text-based, not a spinner -- the spec bans spinners everywhere.
+ * ======================================================================== */
+
+.zsp-save-status {
+	font-size: 13px;
+	font-weight: var(--zym-font-weight-semibold);
+	color: var(--zym-color-neutral-text);
+}
+
+.zsp-save-status--ok  { color: var(--zym-color-success-text); }
+.zsp-save-status--err { color: var(--zym-color-error); }
+
+/* ===========================================================================
+ * STATUS LIST
+ * ======================================================================== */
+
+.zsp-status-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.zsp-status-list li {
+	display: flex;
+	align-items: center;
+	gap: var(--zym-space-4);
+	padding: var(--zym-space-4) 0;
+	border-bottom: 1px solid var(--zym-color-divider);
+	font-size: 13px;
+	font-weight: var(--zym-font-weight-medium);
+	color: var(--zym-color-text);
+}
+
+.zsp-status-list li:last-child { border-bottom: none; }
+
+.zsp-status-dot {
+	width: 10px;
+	height: 10px;
+	border-radius: var(--zym-radius-pill);
+	flex-shrink: 0;
+}
+
+.zsp-status-dot--ok  { background: var(--zym-color-success-text); }
+.zsp-status-dot--err { background: var(--zym-color-error); }
+
+.zsp-status-value {
+	margin-left: auto;
+	font-size: 11px;
+	font-weight: var(--zym-font-weight-bold);
+	letter-spacing: 0.06em;
+}
+
+.zsp-status-value--ok  { color: var(--zym-color-success-text); }
+.zsp-status-value--err { color: var(--zym-color-error); }
+
+/* ===========================================================================
+ * OVERRIDE BANNER
+ * ======================================================================== */
+
+.zsp-banner {
+	display: flex;
+	align-items: center;
+	gap: var(--zym-space-5);
+	padding: var(--zym-space-6) var(--zym-space-7);
+	border-radius: var(--zym-radius-control);
+	font-size: 13px;
+	font-weight: var(--zym-font-weight-semibold);
+	margin-bottom: var(--zym-space-9);
+	border: 1px solid transparent;
+}
+
+.zsp-banner svg {
+	width: 20px;
+	height: 20px;
+	flex-shrink: 0;
+	fill: none;
+	stroke-width: 2;
+	stroke: currentColor;
+}
+
+.zsp-banner--active {
+	background: var(--zym-color-success-bg);
+	border-color: var(--zym-color-success-text);
+	color: var(--zym-color-success-text);
+}
+
+.zsp-banner--inactive {
+	background: var(--zym-color-error-bg);
+	border-color: var(--zym-color-error);
+	color: var(--zym-color-error);
+}
+
+/* ===========================================================================
+ * QUICK LINKS + VERSION CHIP
+ * ======================================================================== */
+
+.zsp-links {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.zsp-links li { border-bottom: 1px solid var(--zym-color-divider); }
+.zsp-links li:last-child { border-bottom: none; }
+
+.zsp-links a {
+	display: flex;
+	align-items: center;
+	gap: var(--zym-space-3);
+	padding: var(--zym-space-4) 0;
+	min-height: var(--zym-space-11);
+	font-size: 13px;
+	font-weight: var(--zym-font-weight-semibold);
+	color: var(--zym-color-primary);
+	text-decoration: none;
+	transition: color var(--zym-motion-fast) var(--zym-ease);
+}
+
+.zsp-links a:hover { color: var(--zym-color-secondary); }
+
+.zsp-links a:focus-visible {
+	box-shadow: var(--zym-focus-ring);
+	border-radius: var(--zym-radius-chip);
+	outline: none;
+}
+
+.zsp-links a svg {
+	width: 15px;
+	height: 15px;
+	stroke: currentColor;
+	fill: none;
+	stroke-width: 2;
+	flex-shrink: 0;
+}
+
+.zsp-center { text-align: center; }
+
+.zsp-version-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--zym-space-2);
+	background: var(--zym-color-bg);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-pill);
+	padding: var(--zym-space-2) var(--zym-space-6);
+	font-size: var(--zym-font-size-xs);
+	color: var(--zym-color-neutral-text);
+	margin-top: var(--zym-space-2);
+}
+
+.zsp-version-chip strong { color: var(--zym-color-primary); }
+
+/* ===========================================================================
+ * UTILITIES
+ * ======================================================================== */
+
+.zsp-is-hidden { display: none !important; }
+
+@media ( prefers-reduced-motion: reduce ) {
+	.zymarg-sp-admin *,
+	.zymarg-sp-admin *::before {
+		transition: none !important;
+	}
+
+	.zsp-save-btn:hover { transform: none; }
+}
+
+
+/* ===========================================================================
+ * FLASH SALE HERO PANEL (1.20.0)
+ *
+ * The hero's control surface, rendered inside the Settings card by
+ * ZYMARG_SP_Flash_Hero::render_fields(). Everything here reuses the --zym-*
+ * tokens; no hardcoded brand colour appears below.
+ * ======================================================================== */
+
+/* ── Sub-section heading ─────────────────────────────────────────────────
+ * A heading one level below the card title, used because the hero panel
+ * shares the Settings card rather than owning one. It has to read as a
+ * distinct area without a card border to do that job for it.
+ */
+.zsp-section-heading {
+	display: flex;
+	align-items: center;
+	gap: var(--zym-space-4);
+	margin: 0 0 var(--zym-space-4);
+	font-size: var(--zym-font-size-lg);
+	font-weight: var(--zym-font-weight-bold);
+	color: var(--zym-color-dark);
+}
+
+.zsp-section-heading__mark {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 auto;
+	width: var(--zym-space-11);
+	height: var(--zym-space-11);
+	border-radius: var(--zym-radius-control);
+	background: var(--zym-gradient);
+	color: #fff;
+}
+
+.zsp-section-heading__mark svg {
+	width: 16px;
+	height: 16px;
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 1.8;
+}
+
+.zsp-intro {
+	margin: 0 0 var(--zym-space-8);
+	max-width: 68ch;
+}
+
+/* A denser field, for repeater rows where six of them stack up. */
+.zsp-field--tight {
+	margin-bottom: var(--zym-space-6);
+}
+
+.zsp-field--tight .zsp-label {
+	font-size: var(--zym-font-size-xs);
+	font-weight: var(--zym-font-weight-medium);
+	color: var(--zym-color-text);
+}
+
+/* ── Colour control ─────────────────────────────────────────────────────── */
+
+.zfs-colour {
+	display: flex;
+	align-items: center;
+	gap: var(--zym-space-4);
+}
+
+/*
+ * The native swatch, stripped of its default chrome so it matches the other
+ * controls on the screen. The inner well is targeted per-engine because there
+ * is no standard selector for it.
+ */
+.zymarg-sp-admin input[type="color"] {
+	width: var(--zym-space-12);
+	height: var(--zym-space-11);
+	padding: 2px;
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-control);
+	background: var(--zym-color-surface);
+	cursor: pointer;
+	transition: border-color var(--zym-motion-input) var(--zym-ease),
+		box-shadow var(--zym-motion-input) var(--zym-ease);
+}
+
+.zymarg-sp-admin input[type="color"]:focus-visible {
+	border-color: var(--zym-color-primary);
+	box-shadow: var(--zym-focus-ring);
+	outline: none;
+}
+
+.zymarg-sp-admin input[type="color"]::-webkit-color-swatch-wrapper {
+	padding: 0;
+}
+
+.zymarg-sp-admin input[type="color"]::-webkit-color-swatch {
+	border: none;
+	border-radius: calc(var(--zym-radius-control) - 2px);
+}
+
+.zymarg-sp-admin input[type="color"]::-moz-color-swatch {
+	border: none;
+	border-radius: calc(var(--zym-radius-control) - 2px);
+}
+
+/*
+ * The hex as text. A swatch alone gives an administrator no way to read the
+ * value they picked or copy it into another plugin's settings.
+ */
+.zfs-colour__value {
+	padding: var(--zym-space-2) var(--zym-space-4);
+	border-radius: var(--zym-radius-chip);
+	background: var(--zym-color-neutral-bg);
+	color: var(--zym-color-text);
+	font-family: var(--zym-font-mono);
+	font-size: var(--zym-font-size-xs);
+	text-transform: uppercase;
+}
+
+.zfs-reset {
+	padding: 0;
+	border: none;
+	background: none;
+	color: var(--zym-color-primary);
+	font-size: var(--zym-font-size-xs);
+	font-weight: var(--zym-font-weight-semibold);
+	cursor: pointer;
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+
+.zfs-reset:hover,
+.zfs-reset:focus-visible {
+	color: var(--zym-color-secondary);
+}
+
+/* ── Code boxes ─────────────────────────────────────────────────────────── */
+
+/*
+ * Full width regardless of .zsp-input--wide's 300px cap: these hold whole HTML
+ * documents, and a 300px column would make pasted markup unreadable.
+ */
+.zymarg-sp-admin .zfs-code-box {
+	display: block;
+	width: 100%;
+	max-width: none;
+	font-family: var(--zym-font-mono);
+	font-size: var(--zym-font-size-xs);
+	line-height: 1.55;
+	white-space: pre;
+	overflow-wrap: normal;
+	overflow-x: auto;
+	tab-size: 2;
+}
+
+.zsp-field-desc code {
+	padding: 1px var(--zym-space-2);
+	border-radius: var(--zym-radius-chip);
+	background: var(--zym-color-neutral-bg);
+	font-family: var(--zym-font-mono);
+	font-size: var(--zym-font-size-xxs);
+	color: var(--zym-color-text);
+}
+
+/* ── Slide repeater ─────────────────────────────────────────────────────── */
+
+.zfs-repeater__intro {
+	margin-bottom: var(--zym-space-6);
+	max-width: 68ch;
+}
+
+.zfs-repeater__rows {
+	display: grid;
+	gap: var(--zym-space-6);
+	margin-bottom: var(--zym-space-6);
+}
+
+.zfs-repeater__row {
+	position: relative;
+	padding: var(--zym-space-7);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-card);
+	background: var(--zym-color-surface-alt);
+}
+
+.zfs-repeater__row .zsp-field--tight:last-of-type {
+	margin-bottom: 0;
+}
+
+.zfs-repeater__title {
+	margin: 0 0 var(--zym-space-5);
+	font-size: var(--zym-font-size-xs);
+	font-weight: var(--zym-font-weight-bold);
+	letter-spacing: var(--zym-tracking-wide);
+	text-transform: uppercase;
+	color: var(--zym-color-primary);
+}
+
+.zfs-repeater__remove {
+	margin-top: var(--zym-space-5);
+	padding: var(--zym-space-2) var(--zym-space-5);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-button);
+	background: var(--zym-color-surface);
+	color: var(--zym-color-error);
+	font-size: var(--zym-font-size-xs);
+	font-weight: var(--zym-font-weight-semibold);
+	cursor: pointer;
+	transition: background var(--zym-motion-fast) var(--zym-ease),
+		border-color var(--zym-motion-fast) var(--zym-ease);
+}
+
+.zfs-repeater__remove:hover,
+.zfs-repeater__remove:focus-visible {
+	background: var(--zym-color-error-bg);
+	border-color: var(--zym-color-error);
+}
+
+/*
+ * A secondary button: white with a brand border, matching the ZYMARG secondary
+ * button convention rather than inventing a third button style for this screen.
+ */
+.zsp-ghost-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--zym-space-3);
+	padding: var(--zym-space-3) var(--zym-space-6);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-button);
+	background: var(--zym-color-surface);
+	color: var(--zym-color-primary);
+	font-size: var(--zym-font-size-sm);
+	font-weight: var(--zym-font-weight-semibold);
+	cursor: pointer;
+	transition: background var(--zym-motion-fast) var(--zym-ease),
+		border-color var(--zym-motion-fast) var(--zym-ease);
+}
+
+.zsp-ghost-btn:hover,
+.zsp-ghost-btn:focus-visible {
+	background: var(--zym-color-container);
+	border-color: var(--zym-color-primary);
+}
+
+.zsp-ghost-btn:focus-visible {
+	box-shadow: var(--zym-focus-ring);
+	outline: none;
+}
