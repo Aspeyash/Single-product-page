@@ -1748,6 +1748,31 @@ input.zsp-sheet__input[type="search"] {
    Follow / Chat / Share button colors and behavior are UNCHANGED from the
    original .flex.shrink-0 button markup — only position/sizing changed.
    ============================================================================= */
+/*
+ * Hero banner image - defensive override.
+ *
+ * Many host themes (Astra included) ship a global rule along the lines of
+ * `img{max-width:100%;height:auto}` for responsive content images, often
+ * scoped to a wrapper selector that ends up MORE specific than this
+ * plugin's own .h-full/.object-cover utility classes at some breakpoints.
+ * When that theme rule wins, the banner's height collapses to whatever its
+ * own aspect ratio computes to at the current width instead of filling the
+ * fixed-height banner container - visually showing as the image "not
+ * covering fully" / leaving a gap, most noticeable on mobile.
+ *
+ * [data-hero-section] scopes this narrowly to just the banner photo, not
+ * every image on the page, and !important guarantees this plugin's own
+ * intended sizing always wins regardless of the host theme's own image
+ * rules or their specificity.
+ */
+[data-hero-section] [data-store-cover]{
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  object-fit: cover !important;
+  display: block !important;
+}
+
 .zsp-hc-wrap{
   position: absolute;
   left: 0;
