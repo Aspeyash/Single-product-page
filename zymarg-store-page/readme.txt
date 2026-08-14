@@ -4,7 +4,7 @@ Tags:              dokan, vendor, store, marketplace, activewear
 Requires at least: 6.0
 Tested up to:      6.7
 Requires PHP:      7.4
-Stable tag:        1.22.6
+Stable tag:        1.23.0
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,6 +73,15 @@ Yes. Edit the `@theme` block inside `templates/store.php` to change the design t
 4. Admin settings page under Dokan → ZYMARG Store Page
 
 == Changelog ==
+
+= 1.23.0 — Admin-managed Product Grid Sections (Trending / Best Selling / All Products) =
+* Added: a new "Product Grid Sections" panel on the plugin's settings screen. An ordered, drag-reorderable list of sections that render on the vendor store page — each row runs one `[zymarg_products]` shortcode against the ZYMARG WC Product Grid engine's `current_vendor` source (requires engine v2.17.3+), so what a section shows, and how it's laid out, is entirely admin-editable with no plugin update needed. Ships with three default rows: Trending and Best Selling (sliders, 8 products, 5/4/2 visible on desktop/tablet/mobile), and All Products (the existing category-filtered grid, now sourced from the engine instead of a direct Dokan REST call).
+* Added: rows open locked — press Edit before anything in a row can be changed, so visiting the settings screen can never alter what shoppers see by accident. Removing a row asks for confirmation, and the list from before your last save can be restored with one click.
+* Added: every row must use `source="current_vendor"` — the only source a store page section can run, since a store page always shows exactly one vendor's own products. A row using any other source, or omitting the source attribute, is rejected on save.
+* Changed: the "All Products" grid is now server-rendered by the Product Grid engine, with the engine's own native infinite scroll, instead of being built client-side from a direct call to Dokan's REST API. Whichever admin-configured row resolves to `current_vendor_subset="all"` (the default when that attribute is left off) is the one that renders here.
+* Changed: the category-filter sidebar and AURA/mobile search are functionally unchanged — same fetch strategy, same card rendering — but now render into a new sibling container that sits alongside the server-rendered All Products grid rather than replacing it. Clearing a category or search filter now simply reveals the original grid again instead of re-fetching it, since it was never destroyed.
+* Changed: the Sort control now reloads the page with a `?zy_sort=` parameter when no category filter or search is active, instead of re-fetching the grid over AJAX — the server-rendered grid has no live re-sort of its own. Sorting while a category filter or search is active is unaffected and still happens instantly, client-side, exactly as before.
+* Requires: ZYMARG WC Product Grid engine v2.17.3 or later for the `current_vendor_subset` shortcode attribute used by the default sections. Older engine versions will render every section as if `current_vendor_subset="all"`, since that attribute is silently ignored below v2.17.3 — update the engine before this version if you use the Trending/Best Selling defaults.
 
 = 1.22.6 — Fix: correct banner and logo briefly replaced by wrong images after page load =
 

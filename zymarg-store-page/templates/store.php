@@ -464,6 +464,62 @@ if ( function_exists( 'zymarg_sp_premium_render_all' ) ) {
 ?>
 
 <!-- ============================================================
+     ADMIN-MANAGED PRODUCT SECTIONS (Trending / Best Selling / etc.)
+
+     Every enabled row from ZYMARG_SP_Store_Sections EXCEPT the one that
+     resolves to the engine's current_vendor "all" subset -- that row
+     renders further down, inside the existing category-sidebar layout
+     (see PRODUCTS & CATEGORIES LAYOUT below), not as a section here.
+
+     Each row's shortcode runs through the Product Grid engine. When a
+     row's query legitimately matches nothing (e.g. a brand-new vendor
+     with no trending signal yet), the engine renders its own "No
+     products found" wrapper rather than an empty string -- that wrapper
+     is suppressed here so the whole section disappears (heading, link
+     and all) instead of leaving a heading over blank space. This mirrors
+     ZYMARG Single Product's own section repeater, and ZYMARG Homepage's
+     ProductGridBridge, which both apply the same rule for the same
+     reason.
+============================================================ -->
+<?php
+if ( class_exists( 'ZYMARG_SP_Store_Sections' ) && shortcode_exists( 'zymarg_products' ) ) {
+	foreach ( ZYMARG_SP_Store_Sections::get_generic_rows() as $zy_section_row ) {
+		$zy_section_code = trim( (string) ( $zy_section_row['shortcode'] ?? '' ) );
+		if ( '' === $zy_section_code ) {
+			continue;
+		}
+
+		$zy_section_code = ZYMARG_SP_Store_Sections::force_no_heading( $zy_section_code );
+		$zy_section_html = trim( (string) do_shortcode( $zy_section_code ) );
+
+		if ( '' === $zy_section_html || false !== strpos( $zy_section_html, 'zymarg-wcpg__empty' ) ) {
+			continue;
+		}
+
+		$zy_section_heading = trim( (string) ( $zy_section_row['heading'] ?? '' ) );
+		$zy_section_link    = ZYMARG_SP_Store_Sections::link( $zy_section_row );
+		?>
+		<section class="zy-store-section mx-auto max-w-7xl px-4 pt-12 sm:px-6 lg:px-8" data-zy-section-id="<?php echo esc_attr( $zy_section_row['id'] ); ?>">
+			<?php if ( '' !== $zy_section_heading || ! empty( $zy_section_link ) ) : ?>
+			<div class="flex flex-wrap items-end justify-between gap-3 mb-6">
+				<?php if ( '' !== $zy_section_heading ) : ?>
+					<h2 class="text-xl font-bold tracking-tight text-zy-dark sm:text-2xl"><?php echo esc_html( $zy_section_heading ); ?></h2>
+				<?php endif; ?>
+				<?php if ( ! empty( $zy_section_link ) ) : ?>
+					<a href="<?php echo esc_url( $zy_section_link['url'] ); ?>" class="text-sm font-semibold text-zy-primary hover:underline whitespace-nowrap">
+						<?php echo esc_html( $zy_section_link['text'] ); ?> &rarr;
+					</a>
+				<?php endif; ?>
+			</div>
+			<?php endif; ?>
+			<?php echo $zy_section_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- markup comes from the Product Grid engine, which escapes its own values. ?>
+		</section>
+		<?php
+	}
+}
+?>
+
+<!-- ============================================================
      PRODUCTS & CATEGORIES LAYOUT
 ============================================================ -->
 <div id="products-layout-container" class="mx-auto max-w-7xl px-4 pt-12 sm:px-6 lg:px-8">
@@ -665,38 +721,119 @@ if ( function_exists( 'zymarg_sp_premium_render_all' ) ) {
         </div>
         <label class="flex items-center gap-2 text-sm">
           <span class="text-zy-body/70"><?php esc_html_e( 'Sort', 'zymarg-store-page' ); ?></span>
+          <?php
+          // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only sort preference, no state change.
+          $zy_sort = isset( $_GET['zy_sort'] ) ? sanitize_key( wp_unslash( $_GET['zy_sort'] ) ) : 'popular';
+          if ( ! in_array( $zy_sort, [ 'popular', 'newest', 'price-asc', 'price-desc', 'rating' ], true ) ) {
+              $zy_sort = 'popular';
+          }
+          ?>
           <select data-sort-select class="rounded-xl border border-zy-border bg-zy-surface px-3 py-2 text-sm font-medium text-zy-dark shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-zy-secondary">
-            <option value="popular"   ><?php esc_html_e( 'Most Popular',        'zymarg-store-page' ); ?></option>
-            <option value="newest"    ><?php esc_html_e( 'Newest',              'zymarg-store-page' ); ?></option>
-            <option value="price-asc" ><?php esc_html_e( 'Price: Low to High', 'zymarg-store-page' ); ?></option>
-            <option value="price-desc"><?php esc_html_e( 'Price: High to Low', 'zymarg-store-page' ); ?></option>
-            <option value="rating"    ><?php esc_html_e( 'Top Rated',          'zymarg-store-page' ); ?></option>
+            <option value="popular"    <?php selected( $zy_sort, 'popular' ); ?>><?php esc_html_e( 'Most Popular',        'zymarg-store-page' ); ?></option>
+            <option value="newest"     <?php selected( $zy_sort, 'newest' ); ?>><?php esc_html_e( 'Newest',              'zymarg-store-page' ); ?></option>
+            <option value="price-asc"  <?php selected( $zy_sort, 'price-asc' ); ?>><?php esc_html_e( 'Price: Low to High', 'zymarg-store-page' ); ?></option>
+            <option value="price-desc" <?php selected( $zy_sort, 'price-desc' ); ?>><?php esc_html_e( 'Price: High to Low', 'zymarg-store-page' ); ?></option>
+            <option value="rating"     <?php selected( $zy_sort, 'rating' ); ?>><?php esc_html_e( 'Top Rated',          'zymarg-store-page' ); ?></option>
           </select>
         </label>
       </div>
 
       <?php
       /*
-       * v1.18.1: a div, not a ul.
+       * v1.23.0: server-rendered by the Product Grid engine.
        *
-       * Cards are no longer built in JavaScript. store-page.js sends the
-       * product IDs it has resolved to the engine and injects the ZYMARG card
-       * markup that comes back, and that markup carries the engine's own grid
-       * wrapper. A <ul> parent would make the returned <div> invalid markup,
-       * and the grid columns now come from the engine's stylesheet rather than
-       * the Tailwind classes that used to live on this element.
+       * The admin-managed "All Products" row (ZYMARG_SP_Store_Sections::
+       * get_all_products_row(), identified by its current_vendor_subset
+       * being "all" rather than by a hardcoded row id) now renders here
+       * directly via do_shortcode(), with the engine's own native infinite
+       * scroll taking over from the Dokan-REST-driven JS that used to own
+       * this container. store-page.js no longer builds this grid's initial
+       * page at all.
+       *
+       * The Sort control above still works, but only by round-tripping
+       * through ?zy_sort= (see $zy_sort just above): the shortcode has no
+       * live re-sort of its own, so a sort change reloads the page with the
+       * chosen orderby/order folded into the shortcode below. This does NOT
+       * apply while a category filter is active -- store-page.js keeps its
+       * existing client-side re-sort of the already-fetched filtered list
+       * for that case, completely unchanged.
+       *
+       * #product-grid-filtered is a SIBLING, not a replacement: clicking a
+       * category in the sidebar hides this container and shows that one
+       * instead (see store-page.js), so the engine's widget here --
+       * including its scroll position and its own infinite-scroll state --
+       * is never destroyed and simply reappears untouched when the filter
+       * is cleared.
        */
+      $zy_all_products_row  = class_exists( 'ZYMARG_SP_Store_Sections' ) ? ZYMARG_SP_Store_Sections::get_all_products_row() : null;
+      $zy_all_products_html = '';
+
+      if ( null !== $zy_all_products_row && shortcode_exists( 'zymarg_products' ) ) {
+          $zy_all_products_code = trim( (string) ( $zy_all_products_row['shortcode'] ?? '' ) );
+
+          if ( '' !== $zy_all_products_code ) {
+              $zy_all_products_code = ZYMARG_SP_Store_Sections::force_no_heading( $zy_all_products_code );
+
+              // Fold the Sort control's choice into the shortcode, only when
+              // no orderby/order was already hand-set by the admin -- an
+              // admin-chosen order always wins over the shopper's dropdown.
+              if ( 'popular' !== $zy_sort
+                  && ! preg_match( '/\borderby=/', $zy_all_products_code )
+                  && ! preg_match( '/\border=/', $zy_all_products_code )
+              ) {
+                  $zy_sort_map = [
+                      'newest'     => [ 'orderby' => 'date',  'order' => 'DESC' ],
+                      'price-asc'  => [ 'orderby' => 'price', 'order' => 'ASC' ],
+                      'price-desc' => [ 'orderby' => 'price', 'order' => 'DESC' ],
+                      'rating'     => [ 'orderby' => 'rating', 'order' => 'DESC' ],
+                  ];
+                  if ( isset( $zy_sort_map[ $zy_sort ] ) ) {
+                      $zy_pos = strrpos( $zy_all_products_code, ']' );
+                      if ( false !== $zy_pos ) {
+                          $zy_all_products_code = substr( $zy_all_products_code, 0, $zy_pos )
+                              . ' orderby="' . esc_attr( $zy_sort_map[ $zy_sort ]['orderby'] ) . '"'
+                              . ' order="' . esc_attr( $zy_sort_map[ $zy_sort ]['order'] ) . '"'
+                              . substr( $zy_all_products_code, $zy_pos );
+                      }
+                  }
+              }
+
+              $zy_all_products_html = trim( (string) do_shortcode( $zy_all_products_code ) );
+
+              if ( false !== strpos( $zy_all_products_html, 'zymarg-wcpg__empty' ) ) {
+                  $zy_all_products_html = '';
+              }
+          }
+      }
       ?>
       <div id="product-grid" class="zy-product-grid mt-6">
-        <!-- Rendered by store-page.js via ZYMARG_SP_Grid_Bridge -->
+        <?php echo $zy_all_products_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- markup comes from the Product Grid engine, which escapes its own values. ?>
       </div>
 
-      <!-- Infinite scroll loader -->
+      <?php if ( '' === $zy_all_products_html ) : ?>
+      <p class="zy-products-empty mt-6 text-sm text-zy-body/70">
+          <?php esc_html_e( 'No products to show right now.', 'zymarg-store-page' ); ?>
+      </p>
+      <?php endif; ?>
+
+      <!--
+        Category-filtered and search results. Same fetch/render pipeline as
+        before (fetchByCategory() / fetchSearchPage() -> renderProducts() ->
+        ZYMARG_SP_Grid_Bridge's ajax_render_cards, all unchanged) -- only the
+        mount point moved here from #product-grid, so that container's
+        engine-rendered widget is never torn down by a category click or a
+        search. Hidden until a category or search is active; store-page.js
+        toggles visibility between this and #product-grid.
+      -->
+      <div id="product-grid-filtered" class="zy-product-grid mt-6" style="display:none;"></div>
+
+      <!-- Infinite scroll loader — used by the category/search load-more
+           path above, NOT by #product-grid (the engine has its own). -->
       <div class="zy-infinite-loader-area">
         <div id="zy-infinite-loader" class="zy-infinite-loader" role="status" aria-live="polite" aria-atomic="true"></div>
       </div>
 
-      <!-- Invisible sentinel — IntersectionObserver watches this to trigger next load -->
+      <!-- Invisible sentinel — IntersectionObserver watches this to trigger the next page of category/search results. -->
       <div id="zy-scroll-sentinel" aria-hidden="true" style="width:100%;height:2px;"></div>
 
       <p id="zy-scroll-a11y" class="sr-only" aria-live="polite"></p>

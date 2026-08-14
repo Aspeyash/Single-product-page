@@ -93,8 +93,45 @@
   let catPage            = 0;    // how many PAGE_SIZE slices have been rendered
   const CAT_PAGE_SIZE    = 20;   // products to show per load-more in category mode
 
-  const grid        = document.getElementById("product-grid");
-  // Infinite scroll elements (replace old load-more button)
+  /*
+   * v1.23.0: #product-grid is now server-rendered by the Product Grid engine
+   * (see templates/store.php) with its own native infinite scroll, so this
+   * script no longer builds its initial page or paginates it. It is kept as
+   * a SIBLING, not replaced: `staticGrid` is only ever hidden/shown, never
+   * written to.
+   *
+   * Every existing category/search code path in this file still targets the
+   * variable named `grid` by identity (dozens of call sites), so rather than
+   * touch each one, `grid` itself now points at the new sibling container,
+   * #product-grid-filtered. That container starts empty and hidden; the two
+   * small helpers below are the only new logic that decides which of the two
+   * containers is visible at any moment. Category and search fetch/render
+   * logic is otherwise completely unchanged.
+   */
+  const staticGrid  = document.getElementById("product-grid");
+  const grid        = document.getElementById("product-grid-filtered");
+
+  /* Show the filtered grid, hide the server-rendered static one. Called the
+     moment a category filter or a search becomes active. */
+  function showFilteredGrid() {
+    if (staticGrid) staticGrid.style.display = "none";
+    if (grid) grid.style.display = "";
+  }
+
+  /* Hide the filtered grid, reveal the static one exactly as the server
+     rendered it — it was never touched, so nothing needs to be re-fetched
+     or re-rendered here. Called whenever a filter/search is cleared. */
+  function showStaticGrid() {
+    if (grid) {
+      grid.style.display = "none";
+      grid.innerHTML = ""; // don't keep a stale filtered result set in the DOM
+    }
+    if (staticGrid) staticGrid.style.display = "";
+  }
+
+  // Infinite scroll elements (replace old load-more button). These now
+  // belong to the category/search path only — #product-grid has its own,
+  // engine-native infinite scroll and never uses these.
   const infiniteLoader   = document.getElementById("zy-infinite-loader");
   const scrollSentinel   = document.getElementById("zy-scroll-sentinel");
   const a11yStatus       = document.getElementById("zy-scroll-a11y");
@@ -374,6 +411,12 @@
     searchPage        = 1;
     searchTotalPages  = totalPages || 1;
 
+    // Reveal the filtered grid, hide the server-rendered static one. Safe to
+    // call on every invocation of this function, including the re-sort
+    // path — it is a pure visibility toggle, so calling it while already
+    // showing the filtered grid is a no-op.
+    showFilteredGrid();
+
     if (searchResultsList.length === 0) {
       setProductsHeading(`No results for "${query}"`, true);
       if (grid) {
@@ -592,11 +635,14 @@
       scrollObserver.disconnect();
     }
 
-    // Reload the full catalog, then re-observe
+    /*
+     * v1.23.0: restore the server-rendered "All Products" grid instead of
+     * re-fetching the catalog. It was only ever hidden by showFilteredGrid()
+     * — its markup, scroll position and the engine's own infinite scroll
+     * are exactly as they were, so there is nothing to reload here.
+     */
+    showStaticGrid();
     visibleCount = PAGE_SIZE;
-    loadProducts(true).then(() => {
-      if (scrollObserver && scrollSentinel) scrollObserver.observe(scrollSentinel);
-    });
     hideSearchBanner();
 
     // Clear the AURA input
@@ -2161,16 +2207,41 @@
           return 0;
         });
         applySearchToGrid(activeSearchQuery, sorted, searchTotalPages);
-      } else {
-        // Reset pagination state for fresh sort
+      } else if (activeCatProducts.length > 0) {
+        /*
+         * A category filter is active. This reproduces the exact behaviour
+         * this branch already had before v1.23.0 — it did not special-case
+         * an active category filter, so choosing a sort here fell through
+         * to the plain "no active search" branch below and reloaded the
+         * full, newly-sorted catalog, silently dropping the category
+         * filter. That is unchanged. The only difference is that the
+         * catalog now paints into the (now-visible) filtered container
+         * rather than the page's only grid, since there was only one before.
+         */
+        showFilteredGrid();
         totalPages = 999;
         loaderHide();
         if (scrollObserver && scrollSentinel) {
           scrollObserver.disconnect();
         }
+        activeCatProducts = [];
+        activeCatName     = "";
+        catPage           = 0;
         loadProducts(true).then(() => {
           if (scrollObserver && scrollSentinel) scrollObserver.observe(scrollSentinel);
         });
+      } else {
+        /*
+         * v1.23.0: #product-grid is server-rendered with no live re-sort of
+         * its own, so an unfiltered sort change reloads the page with the
+         * chosen value carried as ?zy_sort= — templates/store.php reads
+         * that query var and folds it into the "All Products" shortcode's
+         * orderby/order attributes before rendering. Any other existing
+         * query params on the URL are preserved.
+         */
+        const zyUrl = new URL(window.location.href);
+        zyUrl.searchParams.set("zy_sort", sortSelect.value);
+        window.location.href = zyUrl.toString();
       }
     });
     /* ── Infinite scroll via IntersectionObserver ─────────────────────────
@@ -2255,13 +2326,18 @@
       { root: null, rootMargin: "0px 0px", threshold: 0 }
     );
 
-    // Load the first page of products, THEN start the observer.
-    // This prevents the sentinel (visible on page load) from firing a
-    // second fetch before the first page has even finished loading.
-    loadProducts(true).then(() => {
-      // Start observing only after page 1 is rendered
-      if (scrollSentinel && scrollObserver) scrollObserver.observe(scrollSentinel);
-    });
+    /*
+     * v1.23.0: no initial fetch here any more, and the observer is NOT
+     * attached to the sentinel on boot.
+     *
+     * #product-grid (the "All Products" row) is now server-rendered by the
+     * Product Grid engine with its own native infinite scroll — this script
+     * never builds its first page or paginates it. #zy-scroll-sentinel
+     * belongs to the category/search path only, so `scrollObserver` starts
+     * idle and is attached reactively, exactly where it already was: inside
+     * the category click handler and the search render paths, once one of
+     * those becomes active and shows #product-grid-filtered.
+     */
 
     fetchStoreDetails();
     initStickyHeader();
@@ -2293,6 +2369,12 @@
         // Highlight the active sidebar link
         document.querySelectorAll(".zy-sidebar-cat").forEach(l => l.classList.remove("is-active"));
         this.classList.add("is-active");
+
+        // Reveal the filtered grid, hide the server-rendered static one.
+        // The static grid's own content is left completely alone underneath
+        // — it is only hidden, never cleared or re-fetched — so clearing
+        // this filter later restores it instantly with no extra work.
+        showFilteredGrid();
 
         // Show a loading state on the heading and grid
         setProductsHeading(`Loading "${catName}"…`, true);
