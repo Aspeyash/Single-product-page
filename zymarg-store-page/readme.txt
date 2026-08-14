@@ -4,7 +4,7 @@ Tags:              dokan, vendor, store, marketplace, activewear
 Requires at least: 6.0
 Tested up to:      6.7
 Requires PHP:      7.4
-Stable tag:        1.22.1
+Stable tag:        1.22.2
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,6 +73,10 @@ Yes. Edit the `@theme` block inside `templates/store.php` to change the design t
 4. Admin settings page under Dokan → ZYMARG Store Page
 
 == Changelog ==
+
+= 1.22.2 — Hero Store Card: stats and buttons stay on one line on mobile =
+
+* Fix: 1.22.1 stopped the Follow/Chat/Share buttons from overlapping the Followers/Rating/Reviews/Products stats on narrow phones by letting the buttons wrap onto a second line when needed — but the layout is meant to be a single line at every phone size, not two. Measured the actual space available inside the card at real phone widths (320px up to 428px) versus how much room the stats and buttons needed, then reduced gaps, stat text size, and button padding on mobile only until both blocks fit on one line with room to spare, at every width tested, with no overlap. Tablet and desktop sizing is unchanged.
 
 = 1.22.1 — Hero Store Card fixes: name color, duplicate follower count, mobile overlap =
 

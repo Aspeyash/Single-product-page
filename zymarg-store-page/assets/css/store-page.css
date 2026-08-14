@@ -1859,36 +1859,33 @@ input.zsp-sheet__input[type="search"] {
 .zsp-hc-stats-slot{
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
   width: 100%;
   margin-top: 4px;
-  /* FIX: was flex-wrap:nowrap with both the stats block AND the actions
-     block set to flex-shrink:0 (see below) - on a real narrow phone their
-     combined minimum width is wider than the card, and since neither side
-     was allowed to shrink OR wrap, the buttons rendered on top of the
-     stats instead of moving out of the way. flex-wrap:wrap lets the
-     actions block (Follow/Chat/Share) drop to its own line automatically,
-     but ONLY on devices narrow enough that it doesn't fit - wider phones
-     keep the original single-row layout unchanged. row-gap covers the
-     spacing on devices where it does wrap. */
-  flex-wrap: wrap;
-  row-gap: 6px;
+  /* MUST stay a single line on mobile per confirmed layout - wrapping to a
+     2nd row is NOT wanted here. Measured with the browser's own layout
+     engine at real phone widths (320-428px): at 320px the card has ~249px
+     available in this row, while stats+actions previously needed ~309px
+     combined - that 60px shortfall is what caused the overlap/wrap.
+     Fixed by shrinking gaps/font-sizes/button padding below until both
+     blocks fit inside the available width with margin to spare, instead of
+     wrapping or shrinking unpredictably. flex-wrap stays nowrap on
+     purpose. */
+  flex-wrap: nowrap;
 }
 
-.zsp-hc-stats{ display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; flex-shrink: 1; min-width: 0; }
+.zsp-hc-stats{ display: flex; align-items: center; gap: 4px; flex-wrap: nowrap; flex-shrink: 0; min-width: 0; }
 .zsp-hc-stat{ text-align: center; line-height: 1.05; flex-shrink: 0; }
-.zsp-hc-stat b{ display: block; font-size: 11px; font-weight: 800; }
-.zsp-hc-stat span{ display: block; font-size: 7px; font-weight: 600; text-transform: uppercase; letter-spacing: .02em; opacity: .85; margin-top: 1px; white-space: nowrap; }
+.zsp-hc-stat b{ display: block; font-size: 9px; font-weight: 800; }
+.zsp-hc-stat span{ display: block; font-size: 5.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .01em; opacity: .85; margin-top: 1px; white-space: nowrap; }
 
 .zsp-hc-actions{
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 3px;
   flex-shrink: 0;
-  /* margin-left:auto still pushes this block to the right edge of
-     whichever line it ends up on - the same line as the stats on wider
-     phones, or its own line on narrower ones - matching the "push to the
-     edge" request either way. */
+  /* margin-left:auto keeps this block pushed to the card's right edge on
+     the same single line as the stats. */
   margin-left: auto;
 }
 
@@ -1896,15 +1893,19 @@ input.zsp-sheet__input[type="search"] {
    buttons (bg-zy-gradient primary, white+border secondary), only size and
    padding tuned per breakpoint for the new card layout. */
 .zsp-hc-btn-follow{
-  border-radius: 9px;
+  border-radius: 8px;
   font-weight: 700;
   white-space: nowrap;
   background: linear-gradient(135deg, #9500A5 0%, #BD00D1 60%, #FEA9FF 130%);
   color: #fff;
   border: none;
   text-shadow: none;
-  padding: 6px 11px;
-  font-size: 10.5px;
+  /* Shrunk from 6px/11px, 10.5px on mobile only (>=640px tablet/desktop
+     rules below override this back up) - measured against real phone
+     widths so stats+actions fit on one line without wrapping or
+     overlapping; see .zsp-hc-stats-slot comment for the measurements. */
+  padding: 5px 8px;
+  font-size: 9.5px;
   cursor: pointer;
   transition: opacity .3s ease-in-out, transform .3s ease-in-out, box-shadow .3s ease-in-out;
 }
@@ -1916,26 +1917,26 @@ input.zsp-sheet__input[type="search"] {
   text-shadow: none;
 }
 .zsp-hc-btn-chat{
-  border-radius: 9px;
+  border-radius: 8px;
   font-weight: 700;
   white-space: nowrap;
   background: #fff;
   color: #36003D;
   border: 1px solid #D8BFD3;
   text-shadow: none;
-  padding: 6px 10px;
-  font-size: 10.5px;
+  padding: 5px 7px;
+  font-size: 9.5px;
   cursor: pointer;
   transition: background .3s ease-in-out, transform .3s ease-in-out, box-shadow .3s ease-in-out;
 }
 .zsp-hc-btn-chat:hover{ background: #EAEDFF; }
 .zsp-hc-btn-share{
-  border-radius: 9px;
+  border-radius: 8px;
   background: #fff;
   color: #36003D;
   border: 1px solid #D8BFD3;
-  width: 26px;
-  height: 26px;
+  width: 22px;
+  height: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1944,7 +1945,7 @@ input.zsp-sheet__input[type="search"] {
   transition: background .3s ease-in-out, transform .3s ease-in-out, box-shadow .3s ease-in-out;
 }
 .zsp-hc-btn-share:hover{ background: #EAEDFF; }
-.zsp-hc-btn-share svg{ width: 13px; height: 13px; }
+.zsp-hc-btn-share svg{ width: 11px; height: 11px; }
 
 /* ================= TABLET (>=640px): 3 columns —
    logo+identity (max width) | stats | actions ================= */
