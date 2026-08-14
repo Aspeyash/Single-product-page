@@ -3,7 +3,7 @@
  * Plugin Name:       ZYMARG Store Page
  * Plugin URI:        https://zymarg.com/plugins/zymarg-store-page
  * Description:       Replaces the default Dokan vendor store page with the premium ZYMARG Store Page design — hero banner, trust highlights, featured collections carousel, category sidebar, AURA Studio live-search (vendor-scoped), dynamic product grid via Dokan REST API, customer-reviews section with star breakdowns, and a collapsible store-story panel. Automatically overrides Dokan's store template on activation; no theme edits required.
- * Version:           1.22.1
+ * Version:           1.22.2
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            ZYMARG
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'ZYMARG_SP_VERSION' ) ) {
-	define( 'ZYMARG_SP_VERSION', '1.22.1' );
+	define( 'ZYMARG_SP_VERSION', '1.22.2' );
 }
 if ( ! defined( 'ZYMARG_SP_FILE' ) ) {
 	define( 'ZYMARG_SP_FILE',      __FILE__ );
