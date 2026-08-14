@@ -4,7 +4,7 @@ Tags:              dokan, vendor, store, marketplace, activewear
 Requires at least: 6.0
 Tested up to:      6.7
 Requires PHP:      7.4
-Stable tag:        1.22.3
+Stable tag:        1.22.4
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,6 +73,10 @@ Yes. Edit the `@theme` block inside `templates/store.php` to change the design t
 4. Admin settings page under Dokan → ZYMARG Store Page
 
 == Changelog ==
+
+= 1.22.4 — Hero banner: fix cut-off/gap under the banner image on mobile =
+
+* Fix: on some sites the hero banner photo did not fully cover its container on mobile, leaving a visible gap of blank space above the store card. Root cause: many host themes (including Astra) ship a global CSS rule for content images (roughly `img { max-width: 100%; height: auto; }`) that can end up more specific than this plugin's own banner sizing rules, particularly at certain breakpoints - when the theme's rule won, the banner's height collapsed to its own aspect ratio instead of filling the fixed-height banner area. The banner image now carries an explicit, narrowly-scoped override so it always fills its container edge-to-edge regardless of what a host theme's own image styles do. Desktop and tablet, which were already unaffected, are unchanged.
 
 = 1.22.3 — Hero Store Card: larger, more legible stats text on mobile =
 
