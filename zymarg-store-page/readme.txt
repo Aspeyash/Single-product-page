@@ -4,7 +4,7 @@ Tags:              dokan, vendor, store, marketplace, activewear
 Requires at least: 6.0
 Tested up to:      6.7
 Requires PHP:      7.4
-Stable tag:        1.22.4
+Stable tag:        1.22.5
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,6 +73,10 @@ Yes. Edit the `@theme` block inside `templates/store.php` to change the design t
 4. Admin settings page under Dokan → ZYMARG Store Page
 
 == Changelog ==
+
+= 1.22.5 — Fix: some vendors' banner photos did not appear at all =
+
+* Fix: on multi-vendor sites, a store banner uploaded through the vendor dashboard's own uploader could fail to appear entirely, silently falling back to the plain gradient background as though no banner had ever been set - while a banner set via the WordPress media library (as an admin typically would) displayed correctly. Root cause: Dokan can store the banner as either a URL string or a bare numeric attachment ID depending on which upload path was used, and this plugin only ever handled the URL-string case. The store logo already handled both cases correctly; the banner now uses that same resolution logic, so both upload paths display correctly.
 
 = 1.22.4 — Hero banner: fix cut-off/gap under the banner image on mobile =
 
