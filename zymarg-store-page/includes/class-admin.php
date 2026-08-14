@@ -40,6 +40,16 @@ class ZYMARG_SP_Admin {
 		add_action( 'admin_enqueue_scripts', [ __CLASS__, 'enqueue_admin_assets' ] );
 		add_action( 'admin_init',            [ __CLASS__, 'register_settings' ] );
 		add_action( 'wp_ajax_zymarg_sp_save_settings', [ __CLASS__, 'ajax_save_settings' ] );
+
+		// Admin-managed product grid sections (Trending / Best Selling / All
+		// Products). Deliberately separate AJAX actions from the settings save
+		// above -- the section repeater has its own validation (shortcode
+		// allow-list + current_vendor source restriction) and its own one-step
+		// backup/restore, mirroring how ZYMARG Single Product keeps its section
+		// repeater's save action apart from its general settings save.
+		add_action( 'wp_ajax_zymarg_sp_save_store_sections',    [ __CLASS__, 'ajax_save_store_sections' ] );
+		add_action( 'wp_ajax_zymarg_sp_restore_store_sections', [ __CLASS__, 'ajax_restore_store_sections' ] );
+
 		add_filter( 'plugin_action_links_' . plugin_basename( ZYMARG_SP_FILE ),
 		            [ __CLASS__, 'action_links' ] );
 	}
@@ -158,6 +168,44 @@ class ZYMARG_SP_Admin {
 				'disabled' => __( 'Disabled', 'zymarg-store-page' ),
 				'on'       => __( 'ON', 'zymarg-store-page' ),
 				'off'      => __( 'OFF', 'zymarg-store-page' ),
+			],
+		] );
+
+		// ── Product grid sections repeater ──────────────────────────────
+		// Separate script from zymarg-sp-admin above: the section repeater
+		// has its own Ajax actions, its own validation, and needs
+		// jquery-ui-sortable, which the settings form itself does not.
+		wp_enqueue_script(
+			'zymarg-sp-store-sections',
+			ZYMARG_SP_URL . 'assets/js/zymarg-sp-store-sections.js',
+			[ 'jquery', 'jquery-ui-sortable' ],
+			ZYMARG_SP_VERSION,
+			true
+		);
+
+		wp_localize_script( 'zymarg-sp-store-sections', 'ZymargSPStoreSections', [
+			'ajaxUrl'        => admin_url( 'admin-ajax.php' ),
+			'saveNonce'      => wp_create_nonce( 'zymarg_sp_save_store_sections' ),
+			'restoreNonce'   => wp_create_nonce( 'zymarg_sp_restore_store_sections' ),
+			'allowedShortcodes' => class_exists( 'ZYMARG_SP_Store_Sections' )
+				? array_values( ZYMARG_SP_Store_Sections::allowed_shortcodes() )
+				: [ 'zymarg_products' ],
+			'i18n'           => [
+				'saved'           => __( 'Sections saved.', 'zymarg-store-page' ),
+				'failed'          => __( 'Error saving. Please try again.', 'zymarg-store-page' ),
+				'edit'            => __( 'Edit', 'zymarg-store-page' ),
+				'done'            => __( 'Done', 'zymarg-store-page' ),
+				'untitled'        => __( 'this section', 'zymarg-store-page' ),
+				'confirmRemove'   => __( 'Remove "%s"? It will stop rendering on the store page once you save.', 'zymarg-store-page' ),
+				'confirmRestore'  => __( 'Restore the section list from before your last save? The list you have now becomes the restore point, so you can swap back.', 'zymarg-store-page' ),
+				'confirmSave'     => __( 'Save these section changes?', 'zymarg-store-page' ),
+				'invalid'         => __( 'Fix these section problems before saving:', 'zymarg-store-page' ),
+				'restoreFailed'   => __( 'Restore failed. Please reload and try again.', 'zymarg-store-page' ),
+				'notAllowedTag'   => __( 'is not a ZYMARG Product Grid shortcode and would be discarded on save.', 'zymarg-store-page' ),
+				'mustBeCurrentVendor' => __( 'must use source="current_vendor" — this is the only source a store page section can run, and would be discarded on save.', 'zymarg-store-page' ),
+				'unbalancedBrackets'  => __( 'Unbalanced square brackets.', 'zymarg-store-page' ),
+				'unbalancedQuotes'    => __( 'Unbalanced quotation marks.', 'zymarg-store-page' ),
+				'mustStartEnd'        => __( 'Must start with [ and end with ].', 'zymarg-store-page' ),
 			],
 		] );
 	}
@@ -289,6 +337,89 @@ class ZYMARG_SP_Admin {
 			'message' => __( 'Settings saved.', 'zymarg-store-page' ),
 			'options' => $clean,
 			'hero'    => $hero,
+		] );
+	}
+
+	// ──────────────────────────────────────────────────────────────────────
+	// Ajax save/restore — admin-managed product grid sections.
+	//
+	// Own nonce, own action, own capability check -- deliberately not folded
+	// into ajax_save_settings() above. That handler posts the entire settings
+	// form as one payload; the section repeater has its own guarded save path
+	// (allow-list + current_vendor restriction) that should not depend on, or
+	// be blocked by, anything else on the settings screen.
+	// ──────────────────────────────────────────────────────────────────────
+
+	public static function ajax_save_store_sections() {
+		if ( ! check_ajax_referer( 'zymarg_sp_save_store_sections', 'nonce', false ) ) {
+			wp_send_json_error( [
+				'message' => __( 'Your session expired. Reload the page and try again.', 'zymarg-store-page' ),
+			], 403 );
+		}
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( [
+				'message' => __( 'You do not have permission to change these settings.', 'zymarg-store-page' ),
+			], 403 );
+		}
+
+		if ( ! class_exists( 'ZYMARG_SP_Store_Sections' ) ) {
+			wp_send_json_error( [ 'message' => 'sections_unavailable' ], 500 );
+		}
+
+		$raw_sections = isset( $_POST['sections'] ) ? wp_unslash( $_POST['sections'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitised by sanitize_rows() below.
+
+		if ( ! is_string( $raw_sections ) || '' === $raw_sections ) {
+			wp_send_json_error( [ 'message' => __( 'No section data received.', 'zymarg-store-page' ) ] );
+		}
+
+		$decoded = json_decode( $raw_sections, true );
+
+		if ( ! is_array( $decoded ) ) {
+			wp_send_json_error( [ 'message' => __( 'Invalid section data format.', 'zymarg-store-page' ) ] );
+		}
+
+		ZYMARG_SP_Store_Sections::save( $decoded );
+
+		wp_send_json_success( [
+			'message'  => __( 'Sections saved.', 'zymarg-store-page' ),
+			'sections' => ZYMARG_SP_Store_Sections::get_all(),
+		] );
+	}
+
+	/**
+	 * Swap the stored section list with the rollback snapshot.
+	 *
+	 * The current list becomes the new snapshot, so pressing this twice
+	 * undoes itself -- same contract as ZYMARG Single Product's own
+	 * ajax_restore_sections().
+	 */
+	public static function ajax_restore_store_sections() {
+		if ( ! check_ajax_referer( 'zymarg_sp_restore_store_sections', 'nonce', false ) ) {
+			wp_send_json_error( [
+				'message' => __( 'Your session expired. Reload the page and try again.', 'zymarg-store-page' ),
+			], 403 );
+		}
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_send_json_error( [
+				'message' => __( 'You do not have permission to change these settings.', 'zymarg-store-page' ),
+			], 403 );
+		}
+
+		if ( ! class_exists( 'ZYMARG_SP_Store_Sections' ) ) {
+			wp_send_json_error( [ 'message' => 'sections_unavailable' ], 500 );
+		}
+
+		$restored = ZYMARG_SP_Store_Sections::restore();
+
+		if ( false === $restored ) {
+			wp_send_json_error( [ 'message' => __( 'There is no previous version to restore.', 'zymarg-store-page' ) ] );
+		}
+
+		wp_send_json_success( [
+			'message'  => __( 'Previous sections restored.', 'zymarg-store-page' ),
+			'sections' => $restored,
 		] );
 	}
 
@@ -596,7 +727,199 @@ class ZYMARG_SP_Admin {
 
 				</div><!-- /.zsp-aside -->
 			</div><!-- /.zsp-layout -->
+
+			<?php self::render_store_sections_card(); ?>
+
 		</div><!-- /.zymarg-sp-admin -->
+		<?php
+	}
+
+	// ──────────────────────────────────────────────────────────────────────
+	// Product grid sections — Trending / Best Selling / All Products by
+	// default, each an admin-editable [zymarg_products] shortcode against
+	// the engine's current_vendor source.
+	//
+	// Deliberately its own full-width card below the two-column settings
+	// layout, not squeezed into .zsp-main: a shortcode textarea and a
+	// drag-reorderable list both want more horizontal room than the
+	// settings column gives every other field on this screen.
+	// ──────────────────────────────────────────────────────────────────────
+
+	/**
+	 * The Product Grid Sections card.
+	 *
+	 * @return void
+	 */
+	private static function render_store_sections_card() {
+		if ( ! class_exists( 'ZYMARG_SP_Store_Sections' ) ) {
+			return;
+		}
+
+		$sections = ZYMARG_SP_Store_Sections::get_all();
+		$backup   = get_option( ZYMARG_SP_Store_Sections::BACKUP_KEY, [] );
+		?>
+		<div class="zsp-card zsp-card--sections">
+			<div class="zsp-card__head">
+				<div class="zsp-card__icon" aria-hidden="true">
+					<svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"/></svg>
+				</div>
+				<h2><?php esc_html_e( 'Product Grid Sections', 'zymarg-store-page' ); ?></h2>
+			</div>
+			<div class="zsp-card__body">
+
+				<p class="zsp-field-desc zsp-sections__lede">
+					<?php esc_html_e( 'These sections render on the store page, above the category sidebar, in the order listed. Drag a row by its handle to move it up or down. Each row runs one ZYMARG Product Grid shortcode against this vendor\'s own products, so you can change the layout, limit or card without a plugin update.', 'zymarg-store-page' ); ?>
+				</p>
+				<p class="zsp-field-desc zsp-sections__lede">
+					<strong><?php esc_html_e( 'Rows open locked.', 'zymarg-store-page' ); ?></strong>
+					<?php esc_html_e( 'Press Edit on a row before anything in it can be changed, so simply visiting this screen cannot alter what shoppers see. Removing a row asks for confirmation, and the list from before your last save can be restored below.', 'zymarg-store-page' ); ?>
+				</p>
+				<p class="zsp-field-desc zsp-sections__lede">
+					<strong><?php esc_html_e( 'Every section must use source="current_vendor".', 'zymarg-store-page' ); ?></strong>
+					<?php esc_html_e( 'A store page always shows one vendor\'s own products, so that is the only source a row here can run. Available subsets: all, featured, trending, best_selling.', 'zymarg-store-page' ); ?>
+				</p>
+				<p class="zsp-field-desc zsp-sections__lede">
+					<strong><?php esc_html_e( 'One row is special.', 'zymarg-store-page' ); ?></strong>
+					<?php esc_html_e( 'Whichever enabled row uses current_vendor_subset="all" (the default when the attribute is left out) renders inside the existing category sidebar layout, with infinite scroll, instead of as a standalone block. Only the first such row is treated this way.', 'zymarg-store-page' ); ?>
+				</p>
+
+				<div id="zsp-store-sections" class="zsp-sections">
+					<?php foreach ( $sections as $row ) : ?>
+						<?php self::render_store_section_row( is_array( $row ) ? $row : [] ); ?>
+					<?php endforeach; ?>
+				</div>
+
+				<div class="zsp-sections__actions">
+					<button type="button" class="zsp-sections__add" id="zsp-add-store-section">
+						<span aria-hidden="true">+</span> <?php esc_html_e( 'Add Section', 'zymarg-store-page' ); ?>
+					</button>
+
+					<button type="button" class="zsp-sections__save" id="zsp-save-store-sections">
+						<?php esc_html_e( 'Save Sections', 'zymarg-store-page' ); ?>
+					</button>
+
+					<?php if ( is_array( $backup ) && ! empty( $backup ) ) : ?>
+						<button type="button" class="zsp-sections__restore" id="zsp-restore-store-sections">
+							<?php
+							printf(
+								/* translators: %d: number of sections in the rollback snapshot. */
+								esc_html__( 'Restore previous (%d sections)', 'zymarg-store-page' ),
+								count( $backup )
+							);
+							?>
+						</button>
+					<?php endif; ?>
+
+					<span id="zsp-sections-status" class="zsp-save-status" role="status" aria-live="polite"></span>
+				</div>
+
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * A single section repeater row.
+	 *
+	 * @param array $row Row data: id, label, enabled, heading, show_link,
+	 *                   link_url, shortcode.
+	 * @return void
+	 */
+	private static function render_store_section_row( array $row ) {
+		$id        = (string) ( $row['id'] ?? '' );
+		$label     = (string) ( $row['label'] ?? '' );
+		$heading   = (string) ( $row['heading'] ?? '' );
+		$link_url  = (string) ( $row['link_url'] ?? '' );
+		$shortcode = (string) ( $row['shortcode'] ?? '' );
+		$enabled   = ! empty( $row['enabled'] );
+		$show_link = ! empty( $row['show_link'] );
+		$source    = ZYMARG_SP_Store_Sections::source_of( $shortcode );
+		$layout    = ZYMARG_SP_Store_Sections::layout_of( $shortcode );
+		$subset    = ZYMARG_SP_Store_Sections::subset_of( $shortcode );
+		$is_all    = ZYMARG_SP_Store_Sections::is_all_products_row( $row );
+		?>
+		<div class="zsp-section-row is-locked<?php echo $enabled ? '' : ' is-disabled'; ?>" data-row-id="<?php echo esc_attr( $id ); ?>">
+
+			<div class="zsp-section-row__head">
+				<span class="zsp-section-row__handle" title="<?php esc_attr_e( 'Drag to reorder', 'zymarg-store-page' ); ?>" aria-hidden="true">&#8942;&#8942;</span>
+
+				<input type="text"
+					class="zymarg-sp-admin-input zsp-section-row__label"
+					data-row-field="label"
+					value="<?php echo esc_attr( $label ); ?>"
+					readonly
+					placeholder="<?php esc_attr_e( 'Section name (admin only)', 'zymarg-store-page' ); ?>">
+
+				<span class="zsp-section-row__meta" data-row-meta>
+					<?php
+					echo esc_html(
+						( '' !== $source ? $source : '?' ) . ' · ' . $layout . ' · ' . $subset
+						. ( $is_all ? ' · ' . __( 'special: All Products', 'zymarg-store-page' ) : '' )
+					);
+					?>
+				</span>
+
+				<label class="zsp-toggle zsp-section-row__toggle">
+					<input type="checkbox" data-row-field="enabled" disabled <?php checked( $enabled ); ?>>
+					<span class="zsp-toggle__slider"></span>
+				</label>
+
+				<button type="button" class="zsp-section-row__edit"><?php esc_html_e( 'Edit', 'zymarg-store-page' ); ?></button>
+				<button type="button" class="zsp-section-row__remove" aria-label="<?php esc_attr_e( 'Remove section', 'zymarg-store-page' ); ?>">&times;</button>
+			</div>
+
+			<div class="zsp-section-row__body">
+
+				<div class="zsp-section-row__field">
+					<label class="zsp-section-row__flabel"><?php esc_html_e( 'Section heading (shown on the page)', 'zymarg-store-page' ); ?></label>
+					<input type="text"
+						class="zymarg-sp-admin-input"
+						data-row-field="heading"
+						value="<?php echo esc_attr( $heading ); ?>"
+						readonly
+						placeholder="<?php esc_attr_e( 'Trending', 'zymarg-store-page' ); ?>">
+					<p class="zsp-section-row__hint">
+						<?php esc_html_e( 'Plain text only. Leave empty for no heading. Ignored on the All Products row, which uses this plugin\'s existing All Products toolbar instead.', 'zymarg-store-page' ); ?>
+					</p>
+				</div>
+
+				<div class="zsp-section-row__field zsp-section-row__field--inline">
+					<label class="zsp-toggle">
+						<input type="checkbox" data-row-field="show_link" disabled <?php checked( $show_link ); ?>>
+						<span class="zsp-toggle__slider"></span>
+					</label>
+					<span class="zsp-section-row__flabel"><?php esc_html_e( 'Show the section link', 'zymarg-store-page' ); ?></span>
+				</div>
+
+				<div class="zsp-section-row__field">
+					<label class="zsp-section-row__flabel"><?php esc_html_e( 'Link URL', 'zymarg-store-page' ); ?></label>
+					<input type="url"
+						class="zymarg-sp-admin-input"
+						data-row-field="link_url"
+						value="<?php echo esc_attr( $link_url ); ?>"
+						readonly
+						placeholder="https://">
+					<p class="zsp-section-row__hint">
+						<?php esc_html_e( 'Leave empty and no link renders at all. The link reads "Explore More".', 'zymarg-store-page' ); ?>
+					</p>
+				</div>
+
+				<div class="zsp-section-row__field">
+					<label class="zsp-section-row__flabel"><?php esc_html_e( 'Shortcode', 'zymarg-store-page' ); ?></label>
+					<textarea class="zymarg-sp-admin-input zsp-textarea zsp-section-row__shortcode"
+						data-row-field="shortcode"
+						rows="3"
+						readonly
+						spellcheck="false"
+						placeholder="[zymarg_products source=&quot;current_vendor&quot; current_vendor_subset=&quot;all&quot; limit=&quot;8&quot;]"><?php echo esc_textarea( $shortcode ); ?></textarea>
+					<p class="zsp-section-row__hint">
+						<?php esc_html_e( 'Must use source="current_vendor". Available current_vendor_subset values: all, featured, trending, best_selling.', 'zymarg-store-page' ); ?>
+					</p>
+					<p class="zsp-section-row__warn" hidden></p>
+				</div>
+
+			</div>
+		</div>
 		<?php
 	}
 

@@ -870,3 +870,271 @@
 	box-shadow: var(--zym-focus-ring);
 	outline: none;
 }
+
+
+/* ===========================================================================
+ * PRODUCT GRID SECTIONS REPEATER
+ * Trending / Best Selling / All Products by default -- an ordered,
+ * drag-reorderable list of [zymarg_products] shortcodes against the
+ * current_vendor source. Ported from ZYMARG Single Product's own section
+ * repeater, translated to this screen's zsp- naming and --zym-* tokens.
+ * ======================================================================== */
+
+.zsp-card--sections { margin-top: var(--zym-space-8); }
+
+.zsp-sections__lede {
+	max-width: 78ch;
+	margin: 0 0 var(--zym-space-5);
+}
+
+.zsp-sections__lede code {
+	padding: 1px var(--zym-space-2);
+	border-radius: var(--zym-radius-chip);
+	background: var(--zym-color-neutral-bg);
+	font-family: var(--zym-font-mono);
+	font-size: var(--zym-font-size-xxs);
+	color: var(--zym-color-text);
+}
+
+.zsp-sections {
+	display: flex;
+	flex-direction: column;
+	gap: var(--zym-space-5);
+	margin-top: var(--zym-space-7);
+}
+
+/* Placeholder the sortable plugin drops in while a row is being dragged. */
+.zsp-section-row__placeholder {
+	height: 52px;
+	border: 2px dashed var(--zym-color-border);
+	border-radius: var(--zym-radius-card);
+	background: var(--zym-color-neutral-bg);
+}
+
+.zsp-section-row {
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-card);
+	background: var(--zym-color-surface);
+	overflow: hidden;
+	transition: opacity var(--zym-motion-fast) var(--zym-ease);
+}
+
+.zsp-section-row.is-disabled { opacity: 0.55; }
+
+.zsp-section-row__head {
+	display: flex;
+	align-items: center;
+	gap: var(--zym-space-4);
+	padding: var(--zym-space-5) var(--zym-space-6);
+	background: var(--zym-color-surface-alt);
+}
+
+.zsp-section-row__handle {
+	flex-shrink: 0;
+	cursor: grab;
+	color: var(--zym-color-neutral-text);
+	font-size: 16px;
+	line-height: 1;
+	user-select: none;
+}
+
+.zsp-section-row__label {
+	flex: 1 1 220px;
+	min-width: 120px;
+	font-weight: var(--zym-font-weight-semibold);
+}
+
+.zsp-section-row__meta {
+	flex-shrink: 0;
+	font-size: var(--zym-font-size-xxs);
+	font-family: var(--zym-font-mono);
+	color: var(--zym-color-neutral-text);
+	padding: var(--zym-space-1) var(--zym-space-3);
+	border-radius: var(--zym-radius-chip);
+	background: var(--zym-color-neutral-bg);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 260px;
+}
+
+.zsp-section-row__toggle { flex-shrink: 0; }
+
+.zsp-section-row__edit,
+.zsp-section-row__remove {
+	flex-shrink: 0;
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-button);
+	background: var(--zym-color-surface);
+	font-size: var(--zym-font-size-xs);
+	font-weight: var(--zym-font-weight-semibold);
+	cursor: pointer;
+	transition: background var(--zym-motion-fast) var(--zym-ease),
+		border-color var(--zym-motion-fast) var(--zym-ease);
+}
+
+.zsp-section-row__edit {
+	padding: var(--zym-space-2) var(--zym-space-5);
+	color: var(--zym-color-primary);
+}
+
+.zsp-section-row__edit:hover,
+.zsp-section-row__edit:focus-visible {
+	background: var(--zym-color-container);
+	border-color: var(--zym-color-primary);
+}
+
+.zsp-section-row__edit.is-editing {
+	background: var(--zym-gradient);
+	color: var(--zym-color-surface);
+	border-color: transparent;
+}
+
+.zsp-section-row__remove {
+	width: 30px;
+	height: 30px;
+	line-height: 1;
+	color: var(--zym-color-error);
+	font-size: 16px;
+}
+
+.zsp-section-row__remove:hover,
+.zsp-section-row__remove:focus-visible {
+	background: var(--zym-color-error-bg);
+	border-color: var(--zym-color-error);
+}
+
+.zsp-section-row__body {
+	display: none;
+	padding: var(--zym-space-6);
+	border-top: 1px solid var(--zym-color-border);
+}
+
+/* Rows open locked -- editable fields only appear once Edit has been
+   pressed, which also reveals the body. Kept as one state (is-locked
+   absent) rather than a second class, so JS has one thing to toggle. */
+.zsp-section-row:not(.is-locked) .zsp-section-row__body { display: block; }
+
+.zsp-section-row__field { margin-bottom: var(--zym-space-6); }
+.zsp-section-row__field:last-child { margin-bottom: 0; }
+
+.zsp-section-row__field--inline {
+	display: flex;
+	align-items: center;
+	gap: var(--zym-space-4);
+}
+
+.zsp-section-row__flabel {
+	display: block;
+	font-size: 13px;
+	font-weight: var(--zym-font-weight-semibold);
+	color: var(--zym-color-dark);
+	margin-bottom: var(--zym-space-3);
+}
+
+.zsp-section-row__field--inline .zsp-section-row__flabel {
+	margin-bottom: 0;
+}
+
+.zsp-section-row__hint {
+	font-size: var(--zym-font-size-xs);
+	color: var(--zym-color-neutral-text);
+	margin: var(--zym-space-2) 0 0;
+	line-height: 1.6;
+}
+
+.zsp-section-row__warn {
+	font-size: var(--zym-font-size-xs);
+	color: var(--zym-color-error);
+	font-weight: var(--zym-font-weight-semibold);
+	margin: var(--zym-space-2) 0 0;
+}
+
+.zsp-section-row.has-error .zsp-section-row__shortcode {
+	border-color: var(--zym-color-error);
+}
+
+.zymarg-sp-admin-input {
+	width: 100%;
+	padding: var(--zym-space-3) var(--zym-space-5);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-control);
+	background: var(--zym-color-surface);
+	font-size: var(--zym-font-size-sm);
+	color: var(--zym-color-dark);
+	box-shadow: none;
+	outline: none;
+	transition: border-color var(--zym-motion-input) var(--zym-ease),
+		box-shadow var(--zym-motion-input) var(--zym-ease);
+}
+
+.zymarg-sp-admin-input:focus {
+	border-color: var(--zym-color-primary);
+	box-shadow: var(--zym-focus-ring);
+}
+
+.zymarg-sp-admin-input[readonly] {
+	background: var(--zym-color-neutral-bg);
+	color: var(--zym-color-neutral-text);
+	cursor: default;
+}
+
+.zsp-textarea {
+	min-height: 0;
+	line-height: 1.6;
+	resize: vertical;
+	font-family: var(--zym-font-mono);
+	font-size: var(--zym-font-size-xs);
+}
+
+.zsp-sections__actions {
+	display: flex;
+	align-items: center;
+	gap: var(--zym-space-5);
+	flex-wrap: wrap;
+	margin-top: var(--zym-space-7);
+}
+
+.zsp-sections__add,
+.zsp-sections__save {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--zym-space-3);
+	padding: var(--zym-space-3) var(--zym-space-6);
+	border: none;
+	border-radius: var(--zym-radius-button);
+	background: var(--zym-gradient);
+	color: var(--zym-color-surface);
+	font-size: var(--zym-font-size-sm);
+	font-weight: var(--zym-font-weight-semibold);
+	cursor: pointer;
+	transition: opacity var(--zym-motion-fast) var(--zym-ease);
+}
+
+.zsp-sections__add:hover,
+.zsp-sections__save:hover,
+.zsp-sections__add:focus-visible,
+.zsp-sections__save:focus-visible {
+	opacity: 0.9;
+}
+
+.zsp-sections__restore {
+	display: inline-flex;
+	align-items: center;
+	padding: var(--zym-space-3) var(--zym-space-6);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-button);
+	background: var(--zym-color-surface);
+	color: var(--zym-color-dark);
+	font-size: var(--zym-font-size-sm);
+	font-weight: var(--zym-font-weight-semibold);
+	cursor: pointer;
+	transition: background var(--zym-motion-fast) var(--zym-ease),
+		border-color var(--zym-motion-fast) var(--zym-ease);
+}
+
+.zsp-sections__restore:hover,
+.zsp-sections__restore:focus-visible {
+	background: var(--zym-color-neutral-bg);
+	border-color: var(--zym-color-primary);
+}
