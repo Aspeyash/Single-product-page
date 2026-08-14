@@ -1876,8 +1876,17 @@ input.zsp-sheet__input[type="search"] {
 
 .zsp-hc-stats{ display: flex; align-items: center; gap: 4px; flex-wrap: nowrap; flex-shrink: 0; min-width: 0; }
 .zsp-hc-stat{ text-align: center; line-height: 1.05; flex-shrink: 0; }
-.zsp-hc-stat b{ display: block; font-size: 9px; font-weight: 800; }
-.zsp-hc-stat span{ display: block; font-size: 5.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .01em; opacity: .85; margin-top: 1px; white-space: nowrap; }
+.zsp-hc-stat b{
+  display: block;
+  /* Increased from 9px - measured with the browser's own layout engine at
+     the narrowest real phone width (320px): 11px is the largest size that
+     still keeps a small safe gap (4px) before the actions block without
+     the row overflowing the card's own right edge. 12px overflows the
+     card at 320px. See .zsp-hc-stats-slot comment for full measurements. */
+  font-size: 11px;
+  font-weight: 800;
+}
+.zsp-hc-stat span{ display: block; font-size: 6.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .01em; opacity: .85; margin-top: 1px; white-space: nowrap; }
 
 .zsp-hc-actions{
   display: flex;
