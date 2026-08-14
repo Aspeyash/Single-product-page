@@ -4,7 +4,7 @@ Tags:              dokan, vendor, store, marketplace, activewear
 Requires at least: 6.0
 Tested up to:      6.7
 Requires PHP:      7.4
-Stable tag:        1.22.0
+Stable tag:        1.22.1
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,6 +73,12 @@ Yes. Edit the `@theme` block inside `templates/store.php` to change the design t
 4. Admin settings page under Dokan → ZYMARG Store Page
 
 == Changelog ==
+
+= 1.22.1 — Hero Store Card fixes: name color, duplicate follower count, mobile overlap =
+
+* Fix: the store name on the Hero Store Card rendered in the host theme's default black text instead of white. It was only ever inheriting its color from the card, and a theme's own direct `h1` color rule overrides an inherited value regardless of specificity — the name now sets its own white color explicitly.
+* Fix: the follower count briefly showed a small duplicate "followers" label underneath the new "FOLLOWERS" stat label. A second script (the Follow button's live counter, separate from the one already fixed in 1.22.0) was still writing the old pre-redesign "<strong>N</strong> followers" text into the same element on every page load — it now writes the number only, like the rest of the card.
+* Fix: on narrow mobile screens the Follow / Chat / Share buttons could render on top of the Followers/Rating/Reviews/Products stats instead of moving out of the way. The stats and buttons now wrap onto their own line automatically whenever a phone is too narrow to fit both side by side — wider phones are unaffected and keep the original single-line layout.
 
 = 1.22.0 — Hero Store Card redesign: glass card moved inside the banner, new stats, seller status =
 

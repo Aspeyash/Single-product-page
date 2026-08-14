@@ -1809,6 +1809,13 @@ input.zsp-sheet__input[type="search"] {
 .zsp-hc-identity{ min-width: 0; flex: 1; }
 
 .zsp-hc-name{
+  /* FIX: was only ever inheriting white from .zsp-hc-card{color:#fff}.
+     A host theme's own `h1{color:...}` rule matches this element directly,
+     and any directly-matching rule always wins over an inherited value
+     regardless of specificity — that's why this rendered in the theme's
+     default black instead of white. Declaring color here explicitly (a
+     class selector) beats a plain element selector like the theme's h1. */
+  color: #fff;
   font-weight: 800;
   font-size: 13px;
   line-height: 1.18;
@@ -1855,7 +1862,17 @@ input.zsp-sheet__input[type="search"] {
   gap: 8px;
   width: 100%;
   margin-top: 4px;
-  flex-wrap: nowrap;
+  /* FIX: was flex-wrap:nowrap with both the stats block AND the actions
+     block set to flex-shrink:0 (see below) - on a real narrow phone their
+     combined minimum width is wider than the card, and since neither side
+     was allowed to shrink OR wrap, the buttons rendered on top of the
+     stats instead of moving out of the way. flex-wrap:wrap lets the
+     actions block (Follow/Chat/Share) drop to its own line automatically,
+     but ONLY on devices narrow enough that it doesn't fit - wider phones
+     keep the original single-row layout unchanged. row-gap covers the
+     spacing on devices where it does wrap. */
+  flex-wrap: wrap;
+  row-gap: 6px;
 }
 
 .zsp-hc-stats{ display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; flex-shrink: 1; min-width: 0; }
@@ -1863,7 +1880,17 @@ input.zsp-sheet__input[type="search"] {
 .zsp-hc-stat b{ display: block; font-size: 11px; font-weight: 800; }
 .zsp-hc-stat span{ display: block; font-size: 7px; font-weight: 600; text-transform: uppercase; letter-spacing: .02em; opacity: .85; margin-top: 1px; white-space: nowrap; }
 
-.zsp-hc-actions{ display: flex; align-items: center; gap: 5px; flex-shrink: 0; margin-left: auto; }
+.zsp-hc-actions{
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+  /* margin-left:auto still pushes this block to the right edge of
+     whichever line it ends up on - the same line as the stats on wider
+     phones, or its own line on narrower ones - matching the "push to the
+     edge" request either way. */
+  margin-left: auto;
+}
 
 /* Buttons — SAME colors/behavior as the plugin's existing Follow/Chat/Share
    buttons (bg-zy-gradient primary, white+border secondary), only size and
