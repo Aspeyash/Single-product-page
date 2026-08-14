@@ -828,7 +828,7 @@
   window.__zyCloseDrawer   = closeDrawer;
 
   /* ══════════════════════════════════════════════════════════════════════════
-     STORE DETAILS & REVIEWS (unchanged)
+     STORE DETAILS & REVIEWS
      ══════════════════════════════════════════════════════════════════════════ */
   async function fetchStoreDetails() {
     try {
@@ -836,24 +836,23 @@
       if (!res.ok) throw new Error("Store API error");
       const store = await res.json();
 
-      const coverImg = document.querySelector("[data-store-cover]");
-      if (coverImg && store.banner) coverImg.src = store.banner;
-
-      if (store.gravatar) {
-        document.querySelectorAll("[data-store-logo]").forEach(el => {
-          if (el.querySelector("img")) return;
-          const img = document.createElement("img");
-          img.style.cssText = "position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;";
-          img.alt     = store.store_name || "";
-          img.onerror = () => img.remove();
-          img.src     = store.gravatar;
-          el.textContent = "";
-          el.appendChild(img);
-          // Switch container from flex-centering (letter fallback) to plain block
-          el.classList.remove("flex", "items-center", "justify-center", "text-3xl", "text-sm", "font-extrabold", "text-white");
-          el.style.display = "block";
-        });
-      }
+      /*
+       * Banner and logo are NOT touched here any more (v1.22.6).
+       *
+       * PHP already resolves both correctly from the same source of truth
+       * Dokan's own REST endpoint reads from (`dokan_profile_settings`),
+       * with this plugin's own upload fallback on top -- see
+       * `templates/store.php`. Overwriting them here with Dokan's REST
+       * response caused the correct server-rendered banner/logo to flash
+       * briefly on load and then get replaced by a different, sometimes
+       * wrong image a moment later, because the REST endpoint does not
+       * always resolve the saved attachment the same way the template does.
+       *
+       * This is the same class of bug already fixed for name/avatar in
+       * 1.1.3 and intentionally left alone for location/rating (see the
+       * comments below): PHP owns the banner and logo, JS no longer
+       * touches them.
+       */
 
       const locEl = document.querySelector("[data-store-location]");
       if (locEl && store.address) {
