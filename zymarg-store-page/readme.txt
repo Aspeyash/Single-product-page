@@ -4,7 +4,7 @@ Tags:              dokan, vendor, store, marketplace, activewear
 Requires at least: 6.0
 Tested up to:      6.7
 Requires PHP:      7.4
-Stable tag:        1.22.5
+Stable tag:        1.22.6
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,6 +73,10 @@ Yes. Edit the `@theme` block inside `templates/store.php` to change the design t
 4. Admin settings page under Dokan → ZYMARG Store Page
 
 == Changelog ==
+
+= 1.22.6 — Fix: correct banner and logo briefly replaced by wrong images after page load =
+
+* Fix: on page load, the correct store banner and logo (already rendered correctly by PHP) could be visibly swapped out a moment later for a different, incorrect image. Root cause: `fetchStoreDetails()` made a follow-up call to Dokan's own store REST endpoint purely to refresh live stats (followers, description, etc.), but it also unconditionally overwrote the banner and logo with whatever that endpoint returned — even though the endpoint does not always resolve the saved attachment the same way this plugin's own template does. This is the same class of bug already fixed for the store name and avatar in 1.1.3. The banner and logo are no longer touched by this script at all — PHP is now the sole source for both, exactly like name and avatar already were.
 
 = 1.22.5 — Fix: some vendors' banner photos did not appear at all =
 
