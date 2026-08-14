@@ -3,7 +3,7 @@
  * Plugin Name:       ZYMARG Store Page
  * Plugin URI:        https://zymarg.com/plugins/zymarg-store-page
  * Description:       Replaces the default Dokan vendor store page with the premium ZYMARG Store Page design — hero banner, trust highlights, featured collections carousel, category sidebar, AURA Studio live-search (vendor-scoped), dynamic product grid via Dokan REST API, customer-reviews section with star breakdowns, and a collapsible store-story panel. Automatically overrides Dokan's store template on activation; no theme edits required.
- * Version:           1.22.6
+ * Version:           1.23.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            ZYMARG
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! defined( 'ZYMARG_SP_VERSION' ) ) {
-	define( 'ZYMARG_SP_VERSION', '1.22.6' );
+	define( 'ZYMARG_SP_VERSION', '1.23.0' );
 }
 if ( ! defined( 'ZYMARG_SP_FILE' ) ) {
 	define( 'ZYMARG_SP_FILE',      __FILE__ );
@@ -87,6 +87,12 @@ function zymarg_sp_init() {
 	// anything that renders a product card, which is now every card surface:
 	// no hand-rolled product card remains in this plugin.
 	require_once ZYMARG_SP_DIR . 'includes/class-grid-bridge.php';
+
+	// Admin-managed product grid sections (Trending / Best Selling / All
+	// Products by default), each running a [zymarg_products] shortcode
+	// against the engine's current_vendor source. Loaded here, ahead of
+	// class-admin.php and templates/store.php, both of which read from it.
+	require_once ZYMARG_SP_DIR . 'includes/class-store-sections.php';
 
 	// Registers Premium flash sales as a real engine source, which is what
 	// gives the /flash-sale/ page working load-more. Self-registering on the
