@@ -1085,8 +1085,19 @@
       const formatted = count >= 1000
         ? (count / 1000).toFixed(1).replace(/\.0$/, "") + "K"
         : String(count);
+      /*
+       * FIX: Hero Store Card v2's [data-store-followers] is the number-only
+       * <b> node inside the stats cluster, with "Followers" rendered by a
+       * separate sibling <span> label — NOT a combined "N followers"
+       * string. This function still wrote the OLD pre-redesign HTML
+       * ("<strong>N</strong> followers") into that same node on every page
+       * load (via the unconditional cfg.followersCount seed call below),
+       * which visually duplicated the word "Followers" right next to the
+       * new label span. Now writes the formatted number only, matching the
+       * fix already applied to fetchStoreDetails()'s equivalent write.
+       */
       document.querySelectorAll("[data-store-followers]").forEach(el => {
-        el.innerHTML = `<strong class="font-semibold text-zy-dark">${formatted}</strong> followers`;
+        el.textContent = formatted;
       });
       // Also update sticky header meta line if present.
       const stickyMeta = document.querySelector("[data-sticky-meta]");
