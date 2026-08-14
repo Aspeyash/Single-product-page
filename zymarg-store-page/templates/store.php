@@ -117,7 +117,27 @@ $is_following_store = class_exists( 'ZYMARG_SP_Follow' ) ? ZYMARG_SP_Follow::cur
 // and every store that had not uploaded one showed the same borrowed photo.
 // With no banner the hero falls back to the brand gradient below, which claims
 // nothing about the store.
-$banner_url     = ! empty( $store_info['banner'] )  ? $store_info['banner']  : '';
+//
+// Dokan stores this value in two different shapes depending on which upload
+// path the seller used: admin-side media library edits typically leave a URL
+// string in place, while the vendor dashboard's own uploader has been
+// observed saving a bare attachment ID instead. Resolve both the same way
+// $gravatar_url already does a few lines below — without this, a vendor who
+// uploaded through the dashboard uploader gets a numeric string passed
+// straight into an <img src>, which the browser cannot load, so the banner
+// silently falls back to looking like no banner was set at all.
+$banner_raw = ! empty( $store_info['banner'] ) ? $store_info['banner'] : '';
+if ( $banner_raw ) {
+	if ( is_numeric( $banner_raw ) ) {
+		// Vendor dashboard stores an attachment ID — resolve it to a URL.
+		$banner_url = (string) wp_get_attachment_image_url( (int) $banner_raw, 'full' );
+	} else {
+		// Admin/media-library edits leave a URL string in place — use it as-is.
+		$banner_url = esc_url( $banner_raw );
+	}
+} else {
+	$banner_url = '';
+}
 // Use the vendor's custom uploaded photo from Dokan (stored as 'gravatar' in store_info).
 // Do NOT fall back to Gravatar.com — it requires an external CDN that may be unavailable
 // and returns broken images for vendors without a Gravatar account.
