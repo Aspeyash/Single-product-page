@@ -296,7 +296,7 @@ class ZYMARG_SP_Grid_Bridge {
 			);
 		}
 
-		$html = self::render_products( $ids, self::CARD_GENERAL );
+		$html = self::render_products( $ids, self::CARD_GENERAL, self::all_products_layout_overrides() );
 
 		wp_send_json_success(
 			array(
@@ -304,6 +304,66 @@ class ZYMARG_SP_Grid_Bridge {
 				'count' => count( $ids ),
 			)
 		);
+	}
+
+	/**
+	 * Layout overrides mirroring the admin's "All Products" row.
+	 *
+	 * WHY THIS EXISTS
+	 * ----------------
+	 * ajax_render_cards() repaints the grid for search results and category
+	 * filtering. Its config previously hardcoded 'columns' => 4 with no
+	 * responsive breakpoint keys at all, so a search or category switch
+	 * always rendered a flat 4-column grid on every device -- ignoring
+	 * whatever columns / columns_tablet / columns_mobile / gap the admin had
+	 * configured on the "All Products" row's own shortcode (which the normal,
+	 * non-AJAX page-load render DOES honour, via do_shortcode() in
+	 * templates/store.php).
+	 *
+	 * This reads those same four attributes straight out of that row's saved
+	 * shortcode -- the single source of truth already used for the initial
+	 * render -- so a search/category repaint always matches it, with no
+	 * separate setting to keep in sync and nothing hardcoded here.
+	 *
+	 * @return array<string,mixed> Config overrides, or [] when there is no
+	 *                              "All Products" row to read from.
+	 */
+	private static function all_products_layout_overrides() {
+		if ( ! class_exists( 'ZYMARG_SP_Store_Sections' ) ) {
+			return array();
+		}
+
+		$row = ZYMARG_SP_Store_Sections::get_all_products_row();
+		if ( null === $row ) {
+			return array();
+		}
+
+		$shortcode = (string) ( $row['shortcode'] ?? '' );
+		if ( '' === $shortcode ) {
+			return array();
+		}
+
+		$columns        = ZYMARG_SP_Store_Sections::attr_of( $shortcode, 'columns' );
+		$columns_tablet = ZYMARG_SP_Store_Sections::attr_of( $shortcode, 'columns_tablet' );
+		$columns_mobile = ZYMARG_SP_Store_Sections::attr_of( $shortcode, 'columns_mobile' );
+		$gap            = ZYMARG_SP_Store_Sections::attr_of( $shortcode, 'gap' );
+
+		$overrides = array();
+
+		if ( '' !== $columns ) {
+			$overrides['layout']['columns'] = max( 1, min( 6, (int) $columns ) );
+		}
+		if ( '' !== $gap ) {
+			$overrides['layout']['gap'] = max( 0, min( 100, (int) $gap ) );
+		}
+		if ( '' !== $columns_tablet ) {
+			$overrides['responsive']['tablet']['layout']['columns'] = max( 1, min( 6, (int) $columns_tablet ) );
+		}
+		if ( '' !== $columns_mobile ) {
+			$overrides['responsive']['mobile']['layout']['columns'] = max( 1, min( 6, (int) $columns_mobile ) );
+		}
+
+		return $overrides;
 	}
 
 	// ─────────────────────────────────────────────────────────────────────────
