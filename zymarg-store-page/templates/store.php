@@ -499,11 +499,11 @@ if ( class_exists( 'ZYMARG_SP_Store_Sections' ) && shortcode_exists( 'zymarg_pro
 		$zy_section_heading = trim( (string) ( $zy_section_row['heading'] ?? '' ) );
 		$zy_section_link    = ZYMARG_SP_Store_Sections::link( $zy_section_row );
 		?>
-		<section class="zy-store-section mx-auto max-w-7xl px-4 pt-12 sm:px-6 lg:px-8" data-zy-section-id="<?php echo esc_attr( $zy_section_row['id'] ); ?>">
+		<section class="zy-store-section zy-section mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" data-zy-section-id="<?php echo esc_attr( $zy_section_row['id'] ); ?>">
 			<?php if ( '' !== $zy_section_heading || ! empty( $zy_section_link ) ) : ?>
-			<div class="flex flex-wrap items-end justify-between gap-3 mb-6">
+			<div class="zy-section-heading-row flex flex-wrap items-end justify-between gap-3">
 				<?php if ( '' !== $zy_section_heading ) : ?>
-					<h2 class="text-xl font-bold tracking-tight text-zy-dark sm:text-2xl"><?php echo esc_html( $zy_section_heading ); ?></h2>
+					<h2 class="zy-section-heading font-bold tracking-tight text-zy-dark"><?php echo esc_html( $zy_section_heading ); ?></h2>
 				<?php endif; ?>
 				<?php if ( ! empty( $zy_section_link ) ) : ?>
 					<a href="<?php echo esc_url( $zy_section_link['url'] ); ?>" class="text-sm font-semibold text-zy-primary hover:underline whitespace-nowrap">
@@ -522,7 +522,7 @@ if ( class_exists( 'ZYMARG_SP_Store_Sections' ) && shortcode_exists( 'zymarg_pro
 <!-- ============================================================
      PRODUCTS & CATEGORIES LAYOUT
 ============================================================ -->
-<div id="products-layout-container" class="mx-auto max-w-7xl px-4 pt-12 sm:px-6 lg:px-8">
+<div id="products-layout-container" class="zy-section mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
   <div class="flex flex-col lg:flex-row gap-8">
 
     <!-- LEFT SIDEBAR -->
@@ -846,11 +846,11 @@ if ( class_exists( 'ZYMARG_SP_Store_Sections' ) && shortcode_exists( 'zymarg_pro
      REVIEWS
 ============================================================ -->
 <?php if ( $show_reviews && ! empty( $store_review_list ) ) : ?>
-<section aria-labelledby="reviews-heading" class="mx-auto max-w-7xl px-4 pt-14 pb-16 sm:px-6 lg:px-8">
+<section aria-labelledby="reviews-heading" class="zy-section mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
   <p class="text-xs font-semibold uppercase tracking-[0.2em] text-zy-secondary"><?php esc_html_e( 'Customer Reviews', 'zymarg-store-page' ); ?></p>
-  <h2 id="reviews-heading" class="mt-2 text-xl font-bold tracking-tight text-zy-dark sm:text-2xl"><?php esc_html_e( 'What buyers are saying', 'zymarg-store-page' ); ?></h2>
+  <h2 id="reviews-heading" class="zy-section-heading mt-2 font-bold tracking-tight text-zy-dark"><?php esc_html_e( 'What buyers are saying', 'zymarg-store-page' ); ?></h2>
 
-  <div class="mt-6 grid gap-6 <?php echo $has_rating ? 'lg:grid-cols-3' : 'lg:grid-cols-1'; ?>">
+  <div class="zy-section-content grid gap-6 <?php echo $has_rating ? 'lg:grid-cols-3' : 'lg:grid-cols-1'; ?>">
 
 <?php if ( $has_rating ) : ?>
     <!-- Rating summary. Rendered only when the store actually has rated reviews. -->
@@ -968,11 +968,11 @@ if ( class_exists( 'ZYMARG_SP_Store_Sections' ) && shortcode_exists( 'zymarg_pro
      STORE STORY
 ============================================================ -->
 <?php if ( $has_story ) : ?>
-<section aria-labelledby="story-heading" class="mx-auto max-w-7xl px-4 pt-10 pb-16 sm:px-6 lg:px-8">
+<section aria-labelledby="story-heading" class="zy-section mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
   <div class="rounded-2xl bg-zy-surface p-6 shadow-lg sm:p-8">
     <p class="text-xs font-semibold uppercase tracking-[0.2em] text-zy-secondary"><?php esc_html_e( 'Our Story', 'zymarg-store-page' ); ?></p>
     <?php if ( '' !== trim( $story_headline ) ) : ?>
-      <h2 id="story-heading" class="mt-2 text-xl font-bold tracking-tight text-zy-dark sm:text-2xl"><?php echo esc_html( $story_headline ); ?></h2>
+      <h2 id="story-heading" class="zy-section-heading mt-2 font-bold tracking-tight text-zy-dark"><?php echo esc_html( $story_headline ); ?></h2>
     <?php else : ?>
       <?php /* No headline written, but the landmark still needs a name. */ ?>
       <h2 id="story-heading" class="sr-only"><?php
@@ -981,7 +981,7 @@ if ( class_exists( 'ZYMARG_SP_Store_Sections' ) && shortcode_exists( 'zymarg_pro
       ?></h2>
     <?php endif; ?>
     <?php if ( '' !== trim( $store_description ) ) : ?>
-      <p class="mt-3 max-w-3xl leading-relaxed" data-store-desc><?php echo esc_html( $store_description ); ?></p>
+      <p class="zy-section-content max-w-3xl leading-relaxed" data-store-desc><?php echo esc_html( $store_description ); ?></p>
     <?php endif; ?>
     <?php if ( '' !== trim( $story_more ) ) : ?>
       <p data-story-more class="mt-3 hidden max-w-3xl leading-relaxed"><?php echo esc_html( $story_more ); ?></p>
