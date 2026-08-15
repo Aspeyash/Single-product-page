@@ -4,7 +4,7 @@ Tags:              dokan, vendor, store, marketplace, activewear
 Requires at least: 6.0
 Tested up to:      6.7
 Requires PHP:      7.4
-Stable tag:        1.23.0
+Stable tag:        1.23.1
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,6 +73,12 @@ Yes. Edit the `@theme` block inside `templates/store.php` to change the design t
 4. Admin settings page under Dokan → ZYMARG Store Page
 
 == Changelog ==
+
+= 1.23.1 — Hero Store Card: reverted to solid card, now theme-aware in light and dark mode =
+
+* Change: the Hero Store Card's glass/frosted background (translucent + blur, introduced in 1.22.0) has been reverted to a solid card background. Reasoning: on a multi-vendor marketplace, banner photos vary too widely in brightness and contrast from seller to seller for translucent text to stay reliably legible for everyone — a solid card guarantees consistent readability regardless of what photo a seller has uploaded, and matches every other card on the page (product cards, category cards, review cards), which have always used a solid surface.
+* Fix: the card's background, name, status text, and Chat/Share buttons now use the same theme color tokens already used everywhere else on this page (the ones store-page-dark.css remaps under dark mode), instead of colors hardcoded for the glass treatment. The card now automatically matches the site's light/dark mode switch correctly - previously it was fixed to white text regardless of theme, which would have been unreadable if this card had ever been checked against dark mode.
+* No layout changes - logo size/position, name/status placement, the four stats, and the Follow/Chat/Share buttons are all unchanged from 1.22.x; only the card's own background and text colors changed.
 
 = 1.23.0 — Admin-managed Product Grid Sections (Trending / Best Selling / All Products) =
 * Added: a new "Product Grid Sections" panel on the plugin's settings screen. An ordered, drag-reorderable list of sections that render on the vendor store page — each row runs one `[zymarg_products]` shortcode against the ZYMARG WC Product Grid engine's `current_vendor` source (requires engine v2.17.3+), so what a section shows, and how it's laid out, is entirely admin-editable with no plugin update needed. Ships with three default rows: Trending and Best Selling (sliders, 8 products, 5/4/2 visible on desktop/tablet/mobile), and All Products (the existing category-filtered grid, now sourced from the engine instead of a direct Dokan REST call).

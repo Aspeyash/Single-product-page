@@ -1793,16 +1793,23 @@ input.zsp-sheet__input[type="search"] {
 
 .zsp-hc-card{
   border-radius: 16px;
-  color: #fff;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, .4);
+  /* Reverted from the glass/frosted treatment back to a solid card, per
+     confirmed decision: vendor-uploaded banners vary too much in
+     brightness/contrast for translucent-over-photo text to stay reliably
+     legible for every seller. Uses the SAME --color-zy-* custom
+     properties the rest of this page already uses for light/dark theming
+     (defined in the @theme block in templates/store.php, overridden under
+     html[data-theme="dark"] in store-page-dark.css) — NOT a hardcoded
+     hex value — so this card automatically follows the site's light/dark
+     mode switch exactly like every other surface on the page, with no
+     separate dark-mode override needed. */
+  color: var(--color-zy-dark, #36003D);
+  text-shadow: none;
   padding: 10px 12px;
   max-height: 100%;
   overflow: hidden;
-  background: rgba(255, 255, 255, .16);
-  -webkit-backdrop-filter: blur(18px) saturate(160%);
-  backdrop-filter: blur(18px) saturate(160%);
-  border: 1px solid rgba(255, 255, 255, .35);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .45), 0 10px 30px rgba(0, 0, 0, .28);
+  background: var(--color-zy-surface, #FFFFFF);
+  box-shadow: 0 10px 30px rgba(20, 6, 26, .22);
 }
 @media (min-width: 640px) { .zsp-hc-card { padding: 14px; border-radius: 18px; } }
 @media (min-width: 1024px) { .zsp-hc-card { padding: 16px 24px; border-radius: 20px; } }
@@ -1823,7 +1830,12 @@ input.zsp-sheet__input[type="search"] {
   border-radius: 12px;
   overflow: hidden;
   background: linear-gradient(135deg, #9500A5, #BD00D1, #FEA9FF);
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, .5);
+  /* Ring switched from a translucent-white glass-card accent to the
+     card's own background token, so the logo's edge reads as a clean
+     "cutout" against the solid card in both light and dark mode, instead
+     of a white ring that would look like a stray highlight on a dark
+     card. */
+  box-shadow: 0 0 0 2px var(--color-zy-surface, #FFFFFF);
   align-items: center;
   justify-content: center;
   font-size: 16px;
@@ -1834,13 +1846,12 @@ input.zsp-sheet__input[type="search"] {
 .zsp-hc-identity{ min-width: 0; flex: 1; }
 
 .zsp-hc-name{
-  /* FIX: was only ever inheriting white from .zsp-hc-card{color:#fff}.
-     A host theme's own `h1{color:...}` rule matches this element directly,
-     and any directly-matching rule always wins over an inherited value
-     regardless of specificity — that's why this rendered in the theme's
-     default black instead of white. Declaring color here explicitly (a
-     class selector) beats a plain element selector like the theme's h1. */
-  color: #fff;
+  /* Explicit color still required here even on a solid card: a host
+     theme's own `h1{color:...}` rule matches this element directly, and a
+     directly-matching rule always wins over an inherited value regardless
+     of specificity. Uses the same --color-zy-dark theme token as the card
+     background above, so light/dark mode both stay correctly readable. */
+  color: var(--color-zy-dark, #36003D);
   font-weight: 800;
   font-size: 13px;
   line-height: 1.18;
@@ -1862,14 +1873,21 @@ input.zsp-sheet__input[type="search"] {
   font-size: 10px;
   font-weight: 600;
   margin-top: 3px;
-  opacity: .95;
+  /* Text color inherits from .zsp-hc-card's --color-zy-dark; opacity gives
+     it a slightly muted "secondary text" weight against the solid card,
+     matching how muted text is handled elsewhere on this page
+     (e.g. text-zy-body/70). */
+  opacity: .7;
 }
 .zsp-hc-status-dot{
   width: 7px;
   height: 7px;
   border-radius: 50%;
   flex-shrink: 0;
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, .25);
+  /* Ring shadow removed - it existed to give the dot a defined edge
+     against a translucent glass card sitting over an unpredictable photo.
+     On a solid card the dot's own fill color already reads clearly with
+     no ring needed. */
 }
 .zsp-hc-status.is-online .zsp-hc-status-dot{ background: #3ddc7a; }
 .zsp-hc-status.is-offline .zsp-hc-status-dot{ background: #b7b0bd; }
@@ -1945,30 +1963,40 @@ input.zsp-sheet__input[type="search"] {
 }
 .zsp-hc-btn-follow:hover{ opacity: .9; }
 .zsp-hc-btn-follow.is-following{
-  background: #fff;
-  color: #9500A5;
-  border: 1px solid #9500A5;
+  /* Switched to theme tokens (matches the equivalent border-zy-primary/
+     text-zy-primary/bg-zy-surface combination the header's own "Following"
+     state already uses in templates/store.php) - store-page-dark.css
+     remaps --color-zy-primary to a lighter tint for dark-mode contrast,
+     so this state now stays readable in both themes instead of being
+     pinned to the light-mode purple. */
+  background: var(--color-zy-surface, #FFFFFF);
+  color: var(--color-zy-primary, #9500A5);
+  border: 1px solid var(--color-zy-primary, #9500A5);
   text-shadow: none;
 }
 .zsp-hc-btn-chat{
   border-radius: 8px;
   font-weight: 700;
   white-space: nowrap;
-  background: #fff;
-  color: #36003D;
-  border: 1px solid #D8BFD3;
+  /* Switched from hardcoded hex to the same --color-zy-* theme tokens the
+     header's own chat button already uses (bg-zy-surface/border-zy-border/
+     text-zy-dark) - keeps this button correctly readable in both light and
+     dark mode instead of staying stuck at a fixed white/dark-purple pair. */
+  background: var(--color-zy-surface, #FFFFFF);
+  color: var(--color-zy-dark, #36003D);
+  border: 1px solid var(--color-zy-border, #D8BFD3);
   text-shadow: none;
   padding: 5px 7px;
   font-size: 9.5px;
   cursor: pointer;
   transition: background .3s ease-in-out, transform .3s ease-in-out, box-shadow .3s ease-in-out;
 }
-.zsp-hc-btn-chat:hover{ background: #EAEDFF; }
+.zsp-hc-btn-chat:hover{ background: var(--color-zy-container, #EAEDFF); }
 .zsp-hc-btn-share{
   border-radius: 8px;
-  background: #fff;
-  color: #36003D;
-  border: 1px solid #D8BFD3;
+  background: var(--color-zy-surface, #FFFFFF);
+  color: var(--color-zy-dark, #36003D);
+  border: 1px solid var(--color-zy-border, #D8BFD3);
   width: 22px;
   height: 22px;
   display: flex;
@@ -1978,7 +2006,7 @@ input.zsp-sheet__input[type="search"] {
   cursor: pointer;
   transition: background .3s ease-in-out, transform .3s ease-in-out, box-shadow .3s ease-in-out;
 }
-.zsp-hc-btn-share:hover{ background: #EAEDFF; }
+.zsp-hc-btn-share:hover{ background: var(--color-zy-container, #EAEDFF); }
 .zsp-hc-btn-share svg{ width: 11px; height: 11px; }
 
 /* ================= TABLET (>=640px): 3 columns —
