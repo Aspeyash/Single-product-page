@@ -1697,6 +1697,152 @@ input.zsp-sheet__input[type="search"] {
 	:where(.zymarg-wcpg__grid--cols-6) { grid-template-columns: repeat(6, minmax(0, 1fr)); }
 }
 
+/* ══════════════════════════════════════════════════════════════════════════
+   ALL PRODUCTS GRID — RESPONSIVE COLUMNS + GAP OVERRIDE FIX      v1.24.0
+
+   Root cause: the ZYMARG OS theme ships its own base rule targeting
+   `.zymarg-wcpg .zymarg-wcpg__grid` (grid-template-columns + gap), and the
+   Product Grid engine's own responsive rules target
+   `.zymarg-wcpg__grid[data-columns-tablet="N"]` / `--cols-N`. Both selectors
+   resolve to identical CSS specificity (two class-level selectors each), so
+   whichever stylesheet happens to load LAST wins the tie — which on this
+   site is the theme, not the engine. Result: an admin-configured
+   columns/columns_tablet/columns_mobile/gap value on the "All Products"
+   shortcode was silently ignored at every breakpoint, always falling back
+   to the theme's hardcoded 2-column / 1.5rem-gap default.
+
+   Fix: #product-grid and #product-grid-filtered are IDs that only exist on
+   this plugin's own store template, so scoping through them gives this rule
+   higher specificity than any class-only selector, regardless of stylesheet
+   load order — no !important needed, and the theme file is never touched.
+   The actual column counts and gap are read from the CSS custom properties
+   (--columns-desktop / --columns-tablet / --columns-mobile / --grid-gap)
+   that the engine already writes inline on the grid element for exactly
+   this purpose, so this rule always reflects whatever the admin configures
+   in the shortcode -- nothing here is hardcoded.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+#product-grid .zymarg-wcpg__grid,
+#product-grid-filtered .zymarg-wcpg__grid {
+	grid-template-columns: repeat(var(--columns-desktop, 4), minmax(0, 1fr));
+	gap: var(--grid-gap, 8px);
+}
+
+@media (max-width: 1024px) {
+	#product-grid .zymarg-wcpg__grid,
+	#product-grid-filtered .zymarg-wcpg__grid {
+		grid-template-columns: repeat(var(--columns-tablet, var(--columns-desktop, 4)), minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 767px) {
+	#product-grid .zymarg-wcpg__grid,
+	#product-grid-filtered .zymarg-wcpg__grid {
+		grid-template-columns: repeat(var(--columns-mobile, var(--columns-tablet, var(--columns-desktop, 4))), minmax(0, 1fr));
+	}
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   SHARED SECTION HEADING COMPONENT                                v1.24.0
+
+   One responsive treatment for every content-section heading on the store
+   page — the admin-managed Product Grid Sections (Trending, Best Selling,
+   All Products, and any section added in the future), Reviews, and Our
+   Story. Previously each section carried its own hand-picked Tailwind
+   utilities (pt-10/pt-12/pt-14, mb-6/mt-6/mt-3, text-xl sm:text-2xl), so
+   spacing and heading size drifted section to section and never adapted for
+   tablet — mobile jumped straight to the "desktop" size at the 640px
+   breakpoint. These three classes replace those hardcoded utilities:
+
+     .zy-section              — section wrapper top padding (was pt-10/12/14)
+     .zy-section-heading      — heading font-size (was text-xl sm:text-2xl)
+     .zy-section-heading-row  / .zy-section-content
+                               — space between the heading and what follows
+                                 it (was mb-6 / mt-6 / mt-3)
+
+   Desktop values are unchanged from before (48px section padding, 24px
+   heading gap, 24px/1.5rem heading size) so nothing shifts for anyone
+   viewing at 1024px+. Mobile and the new tablet tier are tightened for a
+   more compact feel, per the layout brief.
+
+   Any future admin-managed section automatically inherits this because
+   ZYMARG_SP_Store_Sections' generic-rows loop (templates/store.php) applies
+   these classes to every row it renders — nothing section-specific to
+   maintain going forward.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.zy-section {
+	padding-top: 1.5rem; /* 24px — mobile */
+}
+
+@media (min-width: 640px) {
+	.zy-section {
+		padding-top: 2rem; /* 32px — tablet */
+	}
+}
+
+@media (min-width: 1024px) {
+	.zy-section {
+		padding-top: 3rem; /* 48px — desktop, matches the previous pt-12 default */
+	}
+}
+
+.zy-section-heading {
+	font-size: 1.125rem; /* 18px — mobile */
+	line-height: 1.3;
+}
+
+@media (min-width: 640px) {
+	.zy-section-heading {
+		font-size: 1.25rem; /* 20px — tablet */
+	}
+}
+
+@media (min-width: 1024px) {
+	.zy-section-heading {
+		font-size: 1.5rem; /* 24px — desktop, matches the previous sm:text-2xl */
+	}
+}
+
+/* Space AFTER the heading (row), before whatever content follows it.
+   Single-purpose (margin-bottom only) so it is safe to combine with
+   .zy-section-content below without ever double-spacing the same gap. */
+.zy-section-heading-row {
+	margin-bottom: 0.75rem; /* 12px — mobile */
+}
+
+@media (min-width: 640px) {
+	.zy-section-heading-row {
+		margin-bottom: 1.25rem; /* 20px — tablet */
+	}
+}
+
+@media (min-width: 1024px) {
+	.zy-section-heading-row {
+		margin-bottom: 1.5rem; /* 24px — desktop, matches the previous mb-6 */
+	}
+}
+
+/* Space BEFORE a content block that follows a heading directly (no
+   .zy-section-heading-row wrapper in between) — e.g. the reviews rating
+   grid, or the store story description paragraph. Margin-top only, so a
+   section using both classes on adjacent elements never double-spaces. */
+.zy-section-content {
+	margin-top: 0.75rem; /* 12px — mobile */
+}
+
+@media (min-width: 640px) {
+	.zy-section-content {
+		margin-top: 1.25rem; /* 20px — tablet */
+	}
+}
+
+@media (min-width: 1024px) {
+	.zy-section-content {
+		margin-top: 1.5rem; /* 24px — desktop, matches the previous mt-6 */
+	}
+}
+
 /*
  * The image box. This is what stops a single product filling the viewport:
  * without it the <img> is laid out at its natural pixel size, which on a

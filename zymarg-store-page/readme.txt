@@ -4,7 +4,7 @@ Tags:              dokan, vendor, store, marketplace, activewear
 Requires at least: 6.0
 Tested up to:      6.7
 Requires PHP:      7.4
-Stable tag:        1.23.1
+Stable tag:        1.24.0
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,6 +73,11 @@ Yes. Edit the `@theme` block inside `templates/store.php` to change the design t
 4. Admin settings page under Dokan → ZYMARG Store Page
 
 == Changelog ==
+
+= 1.24.0 — Fix: All Products grid columns/gap overridden by theme; new shared section heading + spacing component =
+
+* Fixed: the "All Products" grid's admin-configured `columns` / `columns_tablet` / `columns_mobile` / `gap` shortcode attributes were being silently overridden at every breakpoint (desktop, tablet, and mobile), and the card gap never matched the ZYMARG card template's intended 8px spacing. Root cause: the ZYMARG OS theme ships its own base rule targeting `.zymarg-wcpg .zymarg-wcpg__grid`, and the Product Grid engine's own responsive rules target `.zymarg-wcpg__grid[data-columns-tablet="N"]` / `.zymarg-wcpg__grid--cols-N` — both selectors resolve to identical CSS specificity, so whichever stylesheet loaded last on the page won the tie, which was the theme rather than the engine. Fixed with a new rule scoped through `#product-grid` / `#product-grid-filtered` (IDs unique to this plugin's own template), reading the engine's own `--columns-desktop` / `--columns-tablet` / `--columns-mobile` / `--grid-gap` CSS custom properties so it always reflects whatever the admin configures — nothing hardcoded, and the ZYMARG OS theme file is untouched.
+* Added: a shared `.zy-section` / `.zy-section-heading` / `.zy-section-heading-row` / `.zy-section-content` CSS component, now applied to every content section on the store page (the admin-managed Product Grid Sections panel — Trending, Best Selling, All Products, and any section added in future — plus Reviews and Our Story). Replaces each section's previously hand-picked, inconsistent Tailwind utilities (`pt-10` / `pt-12` / `pt-14`, `mb-6` / `mt-6` / `mt-3`, `text-xl sm:text-2xl`) with one true 3-tier responsive scale (mobile / tablet / desktop) for heading size and section spacing. Desktop sizing is unchanged from before; mobile and the new tablet tier are tightened for a more compact layout. Because the admin-managed sections loop applies these classes generically, any section added later through the settings screen inherits this automatically with no further plugin changes.
 
 = 1.23.1 — Hero Store Card: reverted to solid card, now theme-aware in light and dark mode =
 
