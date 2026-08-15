@@ -310,6 +310,27 @@ class ZYMARG_SP_Store_Sections {
 	}
 
 	/**
+	 * Read an arbitrary attribute's raw value out of a shortcode string.
+	 *
+	 * Generic counterpart to source_of() / layout_of() / subset_of() above,
+	 * for attributes that have no dedicated parser of their own -- e.g. the
+	 * responsive column overrides (columns, columns_tablet, columns_mobile,
+	 * gap) that the AJAX card-repaint bridge needs to mirror from the "All
+	 * Products" row's own shortcode.
+	 *
+	 * @param string $shortcode Shortcode.
+	 * @param string $name      Attribute name.
+	 * @return string Raw attribute value, or '' when the attribute is absent.
+	 */
+	public static function attr_of( $shortcode, $name ) {
+		$pattern = '/\b' . preg_quote( (string) $name, '/' ) . '=("|\')(.*?)\1/';
+		if ( preg_match( $pattern, (string) $shortcode, $m ) ) {
+			return trim( $m[2] );
+		}
+		return '';
+	}
+
+	/**
 	 * Read the current_vendor_subset attribute out of a shortcode string.
 	 *
 	 * @param string $shortcode Shortcode.
