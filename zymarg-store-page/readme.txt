@@ -4,7 +4,7 @@ Tags:              dokan, vendor, store, marketplace, activewear
 Requires at least: 6.0
 Tested up to:      6.7
 Requires PHP:      7.4
-Stable tag:        1.24.0
+Stable tag:        1.24.1
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,6 +73,10 @@ Yes. Edit the `@theme` block inside `templates/store.php` to change the design t
 4. Admin settings page under Dokan → ZYMARG Store Page
 
 == Changelog ==
+
+= 1.24.1 — Fix: All Products grid always showed 4 columns after a search or category switch =
+
+* Fixed: after searching or switching category on the store page, the "All Products" grid always repainted as a flat 4-column layout on every device — desktop, tablet, and mobile — ignoring whatever `columns` / `columns_tablet` / `columns_mobile` / `gap` the admin had configured on the "All Products" row's shortcode. Root cause: search and category filtering repaint the grid through a separate AJAX path (`ZYMARG_SP_Grid_Bridge::ajax_render_cards()`), whose config hardcoded `columns => 4` with no responsive breakpoint keys at all — a completely different code path from the initial page-load render, which already read those same shortcode attributes correctly via `do_shortcode()`. The AJAX repaint now reads the same four attributes from the same "All Products" row shortcode (the initial render's own single source of truth) via a new `ZYMARG_SP_Store_Sections::attr_of()` helper, so a search or category switch always matches the admin's configured layout, with nothing hardcoded and no separate setting to keep in sync. The Premium sections' own layout config (Flash Sale / Featured Items) is a fully separate code path and is unaffected by this change.
 
 = 1.24.0 — Fix: All Products grid columns/gap overridden by theme; new shared section heading + spacing component =
 
