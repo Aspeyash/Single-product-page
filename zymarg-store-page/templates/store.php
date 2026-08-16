@@ -498,12 +498,35 @@ if ( class_exists( 'ZYMARG_SP_Store_Sections' ) && shortcode_exists( 'zymarg_pro
 
 		$zy_section_heading = trim( (string) ( $zy_section_row['heading'] ?? '' ) );
 		$zy_section_link    = ZYMARG_SP_Store_Sections::link( $zy_section_row );
+		$zy_section_anchor  = sanitize_key( (string) $zy_section_row['id'] ) . '-heading';
 		?>
-		<section class="zy-store-section zy-section mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" data-zy-section-id="<?php echo esc_attr( $zy_section_row['id'] ); ?>">
+		<section class="zy-store-section zy-section mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" data-zy-section-id="<?php echo esc_attr( $zy_section_row['id'] ); ?>"<?php echo ( '' !== $zy_section_heading ) ? ' aria-labelledby="' . esc_attr( $zy_section_anchor ) . '"' : ''; ?>>
 			<?php if ( '' !== $zy_section_heading || ! empty( $zy_section_link ) ) : ?>
 			<div class="zy-section-heading-row flex flex-wrap items-end justify-between gap-3">
 				<?php if ( '' !== $zy_section_heading ) : ?>
-					<h2 class="zy-section-heading font-bold tracking-tight text-zy-dark"><?php echo esc_html( $zy_section_heading ); ?></h2>
+					<div>
+						<?php
+						/*
+						 * v1.25.0: eyebrow label + sr-only real heading.
+						 *
+						 * This is the exact markup/class pair used by the Limited
+						 * Time, Handpicked, and All Products sections (see
+						 * includes/premium-sections.php and the "All Products"
+						 * block further down this template) -- a small uppercase
+						 * label carries the visible text, and the actual <h2>
+						 * stays in the DOM (for aria-labelledby) but visually
+						 * hidden. Previously this generic-rows loop rendered a
+						 * bold, dark, larger visible <h2 class="zy-section-heading">
+						 * instead, which is why Trending/Best Selling never
+						 * matched the other sections' heading style. Because this
+						 * loop is what every admin-managed section (current and
+						 * future) renders through, fixing it here is a single
+						 * change that applies everywhere automatically.
+						 */
+						?>
+						<p class="text-xs font-semibold uppercase tracking-[0.2em] text-zy-secondary"><?php echo esc_html( $zy_section_heading ); ?></p>
+						<h2 id="<?php echo esc_attr( $zy_section_anchor ); ?>" class="sr-only"><?php echo esc_html( $zy_section_heading ); ?></h2>
+					</div>
 				<?php endif; ?>
 				<?php if ( ! empty( $zy_section_link ) ) : ?>
 					<a href="<?php echo esc_url( $zy_section_link['url'] ); ?>" class="text-sm font-semibold text-zy-primary hover:underline whitespace-nowrap">

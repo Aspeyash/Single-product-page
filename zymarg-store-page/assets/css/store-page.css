@@ -2200,3 +2200,38 @@ input.zsp-sheet__input[type="search"] {
   .zsp-hc-btn-share{ width: 38px; height: 38px; border-radius: 11px; }
   .zsp-hc-btn-share svg{ width: 17px; height: 17px; }
 }
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   PRODUCT CARD OLD-PRICE POSITION FIX (Tailwind preflight collision)  v1.25.0
+
+   Root cause: every ZYMARG product card (Template Pack 'zymarg'/'flash' card
+   templates, consumed via the Product Grid engine) wraps its old/strikethrough
+   price in a native <sub class="zymarg-wcpg__price-old"> element. Neither the
+   engine's frontend.css nor the Template Pack's style.css ever declares
+   `position` or `bottom` for that class -- both only set font-size, color,
+   vertical-align. This plugin enqueues Tailwind's compiled preflight
+   (assets/css/store-tailwind.css), which resets EVERY <sub> tag on the page
+   with a bare element selector:
+
+       sub,sup{ ...; position:relative }
+       sub{ bottom:-.25em }
+
+   Because nothing else declares position/bottom for .zymarg-wcpg__price-old,
+   Tailwind's tag-level rule applies unopposed and drags the old price down by
+   an extra 0.25em with a zeroed line-height -- visible only on pages this
+   plugin renders (any page NOT loading Tailwind's preflight, e.g. a plain
+   WooCommerce single-product page, is unaffected and renders correctly).
+
+   Fix: a class-level rule beats a tag-level rule regardless of source order,
+   so resetting position/bottom/line-height here on the .zymarg-wcpg__price-old
+   class is enough to cancel Tailwind's reset without touching the shared
+   Product Grid engine or Template Pack (scoped fix, per the site owner's
+   choice -- see conversation, option 1).
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.zymarg-wcpg__price-old {
+	position: static;
+	bottom: auto;
+	line-height: 1;
+}

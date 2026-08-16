@@ -353,6 +353,21 @@ function zymarg_sp_premium_section( $store_id, $which ) {
 	$display  = zymarg_sp_premium_display();
 	$overrides = zymarg_sp_premium_layout_config( $display );
 
+	/*
+	 * v1.25.0: hide the vendor row on Featured Items ("Handpicked") cards.
+	 *
+	 * Every card on a store page already belongs to the vendor whose store
+	 * is being viewed, so a "sold by {vendor}" row on the card is redundant
+	 * here. Scoped to Featured Items only, per the site owner's request --
+	 * Flash Sale keeps the engine/Template Pack default. The 'zymarg' card
+	 * template defaults show_vendor to true unless a caller explicitly
+	 * overrides it (see ZYMARG Template Pack's apply_defaults()), so it has
+	 * to be set here rather than simply omitted.
+	 */
+	if ( ! $is_flash ) {
+		$overrides['card']['show_vendor'] = false;
+	}
+
 	if ( $is_flash ) {
 		$eyebrow = __( 'Limited Time', 'zymarg-store-page' );
 		$heading = __( 'Flash Sale', 'zymarg-store-page' );
