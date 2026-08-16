@@ -261,54 +261,70 @@ function zymarg_sp_premium_layout_config( array $display ) {
 	$rotation = isset( $display['rotation'] ) ? (string) $display['rotation'] : 'step';
 	$glide    = isset( $display['glide_speed'] ) ? (int) $display['glide_speed'] : 400;
 
+	/*
+	 * v1.24.2/1.24.3: responsive columns, admin-configurable, for BOTH
+	 * layout modes.
+	 *
+	 * Previously Grid hardcoded 'columns' => 4 with no responsive keys at
+	 * all (fixed in 1.24.2), and Carousel carried no column count whatsoever
+	 * -- the engine's slider template reads exactly the same
+	 * columns/columns_tablet/columns_mobile settings to decide how many
+	 * cards are visible at once per breakpoint (slidesPerView), so the
+	 * admin's three numbers apply identically to both layouts; only the
+	 * engine's own layout.type decides whether they become a static grid
+	 * or a slider's per-view count.
+	 *
+	 * columns_desktop/tablet/mobile come from the Vendor Dashboard's own
+	 * Premium Display settings screen (added in Vendor Dashboard v1.46.14),
+	 * shared between Flash Sale and Featured Items since both render on the
+	 * same store page. zymarg_sp_premium_display() always returns all three
+	 * keys -- falling back to 4/3/2 when the Vendor Dashboard is an older
+	 * version that predates them -- so no extra isset() guard is needed
+	 * here.
+	 */
+	$responsive_columns = array(
+		'responsive' => array(
+			'tablet' => array(
+				'layout' => array(
+					'columns' => max( 1, min( 6, (int) $display['columns_tablet'] ) ),
+				),
+			),
+			'mobile' => array(
+				'layout' => array(
+					'columns' => max( 1, min( 6, (int) $display['columns_mobile'] ) ),
+				),
+			),
+		),
+	);
+
 	if ( 'carousel' !== $layout ) {
-		/*
-		 * v1.24.2: responsive columns, admin-configurable.
-		 *
-		 * Previously hardcoded 'columns' => 4 with no responsive keys at
-		 * all, so Flash Sale and Featured Items always rendered a flat
-		 * 4-column grid on every device -- the same defect already fixed
-		 * for the "All Products" section in v1.24.1, just in this other
-		 * call site. columns_desktop/tablet/mobile now come from the
-		 * Vendor Dashboard's own Premium Display settings screen (added in
-		 * Vendor Dashboard v1.46.14), shared between both sections since
-		 * they render on the same store page grid. zymarg_sp_premium_display()
-		 * always returns all three keys -- falling back to 4/3/2 when the
-		 * Vendor Dashboard is an older version that predates them -- so no
-		 * extra isset() guard is needed here.
-		 */
-		return array(
-			'layout'     => array(
-				'type'    => 'grid',
-				'columns' => max( 1, min( 6, (int) $display['columns_desktop'] ) ),
-			),
-			'responsive' => array(
-				'tablet' => array(
-					'layout' => array(
-						'columns' => max( 1, min( 6, (int) $display['columns_tablet'] ) ),
-					),
-				),
-				'mobile' => array(
-					'layout' => array(
-						'columns' => max( 1, min( 6, (int) $display['columns_mobile'] ) ),
-					),
+		return array_merge(
+			array(
+				'layout' => array(
+					'type'    => 'grid',
+					'columns' => max( 1, min( 6, (int) $display['columns_desktop'] ) ),
 				),
 			),
+			$responsive_columns
 		);
 	}
 
-	return array(
-		'layout' => array(
-			'type'   => 'slider',
-			'slider' => array(
-				'speed' => max( 100, $glide ),
-				// Premium's "continuous" rotation is a marquee. The engine's
-				// slider has no marquee mode, so continuous maps to free
-				// momentum scrolling -- the nearest honest equivalent. The
-				// marquee speed setting therefore no longer applies.
-				'free_scroll' => ( 'continuous' === $rotation ),
+	return array_merge(
+		array(
+			'layout' => array(
+				'type'    => 'slider',
+				'columns' => max( 1, min( 6, (int) $display['columns_desktop'] ) ),
+				'slider'  => array(
+					'speed' => max( 100, $glide ),
+					// Premium's "continuous" rotation is a marquee. The engine's
+					// slider has no marquee mode, so continuous maps to free
+					// momentum scrolling -- the nearest honest equivalent. The
+					// marquee speed setting therefore no longer applies.
+					'free_scroll' => ( 'continuous' === $rotation ),
+				),
 			),
 		),
+		$responsive_columns
 	);
 }
 

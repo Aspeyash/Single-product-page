@@ -68,3 +68,28 @@
 	color:   var(--zym-color-surface) !important;
 	opacity: 1                       !important;
 }
+
+/*
+ * Premium pending-request count badge (v1.46.15).
+ *
+ * zymarg_vd_premium_menu_title_with_badge() (includes/premium.php) always
+ * prints the badge markup, even when the count is zero, so
+ * assets/js/premium-badge.js has one stable element to find and patch live
+ * on every Heartbeat tick without ever injecting new markup into the DOM.
+ * The zero-count state carries .zvd-is-hidden and relies on THIS rule to
+ * actually disappear.
+ *
+ * The existing .zvd-is-hidden rule (zymarg-admin.css) is scoped inside
+ * .zymarg-admin -- a wrapper that only exists around this plugin's own
+ * page content, never around the WordPress sidebar menu itself, where
+ * both badges (Vendor Hub + its Premium submenu) actually live. That scope
+ * mismatch is why the pink bubble shell stayed visible at all times: the
+ * hide rule never reached it. This file already loads globally on every
+ * wp-admin screen for exactly this class of "the sidebar exists everywhere"
+ * styling (see the file's own top-of-file rationale), so the fix belongs
+ * here, not in zymarg-admin.css.
+ */
+#toplevel_page_zymarg-vendor-hub .zvd-is-hidden,
+#toplevel_page_zymarg-vendor-hub ul.wp-submenu .zvd-is-hidden {
+	display: none;
+}

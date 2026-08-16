@@ -4,7 +4,7 @@ Tags:              dokan, vendor, store, marketplace, activewear
 Requires at least: 6.0
 Tested up to:      6.7
 Requires PHP:      7.4
-Stable tag:        1.24.2
+Stable tag:        1.24.3
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,6 +73,11 @@ Yes. Edit the `@theme` block inside `templates/store.php` to change the design t
 4. Admin settings page under Dokan → ZYMARG Store Page
 
 == Changelog ==
+
+= 1.24.3 — Fix: Columns settings had no effect when Premium Layout is Carousel =
+
+* Fixed: the Columns (desktop/tablet/mobile) settings added in 1.24.2 only applied when the marketplace admin's Premium Layout was set to "Grid" — with Layout set to "Carousel" (the ZYMARG default), the settings saved correctly but had zero effect on the front end, which kept falling back to the engine's own hardcoded 4/3/2. Root cause: `zymarg_sp_premium_layout_config()` only attached the columns settings to the Grid branch of its layout config; the Carousel branch never received them at all.
+* The engine's own slider template already reads exactly the same `columns` / `columns_tablet` / `columns_mobile` config keys to decide how many product cards are visible at once per breakpoint, so no new engine capability was needed — Carousel mode now receives the same three admin-configured numbers Grid mode does, and both Layout options respect them identically.
 
 = 1.24.2 — Fix: Flash Sale and Featured Items grids always showed 4 columns on every device =
 

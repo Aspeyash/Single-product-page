@@ -3,7 +3,7 @@ Contributors: zymarg
 Requires at least: 6.0
 Tested up to: 6.6
 Requires PHP: 7.4
-Stable tag: 1.46.14
+Stable tag: 1.46.15
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -29,6 +29,9 @@ Sections:
 Requires WooCommerce. Dokan (Lite or Pro) is recommended for full multi-vendor data (per-vendor order amounts, store info, balances). Designed to pair with the ZYMARG OS theme for full branding, but works standalone on any theme via built-in fallback styling.
 
 == Changelog ==
+
+= 1.46.15 =
+* Fix: the Premium pending-request count badge on "Vendor Hub" and "Premium" in the admin sidebar showed its pink pill background at all times, even with zero requests waiting -- only the number inside it correctly appeared/disappeared. Cause: the zero-count state relies on `.zvd-is-hidden` to actually hide, but that class's only style rule lives inside `.zymarg-admin`, a wrapper around this plugin's own page content that never reaches the WordPress sidebar menu the badge lives in. Added the missing hide rule to `zymarg-vd-menu.css`, which already loads globally on every wp-admin screen for exactly this class of sidebar-only styling.
 
 = 1.46.14 =
 * Added: three new fields on the Premium "Limits and display" screen -- Columns: desktop / tablet / mobile (1 to 6 each, defaults 4/3/2). Only meaningful when Layout above is Grid, and shared between Flash Sale and Featured Items since both render on the same store page grid. Requires ZYMARG Store Page 1.24.2 or newer to actually apply on the front end -- older Store Page versions ignore these and keep rendering a flat 4-column grid, same as before.
