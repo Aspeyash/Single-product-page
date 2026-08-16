@@ -1,0 +1,146 @@
+/*
+ * ZYMARG shared design tokens.
+ * Handle: zymarg-tokens   Version: 2.0.0
+ * Generated verbatim from ZYMARG_Design_Tokens.txt (THE TOKEN FILE section).
+ * Never edit per-plugin. Never redefine a --zym-* value inside a plugin.
+ */
+
+/* --- shared by both systems ------------------------------------------ */
+
+:root,
+.zymarg-admin {
+  --zym-tokens-version:      "2.0.0";
+  --zym-tokens-owner:        "zymarg-media-optimizer";
+
+  /* Brand */
+  --zym-color-primary:       #9500A5;
+  --zym-color-secondary:     #BD00D1;
+  --zym-color-accent:        #FEA9FF;
+  --zym-gradient:            linear-gradient(135deg, #9500A5 0%, #BD00D1 60%, #FEA9FF 130%);
+
+  /* Neutrals */
+  --zym-color-dark:          #36003D;
+  --zym-color-text:          #534152;
+  --zym-color-border:        #D8BFD3;
+
+  /* Surfaces */
+  --zym-color-surface:       #FFFFFF;
+  --zym-color-bg:            #FAF5FB;
+  --zym-color-surface-alt:   #F8F9FF;
+  --zym-color-container:     #EAEDFF;
+
+  /* Type */
+  --zym-font-size-xxl:       30px;
+  --zym-font-size-xl:        24px;
+  --zym-font-size-lg:        20px;
+  --zym-font-size-md:        16px;
+  --zym-font-size-sm:        14px;
+  --zym-font-size-xs:        12px;
+  --zym-font-size-xxs:       10px;
+  --zym-font-weight-medium:  500;
+  --zym-font-weight-semibold:600;
+  --zym-font-weight-bold:    700;
+  --zym-font-weight-extrabold:800;
+  --zym-tracking-normal:     0.08em;
+  --zym-tracking-wide:       0.20em;
+  --zym-font-mono:           ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Spacing scale */
+  --zym-space-1:   2px;
+  --zym-space-2:   4px;
+  --zym-space-3:   8px;
+  --zym-space-4:  10px;
+  --zym-space-5:  12px;
+  --zym-space-6:  14px;
+  --zym-space-7:  16px;
+  --zym-space-8:  20px;
+  --zym-space-9:  24px;
+  --zym-space-10: 28px;
+  --zym-space-11: 32px;
+  --zym-space-12: 40px;
+  --zym-space-13: 48px;
+  --zym-space-14: 56px;
+  --zym-space-15: 64px;
+
+  /* Gaps */
+  --zym-gap-grid:  32px;
+  --zym-gap-card:  16px;
+  --zym-gap-small: 12px;
+  --zym-gap-tiny:   8px;
+
+  /* Radius */
+  --zym-radius-card:        16px;
+  --zym-radius-image:       16px;
+  --zym-radius-image-small: 12px;
+  --zym-radius-chip:         8px;
+  --zym-radius-pill:        9999px;
+
+  /* Motion */
+  --zym-motion-fast:      100ms;
+  --zym-motion-input:     180ms;
+  --zym-motion-standard:  300ms;
+  --zym-ease:             ease-in-out;
+  --zym-ease-spark:       cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* --- front end only ---------------------------------------------------- */
+
+:root {
+  --zym-font:                'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+
+  --zym-color-danger:        #E53E3E;
+  --zym-color-warning:       #ED8936;
+  --zym-color-star:          #F6AD55;
+
+  --zym-gradient-hero-overlay: linear-gradient(to bottom, rgba(54,0,61,0.80), transparent);
+
+  --zym-radius-button:       12px;
+  --zym-radius-input:        14px;
+
+  --zym-container:           1280px;
+  --zym-pad-mobile:          16px;
+  --zym-pad-tablet:          24px;
+  --zym-pad-desktop:         32px;
+
+  --zym-shadow-input:        0 2px 8px rgba(53,0,61,0.06);
+  --zym-shadow-dropdown:     0 12px 32px rgba(53,0,61,0.13), 0 2px 6px rgba(53,0,61,0.06);
+  --zym-shadow-card:         0 4px 24px rgba(53,0,61,0.10), 0 1px 4px rgba(53,0,61,0.06);
+  --zym-shadow-card-hover:   0 8px 40px rgba(53,0,61,0.16), 0 2px 8px rgba(53,0,61,0.08);
+  --zym-focus-ring:          0 0 0 4px rgba(149,0,165,0.15);
+
+  --zym-img-hover-scale:     1.05;
+}
+
+/* --- back end only ----------------------------------------------------- */
+/* Replace .zymarg-admin with your plugin's admin wrapper class.            */
+
+.zymarg-admin {
+  --zym-font:                -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                             "Helvetica Neue", "Noto Sans Bengali", Arial, sans-serif;
+
+  --zym-color-divider:       #F3ECF3;
+  --zym-color-success-bg:    #E6F4EA;
+  --zym-color-success-text:  #1A7F37;
+  --zym-color-error:         #B3261E;
+  --zym-color-error-bg:      #FDECEC;
+  --zym-color-error-hover:   #D43F3A;
+  --zym-color-error-text:    #FFFFFF;
+  --zym-color-neutral-bg:    #F0F0F1;
+  --zym-color-neutral-text:  #646970;
+
+  --zym-radius-control:      10px;
+
+  --zym-container:           1200px;
+
+  --zym-shadow-surface:      0 8px 24px rgba(19,27,46,0.06);
+  --zym-shadow-modal:        0 8px 24px rgba(19,27,46,0.25);
+  --zym-shadow-btn:          0 4px 10px rgba(149,0,165,0.25);
+  --zym-shadow-btn-hover:    0 6px 14px rgba(149,0,165,0.30);
+  --zym-focus-ring:          0 0 0 3px rgba(149,0,165,0.12);
+
+  margin: 16px 20px 40px 0;
+  max-width: var(--zym-container);
+  font-family: var(--zym-font);
+  color: var(--zym-color-text);
+  line-height: 1.5;
+}

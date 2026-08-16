@@ -1,0 +1,1639 @@
+/*!
+ * ZYMARG Reviews — Front-end stylesheet
+ * Version: 1.1.2
+ * License: GPL-2.0-or-later
+ *
+ * Variables drive all defaults; Elementor controls override per-widget
+ * by writing inline CSS in the editor. Mobile-first responsive layout.
+ *
+ * No third-party fonts. Cabinet Grotesk and Inter are loaded locally
+ * from the assets/fonts directory. Icons are inline SVG (no icon-font).
+ */
+
+/* ===========================================================================
+ * Local fonts
+ *
+ * The plugin ships @font-face declarations expecting variable-axis WOFF2
+ * files. Drop your font files into assets/fonts/ with these exact names:
+ *   - assets/fonts/CabinetGrotesk-Variable.woff2 (axes: weight 100-900)
+ *   - assets/fonts/Inter-Variable.woff2          (axes: weight 100-900)
+ *
+ * If you only have static weight files, comment-out the variable
+ * declarations below and uncomment the matching static fallbacks.
+ * ======================================================================== */
+
+@font-face {
+	font-family: 'Cabinet Grotesk';
+	src: url('../fonts/CabinetGrotesk-Variable.woff2') format('woff2-variations'),
+	     url('../fonts/CabinetGrotesk-Variable.woff2') format('woff2');
+	font-weight: 100 900;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'Inter';
+	src: url('../fonts/Inter-Variable.woff2') format('woff2-variations'),
+	     url('../fonts/Inter-Variable.woff2') format('woff2');
+	font-weight: 100 900;
+	font-style: normal;
+	font-display: swap;
+}
+
+/* --- Static-weight fallbacks (uncomment if you don't have variable WOFF2) ---
+@font-face { font-family:'Cabinet Grotesk'; src:url('../fonts/CabinetGrotesk-Regular.woff2')   format('woff2'); font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:'Cabinet Grotesk'; src:url('../fonts/CabinetGrotesk-Medium.woff2')    format('woff2'); font-weight:500; font-style:normal; font-display:swap; }
+@font-face { font-family:'Cabinet Grotesk'; src:url('../fonts/CabinetGrotesk-Bold.woff2')      format('woff2'); font-weight:700; font-style:normal; font-display:swap; }
+@font-face { font-family:'Cabinet Grotesk'; src:url('../fonts/CabinetGrotesk-Extrabold.woff2') format('woff2'); font-weight:800; font-style:normal; font-display:swap; }
+@font-face { font-family:'Inter';           src:url('../fonts/Inter-Regular.woff2')            format('woff2'); font-weight:400; font-style:normal; font-display:swap; }
+@font-face { font-family:'Inter';           src:url('../fonts/Inter-SemiBold.woff2')           format('woff2'); font-weight:600; font-style:normal; font-display:swap; }
+@font-face { font-family:'Inter';           src:url('../fonts/Inter-Bold.woff2')               format('woff2'); font-weight:700; font-style:normal; font-display:swap; }
+*/
+
+/* ===== Root design tokens (defaults match the ZYMARG palette) ===== */
+.zymarg-reviews-widget{
+	/* v1.1.13 - inherit the ZYMARG brand tokens defined on .zymarg-single-product.
+	 * The fallbacks keep the widget correct if it is rendered standalone
+	 * (e.g. an Elementor block outside the product template), and every value
+	 * flips automatically under [data-theme="dark"] because the brand tokens do.
+	 *
+	 * v1.3.2 - fallback values below were retuned to match ZYMARG Store Page's
+	 * Tailwind design tokens exactly (--color-zy-primary/secondary/accent/
+	 * dark/body/border/surface/alt/container in store.php's @theme block),
+	 * plus its rounded-2xl (16px) card radius and shadow-lg box-shadow. This
+	 * is a deliberate brand-wide unification requested by the site owner, not
+	 * a store-page-only patch: since these are only *fallbacks* behind the
+	 * --zymarg-* theme tokens, any theme/plugin (Single Product included)
+	 * that already defines its own --zymarg-* tokens is completely
+	 * unaffected; this only changes what renders when nothing upstream
+	 * supplies a value. */
+	--z-primary:var(--zymarg-primary,#9500a5);       /* = --color-zy-primary */
+	--z-primary-hover:var(--zymarg-primary-hover,#bd00d1); /* = --color-zy-secondary */
+	--z-accent:var(--zymarg-primary-light,#fea9ff);  /* = --color-zy-accent */
+	--z-on-primary:#fff;
+	--z-text:var(--zymarg-text,#36003d);             /* = --color-zy-dark */
+	--z-text-dim:var(--zymarg-text-muted,#534152);   /* = --color-zy-body */
+	--z-surface:var(--zymarg-surface,#ffffff);       /* = --color-zy-surface */
+	--z-surface-alt:var(--zymarg-surface-alt,#f8f9ff); /* = --color-zy-alt */
+	--z-border:var(--zymarg-border,#d8bfd3);         /* = --color-zy-border */
+	--z-track:var(--zymarg-border,#eaedff);          /* = --color-zy-container */
+	--z-star:var(--zymarg-warning,#fbbf24);          /* = Tailwind amber-400, matches store.php's star rows */
+	--z-star-empty:var(--zymarg-border,#d8bfd3);
+	--z-danger:#ba1a1a;
+	--z-success:var(--zymarg-success,#28a745);
+	--z-radius:var(--zymarg-radius-md,16px);         /* = rounded-2xl */
+	--z-radius-sm:var(--zymarg-radius-sm,12px);      /* = rounded-xl */
+	--z-radius-pill:9999px;
+	/* = Tailwind v4 default shadow-lg, used throughout store.php's cards. */
+	--z-shadow:var(--zymarg-shadow,0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1));
+	--z-shadow-hover:0 20px 25px -5px rgba(0,0,0,.1),0 8px 10px -6px rgba(0,0,0,.1); /* = shadow-xl */
+	--z-gap:24px;
+	--z-stack:16px;
+	--z-stack-sm:8px;
+	--z-stack-lg:32px;
+	--z-fs-display:48px;
+	--z-fs-headline:24px;
+	--z-fs-headline-sm:20px;
+	--z-fs-body:16px;
+	--z-fs-body-sm:14px;
+	--z-fs-label:12px;
+	/* v1.3.2 - Store Page uses a single face everywhere: "Inter Variable",
+	 * loaded from the fontsource CDN (see class-assets.php's zymarg-inter-font
+	 * handle) -- it never uses Cabinet Grotesk for headings. Both display and
+	 * body stacks below now lead with that same face, so a review section on
+	 * a store page reads as one typographic system, not two competing ones.
+	 * 'Cabinet Grotesk'/'Inter' (this engine's own local @font-face rules,
+	 * declared above) stay in the stack as the next fallback, so a consumer
+	 * that never loads "Inter Variable" -- e.g. Single Product on a site with
+	 * no CDN access -- still gets this engine's own bundled fonts exactly as
+	 * before. */
+	--z-font-display:'Inter Variable','Cabinet Grotesk',system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+	--z-font-body:'Inter Variable','Inter',system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+
+	position:relative;
+	color:var(--z-text);
+	font-family:var(--z-font-body);
+	font-size:var(--z-fs-body);
+	line-height:1.5;
+	box-sizing:border-box;
+	-webkit-font-smoothing:antialiased;
+	-moz-osx-font-smoothing:grayscale;
+}
+.zymarg-reviews-widget *,
+.zymarg-reviews-widget *::before,
+.zymarg-reviews-widget *::after{box-sizing:border-box}
+
+.zymarg-reviews-widget img{max-width:100%;height:auto;display:block}
+
+/* v1.1.13 - dark mode: shadows and status colours that have no brand token */
+[data-theme="dark"] .zymarg-reviews-widget{
+	--z-shadow:0 10px 15px -3px rgba(0,0,0,.45),0 4px 6px -4px rgba(0,0,0,.45);
+	--z-shadow-hover:0 20px 25px -5px rgba(0,0,0,.55),0 8px 10px -6px rgba(0,0,0,.55);
+	--z-danger:#ff8a94;
+	--z-success:#4ade80;
+}
+
+/* ===== Background decoration ===== */
+.zymarg-bg-decoration{
+	position:absolute;inset:0;z-index:0;
+	background-size:cover;background-position:center;
+	opacity:.6;pointer-events:none;
+}
+
+/* ===== Container ===== */
+.zymarg-container{
+	position:relative;z-index:1;
+	width:100%;max-width:1280px;
+	margin-left:auto;margin-right:auto;
+	padding:32px;
+	display:flex;flex-direction:column;gap:var(--z-stack-lg);
+}
+
+/* ===== Generic stack helpers ===== */
+.zymarg-stack{display:flex;flex-direction:column;gap:var(--z-stack)}
+
+/* ===== Section titles ===== */
+.zymarg-section-title{
+	font-family:var(--z-font-display);
+	font-size:var(--z-fs-headline-sm);
+	font-weight:600;
+	margin:0 0 var(--z-stack-sm);
+	color:var(--z-text);
+	line-height:1.3;
+}
+
+/* ===== Grid (left/right columns) ===== */
+.zymarg-grid{
+	display:grid;
+	grid-template-columns:1fr;
+	gap:var(--z-gap);
+	--zymarg-gap:var(--z-gap);
+	width:100%;
+}
+/* Prevent grid children from overflowing their track.
+ * Without min-width:0, wide content (long names, wide stars) forces the
+ * grid column to grow past its assigned width, breaking the single-column
+ * stacked layout on mobile. */
+.zymarg-col{
+	min-width:0;
+	width:100%;
+}
+
+/* ===== Summary card ===== */
+.zymarg-summary{
+	background:var(--z-surface);
+	padding:16px;
+	border:1px solid var(--z-border);
+	border-radius:var(--z-radius);
+	box-shadow:var(--z-shadow);
+}
+.zymarg-summary-top{
+	display:flex;align-items:center;gap:var(--z-stack-sm);
+	margin-bottom:var(--z-stack);
+}
+.zymarg-avg-rating{
+	font-family:var(--z-font-display);
+	font-size:var(--z-fs-display);
+	font-weight:700;
+	letter-spacing:-.02em;
+	line-height:1;color:var(--z-text);
+}
+.zymarg-summary-stars{display:flex;flex-direction:column;gap:2px}
+.zymarg-summary-count{
+	font-size:var(--z-fs-body-sm);
+	color:var(--z-text-dim);
+}
+
+/* ===== Stars (SVG-based) =====
+ * The wrapper .zymarg-stars sets font-size; each .zymarg-star is sized
+ * in em so it scales with the parent. SVGs use fill: currentColor, so
+ * Elementor color controls (which set `color: ...` on the star) Just Work.
+ * ============================================================================ */
+.zymarg-stars{
+	display:inline-flex;align-items:center;gap:2px;
+	font-size:18px;line-height:1;
+}
+.zymarg-stars--summary{font-size:24px}
+
+.zymarg-star{
+	display:inline-flex;
+	align-items:center;justify-content:center;
+	position:relative;
+	width:1em;height:1em;
+	line-height:1;
+	color:var(--z-star-empty);
+	background:transparent;border:none;padding:0;margin:0;
+	flex-shrink:0;
+	transition:color .15s,transform .15s;
+}
+.zymarg-star svg{
+	width:100%;height:100%;
+	display:block;
+	fill:currentColor;
+	pointer-events:none;
+}
+.zymarg-star.is-filled{color:var(--z-star);}
+.zymarg-star.is-empty{color:var(--z-star-empty);}
+
+/* Partial fill — outline behind, filled SVG clipped on top. */
+.zymarg-star.is-partial{display:inline-block;}
+.zymarg-star.is-partial .zymarg-star-back,
+.zymarg-star.is-partial .zymarg-star-front{
+	position:absolute;inset:0;
+	display:block;
+	width:100%;height:100%;
+}
+.zymarg-star.is-partial .zymarg-star-back  svg{fill:var(--z-star-empty);}
+.zymarg-star.is-partial .zymarg-star-front svg{fill:var(--z-star);}
+
+/* Rating-input star — single SVG containing both paths;
+ * CSS shows filled/outline based on parent .is-filled/.is-empty class. */
+.zymarg-rating-input .zymarg-star{
+	cursor:pointer;
+	font-size:1.555em; /* ~28px when parent is 18px */
+}
+.zymarg-rating-input .zymarg-star:hover{transform:scale(1.05);}
+.zymarg-rating-input .zymarg-star:focus-visible{
+	outline:2px solid var(--z-primary);
+	outline-offset:2px;
+	border-radius:4px;
+}
+.zymarg-rate-star .zymarg-path-fill,
+.zymarg-rate-star .zymarg-path-out{display:none;}
+.zymarg-rate-star.is-filled .zymarg-path-fill{display:inline;}
+.zymarg-rate-star.is-empty  .zymarg-path-out{display:inline;}
+
+/* ===== Generic SVG icon class ===== */
+.zymarg-icon{
+	display:inline-block;
+	width:1em;height:1em;
+	vertical-align:-0.15em;
+	fill:currentColor;
+	flex-shrink:0;
+}
+
+/* ===== Verified buyer badge ===== */
+.zymarg-verified-badge{
+	display:inline-flex;
+	align-items:center;justify-content:center;
+	width:1em;height:1em;
+	font-size:16px;
+	line-height:1;
+	color:var(--z-primary);
+}
+.zymarg-verified-badge svg{
+	width:100%;height:100%;
+	display:block;
+	fill:currentColor;
+}
+
+/* ===== Breakdown bars ===== */
+.zymarg-bars{display:flex;flex-direction:column;gap:8px}
+.zymarg-bar-row{display:flex;align-items:center;gap:12px}
+.zymarg-bar-label{
+	font-size:var(--z-fs-body-sm);
+	color:var(--z-text);
+	width:48px;flex-shrink:0;
+}
+.zymarg-bar-track{
+	flex:1;height:8px;
+	background:var(--z-track);
+	border-radius:var(--z-radius-pill);
+	overflow:hidden;
+}
+.zymarg-bar-fill{
+	height:100%;border-radius:var(--z-radius-pill);
+	background-image:linear-gradient(90deg,var(--z-primary) 0%,var(--z-accent) 100%);
+	width:0;
+	animation:zymargFill 1s ease-out forwards;
+}
+.zymarg-bar-pct{
+	font-size:var(--z-fs-body-sm);
+	color:var(--z-text-dim);
+	width:42px;text-align:right;flex-shrink:0;
+}
+@keyframes zymargFill{from{width:0}to{width:var(--zymarg-target-width,0%)}}
+@media (prefers-reduced-motion: reduce){
+	.zymarg-bar-fill{animation:none;width:var(--zymarg-target-width,0%)}
+}
+
+/* ===== Form ===== */
+.zymarg-form{
+	background:var(--z-surface);
+	padding:16px;
+	border:1px solid var(--z-border);
+	border-radius:var(--z-radius);
+	box-shadow:var(--z-shadow);
+}
+.zymarg-form-sub{
+	font-size:var(--z-fs-body-sm);
+	color:var(--z-text-dim);
+	margin:0 0 var(--z-stack);
+}
+.zymarg-review-form{display:flex;flex-direction:column;gap:var(--z-stack)}
+.zymarg-field{display:flex;flex-direction:column;gap:8px}
+.zymarg-form-label{
+	display:block;
+	font-size:var(--z-fs-label);
+	font-weight:600;letter-spacing:.1em;
+	text-transform:uppercase;color:var(--z-text);
+}
+.zymarg-form input[type="text"],
+.zymarg-form textarea{
+	width:100%;
+	padding:10px 12px;
+	background:var(--z-surface-alt);
+	border:1px solid var(--z-border);
+	border-radius:var(--z-radius-sm);
+	font-family:var(--z-font-body);
+	font-size:var(--z-fs-body);
+	color:var(--z-text);
+	transition:border-color .15s,box-shadow .15s;
+}
+.zymarg-form textarea{resize:vertical;min-height:96px}
+.zymarg-form input[type="text"]:focus,
+.zymarg-form textarea:focus{
+	outline:none;
+	border-color:var(--z-primary);
+	box-shadow:0 0 0 2px rgba(79,0,208,.18);
+}
+.zymarg-media-field{flex-direction:row;align-items:center;gap:12px}
+.zymarg-media-button{
+	display:inline-flex;align-items:center;gap:6px;
+	padding:8px 14px;
+	border:1px solid var(--z-border);
+	border-radius:var(--z-radius-sm);
+	background:var(--z-surface);
+	font-size:var(--z-fs-body-sm);
+	color:var(--z-text);
+	cursor:pointer;transition:background-color .15s;
+}
+.zymarg-media-button:hover{background:var(--z-surface-alt)}
+.zymarg-media-button .zymarg-icon{font-size:20px;width:1em;height:1em;}
+.zymarg-media-count{font-size:var(--z-fs-body-sm);color:var(--z-text-dim)}
+.zymarg-form-message{font-size:var(--z-fs-body-sm);min-height:1.25em}
+.zymarg-form-message.is-error{color:var(--z-danger)}
+.zymarg-form-message.is-success{color:var(--z-success)}
+
+/* ===== Submit button ===== */
+.zymarg-btn-submit{
+	display:block;width:100%;
+	padding:12px 24px;
+	background:var(--z-primary);
+	color:var(--z-on-primary);
+	border:none;border-radius:var(--z-radius-sm);
+	font-family:var(--z-font-display);
+	font-size:var(--z-fs-headline-sm);
+	font-weight:600;cursor:pointer;
+	box-shadow:0 1px 2px rgba(0,0,0,.05);
+	transition:background-color .2s,box-shadow .2s,transform .1s;
+}
+.zymarg-btn-submit:hover{
+	background:var(--z-primary-hover);
+	box-shadow:0 8px 24px rgba(104,51,234,.15);
+}
+.zymarg-btn-submit:active{transform:translateY(1px)}
+.zymarg-btn-submit:disabled{opacity:.6;cursor:not-allowed}
+
+/* ===== Filters bar ===== */
+.zymarg-filters{
+	display:flex;flex-wrap:wrap;align-items:center;
+	justify-content:space-between;gap:12px;
+	padding:12px;
+	background:var(--z-surface);
+	border:1px solid var(--z-border);
+	border-radius:var(--z-radius);
+	box-shadow:var(--z-shadow);
+}
+.zymarg-filter-group{display:flex;gap:8px;flex-wrap:wrap}
+.zymarg-filter-pill{
+	display:inline-flex;align-items:center;gap:4px;
+	padding:8px 16px;
+	border:1px solid var(--z-border);
+	background:transparent;
+	border-radius:var(--z-radius-pill);
+	font-size:var(--z-fs-body-sm);
+	color:var(--z-text);cursor:pointer;
+	font-family:var(--z-font-body);
+	transition:background-color .15s,box-shadow .15s,border-color .15s;
+}
+.zymarg-filter-pill .zymarg-icon{font-size:18px;width:1em;height:1em;}
+.zymarg-filter-pill:hover:not(.is-active){background:var(--z-surface-alt)}
+.zymarg-filter-pill.is-active{
+	background:var(--z-primary);
+	color:var(--z-on-primary);
+	border-color:var(--z-primary);
+	font-weight:600;
+	box-shadow:0 1px 2px rgba(0,0,0,.06);
+}
+.zymarg-sort-select{
+	appearance:none;-webkit-appearance:none;
+	padding:8px 36px 8px 16px;
+	background:var(--z-surface-alt);
+	border:1px solid var(--z-border);
+	border-radius:var(--z-radius-sm);
+	font-size:var(--z-fs-body-sm);
+	color:var(--z-text);cursor:pointer;
+	font-family:var(--z-font-body);
+	background-image:url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24'%3E%3Cpath fill='%23494455' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+	background-repeat:no-repeat;
+	background-position:right 8px center;
+}
+.zymarg-sort-select:focus{outline:none;border-color:var(--z-primary)}
+
+/* ===== Review cards ===== */
+.zymarg-feed{display:flex;flex-direction:column;gap:var(--z-stack)}
+/* ===== Compact review card (responsive: tablet/desktop defaults here,
+ * tightened further under the mobile breakpoint at the bottom of this file) ===== */
+.zymarg-review-card{
+	background:var(--z-surface);
+	padding:12px;
+	border:1px solid var(--z-border);
+	border-radius:var(--z-radius);
+	box-shadow:var(--z-shadow);
+	transition:box-shadow .3s;
+	position:relative; /* needed for three dot dropdown positioning */
+}
+.zymarg-review-card:hover{box-shadow:var(--z-shadow-hover)}
+
+/* Head row: author block + three dot menu */
+.zymarg-review-head{
+	display:flex;justify-content:space-between;
+	align-items:flex-start;gap:8px;
+	margin-bottom:8px;
+}
+.zymarg-review-author{display:flex;align-items:flex-start;gap:8px;min-width:0;flex:1}
+.zymarg-avatar{
+	width:32px;height:32px;flex-shrink:0;
+	border-radius:50%;
+	background:rgba(149,0,165,.12);
+	background:color-mix(in srgb, var(--z-primary) 14%, transparent);
+	color:var(--z-primary);
+	display:flex;align-items:center;justify-content:center;
+	font-family:var(--z-font-display);
+	font-weight:600;font-size:12px;
+}
+.zymarg-review-meta{min-width:0}
+/* Name + date share one row: name first, a space, then the date -
+ * the row wraps gracefully on narrow columns instead of overlapping. */
+.zymarg-review-name-row{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap}
+.zymarg-reviewer-name{
+	font-family:var(--z-font-display);
+	font-size:15px;
+	font-weight:600;color:var(--z-text);
+	margin:0;line-height:1.3;
+}
+.zymarg-review-date{
+	font-size:12px;
+	color:var(--z-text-dim);
+	margin:0;
+	line-height:1.3;
+	white-space:nowrap;
+}
+/* Stars sit below the name/date row inside .zymarg-review-meta */
+.zymarg-review-meta .zymarg-stars{
+	display:inline-flex;
+	margin-top:2px;
+	font-size:14px;
+}
+
+/* ===== Three dot action menu ===== */
+.zymarg-card-actions{
+	position:relative;
+	flex-shrink:0;
+}
+.zymarg-btn-dots{
+	display:flex;align-items:center;justify-content:center;
+	width:32px;height:32px;
+	background:transparent;
+	border:none;
+	border-radius:50%;
+	color:var(--z-text-dim);
+	cursor:pointer;
+	transition:background-color .15s,color .15s;
+	padding:0;
+}
+.zymarg-btn-dots:hover{
+	background:var(--z-surface-alt);
+	color:var(--z-text);
+}
+.zymarg-btn-dots:focus-visible{
+	outline:2px solid var(--z-primary);
+	outline-offset:2px;
+}
+.zymarg-dots-dropdown{
+	position:absolute;
+	top:calc(100% + 4px);
+	right:0;
+	min-width:148px;
+	background:var(--z-surface);
+	border:1px solid var(--z-border);
+	border-radius:var(--z-radius-sm);
+	box-shadow:0 8px 24px rgba(0,0,0,.1);
+	z-index:200;
+	/* Hidden by default — JS adds .is-open */
+	opacity:0;
+	pointer-events:none;
+	transform:translateY(-6px);
+	transition:opacity .15s,transform .15s;
+}
+.zymarg-dots-dropdown.is-open{
+	opacity:1;
+	pointer-events:auto;
+	transform:translateY(0);
+}
+.zymarg-dots-item{
+	display:flex;align-items:center;gap:8px;
+	width:100%;
+	padding:10px 14px;
+	background:transparent;
+	border:none;
+	font-family:var(--z-font-body);
+	font-size:var(--z-fs-body-sm);
+	color:var(--z-text);
+	cursor:pointer;
+	text-align:left;
+	transition:background-color .12s;
+	white-space:nowrap;
+}
+.zymarg-dots-item:hover{background:var(--z-surface-alt)}
+.zymarg-dots-item--report{color:var(--z-danger)}
+.zymarg-dots-item--report:hover{background:rgba(186,26,26,.08)}
+.zymarg-dots-item--reported{
+	color:var(--z-text-dim);
+	cursor:default;
+	opacity:.7;
+}
+.zymarg-dots-item--reported:hover{background:transparent}
+
+/* ===== Interaction bar (like / dislike) ===== */
+.zymarg-interaction-bar{
+	display:flex;
+	align-items:center;
+	padding-top:8px;
+	margin-top:8px;
+	border-top:1px solid var(--z-border);
+}
+.zymarg-vote-group{
+	display:flex;
+	align-items:center;
+	gap:6px;
+}
+.zymarg-btn-vote{
+	display:inline-flex;
+	align-items:center;justify-content:center;
+	width:34px;height:34px;
+	background:transparent;
+	border:1px solid var(--z-border);
+	border-radius:var(--z-radius-sm);
+	color:var(--z-text-dim);
+	cursor:pointer;
+	padding:0;
+	transition:background-color .15s,color .15s,border-color .15s,transform .1s;
+	flex-shrink:0;
+}
+.zymarg-btn-vote:hover{
+	background:var(--z-surface-alt);
+	color:var(--z-text);
+}
+.zymarg-btn-vote:active{transform:scale(.92)}
+.zymarg-btn-vote:focus-visible{
+	outline:2px solid var(--z-primary);
+	outline-offset:2px;
+}
+/* Like active state — filled purple */
+.zymarg-btn-like.is-active{
+	background:rgba(149,0,165,.10);
+	background:color-mix(in srgb, var(--z-primary) 12%, transparent);
+	border-color:var(--z-primary);
+	color:var(--z-primary);
+}
+/* Dislike active state — filled muted grey */
+.zymarg-btn-dislike.is-active{
+	background:var(--z-surface-alt);
+	border-color:var(--z-border);
+	color:var(--z-text-dim);
+}
+.zymarg-vote-count{
+	font-size:var(--z-fs-body-sm);
+	color:var(--z-primary);
+	font-weight:600;
+	white-space:nowrap;
+}
+/* Dislike count uses muted colour, not primary */
+.zymarg-dislike-count{
+	color:var(--z-text-dim);
+}
+
+/* ===== Product context (store-wide scope only) =====
+ * v1.3.2 - a store-wide feed spans every product a vendor owns, so each
+ * card needs to say which product the review is about. Sits between the
+ * name/date row and the variation pill; card/loop template gate this
+ * entirely off in single-product scope, so nothing renders there. */
+.zymarg-review-product{
+	display:inline-flex;
+	align-items:center;
+	gap:6px;
+	margin-top:2px;
+	margin-bottom:3px;
+	font-size:var(--z-fs-label);
+	font-weight:600;
+	color:var(--z-text-dim);
+	text-decoration:none;
+	max-width:100%;
+}
+.zymarg-review-product:hover{
+	color:var(--z-primary);
+	text-decoration:underline;
+}
+.zymarg-review-product__thumb{
+	width:20px;
+	height:20px;
+	border-radius:var(--z-radius-sm);
+	object-fit:cover;
+	flex-shrink:0;
+}
+.zymarg-review-product__title{
+	overflow:hidden;
+	text-overflow:ellipsis;
+	white-space:nowrap;
+}
+
+/* ===== Variation name (above stars) ===== */
+.zymarg-review-variation{
+	display:inline-block;
+	margin-top:3px;
+	margin-bottom:3px;
+	font-size:var(--z-fs-label);
+	font-weight:600;
+	letter-spacing:.04em;
+	text-transform:uppercase;
+	color:var(--z-primary);
+	background:rgba(149,0,165,.10);
+	background:color-mix(in srgb, var(--z-primary) 12%, transparent);
+	padding:2px 8px;
+	border-radius:var(--z-radius-pill);
+}
+.zymarg-review-body{
+	font-size:14px;
+	color:var(--z-text-dim);
+	margin:0 0 6px;line-height:1.5;
+}
+.zymarg-review-photos{
+	display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;
+}
+.zymarg-review-photo{
+	width:64px;height:64px;
+	object-fit:cover;
+	border:1px solid var(--z-border);
+	border-radius:var(--z-radius-sm);
+	cursor:pointer;
+	transition:opacity .2s;
+}
+.zymarg-review-photo:hover{opacity:.8}
+
+/* ===== Store owner replies ===== */
+.zymarg-replies{
+	display:flex;flex-direction:column;gap:6px;
+	margin-top:8px;
+	padding-top:8px;
+	border-top:1px solid var(--z-border);
+}
+.zymarg-reply{
+	background:var(--z-surface-alt);
+	border:1px solid var(--z-border);
+	border-radius:var(--z-radius-sm);
+	padding:8px 12px;
+}
+.zymarg-reply--owner{
+	background:rgba(149,0,165,.07);
+	background:color-mix(in srgb, var(--z-primary) 8%, transparent);
+	border-color:rgba(149,0,165,.28);
+	border-color:color-mix(in srgb, var(--z-primary) 30%, transparent);
+}
+.zymarg-reply-header{
+	display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+	margin-bottom:6px;
+}
+.zymarg-reply-author{
+	font-family:var(--z-font-display);
+	font-size:var(--z-fs-body-sm);
+	font-weight:600;
+	color:var(--z-text);
+}
+.zymarg-reply-badge{
+	display:inline-flex;align-items:center;
+	padding:2px 8px;
+	background:var(--z-primary);
+	color:var(--z-on-primary);
+	border-radius:var(--z-radius-pill);
+	font-size:10px;
+	font-weight:700;
+	letter-spacing:.04em;
+	text-transform:uppercase;
+}
+.zymarg-reply-date{
+	font-size:12px;
+	color:var(--z-text-dim);
+}
+.zymarg-reply-badge{
+	margin-left:auto;
+}
+.zymarg-reply-body{
+	font-size:var(--z-fs-body-sm);
+	color:var(--z-text-dim);
+	margin:0;
+	line-height:1.5;
+}
+
+/* Reply form (shown to store owners only via JS capability check) */
+.zymarg-reply-form-wrap{
+	margin-top:10px;
+	padding-top:10px;
+	border-top:1px dashed var(--z-border);
+	display:none; /* shown by JS for eligible users */
+}
+.zymarg-reply-form-wrap.is-open{display:block}
+.zymarg-reply-form{display:flex;flex-direction:column;gap:8px}
+.zymarg-reply-textarea{
+	width:100%;
+	padding:8px 10px;
+	background:var(--z-surface);
+	border:1px solid var(--z-border);
+	border-radius:var(--z-radius-sm);
+	font-family:var(--z-font-body);
+	font-size:var(--z-fs-body-sm);
+	color:var(--z-text);
+	resize:vertical;
+	min-height:72px;
+	transition:border-color .15s,box-shadow .15s;
+}
+.zymarg-reply-textarea:focus{
+	outline:none;
+	border-color:var(--z-primary);
+	box-shadow:0 0 0 2px rgba(79,0,208,.15);
+}
+.zymarg-reply-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.zymarg-btn-reply-submit{
+	padding:7px 18px;
+	background:var(--z-primary);
+	color:var(--z-on-primary);
+	border:none;
+	border-radius:var(--z-radius-sm);
+	font-family:var(--z-font-display);
+	font-size:var(--z-fs-body-sm);
+	font-weight:600;
+	cursor:pointer;
+	transition:background-color .15s;
+}
+.zymarg-btn-reply-submit:hover{background:var(--z-primary-hover)}
+.zymarg-btn-reply-submit:disabled{opacity:.6;cursor:not-allowed}
+.zymarg-btn-reply-cancel{
+	padding:7px 14px;
+	background:transparent;
+	color:var(--z-text-dim);
+	border:1px solid var(--z-border);
+	border-radius:var(--z-radius-sm);
+	font-family:var(--z-font-body);
+	font-size:var(--z-fs-body-sm);
+	cursor:pointer;
+	transition:background-color .15s;
+}
+.zymarg-btn-reply-cancel:hover{background:var(--z-surface-alt)}
+.zymarg-reply-msg{font-size:var(--z-fs-body-sm);min-height:1.2em}
+.zymarg-reply-msg.is-error{color:var(--z-danger)}
+.zymarg-reply-msg.is-success{color:var(--z-success)}
+
+/* "Reply" toggle button on each card — only rendered for store owners */
+.zymarg-btn-reply-toggle{
+	display:inline-flex;align-items:center;gap:4px;
+	padding:4px 10px;
+	background:transparent;
+	color:var(--z-primary);
+	border:1px solid var(--z-primary);
+	border-radius:var(--z-radius-pill);
+	font-family:var(--z-font-body);
+	font-size:var(--z-fs-label);
+	font-weight:600;
+	cursor:pointer;
+	transition:background-color .15s,color .15s;
+	margin-top:8px;
+}
+.zymarg-btn-reply-toggle:hover{
+	background:var(--z-primary);
+	color:var(--z-on-primary);
+}
+
+/* ===== Report Abuse warning modal ===== */
+/* The modal is appended to document.body by JS, outside .zymarg-reviews-widget,
+ * so the widget's custom properties do not reach it. v1.1.13 declares its own
+ * brand palette on the overlay instead of hard-coding values inline. */
+.zymarg-report-modal-overlay{
+	/* v1.3.2 - retuned to match ZYMARG Store Page's Tailwind tokens, same
+	 * rationale as .zymarg-reviews-widget/.zymarg-mv above. This overlay has
+	 * no --zymarg-* fallback chain (unlike --z-*/--zv-*), so these are its
+	 * only values -- there was no fallback layer to change instead. */
+	--zm-surface:#ffffff;      /* = --color-zy-surface */
+	--zm-text:#36003d;         /* = --color-zy-dark */
+	--zm-text-dim:#534152;     /* = --color-zy-body */
+	--zm-border:#d8bfd3;       /* = --color-zy-border */
+	--zm-danger:#ba1a1a;
+	--zm-danger-hover:#931414;
+	--zm-warn-bg:#fff4e5;
+	--zm-warn-fg:#e65100;
+}
+[data-theme="dark"] .zymarg-report-modal-overlay{
+	--zm-surface:#1a1a2e;
+	--zm-text:#e8e8e8;
+	--zm-text-dim:#a0a0a0;
+	--zm-border:#3d3d5c;
+	--zm-danger:#e5484d;
+	--zm-danger-hover:#c93b40;
+	--zm-warn-bg:rgba(230,81,0,.18);
+	--zm-warn-fg:#ffb27a;
+}
+.zymarg-report-modal-overlay{
+	position:fixed;
+	inset:0;
+	z-index:9990;
+	background:rgba(0,0,0,.55);
+	display:flex;
+	align-items:center;
+	justify-content:center;
+	padding:16px;
+	opacity:0;
+	transition:opacity .2s;
+	pointer-events:none;
+}
+.zymarg-report-modal-overlay:not([hidden]){
+	opacity:1;
+	pointer-events:auto;
+}
+.zymarg-report-modal-overlay[hidden]{
+	display:none !important;
+}
+.zymarg-report-modal{
+	background:var(--zm-surface);
+	border-radius:12px;
+	box-shadow:0 24px 64px rgba(0,0,0,.18);
+	padding:32px 28px 24px;
+	width:100%;
+	max-width:400px;
+	text-align:center;
+	transform:translateY(16px);
+	transition:transform .2s;
+	position:relative;
+}
+.zymarg-report-modal-overlay:not([hidden]) .zymarg-report-modal{
+	transform:translateY(0);
+}
+.zymarg-report-modal-icon{
+	display:flex;
+	align-items:center;
+	justify-content:center;
+	width:56px;height:56px;
+	border-radius:50%;
+	background:var(--zm-warn-bg);
+	color:var(--zm-warn-fg);
+	margin:0 auto 16px;
+}
+.zymarg-report-modal-icon svg{width:28px;height:28px;fill:currentColor}
+.zymarg-report-modal-title{
+	font-family:'Cabinet Grotesk',system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+	font-size:20px;
+	font-weight:700;
+	color:var(--zm-text);
+	margin:0 0 10px;
+	line-height:1.3;
+}
+.zymarg-report-modal-body{
+	font-size:14px;
+	color:var(--zm-text-dim);
+	line-height:1.6;
+	margin:0 0 24px;
+}
+.zymarg-report-modal-actions{
+	display:flex;
+	flex-direction:column;
+	gap:10px;
+}
+.zymarg-report-modal-btn{
+	display:block;
+	width:100%;
+	padding:11px 20px;
+	border-radius:6px;
+	font-family:'Cabinet Grotesk',system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+	font-size:16px;
+	font-weight:600;
+	cursor:pointer;
+	transition:background-color .15s,box-shadow .15s,transform .1s;
+	border:none;
+}
+.zymarg-report-modal-btn:active{transform:translateY(1px)}
+.zymarg-report-modal-btn--danger{
+	background:var(--zm-danger);
+	color:#fff;
+}
+.zymarg-report-modal-btn--danger:hover{background:var(--zm-danger-hover)}
+.zymarg-report-modal-btn--danger:disabled{opacity:.6;cursor:not-allowed}
+.zymarg-report-modal-btn--outline{
+	background:transparent;
+	color:var(--zm-text-dim);
+	border:1px solid var(--zm-border);
+}
+.zymarg-report-modal-btn--outline:hover{background:rgba(149,0,165,.06)}
+.zymarg-report-modal-msg{
+	font-size:14px;
+	min-height:1.2em;
+	margin-top:10px;
+}
+.zymarg-report-modal-msg.is-error{color:var(--zm-danger)}
+.zymarg-report-modal-msg.is-success{color:#16a34a}
+
+/* Mobile: modal full-width with breathing room */
+@media (max-width:479px){
+	.zymarg-report-modal{
+		padding:24px 18px 20px;
+	}
+}
+
+/* ===== Empty state ===== */
+.zymarg-empty{
+	padding:32px;
+	text-align:center;
+	background:var(--z-surface);
+	border:1px dashed var(--z-border);
+	border-radius:var(--z-radius);
+	color:var(--z-text-dim);
+}
+
+/* ===== Pagination ===== */
+.zymarg-pagination{display:flex;flex-direction:column;align-items:center;gap:12px;margin-top:var(--z-stack-lg)}
+.zymarg-pagination-count{
+	font-size:var(--z-fs-body-sm);
+	color:var(--z-text-dim);
+	text-align:center;
+}
+.zymarg-btn-load-more{
+	padding:12px 32px;
+	background:#b387fe;
+	color:#46108d;
+	border:none;
+	border-radius:var(--z-radius-pill);
+	font-family:var(--z-font-display);
+	font-size:var(--z-fs-headline-sm);
+	font-weight:600;cursor:pointer;
+	transition:box-shadow .2s,transform .1s,background-color .15s;
+}
+.zymarg-btn-load-more:hover{box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.zymarg-btn-load-more:active{transform:translateY(1px)}
+.zymarg-btn-load-more:disabled{opacity:.6;cursor:not-allowed}
+
+/* ===== Glass panel utility (kept for design parity) ===== */
+.zymarg-glass{
+	background:rgba(255,255,255,.85);
+	backdrop-filter:blur(8px);
+	-webkit-backdrop-filter:blur(8px);
+}
+
+/* ===== Responsive ===== */
+
+/* Mobile (≤767px): single column, stacked full-width.
+ * Force single-column even if Elementor injects its own grid CSS on the
+ * parent section. The !important beats Elementor's column-width rules
+ * without touching the editor markup. */
+@media (max-width:767px){
+	.zymarg-reviews-widget .zymarg-grid{
+		display:grid !important;
+		grid-template-columns:1fr !important;
+		width:100% !important;
+	}
+	.zymarg-reviews-widget .zymarg-col{
+		width:100% !important;
+		min-width:0 !important;
+		max-width:100% !important;
+		float:none !important;
+	}
+
+	/* Compact review card, mobile tier - one notch tighter than the
+	 * tablet/desktop defaults set on .zymarg-review-card and friends above. */
+	.zymarg-reviews-widget .zymarg-review-card{padding:10px}
+	.zymarg-reviews-widget .zymarg-review-head{gap:6px;margin-bottom:6px}
+	.zymarg-reviews-widget .zymarg-review-author{gap:6px}
+	.zymarg-reviews-widget .zymarg-avatar{width:28px;height:28px;font-size:11px}
+	.zymarg-reviews-widget .zymarg-reviewer-name{font-size:14px}
+	.zymarg-reviews-widget .zymarg-review-date{font-size:11px}
+	.zymarg-reviews-widget .zymarg-review-meta .zymarg-stars{font-size:13px}
+	.zymarg-reviews-widget .zymarg-review-body{font-size:14px;margin-bottom:6px}
+	.zymarg-reviews-widget .zymarg-review-photos{margin-top:8px}
+	.zymarg-reviews-widget .zymarg-review-photo,
+	.zymarg-reviews-widget .zymarg-review-media{width:56px;height:56px}
+	.zymarg-reviews-widget .zymarg-interaction-bar{padding-top:6px;margin-top:6px}
+	.zymarg-reviews-widget .zymarg-replies{gap:6px;margin-top:6px;padding-top:6px}
+	.zymarg-reviews-widget .zymarg-reply{padding:6px 10px}
+	.zymarg-reviews-widget .zymarg-reply-date{font-size:11px}
+}
+
+/* Tablet + Desktop (≥768px): two-column layout with sticky left column. */
+@media (min-width:768px){
+	.zymarg-grid{
+		grid-template-columns:33% calc(67% - var(--zymarg-gap,24px));
+		align-items:start;
+	}
+	.zymarg-col-left{
+		position:sticky;
+		top:24px;
+		/* Ensure it doesn't exceed the viewport height and become unscrollable
+		 * if the left column itself is taller than the screen. */
+		max-height:calc(100vh - 48px);
+		overflow-y:auto;
+		/* Hide scrollbar visually but keep it functional */
+		scrollbar-width:none;
+	}
+	.zymarg-col-left::-webkit-scrollbar{display:none}
+}
+
+/* My Account: simple polish for our review buttons */
+.zymarg-review-btn-list .button{display:inline-block;text-align:center}
+.zymarg-review-btn{
+	background:var(--zymarg-primary,#9500a5)!important;
+	color:#fff!important;
+	border-color:var(--zymarg-primary,#9500a5)!important;
+}
+.zymarg-review-btn:hover{
+	background:var(--zymarg-primary-hover,#bd00d1)!important;
+	color:#fff!important;
+}
+
+/* ===== Mobile (≤640px) only: strip container padding, minimal gaps =====
+ * v1.1.12 - the summary and form cards carry no margin of their own; the space
+ * between them comes from the flex/grid gap tokens, so those are what shrink.
+ * 8px keeps the cards visually separate without restoring the original spacing. */
+@media (max-width:640px){
+	.zymarg-reviews-widget .zymarg-container{padding:0;gap:8px}
+	.zymarg-reviews-widget .zymarg-stack{gap:8px}
+	.zymarg-reviews-widget .zymarg-grid{gap:8px}
+	.zymarg-reviews-widget .zymarg-summary,
+	.zymarg-reviews-widget .zymarg-form{margin:0}
+
+	/* v1.1.18 - filters + sort stay on one line on mobile. */
+	.zymarg-reviews-widget .zymarg-filters{
+		flex-wrap:nowrap;gap:6px;padding:8px;
+	}
+	.zymarg-reviews-widget .zymarg-filter-group{
+		flex-wrap:nowrap;gap:6px;min-width:0;flex:1 1 auto;
+	}
+	.zymarg-reviews-widget .zymarg-filter-pill{
+		padding:6px 10px;font-size:.72rem;gap:3px;
+		min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+	}
+	.zymarg-reviews-widget .zymarg-filter-pill .zymarg-icon{font-size:14px}
+	.zymarg-reviews-widget .zymarg-sort{flex:0 0 auto;min-width:0}
+	.zymarg-reviews-widget .zymarg-sort-select{
+		padding:6px 22px 6px 8px;font-size:.72rem;
+		background-position:right 4px center;
+		max-width:112px;text-overflow:ellipsis;
+	}
+}
+
+/* ===== v1.1.17 — Review media tiles, customer media strip, gallery viewer ===== */
+
+/* Tiles inside review cards (now buttons, not bare <img>) */
+.zymarg-review-media{
+	position:relative;display:block;padding:0;overflow:hidden;
+	width:64px;height:64px;flex:0 0 auto;
+	border:1px solid var(--z-border);border-radius:var(--z-radius-sm);
+	background:var(--z-surface-alt);cursor:pointer;
+	transition:opacity .2s,transform .2s;
+}
+.zymarg-review-media:hover{opacity:.85;transform:translateY(-1px)}
+.zymarg-review-media:focus-visible{outline:2px solid var(--z-primary);outline-offset:2px}
+.zymarg-review-media .zymarg-review-photo{width:100%;height:100%;border:0;border-radius:0;display:block}
+.zymarg-review-photo--blank{
+	display:block;width:100%;height:100%;
+	background:linear-gradient(135deg,var(--z-surface-alt),var(--z-track));
+}
+.zymarg-review-media--video::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.28)}
+.zymarg-media-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.zymarg-media-play svg{width:26px;height:26px;color:#fff;filter:drop-shadow(0 1px 3px rgba(0,0,0,.6))}
+
+/* Customer media strip above the feed */
+.zymarg-media-strip{
+	padding:12px;margin-bottom:4px;
+	border:1px solid var(--z-border);border-radius:var(--z-radius);
+	background:var(--z-surface);
+}
+.zymarg-media-strip__head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.zymarg-media-strip__title{margin:0;font-size:var(--z-fs-body,.95rem);font-weight:700;color:var(--z-text)}
+.zymarg-media-strip__all{
+	background:none;border:0;padding:0;cursor:pointer;
+	font-size:.82rem;font-weight:700;color:var(--z-primary);
+}
+.zymarg-media-strip__all:hover{color:var(--z-primary-hover);text-decoration:none}
+.zymarg-media-strip__row{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:thin}
+.zymarg-media-strip__tile{
+	position:relative;flex:0 0 auto;width:72px;height:72px;padding:0;overflow:hidden;cursor:pointer;
+	border:1px solid var(--z-border);border-radius:var(--z-radius-sm);background:var(--z-surface-alt);
+	transition:transform .2s,border-color .2s;
+}
+.zymarg-media-strip__tile:hover{transform:translateY(-2px);border-color:var(--z-primary)}
+.zymarg-media-strip__tile:focus-visible{outline:2px solid var(--z-primary);outline-offset:2px}
+.zymarg-media-strip__tile img{width:100%;height:100%;object-fit:cover;display:block}
+.zymarg-media-strip__tile--more{
+	display:flex;align-items:center;justify-content:center;
+	font-weight:700;font-size:.9rem;color:var(--z-primary);background:var(--z-surface-alt);
+}
+/* v1.2.0 - .zymarg-media-strip__badge (the reviewer-initial circle on each strip
+   tile) was removed. The strip is a visual index of the product's media; the
+   reviewer identity belongs to the viewer that opens on tap, not to the tile. */
+
+/* Runtime label on video thumbnails, e.g. "0:23". Sits opposite the play glyph
+   so the two never overlap. Uses a scrim rather than a solid chip so it stays
+   readable over both bright and dark video posters. */
+.zymarg-media-duration{
+	position:absolute;right:4px;bottom:4px;
+	padding:1px 5px;border-radius:4px;
+	font-size:.62rem;font-weight:700;line-height:1.4;
+	color:#fff;background:rgba(0,0,0,.62);
+	pointer-events:none;
+}
+
+/* ==========================================================================
+ * v1.2.0 - Review media viewer (.zymarg-mv)
+ *
+ * Replaces the v1.1.17 flat gallery. Two navigation axes:
+ *   horizontal = media within the current review
+ *   vertical   = the next / previous review that has media
+ *
+ * Two visual states driven purely by a class on the root, never by moving the
+ * media element in the DOM:
+ *   .is-fullscreen - backdrop, page scroll locked, review sheet available
+ *   .is-mini       - floating draggable/resizable player, no backdrop, page
+ *                    scroll released (desktop >=1024px only)
+ * Re-parenting a <video> would make the browser destroy and reinitialise it,
+ * restarting playback at 0:00 and losing the mute state, so the frame is one
+ * element that only ever changes size and position.
+ *
+ * SELF-CONTAINED PALETTE (important):
+ * The viewer is appended to <body>, outside .zymarg-reviews-widget, so the
+ * widget's --z-* custom properties do not reach it. Declaring them here is the
+ * same pattern .zymarg-report-modal-overlay already uses for the same reason.
+ * Every value below therefore has a real fallback and a dark-mode counterpart.
+ * ========================================================================== */
+.zymarg-mv{
+	/* v1.3.2 - fallbacks retuned to match ZYMARG Store Page's Tailwind tokens,
+	 * same rationale as the .zymarg-reviews-widget block above. */
+	--zv-surface:var(--zymarg-surface,#ffffff);         /* = --color-zy-surface */
+	--zv-surface-alt:var(--zymarg-surface-alt,#f8f9ff);  /* = --color-zy-alt */
+	--zv-text:var(--zymarg-text,#36003d);                /* = --color-zy-dark */
+	--zv-text-dim:var(--zymarg-text-muted,#534152);      /* = --color-zy-body */
+	--zv-border:var(--zymarg-border,#d8bfd3);            /* = --color-zy-border */
+	--zv-primary:var(--zymarg-primary,#9500a5);          /* = --color-zy-primary */
+	--zv-on-primary:#ffffff;
+	--zv-star:var(--zymarg-warning,#fbbf24);             /* = Tailwind amber-400, matches store.php's star rows */
+	--zv-star-empty:var(--zymarg-border,#d8bfd3);
+	--zv-success:var(--zymarg-success,#28a745);
+	--zv-danger:#ba1a1a;
+	--zv-radius:var(--zymarg-radius-md,16px);            /* = rounded-2xl */
+	--zv-radius-sm:var(--zymarg-radius-sm,12px);         /* = rounded-xl */
+	--zv-radius-pill:9999px;
+
+	/* The stage sits behind letterboxed media, so it stays dark in both themes
+	   on purpose - a white stage makes photos look like they are floating. */
+	--zv-stage-bg:#0d0b12;
+
+	/* Mini geometry. JS overwrites --zv-mini-w/h on resize and --zv-mini-bottom
+	   after measuring the theme's scroll-to-top button. */
+	--zv-mini-w:320px;
+	--zv-mini-h:180px;
+	--zv-mini-right:20px;
+	--zv-mini-bottom:76px;
+
+	color:var(--zv-text);
+}
+[data-theme="dark"] .zymarg-mv{
+	--zv-surface:#15111a;
+	--zv-surface-alt:#1c1622;
+	--zv-text:#e8e2ec;
+	--zv-text-dim:#c3b6c6;
+	--zv-border:#4d444c;
+	--zv-primary:#f0b0ff;
+	--zv-on-primary:#0d0a10;
+	--zv-star:#ffc107;
+	--zv-star-empty:#4d444c;
+	--zv-success:#4ade80;
+	--zv-danger:#ff8a94;
+}
+.zymarg-mv[hidden]{display:none}
+
+/* ----- Backdrop: full-screen only ----- */
+.zymarg-mv__backdrop{
+	position:fixed;inset:0;
+	background:rgba(10,8,14,.82);
+	backdrop-filter:blur(3px);
+	-webkit-backdrop-filter:blur(3px);
+}
+.zymarg-mv.is-mini .zymarg-mv__backdrop{display:none}
+
+/* ----- Frame ----- */
+.zymarg-mv__frame{
+	position:fixed;
+	display:flex;flex-direction:column;
+	overflow:hidden;
+	background:var(--zv-surface);
+	color:var(--zv-text);
+	transition:inset 250ms ease-out,width 250ms ease-out,height 250ms ease-out,border-radius 250ms ease-out;
+}
+.zymarg-mv.is-fullscreen{position:fixed;inset:0;z-index:100000}
+.zymarg-mv.is-fullscreen .zymarg-mv__frame{
+	inset:0;width:auto;height:auto;border-radius:0;
+}
+/* Mini: floats above the theme's scroll-to-top button (z-index 9980) but below
+   the plugin's own report modal (9990) so that modal correctly covers it. */
+.zymarg-mv.is-mini{position:static;z-index:auto}
+.zymarg-mv.is-mini .zymarg-mv__frame{
+	inset:auto;
+	right:var(--zv-mini-right);
+	bottom:var(--zv-mini-bottom);
+	width:var(--zv-mini-w);
+	height:var(--zv-mini-h);
+	z-index:9985;
+	border-radius:var(--zv-radius);
+	box-shadow:0 12px 40px rgba(0,0,0,.35);
+	border:1px solid var(--zv-border);
+}
+/* While being dragged or resized the transition must not fight the pointer. */
+.zymarg-mv.is-dragging .zymarg-mv__frame,
+.zymarg-mv.is-resizing .zymarg-mv__frame{transition:none}
+/* ----- Stage: the media always gets the maximum practical area ----- */
+.zymarg-mv__stage{
+	position:relative;
+	flex:1 1 auto;min-height:0;min-width:0;
+	display:flex;align-items:center;justify-content:center;
+	background:var(--zv-stage-bg);
+	overflow:hidden;
+}
+/* object-fit:contain means a freely resized mini player never distorts a
+   portrait photo or a 16:9 video - it letterboxes inside whatever box the
+   customer drags it to. */
+.zymarg-mv__media{
+	width:100%;height:100%;
+	display:flex;align-items:center;justify-content:center;
+}
+.zymarg-mv__media img,
+.zymarg-mv__media video{
+	max-width:100%;max-height:100%;
+	width:auto;height:auto;
+	display:block;object-fit:contain;
+	background:transparent;
+}
+
+/* ----- Controls: icon-only, no background chip -----
+   Customer media is unpredictable, so a flat icon colour alone cannot be
+   guaranteed legible (a white glyph vanishes on a photo of a white box). A
+   drop-shadow halo hugs the glyph outline instead of introducing a visible
+   background, which keeps the icons readable over any media in either theme.
+   This is the same treatment .zymarg-media-play already uses. */
+.zymarg-mv__btn{
+	position:absolute;
+	display:flex;align-items:center;justify-content:center;
+	padding:0;border:0;background:none;cursor:pointer;
+	color:#fff;
+	filter:drop-shadow(0 1px 3px rgba(0,0,0,.75));
+	transition:transform 120ms ease-out,opacity 120ms ease-out;
+}
+.zymarg-mv__btn:hover{transform:scale(1.12)}
+.zymarg-mv__btn:focus-visible{outline:2px solid #fff;outline-offset:3px;border-radius:4px}
+.zymarg-mv__btn[disabled]{opacity:.32;cursor:default}
+.zymarg-mv__btn[disabled]:hover{transform:none}
+.zymarg-mv__btn svg{width:100%;height:100%;fill:currentColor;display:block;pointer-events:none}
+
+/* Navigation - pinned to the stage edges. Horizontal moves through this
+   review's media, vertical moves between reviews. */
+.zymarg-mv__nav{width:34px;height:34px}
+.zymarg-mv__nav--prev{left:10px;top:50%;transform:translateY(-50%)}
+.zymarg-mv__nav--next{right:10px;top:50%;transform:translateY(-50%)}
+.zymarg-mv__nav--up{right:10px;top:calc(50% - 44px);transform:none}
+.zymarg-mv__nav--down{right:10px;top:calc(50% + 44px);transform:none}
+.zymarg-mv__nav--prev:hover{transform:translateY(-50%) scale(1.12)}
+.zymarg-mv__nav--next:hover{transform:translateY(-50%) scale(1.12)}
+
+/* Top-right cluster: shrink/expand (desktop only) then close. */
+.zymarg-mv__close{width:30px;height:30px;top:10px;right:10px}
+.zymarg-mv__mini{width:28px;height:28px;top:11px;right:48px;display:none}
+/* The mini player is a genuinely large-screen affordance; below 1024px the
+   viewer is full-screen only and the toggle is not offered at all. */
+@media (min-width:1024px){
+	.zymarg-mv__mini{display:flex}
+}
+
+/* Mute toggle. Videos autoplay unmuted; this is how the customer silences
+   them, and the preference carries to every later video in the session. */
+.zymarg-mv__mute{width:30px;height:30px;left:10px;top:10px;display:none}
+.zymarg-mv.has-video .zymarg-mv__mute{display:flex}
+
+/* Two-level position indicator: which review, then which media inside it. */
+.zymarg-mv__pos{
+	position:absolute;left:0;right:0;bottom:10px;
+	display:flex;flex-direction:column;align-items:center;gap:1px;
+	pointer-events:none;
+	text-align:center;
+	filter:drop-shadow(0 1px 3px rgba(0,0,0,.75));
+}
+.zymarg-mv__pos-review{font-size:.68rem;font-weight:600;color:rgba(255,255,255,.82);letter-spacing:.02em}
+.zymarg-mv__pos-media{font-size:.8rem;font-weight:700;color:#fff}
+
+/* ----- Review sheet (full-screen) ----- */
+.zymarg-mv__sheet{
+	flex:0 0 auto;
+	background:var(--zv-surface);
+	border-top:1px solid var(--zv-border);
+	padding:14px 16px;
+	max-height:170px;
+	overflow:hidden;
+	transition:max-height 250ms ease-out;
+}
+.zymarg-mv__sheet.is-expanded{max-height:70vh;overflow-y:auto}
+.zymarg-mv.is-mini .zymarg-mv__sheet{display:none}
+
+.zymarg-mv__author{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.zymarg-mv__stars{display:inline-flex;gap:2px}
+.zymarg-mv__stars svg{width:15px;height:15px}
+.zymarg-mv__star--on{color:var(--zv-star)}
+.zymarg-mv__star--off{color:var(--zv-star-empty)}
+.zymarg-mv__name{font-weight:700;font-size:.92rem;color:var(--zv-text)}
+.zymarg-mv__date{font-size:.76rem;color:var(--zv-text-dim)}
+.zymarg-mv__verified{font-size:.74rem;font-weight:700;color:var(--zv-success)}
+/* Store-wide scope only -- see paintMeta() in zymarg-reviews.js. */
+.zymarg-mv__product{
+	display:none;
+	font-size:.76rem;
+	font-weight:600;
+	color:var(--zv-text-dim);
+	text-decoration:none;
+	margin:0 0 6px;
+}
+.zymarg-mv__product:hover{color:var(--zv-primary);text-decoration:underline}
+.zymarg-mv__variation{
+	display:inline-block;margin:0 0 6px;padding:2px 8px;
+	font-size:.7rem;font-weight:600;letter-spacing:.03em;text-transform:uppercase;
+	color:var(--zv-primary);
+	border:1px solid var(--zv-border);border-radius:var(--zv-radius-pill);
+	background:var(--zv-surface-alt);
+}
+.zymarg-mv__body{
+	margin:0;font-size:.86rem;line-height:1.55;color:var(--zv-text-dim);
+	display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.zymarg-mv__sheet.is-expanded .zymarg-mv__body{
+	display:block;overflow:visible;-webkit-line-clamp:unset;
+}
+.zymarg-mv__expand{
+	display:inline-flex;align-items:center;gap:4px;margin-top:8px;padding:0;
+	background:none;border:0;cursor:pointer;
+	font-family:inherit;font-size:.8rem;font-weight:700;color:var(--zv-primary);
+}
+.zymarg-mv__expand:hover{text-decoration:underline}
+.zymarg-mv__expand:focus-visible{outline:2px solid var(--zv-primary);outline-offset:2px;border-radius:4px}
+/* Only offered when the body is actually long enough to be worth expanding. */
+.zymarg-mv__sheet:not(.has-overflow) .zymarg-mv__expand{display:none}
+
+.zymarg-mv__actions{display:flex;align-items:center;gap:6px;margin-top:10px}
+.zymarg-mv__act{
+	display:inline-flex;align-items:center;justify-content:center;
+	width:32px;height:32px;padding:0;cursor:pointer;
+	border:1px solid var(--zv-border);border-radius:var(--zv-radius-sm);
+	background:transparent;color:var(--zv-text-dim);
+	transition:background-color .15s,color .15s,border-color .15s;
+}
+.zymarg-mv__act svg{width:17px;height:17px;fill:currentColor}
+.zymarg-mv__act:hover{background:var(--zv-surface-alt);color:var(--zv-text)}
+.zymarg-mv__act:focus-visible{outline:2px solid var(--zv-primary);outline-offset:2px}
+.zymarg-mv__act--like.is-active{
+	border-color:var(--zv-primary);color:var(--zv-primary);
+	background:color-mix(in srgb, var(--zv-primary) 12%, transparent);
+}
+.zymarg-mv__act--dislike.is-active{background:var(--zv-surface-alt);color:var(--zv-text-dim)}
+.zymarg-mv__act--report:hover{color:var(--zv-danger);border-color:var(--zv-danger)}
+.zymarg-mv__count{font-size:.8rem;font-weight:600;color:var(--zv-primary);white-space:nowrap}
+.zymarg-mv__count--dislike{color:var(--zv-text-dim)}
+
+/* ----- Caption strip (mini only) - also the drag handle ----- */
+.zymarg-mv__caption{
+	display:none;
+	align-items:center;gap:6px;
+	padding:6px 10px;
+	background:var(--zv-surface);
+	border-top:1px solid var(--zv-border);
+	cursor:grab;
+	touch-action:none;
+	user-select:none;
+	font-size:.76rem;
+	white-space:nowrap;overflow:hidden;
+}
+.zymarg-mv.is-mini .zymarg-mv__caption{display:flex}
+.zymarg-mv.is-dragging .zymarg-mv__caption{cursor:grabbing}
+.zymarg-mv__caption:focus-visible{outline:2px solid var(--zv-primary);outline-offset:-2px}
+.zymarg-mv__caption .zymarg-mv__name{font-size:.76rem;overflow:hidden;text-overflow:ellipsis}
+.zymarg-mv__caption .zymarg-mv__stars svg{width:12px;height:12px}
+
+/* Hover reveal (mini only, desktop pointer). Adds the verified badge and a
+   short snippet without permanently spending the player's small height. */
+.zymarg-mv__hover{
+	position:absolute;left:0;right:0;bottom:0;
+	padding:22px 10px 8px;
+	display:none;flex-direction:column;gap:2px;
+	/* A gradient scrim rather than a solid bar: keeps the text readable over
+	   both bright and dark media without painting a visible panel. */
+	background:linear-gradient(to top,rgba(0,0,0,.82),rgba(0,0,0,.45) 55%,transparent);
+	opacity:0;transition:opacity 160ms ease-out;
+	pointer-events:none;
+}
+.zymarg-mv.is-mini .zymarg-mv__hover{display:flex}
+.zymarg-mv.is-mini .zymarg-mv__stage:hover .zymarg-mv__hover{opacity:1}
+.zymarg-mv__hover-top{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.zymarg-mv__hover .zymarg-mv__name{color:#fff;font-size:.76rem}
+.zymarg-mv__hover .zymarg-mv__verified{color:#7ee2a8}
+.zymarg-mv__hover .zymarg-mv__stars svg{width:12px;height:12px}
+.zymarg-mv__hover-body{
+	margin:0;font-size:.72rem;line-height:1.45;color:rgba(255,255,255,.9);
+	display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+
+/* ----- Resize handle (mini only) -----
+   Top-left corner: the player is docked bottom-right, so growing up-and-left
+   is the natural direction and keeps the dock corner anchored. */
+.zymarg-mv__resize{
+	position:absolute;left:0;top:0;width:18px;height:18px;
+	display:none;cursor:nwse-resize;touch-action:none;
+	background:linear-gradient(135deg,rgba(255,255,255,.9) 0 2px,transparent 2px 5px,rgba(255,255,255,.9) 5px 7px,transparent 7px);
+	filter:drop-shadow(0 1px 2px rgba(0,0,0,.8));
+}
+.zymarg-mv.is-mini .zymarg-mv__resize{display:block}
+
+/* In mini the controls shrink and hug the player's own edges. */
+.zymarg-mv.is-mini .zymarg-mv__nav{width:24px;height:24px}
+.zymarg-mv.is-mini .zymarg-mv__nav--prev{left:4px}
+.zymarg-mv.is-mini .zymarg-mv__nav--next{right:4px}
+.zymarg-mv.is-mini .zymarg-mv__nav--up{right:4px;top:6px}
+.zymarg-mv.is-mini .zymarg-mv__nav--down{right:4px;bottom:6px;top:auto}
+.zymarg-mv.is-mini .zymarg-mv__close{width:24px;height:24px;top:5px;right:32px}
+.zymarg-mv.is-mini .zymarg-mv__mini{width:24px;height:24px;top:5px;right:60px}
+.zymarg-mv.is-mini .zymarg-mv__mute{width:24px;height:24px;left:22px;top:5px}
+.zymarg-mv.is-mini .zymarg-mv__pos{bottom:4px}
+.zymarg-mv.is-mini .zymarg-mv__pos-review{font-size:.6rem}
+.zymarg-mv.is-mini .zymarg-mv__pos-media{font-size:.68rem}
+
+/* ----- Mobile + tablet (<1024px): the review sheet FLOATS over the media as
+   an overlay instead of sitting beside/below it as a normal-flow box. Without
+   this, the sheet was a flex sibling of the stage, so its own height was
+   subtracted from the stage's -- the media visibly shrank to make room for
+   the sheet. Making the sheet position:absolute takes it out of flow
+   entirely, so the stage (also position:absolute; inset:0 here) always fills
+   the complete frame regardless of whether the sheet is in its short-preview
+   or expanded state.
+   The sheet floats OVER unpredictable customer photos/videos, not over the
+   plugin's own surface, so it deliberately does not follow the light/dark
+   theme here -- it is always a dark scrim with light text, the same
+   convention Instagram/TikTok-style story viewers use, and the same reason
+   the nav icons use a drop-shadow instead of a theme color. The permanent
+   side panel at >=1024px below is a real panel beside the media, not an
+   overlay on top of it, so IT correctly keeps following the site theme. */
+@media (max-width:1023px){
+	.zymarg-mv__stage{position:absolute;inset:0}
+
+	.zymarg-mv__pos{top:52px;bottom:auto}
+
+	.zymarg-mv__sheet{
+		position:absolute;left:0;right:0;bottom:0;
+		z-index:2;
+		color:#fff;
+		background:linear-gradient(to top,rgba(13,11,18,.95) 45%,rgba(13,11,18,.62) 75%,transparent);
+	}
+	.zymarg-mv__sheet.is-expanded{
+		/* Solid once expanded, same dark family as the stage -- readable for a
+		   long review without depending on the site's light/dark surface. */
+		background:#15111a;
+	}
+	.zymarg-mv__sheet .zymarg-mv__name{color:#fff}
+	.zymarg-mv__sheet .zymarg-mv__date{color:rgba(255,255,255,.65)}
+	.zymarg-mv__sheet .zymarg-mv__verified{color:#7ee2a8}
+	.zymarg-mv__sheet .zymarg-mv__star--off{color:rgba(255,255,255,.35)}
+	.zymarg-mv__sheet .zymarg-mv__variation{
+		color:#f0b0ff;background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.28)
+	}
+	.zymarg-mv__sheet .zymarg-mv__body{color:rgba(255,255,255,.86)}
+	.zymarg-mv__sheet .zymarg-mv__expand{color:#f0b0ff}
+	.zymarg-mv__sheet .zymarg-mv__act{border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.86)}
+	.zymarg-mv__sheet .zymarg-mv__act:hover{background:rgba(255,255,255,.12);color:#fff}
+	.zymarg-mv__sheet .zymarg-mv__act--like.is-active{
+		border-color:#f0b0ff;color:#f0b0ff;background:rgba(240,176,255,.18)
+	}
+	.zymarg-mv__sheet .zymarg-mv__act--dislike.is-active{
+		background:rgba(255,255,255,.12);color:rgba(255,255,255,.86)
+	}
+	.zymarg-mv__sheet .zymarg-mv__count{color:#f0b0ff}
+	.zymarg-mv__sheet .zymarg-mv__count--dislike{color:rgba(255,255,255,.65)}
+}
+
+/* ----- Full-screen, desktop only: the review panel has room to sit beside
+   the media permanently as a real panel, so the floating-overlay treatment
+   above and the preview/expand dance are both unnecessary here. Raised from
+   768px to 1024px so tablets get the same floating overlay as phones -- a
+   tablet does not have the side-by-side room a desktop window does. --- */
+@media (min-width:1024px){
+	.zymarg-mv.is-fullscreen .zymarg-mv__frame{flex-direction:row}
+	.zymarg-mv.is-fullscreen .zymarg-mv__sheet{
+		flex:0 0 320px;
+		max-height:none;height:100%;
+		overflow-y:auto;
+		border-top:0;border-left:1px solid var(--zv-border);
+		padding:18px;
+	}
+	.zymarg-mv.is-fullscreen .zymarg-mv__body{
+		display:block;overflow:visible;-webkit-line-clamp:unset;
+	}
+	.zymarg-mv.is-fullscreen .zymarg-mv__expand{display:none}
+}
+
+/* ----- Mobile ----- */
+@media (max-width:640px){
+	.zymarg-media-strip{padding:10px}
+	.zymarg-media-strip__tile{width:62px;height:62px}
+	.zymarg-mv__sheet{padding:12px;max-height:150px}
+	.zymarg-mv__nav--up{top:12px;right:8px}
+	.zymarg-mv__nav--down{bottom:12px;top:auto;right:8px}
+}
+
+/* Respect reduced-motion for the mode transition and control hovers. */
+@media (prefers-reduced-motion: reduce){
+	.zymarg-mv__frame,
+	.zymarg-mv__sheet,
+	.zymarg-mv__hover,
+	.zymarg-mv__btn{transition:none}
+	.zymarg-mv__btn:hover{transform:none}
+	.zymarg-mv__nav--prev:hover{transform:translateY(-50%)}
+	.zymarg-mv__nav--next:hover{transform:translateY(-50%)}
+}
+
+
+/* ------------------------------------------------------------------
+ * Interactions (1.0.4)
+ * ---------------------------------------------------------------- */
+
+/* Shown when a guest clicks a reaction button while guest mode is "prompt". */
+.zymarg-vote-note{
+	margin-left:10px;
+	font-size:.82rem;
+	color:var(--color-text-muted,#534152);
+	align-self:center;
+}
+
+/* Customer replies sit below the pinned seller replies and are visually
+   lighter, so the store's answer stays the one that reads first. */
+.zymarg-replies .zymarg-reply + .zymarg-reply{margin-top:8px}
+.zymarg-reply:not(.zymarg-reply--owner){
+	border-left:2px solid var(--color-outline-variant,#d8bfd3);
+	background:transparent;
+}
+
+/* "Write a Review" call to action on the My Account order screen. The link
+   itself carries WooCommerce's own .button class, so only spacing is set. */
+.zymarg-review-cta{margin:8px 0 0}
+.zymarg-review-cta__done{
+	font-size:.85rem;
+	color:var(--color-text-muted,#534152);
+}
+
+
+/* ----- Viewer toast -----
+   Used when an action fails because the review was unapproved or deleted while
+   the customer had it open. There is no live push channel to learn about that,
+   so the failed action is the signal. */
+.zymarg-mv__toast{
+	position:absolute;left:50%;bottom:18%;
+	transform:translateX(-50%) translateY(6px);
+	max-width:80%;
+	padding:8px 14px;
+	border-radius:var(--zv-radius-pill);
+	background:rgba(0,0,0,.86);
+	color:#fff;
+	font-size:.8rem;font-weight:600;text-align:center;
+	opacity:0;pointer-events:none;
+	transition:opacity 180ms ease-out,transform 180ms ease-out;
+}
+.zymarg-mv__toast.is-on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Brief highlight on the review card the viewer returned the customer to, so
+   they visually reconnect with their place in the feed. */
+.zymarg-review-card.is-mv-return{
+	animation:zymargMvReturn 1.4s ease-out;
+}
+@keyframes zymargMvReturn{
+	0%,100%{box-shadow:var(--z-shadow)}
+	25%,60%{box-shadow:0 0 0 2px var(--z-primary),var(--z-shadow-hover)}
+}
+@media (prefers-reduced-motion: reduce){
+	.zymarg-review-card.is-mv-return{animation:none}
+	.zymarg-mv__toast{transition:none}
+}
