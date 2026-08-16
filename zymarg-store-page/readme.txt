@@ -4,7 +4,7 @@ Tags:              dokan, vendor, store, marketplace, activewear
 Requires at least: 6.0
 Tested up to:      6.7
 Requires PHP:      7.4
-Stable tag:        1.25.0
+Stable tag:        1.26.0
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,6 +73,10 @@ Yes. Edit the `@theme` block inside `templates/store.php` to change the design t
 4. Admin settings page under Dokan → ZYMARG Store Page
 
 == Changelog ==
+
+= 1.26.0 — Fix: "All Products" Sort control wraps to two lines on mobile =
+
+* Fixed: on narrow mobile widths (~320–375px), the "Sort" label and its "Most Popular" dropdown in the All Products section broke onto two lines instead of staying on one row. The control's `<label>` in `templates/store.php` now carries a dedicated `zy-products-sort` class, and a new scoped rule in `store-page.css` keeps it on one line (`flex-wrap:nowrap`, a shrinking/truncating `<select>`, tighter gap/padding under 640px). The "All Products" heading label and every other section on the page are unaffected.
 
 = 1.25.0 — Fix: old-price position; hide vendor row on Handpicked cards + section defaults; unify Trending/Best Selling heading style =
 
