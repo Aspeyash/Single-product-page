@@ -4,7 +4,7 @@ Tags:              dokan, vendor, store, marketplace, activewear
 Requires at least: 6.0
 Tested up to:      6.7
 Requires PHP:      7.4
-Stable tag:        1.26.0
+Stable tag:        1.27.0
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,6 +73,12 @@ Yes. Edit the `@theme` block inside `templates/store.php` to change the design t
 4. Admin settings page under Dokan → ZYMARG Store Page
 
 == Changelog ==
+
+= 1.27.0 — Reviews section now uses the Reviews Engine's full renderer (photos, videos, lightbox) =
+* Changed: the Customer Reviews section on the store page now renders through `zymarg_reviews_render(['vendor_id'=>...])` (ZYMARG Reviews Engine 1.3.2+) instead of hand-rolled Tailwind markup built from `zymarg_reviews_get_data()`. Which reviews display is unchanged -- every approved review left on any product this vendor owns, aggregated into one feed, each card still tagged with which product it is about -- but the section now gets the same customer photo/video media strip and full-screen/mini-player lightbox viewer that ZYMARG Single Product's review section already has, instead of bare `<img>`/`<video controls>` thumbnails with no click-to-enlarge.
+* Changed: paging switches from a plain `?zy_reviews_page=N` link to the engine's own AJAX "Load More", now that Reviews Engine 1.3.2 supports a vendor-scoped Load More request.
+* Removed: the section's own hand-drawn rating-summary card (average, star breakdown bars) -- the engine's own summary card replaces it and is functionally identical (same average, same breakdown percentages, same source data), just rendered by the engine instead of by this plugin.
+* Requires ZYMARG Reviews Engine 1.3.2 or later. On an older engine version (or with the engine deactivated), the reviews section does not render at all -- same fail-safe behaviour as before, just gated on `function_exists( 'zymarg_reviews_render' )` instead of an empty review list.
 
 = 1.26.0 — Fix: "All Products" Sort control wraps to two lines on mobile =
 

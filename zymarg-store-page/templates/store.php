@@ -92,15 +92,8 @@ $store_reviews = function_exists( 'zymarg_reviews_get_data' )
 	)
 	: array();
 
-$store_rating           = isset( $store_reviews['avg_rating'] ) ? (float) $store_reviews['avg_rating'] : 0.0;
-$rating_count           = isset( $store_reviews['review_count'] ) ? (int) $store_reviews['review_count'] : 0;
-$store_review_total     = isset( $store_reviews['total_reviews'] ) ? (int) $store_reviews['total_reviews'] : 0;
-$store_review_list      = isset( $store_reviews['reviews'] ) && is_array( $store_reviews['reviews'] ) ? $store_reviews['reviews'] : array();
-$rating_bars            = isset( $store_reviews['breakdown'] ) && is_array( $store_reviews['breakdown'] ) ? $store_reviews['breakdown'] : array();
-$rating_counts          = isset( $store_reviews['rating_counts'] ) && is_array( $store_reviews['rating_counts'] ) ? $store_reviews['rating_counts'] : array();
-$store_reviews_has_more  = ! empty( $store_reviews['has_more'] );
-$store_reviews_pages     = isset( $store_reviews['total_pages'] ) ? max( 1, (int) $store_reviews['total_pages'] ) : 1;
-$store_reviews_base_url  = remove_query_arg( 'zy_reviews_page' );
+$store_rating = isset( $store_reviews['avg_rating'] ) ? (float) $store_reviews['avg_rating'] : 0.0;
+$rating_count = isset( $store_reviews['review_count'] ) ? (int) $store_reviews['review_count'] : 0;
 
 // The single gate every rating surface on this page checks.
 $has_rating = ( $rating_count > 0 && $store_rating > 0 );
@@ -867,122 +860,71 @@ if ( class_exists( 'ZYMARG_SP_Store_Sections' ) && shortcode_exists( 'zymarg_pro
 
 <!-- ============================================================
      REVIEWS
+
+     v1.27.0: this section now delegates entirely to the ZYMARG Reviews
+     Engine's own renderer (zymarg_reviews_render(['vendor_id'=>...])) instead
+     of hand-rolling review cards from zymarg_reviews_get_data(). The site
+     owner's Single Product page already gets the engine's full feature set
+     this way -- customer photo/video media strip, the full-screen/mini-player
+     lightbox viewer, filters, sort, and AJAX Load More -- and the store page
+     was the one surface still missing all of it, rendering bare <img>/
+     <video controls> thumbnails with no click-to-enlarge at all.
+
+     The engine's vendor scope (Data_Builder::build_vendor()) returns the
+     exact same review set this section always showed: every approved review
+     left on any product this vendor owns, aggregated into one feed, each
+     card still tagged with which product it is about. Nothing about WHICH
+     reviews display has changed -- only how much richer the engine's own
+     card/media/lightbox markup is compared to the bespoke Tailwind cards
+     this section used to draw by hand.
+
+     $has_rating (computed above from the same zymarg_reviews_get_data() call,
+     since the header/stats card elsewhere on this page still needs it) is
+     used only to decide whether to show this section container at all --
+     the engine's own template makes the identical “no rated reviews yet”
+     decision internally once it renders.
 ============================================================ -->
-<?php if ( $show_reviews && ! empty( $store_review_list ) ) : ?>
+<?php if ( $show_reviews && $has_rating && function_exists( 'zymarg_reviews_render' ) ) : ?>
 <section aria-labelledby="reviews-heading" class="zy-section mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
   <p class="text-xs font-semibold uppercase tracking-[0.2em] text-zy-secondary"><?php esc_html_e( 'Customer Reviews', 'zymarg-store-page' ); ?></p>
   <h2 id="reviews-heading" class="zy-section-heading mt-2 font-bold tracking-tight text-zy-dark"><?php esc_html_e( 'What buyers are saying', 'zymarg-store-page' ); ?></h2>
 
-  <div class="zy-section-content grid gap-6 <?php echo $has_rating ? 'lg:grid-cols-3' : 'lg:grid-cols-1'; ?>">
+  <div class="zy-section-content mt-6">
+    <?php
+    /*
+     * The engine's own summary card carries its own "Customer Reviews" title
+     * by default (Settings -> reviews_summary_heading), which would print a
+     * second, visually redundant "Customer Reviews" directly under the
+     * eyebrow label this section already renders above. Blanked out here,
+     * scoped to this exact render call only via vendor_id -- the admin's
+     * saved setting, and every other consumer of the engine (including this
+     * store's own Single Product pages), is untouched.
+     */
+    $zy_blank_summary_heading = function ( $settings, $args ) use ( $store_id ) {
+      if ( (int) ( $args['vendor_id'] ?? 0 ) === $store_id ) {
+        $settings['summary_heading'] = '';
+      }
+      return $settings;
+    };
+    add_filter( 'zymarg_reviews_render_settings', $zy_blank_summary_heading, 10, 2 );
 
-<?php if ( $has_rating ) : ?>
-    <!-- Rating summary. Rendered only when the store actually has rated reviews. -->
-    <div class="rounded-2xl bg-zy-surface p-6 shadow-lg">
-      <div class="flex items-end gap-3">
-        <p class="text-5xl font-extrabold text-zy-dark" data-reviews-score><?php echo esc_html( number_format( $store_rating, 1 ) ); ?></p>
-        <div class="pb-1.5">
-          <div class="flex text-amber-400" aria-label="<?php echo esc_attr( sprintf( __( '%s out of 5 stars', 'zymarg-store-page' ), number_format( $store_rating, 1 ) ) ); ?>">
-            <?php
-            // Solid stars reflect the real average. The old template drew five
-            // solid stars unconditionally, so every store looked perfect.
-            $zy_filled = (int) round( $store_rating );
-            for ( $zy_i = 1; $zy_i <= 5; $zy_i++ ) :
-            ?>
-            <svg class="h-4 w-4<?php echo $zy_i <= $zy_filled ? '' : ' text-zy-border'; ?>" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z" clip-rule="evenodd"/></svg>
-            <?php endfor; ?>
-          </div>
-          <p class="mt-1 text-xs text-zy-body/70" data-reviews-count><?php echo esc_html( sprintf( _n( '%s rating', '%s ratings', $rating_count, 'zymarg-store-page' ), number_format( $rating_count ) ) ); ?></p>
-        </div>
-      </div>
-      <dl class="mt-5 space-y-2.5">
-      <?php
-      // Real distribution from the engine, not a fixed 82/11/4/2/1 curve.
-      foreach ( array( 5, 4, 3, 2, 1 ) as $zy_star ) :
-        $zy_pct = isset( $rating_bars[ $zy_star ] ) ? (float) $rating_bars[ $zy_star ] : 0;
-        $zy_n   = isset( $rating_counts[ $zy_star ] ) ? (int) $rating_counts[ $zy_star ] : 0;
-      ?>
-      <div class="flex items-center gap-3 text-xs">
-        <dt class="w-8 font-medium text-zy-dark"><?php echo esc_html( $zy_star ); ?> ★</dt>
-        <dd class="h-2 flex-1 overflow-hidden rounded-full bg-zy-container"><div class="h-full rounded-full bg-zy-gradient" style="width:<?php echo esc_attr( $zy_pct ); ?>%"></div></dd>
-        <span class="w-10 text-right text-zy-body/70" title="<?php echo esc_attr( sprintf( _n( '%s review', '%s reviews', $zy_n, 'zymarg-store-page' ), number_format( $zy_n ) ) ); ?>"><?php echo esc_html( $zy_pct ); ?>%</span>
-      </div>
-      <?php endforeach; ?>
-      </dl>
-    </div>
-<?php endif; // has_rating ?>
+    zymarg_reviews_render(
+      array(
+        'vendor_id'    => $store_id,
+        'page'         => $reviews_page,
+        // Read-only by design: buyers write reviews from My Account against
+        // an order they placed, never from the store page. zymarg_reviews_
+        // render() already forces this off for any vendor-scoped call, but
+        // it is passed explicitly here too so that guarantee is visible at
+        // the call site, not only inside the engine.
+        'show_form'    => false,
+        'show_summary' => true,
+        'show_filters' => true,
+      )
+    );
 
-    <!--
-      Read-only review feed. A store page displays reviews, it never collects
-      them: buyers write reviews from My Account, against an order they placed.
-      There is deliberately no form in this section.
-    -->
-    <div class="space-y-4<?php echo $has_rating ? ' lg:col-span-2' : ''; ?>" data-reviews-list data-reviews-page="1" data-reviews-total="<?php echo esc_attr( $store_review_total ); ?>" data-store-id="<?php echo esc_attr( $store_id ); ?>">
-<?php foreach ( $store_review_list as $zy_review ) : ?>
-      <article class="rounded-2xl bg-zy-surface p-5 shadow-lg" data-review-id="<?php echo esc_attr( $zy_review['id'] ); ?>">
-        <div class="flex items-start gap-3">
-          <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-zy-container text-sm font-bold text-zy-primary" aria-hidden="true"><?php echo esc_html( $zy_review['initials'] ); ?></span>
-          <div class="min-w-0 flex-1">
-            <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
-              <p class="text-sm font-semibold text-zy-dark"><?php echo esc_html( $zy_review['name'] ); ?></p>
-<?php if ( ! empty( $zy_review['verified'] ) ) : ?>
-              <span class="rounded-full bg-zy-container px-2 py-0.5 text-[10px] font-semibold text-zy-primary"><?php esc_html_e( 'Verified Purchase', 'zymarg-store-page' ); ?></span>
-<?php endif; ?>
-              <time class="text-xs text-zy-body/60"><?php echo esc_html( $zy_review['date'] ); ?></time>
-            </div>
-<?php if ( ! empty( $zy_review['product_title'] ) ) : ?>
-            <p class="mt-0.5 truncate text-xs text-zy-body/70">
-              <a class="transition hover:text-zy-primary" href="<?php echo esc_url( $zy_review['product_url'] ); ?>"><?php echo esc_html( $zy_review['product_title'] ); ?></a>
-            </p>
-<?php endif; ?>
-<?php if ( ! empty( $zy_review['rating'] ) ) : ?>
-            <div class="mt-1 flex text-amber-400" aria-label="<?php echo esc_attr( sprintf( __( '%d out of 5 stars', 'zymarg-store-page' ), (int) $zy_review['rating'] ) ); ?>">
-              <?php for ( $zy_s = 1; $zy_s <= 5; $zy_s++ ) : ?><svg class="h-3.5 w-3.5<?php echo $zy_s <= (int) $zy_review['rating'] ? '' : ' text-zy-border'; ?>" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401Z"/></svg><?php endfor; ?>
-            </div>
-<?php endif; ?>
-<?php if ( ! empty( $zy_review['title'] ) ) : ?>
-            <p class="mt-2 text-sm font-semibold text-zy-dark"><?php echo esc_html( $zy_review['title'] ); ?></p>
-<?php endif; ?>
-            <p class="mt-2 text-sm leading-relaxed"><?php echo esc_html( $zy_review['body'] ); ?></p>
-<?php if ( ! empty( $zy_review['media'] ) ) : ?>
-            <div class="mt-3 flex flex-wrap gap-2">
-<?php foreach ( (array) $zy_review['media'] as $zy_media ) : ?>
-<?php if ( isset( $zy_media['type'] ) && 'video' === $zy_media['type'] ) : ?>
-              <video src="<?php echo esc_url( $zy_media['url'] ); ?>" controls preload="metadata" class="h-16 w-16 rounded-xl object-cover shadow-lg"></video>
-<?php else : ?>
-              <img src="<?php echo esc_url( ! empty( $zy_media['thumb'] ) ? $zy_media['thumb'] : $zy_media['url'] ); ?>" alt="<?php esc_attr_e( 'Customer photo', 'zymarg-store-page' ); ?>" loading="lazy" class="h-16 w-16 rounded-xl object-cover shadow-lg transition duration-300 ease-in-out hover:-translate-y-1 hover:shadow-xl" />
-<?php endif; ?>
-<?php endforeach; ?>
-            </div>
-<?php endif; ?>
-<?php foreach ( (array) ( isset( $zy_review['replies'] ) ? $zy_review['replies'] : array() ) as $zy_reply ) : ?>
-            <div class="mt-3 rounded-2xl bg-zy-alt p-3.5">
-              <p class="flex items-center gap-1.5 text-xs font-bold text-zy-primary">
-                <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"/></svg>
-                <?php echo esc_html( sprintf( __( 'Reply from %s', 'zymarg-store-page' ), ! empty( $zy_reply['is_owner'] ) ? $store_name : $zy_reply['author'] ) ); ?>
-              </p>
-              <p class="mt-1 text-sm"><?php echo esc_html( $zy_reply['body'] ); ?></p>
-            </div>
-<?php endforeach; ?>
-          </div>
-        </div>
-      </article>
-<?php endforeach; ?>
-<?php if ( $store_reviews_pages > 1 ) : ?>
-      <nav class="flex items-center justify-between gap-3 pt-2" aria-label="<?php esc_attr_e( 'Review pages', 'zymarg-store-page' ); ?>">
-<?php if ( $reviews_page > 1 ) : ?>
-        <a class="rounded-full border border-zy-border px-5 py-2.5 text-sm font-semibold text-zy-dark transition hover:border-zy-primary hover:text-zy-primary" href="<?php echo esc_url( add_query_arg( 'zy_reviews_page', $reviews_page - 1, $store_reviews_base_url ) . '#reviews-heading' ); ?>" rel="prev"><?php esc_html_e( '← Newer reviews', 'zymarg-store-page' ); ?></a>
-<?php else : ?>
-        <span></span>
-<?php endif; ?>
-        <span class="text-xs text-zy-body/70"><?php echo esc_html( sprintf( __( 'Page %1$s of %2$s', 'zymarg-store-page' ), number_format( $reviews_page ), number_format( $store_reviews_pages ) ) ); ?></span>
-<?php if ( $store_reviews_has_more ) : ?>
-        <a class="rounded-full border border-zy-border px-5 py-2.5 text-sm font-semibold text-zy-dark transition hover:border-zy-primary hover:text-zy-primary" href="<?php echo esc_url( add_query_arg( 'zy_reviews_page', $reviews_page + 1, $store_reviews_base_url ) . '#reviews-heading' ); ?>" rel="next"><?php esc_html_e( 'Older reviews →', 'zymarg-store-page' ); ?></a>
-<?php else : ?>
-        <span></span>
-<?php endif; ?>
-      </nav>
-<?php endif; ?>
-    </div>
+    remove_filter( 'zymarg_reviews_render_settings', $zy_blank_summary_heading, 10 );
+    ?>
   </div>
 </section>
 <?php endif; // show_reviews ?>
