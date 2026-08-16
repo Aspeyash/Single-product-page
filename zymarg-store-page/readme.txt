@@ -4,7 +4,7 @@ Tags:              dokan, vendor, store, marketplace, activewear
 Requires at least: 6.0
 Tested up to:      6.7
 Requires PHP:      7.4
-Stable tag:        1.24.1
+Stable tag:        1.24.2
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,6 +73,12 @@ Yes. Edit the `@theme` block inside `templates/store.php` to change the design t
 4. Admin settings page under Dokan → ZYMARG Store Page
 
 == Changelog ==
+
+= 1.24.2 — Fix: Flash Sale and Featured Items grids always showed 4 columns on every device =
+
+* Fixed: the Flash Sale and Featured Items sections (both rendered by `zymarg_sp_premium_layout_config()`) always showed a flat 4-column grid on desktop, tablet, and mobile alike — the same defect already fixed in 1.24.1 for the "All Products" section's search/category-switch AJAX repaint, just in this separate call site, which builds its config from the Vendor Dashboard's Premium Display settings rather than a shortcode. `columns_desktop` / `columns_tablet` / `columns_mobile` are now read from those settings (new fields added in ZYMARG Vendor Dashboard 1.46.14) and correctly propagated as `layout.columns` plus `responsive.tablet.layout.columns` / `responsive.mobile.layout.columns` in the engine config, so both sections now respect the admin's configured column counts at every breakpoint.
+* Requires ZYMARG Vendor Dashboard 1.46.14 or newer for the new fields to exist; on an older Vendor Dashboard version, `zymarg_sp_premium_display()` fills in the same 4/3/2 defaults Vendor Dashboard itself ships as of 1.46.14, so nothing breaks and behaviour is unchanged from 1.24.1 until both plugins are updated together.
+* This does not affect Carousel layout mode, which has never used a column count and is unchanged.
 
 = 1.24.1 — Fix: All Products grid always showed 4 columns after a search or category switch =
 

@@ -70,16 +70,35 @@ function zymarg_sp_premium_available() {
  */
 function zymarg_sp_premium_display() {
 	if ( function_exists( 'zymarg_vd_premium_display_settings' ) ) {
-		return (array) zymarg_vd_premium_display_settings();
+		$display = (array) zymarg_vd_premium_display_settings();
+
+		/*
+		 * v1.24.2: back-compat with a Vendor Dashboard version older than
+		 * 1.46.14, which added columns_desktop/tablet/mobile to this array.
+		 * An older Vendor Dashboard's copy of this array simply will not
+		 * carry those three keys yet, so they are filled in here rather than
+		 * assumed present -- the same 4/3/2 defaults Vendor Dashboard itself
+		 * ships as of 1.46.14 (zymarg_vd_premium_display_defaults()).
+		 */
+		$display += array(
+			'columns_desktop' => 4,
+			'columns_tablet'  => 3,
+			'columns_mobile'  => 2,
+		);
+
+		return $display;
 	}
 
 	return array(
-		'layout'        => 'grid',
-		'rotation'      => 'step',
-		'marquee_speed' => 40,
-		'glide_speed'   => 400,
-		'featured_max'  => 10,
-		'flash_max'     => 10,
+		'layout'          => 'grid',
+		'rotation'        => 'step',
+		'marquee_speed'   => 40,
+		'glide_speed'     => 400,
+		'featured_max'    => 10,
+		'flash_max'       => 10,
+		'columns_desktop' => 4,
+		'columns_tablet'  => 3,
+		'columns_mobile'  => 2,
 	);
 }
 
@@ -243,10 +262,37 @@ function zymarg_sp_premium_layout_config( array $display ) {
 	$glide    = isset( $display['glide_speed'] ) ? (int) $display['glide_speed'] : 400;
 
 	if ( 'carousel' !== $layout ) {
+		/*
+		 * v1.24.2: responsive columns, admin-configurable.
+		 *
+		 * Previously hardcoded 'columns' => 4 with no responsive keys at
+		 * all, so Flash Sale and Featured Items always rendered a flat
+		 * 4-column grid on every device -- the same defect already fixed
+		 * for the "All Products" section in v1.24.1, just in this other
+		 * call site. columns_desktop/tablet/mobile now come from the
+		 * Vendor Dashboard's own Premium Display settings screen (added in
+		 * Vendor Dashboard v1.46.14), shared between both sections since
+		 * they render on the same store page grid. zymarg_sp_premium_display()
+		 * always returns all three keys -- falling back to 4/3/2 when the
+		 * Vendor Dashboard is an older version that predates them -- so no
+		 * extra isset() guard is needed here.
+		 */
 		return array(
-			'layout' => array(
+			'layout'     => array(
 				'type'    => 'grid',
-				'columns' => 4,
+				'columns' => max( 1, min( 6, (int) $display['columns_desktop'] ) ),
+			),
+			'responsive' => array(
+				'tablet' => array(
+					'layout' => array(
+						'columns' => max( 1, min( 6, (int) $display['columns_tablet'] ) ),
+					),
+				),
+				'mobile' => array(
+					'layout' => array(
+						'columns' => max( 1, min( 6, (int) $display['columns_mobile'] ) ),
+					),
+				),
 			),
 		);
 	}

@@ -1,0 +1,2163 @@
+/**
+ * ZYMARG Vendor Dashboard — Phase 0 (shell) + Phase 1 (Dashboard screen).
+ * -----------------------------------------------------------------------------
+ * A custom, on-brand vendor "business OS". Uses the ZYMARG design tokens so it
+ * stays consistent with the rest of the theme and flips correctly in dark mode.
+ * All colours reference --color-* tokens; no hardcoded brand colours here.
+ */
+
+:where(:root) {
+	/* Fallback design tokens so the plugin looks right even without the ZYMARG
+	   OS theme. When the theme IS active, its real :root tokens (specificity
+	   0,1,0) override these zero-specificity defaults — so Customizer colours
+	   and dark mode still flow through. */
+	--color-primary: #9500a5;
+	--color-primary-container: #bd00d1;
+	--color-primary-inverse: #fea9ff;
+	--color-on-primary: #ffffff;
+	--color-on-primary-fixed: #36003d;
+	--color-text-body: #131b2e;
+	--color-text-muted: #534152;
+	--color-outline-variant: #d8bfd3;
+	--color-surface: #f8f9ff;
+	--color-surface-lowest: #ffffff;
+	--color-surface-low: #f2f3ff;
+	--color-surface-container: #eaedff;
+	--zymarg-orb-1-color: rgba(104, 51, 234, 0.15);
+	--zymarg-orb-2-color: rgba(88, 42, 159, 0.10);
+	--zymarg-gradient: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-container) 60%, var(--color-primary-inverse) 130%);
+}
+
+:root {
+	--zv-sidebar-w: 264px;
+	--zv-gap: 20px;        /* card-to-card gaps (stats, grid, sections) */
+	--zv-gap-inner: 12px;  /* inside cards — between fields/rows */
+	--zv-pad: 28px;        /* outer page frame padding */
+	--zv-radius: 18px;
+	--zv-card-bg: var(--color-surface-lowest);
+	--zv-shell-bg: var(--color-surface);
+	--zv-border: var(--color-outline-variant);
+	--zv-shadow: 0 1px 2px rgba(19, 27, 46, .04), 0 8px 24px rgba(19, 27, 46, .06);
+	--zv-grad: var(--zymarg-gradient);
+}
+
+/* ---- Shell ----------------------------------------------------------- */
+.zymarg-vendor-wrap {
+	display: flex;
+	min-height: 100vh;
+	background: var(--zv-shell-bg);
+	color: var(--color-text-body);
+	font-feature-settings: "tnum" 1;
+}
+
+.zymarg-vendor-main {
+	position: relative;
+	flex: 1 1 auto;
+	min-width: 0;
+	padding: clamp(16px, 3vw, 28px);
+	overflow: hidden;
+}
+
+.zymarg-vendor-content {
+	position: relative;
+	z-index: 1;
+	max-width: 1180px;
+	margin: 0 auto;
+}
+
+/* Soft brand orbs behind content. */
+.zymarg-vendor-orb {
+	position: absolute;
+	border-radius: 50%;
+	filter: blur(60px);
+	opacity: .5;
+	pointer-events: none;
+	z-index: 0;
+}
+.zymarg-vendor-orb--1 { width: 360px; height: 360px; top: -120px; right: -80px; background: var(--zymarg-orb-1-color); }
+.zymarg-vendor-orb--2 { width: 300px; height: 300px; bottom: -120px; left: 10%; background: var(--zymarg-orb-2-color); }
+
+/* ---- Sidebar --------------------------------------------------------- */
+.zymarg-vendor-sidebar {
+	flex: 0 0 var(--zv-sidebar-w);
+	width: var(--zv-sidebar-w);
+	background: var(--color-surface-lowest);
+	border-right: 1px solid var(--zv-border);
+	display: flex;
+	flex-direction: column;
+	padding: 18px 14px;
+	position: sticky;
+	top: 0;
+	align-self: flex-start;
+	height: 100vh;
+	overflow-y: auto;
+}
+
+.zymarg-vendor-brand {
+	display: flex;
+	align-items: center;
+	gap: 9px;
+	padding: 4px 8px 14px;
+}
+.zymarg-vendor-brand__txt {
+	font-weight: 800;
+	letter-spacing: .04em;
+	font-size: 1.05rem;
+	color: var(--color-on-primary-fixed);
+}
+.zymarg-vendor-brand__txt em {
+	font-style: normal;
+	font-weight: 600;
+	color: var(--color-primary);
+}
+
+.zymarg-vendor-store {
+	display: flex;
+	align-items: center;
+	gap: 11px;
+	padding: 12px;
+	margin-bottom: 12px;
+	border-radius: 14px;
+	background: var(--color-surface-container);
+}
+.zymarg-vendor-store__avatar {
+	width: 44px; height: 44px;
+	border-radius: 12px;
+	object-fit: cover;
+	flex: 0 0 44px;
+}
+.zymarg-vendor-store__avatarlink { position: relative; flex: 0 0 44px; line-height: 0; text-decoration: none; display: block; }
+.zymarg-vendor-store__cam {
+	position: absolute;
+	right: 13px; bottom: 11px;
+	width: 19px; height: 19px;
+	display: flex; align-items: center; justify-content: center;
+	background: var(--color-surface-lowest);
+	border: 1px solid var(--zv-border);
+	border-radius: 50%;
+	color: var(--color-primary);
+	box-shadow: 0 1px 4px rgba(19, 27, 46, .28);
+	transition: background .15s ease, color .15s ease;
+}
+.zymarg-vendor-store__cam svg { width: 11px; height: 11px; }
+.zymarg-vendor-store__avatarlink:hover .zymarg-vendor-store__cam {
+	background: var(--color-primary);
+	color: var(--color-on-primary);
+	border-color: var(--color-primary);
+}
+/* Once a real photo is set, fade the camera icon out for a clean avatar
+   look. On hover (desktop) the icon fades back in so the user can still
+   change/remove their photo. On touch devices, the picker is opened by
+   tapping anywhere on the avatar (see store-upload.js), so the icon
+   stays hidden — same clean look on mobile too. */
+.zymarg-vendor-store__cam {
+	transition: opacity 0.18s ease, visibility 0.18s ease, background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.zymarg-vendor-store__avatarlink.has-photo .zymarg-vendor-store__cam {
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
+}
+.zymarg-vendor-store__avatarlink.has-photo:hover .zymarg-vendor-store__cam,
+.zymarg-vendor-store__avatarlink.has-photo:focus-within .zymarg-vendor-store__cam {
+	opacity: 1;
+	visibility: visible;
+	pointer-events: auto;
+}
+
+/* Avatar picker popup (Change photo / Remove photo) — only shown after the
+   user already has a photo set. Anchored to the .zymarg-vendor-store
+   container so it floats just below the avatar on both desktop & mobile. */
+.zymarg-vendor-store__picker {
+	position: absolute;
+	top: calc(100% + 6px);
+	left: 0;
+	min-width: 180px;
+	background: var(--color-surface-lowest, #fff);
+	border: 1px solid var(--zv-border, #d8bfd3);
+	border-radius: 12px;
+	box-shadow: 0 12px 28px rgba(19, 27, 46, 0.18);
+	padding: 6px;
+	z-index: 50;
+	display: flex;
+	flex-direction: column;
+}
+.zymarg-vendor-store__picker[hidden] { display: none; }
+.zvu-picker__opt {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 9px 12px;
+	border: 0;
+	background: none;
+	border-radius: 9px;
+	color: var(--color-text-body, #131b2e);
+	font-size: 0.88rem;
+	font-weight: 600;
+	cursor: pointer;
+	text-align: left;
+}
+.zvu-picker__opt:hover { background: var(--color-surface-container, #eaedff); color: var(--color-primary); }
+.zvu-picker__opt svg { width: 17px; height: 17px; color: var(--color-primary); }
+.zvu-picker__opt--remove { color: #c92a2a; }
+.zvu-picker__opt--remove svg { color: #c92a2a; }
+.zvu-picker__opt--remove:hover { background: #fff5f5; color: #c92a2a; }
+.zymarg-vendor-store__avatar--initials {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: var(--zv-grad);
+	color: var(--color-on-primary);
+	font-weight: 800;
+	font-size: 1.05rem;
+	letter-spacing: .02em;
+}
+.zymarg-vendor-store__meta {
+	min-width: 0;
+	/* Plain block flow (NOT flex) so the two lines always stack tight together,
+	   regardless of card height or any inherited/overriding flex rules. */
+	display: block !important;
+}
+/* Reset inherited spacing + force tight stacking (the gap fix). */
+.zymarg-vendor-store__name,
+.zymarg-vendor-store__link {
+	display: block !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	line-height: 1.25 !important;
+}
+.zymarg-vendor-store__name {
+	font-weight: 700;
+	font-size: .92rem;
+	white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+	color: var(--color-text-body);
+}
+.zymarg-vendor-store__link {
+	font-size: .76rem;
+	color: var(--color-primary);
+	text-decoration: none;
+}
+.zymarg-vendor-store__link:hover { text-decoration: underline; }
+
+.zymarg-vendor-nav { display: flex; flex-direction: column; gap: 2px; }
+.zymarg-vendor-nav__link {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 7px 12px;
+	border-radius: 11px;
+	color: var(--color-text-muted);
+	text-decoration: none;
+	font-size: .9rem;
+	font-weight: 600;
+	line-height: 1;
+	transition: background .16s ease, color .16s ease, transform .16s ease;
+}
+.zymarg-vendor-nav__link:hover {
+	background: var(--color-surface-container);
+	color: var(--color-text-body);
+}
+.zymarg-vendor-nav__icon { display: inline-flex; flex: 0 0 20px; }
+.zymarg-vendor-nav__link.is-active {
+	background: var(--zv-grad);
+	color: var(--color-on-primary);
+	box-shadow: 0 6px 16px rgba(149, 0, 165, .28);
+}
+.zymarg-vendor-nav__link.is-active .zymarg-vendor-nav__icon { color: var(--color-on-primary); }
+.zymarg-vendor-nav__divider {
+	height: 1px;
+	background: var(--zv-border);
+	margin: 10px 8px;
+}
+.zymarg-vendor-nav__link--logout { color: #c0392b; }
+.zymarg-vendor-nav__link--logout:hover { background: rgba(192, 57, 43, .08); color: #c0392b; }
+
+/* ---- Hamburger / overlay (mobile) ------------------------------------ */
+.zymarg-vendor-hamburger {
+	display: none;
+	position: fixed;
+	top: 50%; left: 0;
+	transform: translateY(-50%);
+	z-index: 60;
+	width: 32px; height: 42px;
+	border: 1px solid var(--zv-border);
+	border-radius: 0 12px 12px 0;
+	background: var(--color-surface-lowest);
+	color: var(--color-text-body);
+	cursor: pointer;
+	align-items: center;
+	justify-content: center;
+	box-shadow: var(--zv-shadow);
+}
+.zymarg-vendor-hamburger svg {
+	transition: transform .3s ease;
+}
+.zymarg-vendor-hamburger[aria-expanded="true"] svg {
+	transform: rotate(180deg);
+}
+.zymarg-vendor-overlay {
+	display: none;
+	position: fixed;
+	inset: 0;
+	background: rgba(19, 27, 46, .45);
+	z-index: 49;
+}
+.zymarg-vendor-overlay.is-open { display: block; }
+
+/* ---- Greeting -------------------------------------------------------- */
+.zymarg-vendor-greeting { margin-bottom: var(--zv-gap); }
+.zymarg-vendor-greeting__title {
+	margin: 0;
+	font-size: clamp(1.4rem, 2.6vw, 2rem);
+	font-weight: 800;
+	color: var(--color-on-primary-fixed);
+	line-height: 1.15;
+}
+
+/* v1.46.12 — the sidebar's active state already tells the vendor which
+   section they're on, so the redundant "<section name>" heading above every
+   section was visual noise. Hidden visually with the standard
+   .screen-reader-text pattern so the h1 leaves the accessibility tree, the
+   page outline and the search-engine outline untouched — the section is
+   still announced to screen readers, and the section subtitle
+   (.zymarg-vendor-greeting__sub) remains visible as the first thing the
+   sighted vendor reads.
+
+   `:not(.zymarg-vendor-greeting--personal)` excludes the Dashboard section
+   only. That one greeting reads "Good morning, {first}" with the
+   timezone-aware greeting span and the waving-hand emoji — it is a
+   personal welcome, not a section name, and stays visible.
+
+   Descriptions, quick-action row, greeting--row cluster metadata (badges,
+   tabs, buttons on the right of the header on Products/Earnings) are all
+   untouched. Only the h1 text is hidden. */
+.zymarg-vendor-greeting:not(.zymarg-vendor-greeting--personal) .zymarg-vendor-greeting__title {
+	position: absolute !important;
+	width: 1px !important;
+	height: 1px !important;
+	padding: 0 !important;
+	margin: -1px !important;
+	overflow: hidden !important;
+	clip: rect(0, 0, 0, 0) !important;
+	white-space: nowrap !important;
+	border: 0 !important;
+}
+.zymarg-vendor-greeting__wave { display: inline-block; margin-left: 4px; animation: zvWave 2.4s ease-in-out infinite; transform-origin: 70% 70%; }
+@keyframes zvWave { 0%,60%,100% { transform: rotate(0); } 10% { transform: rotate(14deg); } 20% { transform: rotate(-8deg); } 30% { transform: rotate(14deg); } 40% { transform: rotate(-4deg); } 50% { transform: rotate(10deg); } }
+.zymarg-vendor-greeting__sub { margin: 6px 0 0; color: var(--color-text-muted); font-size: .98rem; }
+
+/* ---- Quick actions --------------------------------------------------- */
+.zymarg-vendor-quick {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-bottom: var(--zv-gap);
+}
+.zymarg-vendor-quick__btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 9px;
+	padding: 11px 16px;
+	border-radius: 13px;
+	background: var(--color-surface-lowest);
+	border: 1px solid var(--zv-border);
+	color: var(--color-text-body);
+	text-decoration: none;
+	font-weight: 700;
+	font-size: .88rem;
+	box-shadow: var(--zv-shadow);
+	transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+.zymarg-vendor-quick__btn:hover {
+	transform: translateY(-2px);
+	border-color: var(--color-primary);
+	box-shadow: 0 10px 26px rgba(149, 0, 165, .16);
+}
+.zymarg-vendor-quick__icon {
+	display: inline-flex;
+	width: 30px; height: 30px;
+	align-items: center; justify-content: center;
+	border-radius: 9px;
+	background: var(--zv-grad);
+	color: var(--color-on-primary);
+}
+.zymarg-vendor-quick__icon svg { width: 17px; height: 17px; }
+
+/* ---- Stat cards ------------------------------------------------------ */
+.zymarg-vendor-stats {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: var(--zv-gap);
+	margin-bottom: var(--zv-gap);
+}
+.zymarg-vendor-stat {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	padding: 20px;
+	border-radius: var(--zv-radius);
+	background: var(--zv-card-bg);
+	border: 1px solid var(--zv-border);
+	box-shadow: var(--zv-shadow);
+}
+.zymarg-vendor-stat__icon {
+	display: inline-flex;
+	flex: 0 0 46px;
+	width: 46px; height: 46px;
+	align-items: center; justify-content: center;
+	border-radius: 13px;
+	background: var(--color-surface-container);
+	color: var(--color-primary);
+}
+.zymarg-vendor-stat__body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.zymarg-vendor-stat__label { font-size: .8rem; color: var(--color-text-muted); font-weight: 600; }
+.zymarg-vendor-stat__value { font-size: 1.5rem; font-weight: 800; color: var(--color-on-primary-fixed); line-height: 1.1; }
+.zymarg-vendor-stat__value .woocommerce-Price-amount { font-size: inherit; }
+.zymarg-vendor-stat__delta { font-size: .75rem; font-weight: 700; }
+.zymarg-vendor-stat__delta--up { color: #1a8a52; }
+.zymarg-vendor-stat__delta--down { color: #c0392b; }
+
+/* ---- Grid of cards --------------------------------------------------- */
+.zymarg-vendor-grid {
+	display: grid;
+	grid-template-columns: 1.5fr 1fr;
+	gap: var(--zv-gap);
+}
+.zymarg-vendor-card {
+	background: var(--zv-card-bg);
+	border: 1px solid var(--zv-border);
+	border-radius: var(--zv-radius);
+	box-shadow: var(--zv-shadow);
+	padding: 20px;
+}
+.zymarg-vendor-card--chart { grid-column: 1 / 2; }
+.zymarg-vendor-card--orders { grid-column: 2 / 3; grid-row: 1 / 3; }
+.zymarg-vendor-card--stock { grid-column: 1 / 2; }
+.zymarg-vendor-card--reviews { grid-column: 1 / 3; }
+
+.zymarg-vendor-card__head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 14px;
+}
+.zymarg-vendor-card__title { margin: 0; font-size: 1.02rem; font-weight: 800; color: var(--color-on-primary-fixed); }
+.zymarg-vendor-card__hint { font-size: .78rem; color: var(--color-text-muted); }
+.zymarg-vendor-card__more { font-size: .82rem; color: var(--color-primary); text-decoration: none; font-weight: 700; }
+.zymarg-vendor-card__more:hover { text-decoration: underline; }
+
+.zymarg-vendor-empty {
+	margin: 0;
+	padding: 22px 4px;
+	color: var(--color-text-muted);
+	font-size: .9rem;
+	text-align: center;
+}
+
+/* ---- Chart ----------------------------------------------------------- */
+.zymarg-vendor-chart { width: 100%; }
+.zymarg-vendor-chart svg { width: 100%; height: 220px; display: block; }
+.zymarg-vendor-chart__line { stroke: var(--color-primary); stroke-width: 2.5; }
+.zymarg-vendor-chart__dot { fill: var(--color-surface-lowest); stroke: var(--color-primary); stroke-width: 2; }
+.zymarg-vendor-chart__xlabel { fill: var(--color-text-muted); font-size: 11px; text-anchor: middle; font-weight: 600; }
+
+/* ---- Orders list ----------------------------------------------------- */
+.zymarg-vendor-orders-list,
+.zymarg-vendor-stock-list,
+.zymarg-vendor-reviews-list { list-style: none; margin: 0; padding: 0; }
+
+.zymarg-vendor-order {
+	display: grid;
+	grid-template-columns: auto 1fr auto;
+	grid-template-areas: "id cust total" "id status total";
+	gap: 2px 10px;
+	align-items: center;
+	padding: 11px 0;
+	border-bottom: 1px solid var(--zv-border);
+}
+.zymarg-vendor-order:last-child { border-bottom: 0; }
+.zymarg-vendor-order__id { grid-area: id; font-weight: 800; color: var(--color-primary); font-size: .86rem; }
+.zymarg-vendor-order__cust { grid-area: cust; font-weight: 600; font-size: .9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.zymarg-vendor-order__total { grid-area: total; font-weight: 800; font-size: .92rem; text-align: right; }
+.zymarg-vendor-order__status {
+	grid-area: status;
+	justify-self: start;
+	font-size: .72rem;
+	font-weight: 700;
+	padding: 2px 9px;
+	border-radius: 999px;
+	background: var(--color-surface-container);
+	color: var(--color-text-muted);
+}
+.zymarg-vendor-order__status--processing { background: #e6f0ff; color: #1657c8; }
+.zymarg-vendor-order__status--completed { background: #e3f7ec; color: #1a8a52; }
+.zymarg-vendor-order__status--on-hold { background: #fff3df; color: #b9770a; }
+.zymarg-vendor-order__status--cancelled,
+.zymarg-vendor-order__status--refunded { background: #fdecec; color: #c0392b; }
+
+/* ---- Low stock ------------------------------------------------------- */
+.zymarg-vendor-stock {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 10px 0;
+	border-bottom: 1px solid var(--zv-border);
+}
+.zymarg-vendor-stock:last-child { border-bottom: 0; }
+.zymarg-vendor-stock__name { color: var(--color-text-body); text-decoration: none; font-weight: 600; font-size: .9rem; }
+.zymarg-vendor-stock__name:hover { color: var(--color-primary); }
+.zymarg-vendor-stock__qty {
+	flex: 0 0 auto;
+	font-size: .76rem;
+	font-weight: 700;
+	color: #b9770a;
+	background: #fff3df;
+	padding: 3px 10px;
+	border-radius: 999px;
+}
+
+/* ---- Reviews --------------------------------------------------------- */
+.zymarg-vendor-reviews-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.zymarg-vendor-review {
+	padding: 14px;
+	border-radius: 13px;
+	background: var(--color-surface);
+	border: 1px solid var(--zv-border);
+}
+.zymarg-vendor-review__top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.zymarg-vendor-review__author { font-weight: 700; font-size: .88rem; }
+.zymarg-vendor-star { color: var(--color-outline-variant); font-size: .92rem; }
+.zymarg-vendor-star.is-on { color: #f5a623; }
+.zymarg-vendor-review__text { margin: 0 0 6px; font-size: .86rem; color: var(--color-text-muted); }
+.zymarg-vendor-review__product { font-size: .76rem; color: var(--color-primary); font-weight: 600; }
+
+/* ---- Preview note ---------------------------------------------------- */
+.zymarg-vendor-preview-note {
+	margin-bottom: 16px;
+	padding: 11px 16px;
+	border-radius: 12px;
+	background: var(--color-surface-container);
+	border: 1px dashed var(--color-primary);
+	color: var(--color-text-muted);
+	font-size: .84rem;
+}
+.zymarg-vendor-preview-note strong { color: var(--color-primary); }
+
+/* ---- Coming-soon placeholder ---------------------------------------- */
+.zymarg-vendor-soon { text-align: center; padding: 48px 24px; }
+.zymarg-vendor-soon h2 { margin: 14px 0 8px; font-size: 1.3rem; color: var(--color-on-primary-fixed); }
+.zymarg-vendor-soon p { margin: 0 auto 18px; max-width: 460px; color: var(--color-text-muted); }
+.zymarg-vendor-soon__btn,
+.zymarg-vendor-gate__btn {
+	display: inline-block;
+	padding: 11px 22px;
+	border-radius: 12px;
+	background: var(--zv-grad);
+	color: var(--color-on-primary);
+	text-decoration: none;
+	font-weight: 700;
+}
+
+/* ---- Access gates ---------------------------------------------------- */
+.zymarg-vendor-gate {
+	max-width: 460px;
+	margin: 8vh auto;
+	text-align: center;
+	padding: 40px 28px;
+	background: var(--color-surface-lowest);
+	border: 1px solid var(--zv-border);
+	border-radius: 22px;
+	box-shadow: var(--zv-shadow);
+}
+.zymarg-vendor-gate h1 { margin: 16px 0 8px; font-size: 1.5rem; color: var(--color-on-primary-fixed); }
+.zymarg-vendor-gate p { margin: 0 0 20px; color: var(--color-text-muted); }
+
+/* ---- Logout modal ---------------------------------------------------- */
+.zymarg-vendor-logout-modal { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; }
+.zymarg-vendor-logout-modal[hidden] { display: none; }
+.zymarg-vendor-logout-modal__overlay { position: absolute; inset: 0; background: rgba(19, 27, 46, .5); }
+.zymarg-vendor-logout-modal__dialog {
+	position: relative;
+	background: var(--color-surface-lowest);
+	border-radius: 20px;
+	padding: 30px 26px;
+	max-width: 380px;
+	width: calc(100% - 32px);
+	text-align: center;
+	box-shadow: 0 20px 60px rgba(19, 27, 46, .3);
+}
+.zymarg-vendor-logout-modal__close {
+	position: absolute; top: 12px; right: 14px;
+	border: 0; background: none; font-size: 1.5rem; line-height: 1;
+	color: var(--color-text-muted); cursor: pointer;
+}
+.zymarg-vendor-logout-modal__icon {
+	width: 56px; height: 56px;
+	margin: 0 auto 12px;
+	display: flex; align-items: center; justify-content: center;
+	border-radius: 16px;
+	background: rgba(192, 57, 43, .1);
+	color: #c0392b;
+}
+.zymarg-vendor-logout-modal__dialog h3 { margin: 0 0 6px; font-size: 1.2rem; color: var(--color-on-primary-fixed); }
+.zymarg-vendor-logout-modal__dialog p { margin: 0 0 20px; color: var(--color-text-muted); font-size: .92rem; }
+.zymarg-vendor-logout-modal__actions { display: flex; gap: 10px; }
+.zymarg-vendor-logout-modal__btn {
+	flex: 1;
+	padding: 11px;
+	border-radius: 12px;
+	font-weight: 700;
+	text-decoration: none;
+	cursor: pointer;
+	border: 1px solid var(--zv-border);
+	font-size: .92rem;
+}
+.zymarg-vendor-logout-modal__btn--cancel { background: var(--color-surface-container); color: var(--color-text-body); }
+.zymarg-vendor-logout-modal__btn--confirm { background: #c0392b; color: #fff; border-color: #c0392b; }
+
+/* ---- Confirm modal (order cancel) ------------------------------------ */
+.zymarg-vendor-confirm-modal { position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center; }
+.zymarg-vendor-confirm-modal[hidden] { display: none; }
+.zymarg-vendor-confirm-modal__overlay { position: absolute; inset: 0; background: rgba(19, 27, 46, .5); }
+.zymarg-vendor-confirm-modal__dialog {
+	position: relative;
+	background: var(--color-surface-lowest);
+	border-radius: 20px;
+	padding: 30px 26px;
+	max-width: 380px;
+	width: calc(100% - 32px);
+	text-align: center;
+	box-shadow: 0 20px 60px rgba(19, 27, 46, .3);
+}
+.zymarg-vendor-confirm-modal__icon {
+	width: 56px; height: 56px;
+	margin: 0 auto 12px;
+	display: flex; align-items: center; justify-content: center;
+	border-radius: 16px;
+	background: rgba(230, 126, 34, .12);
+	color: #e67e22;
+}
+.zymarg-vendor-confirm-modal__dialog h3 { margin: 0 0 6px; font-size: 1.2rem; color: var(--color-on-primary-fixed); }
+.zymarg-vendor-confirm-modal__dialog p { margin: 0 0 20px; color: var(--color-text-muted); font-size: .92rem; }
+.zymarg-vendor-confirm-modal__actions { display: flex; gap: 10px; }
+.zymarg-vendor-confirm-modal__btn {
+	flex: 1;
+	padding: 11px;
+	border-radius: 12px;
+	font-weight: 700;
+	text-decoration: none;
+	cursor: pointer;
+	border: 1px solid var(--zv-border);
+	font-size: .92rem;
+}
+.zymarg-vendor-confirm-modal__btn--cancel { background: var(--color-surface-container); color: var(--color-text-body); }
+.zymarg-vendor-confirm-modal__btn--confirm { background: #c0392b; color: #fff; border-color: #c0392b; }
+
+/* ---- Responsive ------------------------------------------------------ */
+@media (max-width: 1080px) {
+	.zymarg-vendor-stats { grid-template-columns: repeat(2, 1fr); }
+	.zymarg-vendor-grid { grid-template-columns: 1fr; }
+	.zymarg-vendor-card--chart,
+	.zymarg-vendor-card--orders,
+	.zymarg-vendor-card--stock,
+	.zymarg-vendor-card--reviews { grid-column: 1 / -1; grid-row: auto; }
+}
+
+@media (max-width: 860px) {
+	.zymarg-vendor-hamburger { display: flex; }
+	.zymarg-vendor-main { padding-top: 0; }
+	.zymarg-vendor-sidebar {
+		position: fixed;
+		top: 0; left: 0;
+		z-index: 50;
+		height: 100dvh;
+		transform: translateX(-100%);
+		transition: transform .25s ease;
+		box-shadow: 0 0 40px rgba(19, 27, 46, .2);
+	}
+	.zymarg-vendor-sidebar.is-open { transform: translateX(0); }
+}
+
+@media (max-width: 720px) {
+	.zymarg-vendor-quick {
+		display: flex !important;
+		flex-wrap: nowrap !important;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+		scroll-snap-type: x mandatory;
+		scroll-behavior: smooth;
+		scrollbar-width: none;
+		gap: 8px;
+		padding-bottom: 2px;
+		padding-right: 12px;
+		margin-bottom: var(--zv-gap);
+	}
+	.zymarg-vendor-quick::-webkit-scrollbar { display: none; }
+	.zymarg-vendor-quick__btn {
+		display: flex !important;
+		align-items: center;
+		flex: 0 0 auto;
+		padding: 10px 14px;
+		font-size: .78rem;
+		gap: 6px;
+		border-radius: 10px;
+		white-space: nowrap;
+		scroll-snap-align: start;
+	}
+	.zymarg-vendor-quick__icon {
+		flex: 0 0 24px;
+		width: 24px; height: 24px;
+	}
+	.zymarg-vendor-quick__icon svg { width: 14px; height: 14px; }
+}
+
+@media (max-width: 560px) {
+	.zymarg-vendor-stats { grid-template-columns: 1fr 1fr; gap: 12px; }
+	.zymarg-vendor-stat { padding: 14px; gap: 10px; }
+	.zymarg-vendor-stat__icon { flex: 0 0 32px; width: 32px; height: 32px; }
+	.zymarg-vendor-stat__icon svg { width: 16px; height: 16px; }
+	.zymarg-vendor-stat__label { font-size: .74rem; }
+	.zymarg-vendor-stat__value { font-size: 1.25rem; }
+	.zymarg-vendor-reviews-list { grid-template-columns: 1fr; }
+	.zymarg-vendor-quick__btn {
+		padding: 9px 12px;
+		font-size: .74rem;
+		gap: 5px;
+	}
+	.zymarg-vendor-quick__icon {
+		flex: 0 0 22px;
+		width: 22px; height: 22px;
+	}
+	.zymarg-vendor-quick__icon svg { width: 13px; height: 13px; }
+
+	/* Orders tab bar — 2-col × 3-row grid (6 tabs) */
+	.zymarg-vo-tabs {
+		display: grid !important;
+		grid-template-columns: 1fr 1fr;
+		grid-template-rows: auto auto auto;
+		grid-auto-flow: column;
+		gap: 8px;
+		width: 100%;
+	}
+	.zymarg-vo-tab {
+		display: flex !important;
+		flex-shrink: 1 !important;
+		width: 100%;
+		white-space: normal;
+		min-width: 0;
+		box-sizing: border-box;
+		justify-content: center;
+		padding: 8px 10px;
+		font-size: .78rem;
+	}
+
+	/* Customers tab bar — 2-col × 2-row grid (4 tabs) */
+	.zymarg-vo-tabs--customers {
+		display: grid !important;
+		grid-template-columns: 1fr 1fr !important;
+		grid-template-rows: auto auto !important;
+		grid-auto-flow: row !important;
+		gap: 8px !important;
+		width: 100% !important;
+		max-width: 100% !important;
+		overflow: visible !important;
+		padding: 0 !important;
+	}
+	.zymarg-vo-tabs--customers .zymarg-vo-tab {
+		display: flex !important;
+		flex-shrink: 1 !important;
+		width: 100% !important;
+		white-space: normal !important;
+		min-width: 0 !important;
+		box-sizing: border-box !important;
+		justify-content: center !important;
+		padding: 9px 12px !important;
+		font-size: .78rem !important;
+		gap: 6px !important;
+		line-height: 1.4 !important;
+	}
+	.zymarg-vo-tabs--customers .zymarg-vo-tab::after {
+		transform: none !important;
+		font-size: .68rem;
+		min-width: 18px;
+		height: 18px;
+		line-height: 18px;
+		padding: 0 5px;
+		margin-left: 5px;
+	}
+
+	/* Analytics grid — full width cards on mobile */
+	.zymarg-vendor-grid--analytics {
+		display: grid !important;
+		grid-template-columns: 1fr !important;
+	}
+	.zymarg-vendor-grid--analytics .zymarg-vendor-card {
+		width: 100%;
+		min-width: 0;
+		box-sizing: border-box;
+	}
+
+	/* Order row card — info line + buttons/status line */
+	.zymarg-vo-order {
+		flex-wrap: wrap;
+		padding: 10px 12px;
+		gap: 8px;
+	}
+	.zymarg-vo-info {
+		flex: 0 0 100%;
+		overflow: hidden;
+	}
+	.zymarg-vo-btns {
+		width: 100%;
+		justify-content: flex-start;
+		gap: 5px;
+		flex-wrap: nowrap;
+	}
+	.zymarg-vo-btns .zymarg-vo-order__status {
+		font-size: .66rem;
+		padding: 3px 8px;
+	}
+	.zymarg-vo-btns .zymarg-vo-view,
+	.zymarg-vo-btns .zymarg-vo-action {
+		font-size: .7rem;
+		padding: 4px 9px;
+	}
+}
+
+/* ---- Dark mode polish (tokens already flip; minor surface tweaks) ---- */
+[data-theme="dark"] .zymarg-vendor-order__status--processing { background: rgba(22, 87, 200, .18); color: #8db4ff; }
+[data-theme="dark"] .zymarg-vendor-order__status--completed { background: rgba(26, 138, 82, .18); color: #6fdca0; }
+[data-theme="dark"] .zymarg-vendor-order__status--on-hold,
+[data-theme="dark"] .zymarg-vendor-stock__qty { background: rgba(185, 119, 10, .18); color: #f0c074; }
+
+
+
+/* ==========================================================================
+   Phase 2 — Products (card grid + actions) & Orders (tabs)
+   ========================================================================== */
+
+/* ---- Section header row (title + primary CTA) ------------------------ */
+.zymarg-vendor-greeting--row {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 16px;
+	flex-wrap: wrap;
+}
+.zymarg-vendor-cta {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 11px 18px;
+	border-radius: 12px;
+	background: var(--zv-grad);
+	color: var(--color-on-primary);
+	text-decoration: none;
+	font-weight: 700;
+	font-size: .9rem;
+	box-shadow: 0 6px 16px rgba(149, 0, 165, .24);
+	white-space: nowrap;
+	border: none;
+	outline: none;
+	cursor: pointer;
+}
+.zymarg-vendor-cta:hover { transform: translateY(-1px); }
+.zymarg-vendor-cta svg { width: 18px; height: 18px; }
+
+/* ---- Toolbar (search) ------------------------------------------------ */
+.zymarg-vendor-toolbar {
+	display: flex;
+	gap: 10px;
+	align-items: center;
+	margin: 4px 0 var(--zv-gap);
+	flex-wrap: wrap;
+}
+.zymarg-vendor-search {
+	position: relative;
+	flex: 1 1 260px;
+	display: flex;
+	align-items: center;
+}
+.zymarg-vendor-search svg { display: none; }
+.zymarg-vendor-search input {
+	width: 100%;
+	padding: 11px 14px;
+	border: 1px solid var(--zv-border);
+	border-radius: 12px;
+	background: var(--color-surface-lowest);
+	color: var(--color-text-body);
+	font-size: .92rem;
+}
+.zymarg-vendor-search input:focus {
+	outline: none;
+	border-color: var(--color-primary);
+	box-shadow: 0 0 0 3px rgba(149, 0, 165, .1);
+}
+.zymarg-vendor-toolbar__btn {
+	padding: 11px 18px;
+	border: 0;
+	border-radius: 12px;
+	background: var(--zv-grad);
+	color: var(--color-on-primary);
+	font-weight: 700;
+	font-size: .88rem;
+	cursor: pointer;
+}
+.zymarg-vendor-toolbar__clear {
+	color: var(--color-text-muted);
+	text-decoration: none;
+	font-size: .85rem;
+	font-weight: 600;
+}
+.zymarg-vendor-toolbar__clear:hover { color: var(--color-primary); }
+
+/* ---- Products grid --------------------------------------------------- */
+.zymarg-vp-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+	gap: var(--zv-gap);
+}
+.zymarg-vp-card {
+	display: flex;
+	flex-direction: column;
+	background: var(--zv-card-bg);
+	border: 1px solid var(--zv-border);
+	border-radius: var(--zv-radius);
+	box-shadow: var(--zv-shadow);
+	overflow: hidden;
+	transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+}
+.zymarg-vp-card:hover {
+	transform: translateY(-3px);
+	border-color: var(--color-primary);
+	box-shadow: 0 12px 28px rgba(149, 0, 165, .14);
+}
+.zymarg-vp-card.is-busy { opacity: .55; pointer-events: none; }
+
+.zymarg-vp-card__media {
+	position: relative;
+	aspect-ratio: 4 / 3;
+	background: var(--color-surface-container);
+	overflow: hidden;
+}
+.zymarg-vp-card__media a { display: block; width: 100%; height: 100%; }
+.zymarg-vp-card__img,
+.zymarg-vp-card__media img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+}
+.zymarg-vp-badge {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	font-size: .68rem;
+	font-weight: 800;
+	letter-spacing: .03em;
+	text-transform: uppercase;
+	padding: 3px 9px;
+	border-radius: 999px;
+	background: var(--color-surface-lowest);
+	color: var(--color-text-muted);
+	box-shadow: 0 2px 6px rgba(19, 27, 46, .12);
+}
+.zymarg-vp-badge--publish { background: #e3f7ec; color: #1a8a52; }
+.zymarg-vp-badge--draft { background: #eef0f5; color: #5b6678; }
+.zymarg-vp-badge--pending { background: #fff3df; color: #b9770a; }
+.zymarg-vp-feature {
+	position: absolute;
+	top: 8px;
+	right: 10px;
+	font-size: 1.1rem;
+	color: rgba(255, 255, 255, .7);
+	text-shadow: 0 1px 3px rgba(0, 0, 0, .3);
+}
+.zymarg-vp-feature.is-on { color: #f5a623; }
+
+.zymarg-vp-card__body { padding: 14px 14px 8px; flex: 1; }
+.zymarg-vp-card__name {
+	display: block;
+	font-weight: 700;
+	font-size: .95rem;
+	line-height: 1.3;
+	color: var(--color-on-primary-fixed);
+	text-decoration: none;
+	margin-bottom: 6px;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+.zymarg-vp-card__name:hover { color: var(--color-primary); }
+.zymarg-vp-card__price { font-weight: 800; color: var(--color-primary); margin-bottom: 10px; }
+.zymarg-vp-card__price .woocommerce-Price-amount { color: var(--color-primary); }
+.zymarg-vp-card__price del { color: var(--color-text-muted); font-weight: 500; opacity: .7; }
+
+.zymarg-vp-metrics {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px 14px;
+	font-size: .76rem;
+	color: var(--color-text-muted);
+}
+.zymarg-vp-metric { display: inline-flex; align-items: baseline; gap: 4px; }
+.zymarg-vp-metric strong { color: var(--color-text-body); font-weight: 800; font-size: .82rem; }
+.zymarg-vp-metric.is-low em { color: #b9770a; font-style: normal; font-weight: 700; }
+
+.zymarg-vp-card__foot {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 10px 14px;
+	border-top: 1px solid var(--zv-border);
+}
+.zymarg-vp-edit {
+	font-size: .85rem;
+	font-weight: 700;
+	color: var(--color-primary);
+	text-decoration: none;
+}
+.zymarg-vp-edit:hover { text-decoration: underline; }
+
+/* ---- Card "•••" menu ------------------------------------------------- */
+.zymarg-vp-menu { position: relative; }
+.zymarg-vp-menu__btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border: 1px solid var(--zv-border);
+	border-radius: 9px;
+	background: var(--color-surface-lowest);
+	color: var(--color-text-muted);
+	cursor: pointer;
+}
+.zymarg-vp-menu__btn:hover { color: var(--color-primary); border-color: var(--color-primary); }
+.zymarg-vp-menu__list {
+	position: absolute;
+	right: 0;
+	bottom: calc(100% + 6px);
+	min-width: 168px;
+	background: var(--color-surface-lowest);
+	border: 1px solid var(--zv-border);
+	border-radius: 12px;
+	box-shadow: 0 12px 32px rgba(19, 27, 46, .18);
+	padding: 6px;
+	z-index: 20;
+	display: flex;
+	flex-direction: column;
+}
+.zymarg-vp-menu__list[hidden] { display: none; }
+.zymarg-vp-menu__item {
+	display: block;
+	width: 100%;
+	text-align: left;
+	padding: 9px 12px;
+	border: 0;
+	background: none;
+	border-radius: 8px;
+	font-size: .86rem;
+	font-weight: 600;
+	color: var(--color-text-body);
+	cursor: pointer;
+	text-decoration: none;
+}
+.zymarg-vp-menu__item:hover { background: var(--color-surface-container); }
+.zymarg-vp-menu__item--danger { color: #c0392b; }
+.zymarg-vp-menu__item--danger:hover { background: rgba(192, 57, 43, .08); }
+
+/* ---- Pager ----------------------------------------------------------- */
+.zymarg-vendor-pager {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 16px;
+	margin-top: var(--zv-gap);
+}
+.zymarg-vendor-pager__btn {
+	padding: 9px 16px;
+	border-radius: 10px;
+	border: 1px solid var(--zv-border);
+	background: var(--color-surface-lowest);
+	color: var(--color-text-body);
+	text-decoration: none;
+	font-weight: 700;
+	font-size: .85rem;
+}
+.zymarg-vendor-pager__btn:hover { border-color: var(--color-primary); color: var(--color-primary); }
+.zymarg-vendor-pager__info { font-size: .82rem; color: var(--color-text-muted); }
+
+/* ---- Orders tabs ----------------------------------------------------- */
+.zymarg-vo-tabs {
+	display: flex;
+	gap: 8px;
+	flex-wrap: wrap;
+	margin-bottom: var(--zv-gap);
+}
+.zymarg-vo-tab {
+	display: inline-flex !important;
+	flex-direction: row !important;
+	align-items: center !important;
+	flex-wrap: nowrap !important;
+	gap: 7px;
+	padding: 9px 15px;
+	border-radius: 999px;
+	border: 1px solid var(--zv-border);
+	background: var(--color-surface-lowest);
+	color: var(--color-text-muted);
+	font-weight: 700;
+	font-size: .85rem;
+	cursor: pointer;
+	transition: all .16s ease;
+	white-space: nowrap;
+	flex-shrink: 0;
+	line-height: 1.2;
+	position: static !important;
+}
+.zymarg-vo-tab:hover { border-color: var(--color-primary); color: var(--color-primary); }
+.zymarg-vo-tab.is-active {
+	background: var(--zv-grad);
+	color: var(--color-on-primary);
+	border-color: transparent;
+	box-shadow: 0 6px 14px rgba(149, 0, 165, .26);
+}
+.zymarg-vo-tab::after {
+	content: attr(data-count);
+	display: inline-block !important;
+	vertical-align: middle;
+	font-size: .75rem;
+	font-weight: 800;
+	min-width: 20px;
+	height: 20px;
+	padding: 0 6px;
+	border-radius: 999px;
+	background: var(--color-surface-container);
+	color: var(--color-text-muted);
+	margin-left: 7px;
+	line-height: 20px;
+	transform: translateY(2px);
+}
+.zymarg-vo-tab.is-active::after { background: rgba(255, 255, 255, .25); color: #fff; }
+
+.zymarg-vo-panel { display: none; }
+.zymarg-vo-panel.is-active { display: block; }
+
+.zymarg-vo-list { display: flex; flex-direction: column; gap: 10px; }
+.zymarg-vo-order {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 10px 14px;
+	background: var(--zv-card-bg);
+	border: 1px solid var(--zv-border);
+	border-radius: 10px;
+	box-shadow: var(--zv-shadow);
+	gap: 12px;
+}
+.zymarg-vo-order:hover { border-color: var(--color-primary); }
+.zymarg-vo-info {
+	display: flex;
+	align-items: center;
+	flex: 1;
+	min-width: 0;
+	gap: 0;
+}
+.zymarg-vo-sep { color: var(--color-text-muted); opacity: .4; margin: 0 8px; font-size: .8rem; }
+.zymarg-vo-order__id { font-weight: 800; color: var(--color-primary); font-size: .88rem; white-space: nowrap; }
+.zymarg-vo-order__meta { font-size: .82rem; color: var(--color-text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.zymarg-vo-order__total { font-weight: 800; font-size: .88rem; white-space: nowrap; }
+.zymarg-vo-order__status {
+	font-size: .72rem;
+	font-weight: 700;
+	padding: 3px 10px;
+	border-radius: 999px;
+	background: var(--color-surface-container);
+	color: var(--color-text-muted);
+	white-space: nowrap;
+}
+.zymarg-vo-btns {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	flex-shrink: 0;
+}
+.zymarg-vo-view {
+	font-size: .78rem;
+	font-weight: 700;
+	color: var(--color-primary);
+	text-decoration: none;
+	padding: 5px 12px;
+	border: 1px solid var(--zv-border);
+	border-radius: 999px;
+	white-space: nowrap;
+}
+.zymarg-vo-view:hover { border-color: var(--color-primary); }
+
+/* Order action buttons */
+.zymarg-vo-action {
+	font-size: .78rem;
+	font-weight: 700;
+	padding: 5px 12px;
+	border-radius: 999px;
+	cursor: pointer;
+	border: 1.5px solid transparent;
+	transition: transform .15s ease, filter .15s ease, box-shadow .15s ease;
+	line-height: 1.2;
+	white-space: nowrap;
+}
+.zymarg-vo-action[data-vo-action="approve"],
+.zymarg-vo-action[data-vo-action="ship"],
+.zymarg-vo-action[data-vo-action="deliver"] {
+	background: var(--zv-grad);
+	color: #fff;
+	border-color: transparent;
+	box-shadow: 0 2px 8px rgba(149, 0, 165, .18);
+}
+.zymarg-vo-action[data-vo-action="approve"]:hover,
+.zymarg-vo-action[data-vo-action="ship"]:hover,
+.zymarg-vo-action[data-vo-action="deliver"]:hover {
+	transform: scale(1.04);
+	filter: brightness(1.08);
+}
+.zymarg-vo-action[data-vo-action="cancel"] {
+	background: transparent;
+	color: #e53935;
+	border-color: #e53935;
+}
+.zymarg-vo-action[data-vo-action="cancel"]:hover {
+	background: #e53935;
+	color: #fff;
+}
+.zymarg-vo-order.is-busy {
+	opacity: .55;
+	pointer-events: none;
+}
+/* Toast notification */
+.zymarg-vo-toast {
+	position: fixed;
+	bottom: 24px;
+	right: 24px;
+	padding: 12px 20px;
+	border-radius: 12px;
+	background: var(--zv-grad, #333);
+	color: #fff;
+	font-size: .85rem;
+	font-weight: 600;
+	z-index: 9999;
+	animation: zymarg-toast-in .25s ease;
+	box-shadow: 0 4px 16px rgba(0,0,0,.18);
+}
+@keyframes zymarg-toast-in {
+	from { opacity: 0; transform: translateY(12px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 720px) {
+	.zymarg-vo-order { flex-direction: column; align-items: stretch; gap: 6px; padding: 10px 12px; }
+	.zymarg-vo-sep { display: none; }
+	.zymarg-vo-info { flex-wrap: wrap; row-gap: 2px; }
+	.zymarg-vo-order__id { flex: 0 0 auto; }
+	.zymarg-vo-order__total { margin-left: auto; }
+	.zymarg-vo-order__meta { flex-basis: 100%; order: 3; font-size: .78rem; }
+	.zymarg-vo-order__status { order: 3; margin-left: auto; }
+	.zymarg-vo-btns { justify-content: flex-start; }
+}
+
+
+
+/* ==========================================================================
+   Phase 3 — Earnings & Analytics
+   ========================================================================== */
+
+/* 6-up stat grid (Earnings) → 3 columns on desktop. */
+.zymarg-vendor-stats--3 { grid-template-columns: repeat(3, 1fr); }
+
+/* Analytics layout: chart wide, top-products beside it. */
+.zymarg-vendor-grid--analytics { grid-template-columns: 1.6fr 1fr; }
+.zymarg-vendor-grid--analytics .zymarg-vendor-card--chart { grid-column: auto; grid-row: auto; }
+
+/* Helper note under data-dependent sections. */
+.zymarg-vendor-note {
+	margin: var(--zv-gap) 0 0;
+	padding: 12px 16px;
+	border-radius: 12px;
+	background: var(--color-surface-container);
+	border: 1px dashed var(--color-outline-variant);
+	color: var(--color-text-muted);
+	font-size: .84rem;
+}
+
+/* Top Products list. */
+.zymarg-va-top { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+.zymarg-va-top__row { display: flex; align-items: center; gap: 12px; }
+.zymarg-va-top__rank {
+	flex: 0 0 26px;
+	width: 26px; height: 26px;
+	display: inline-flex; align-items: center; justify-content: center;
+	border-radius: 8px;
+	background: var(--color-surface-container);
+	color: var(--color-primary);
+	font-weight: 800;
+	font-size: .82rem;
+}
+.zymarg-va-top__body { flex: 1; min-width: 0; }
+.zymarg-va-top__name {
+	display: block;
+	font-weight: 700;
+	font-size: .88rem;
+	color: var(--color-text-body);
+	text-decoration: none;
+	white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+	margin-bottom: 5px;
+}
+.zymarg-va-top__name:hover { color: var(--color-primary); }
+.zymarg-va-top__bar {
+	display: block;
+	height: 6px;
+	border-radius: 999px;
+	background: var(--color-surface-container);
+	overflow: hidden;
+}
+.zymarg-va-top__bar > span {
+	display: block;
+	height: 100%;
+	border-radius: 999px;
+	background: var(--zv-grad);
+}
+.zymarg-va-top__sales {
+	flex: 0 0 auto;
+	font-size: .78rem;
+	font-weight: 700;
+	color: var(--color-text-muted);
+	white-space: nowrap;
+}
+
+@media (max-width: 1080px) {
+	.zymarg-vendor-stats--3 { grid-template-columns: repeat(2, 1fr); }
+	.zymarg-vendor-grid--analytics { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+	.zymarg-vendor-stats--3 { grid-template-columns: 1fr 1fr; }
+}
+
+
+
+/* ==========================================================================
+   Phase 4 — Promotions (coupons) & Reviews
+   ========================================================================== */
+
+/* ---- Coupon create form --------------------------------------------- */
+.zymarg-vc-form { display: flex; flex-direction: column; gap: 12px; }
+.zymarg-vc-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.zymarg-vc-field { display: flex; flex-direction: column; gap: 5px; }
+.zymarg-vc-field > span { font-size: .78rem; font-weight: 700; color: var(--color-text-muted); }
+.zymarg-vc-field input,
+.zymarg-vc-field select {
+	padding: 10px 12px;
+	border: 1px solid var(--zv-border);
+	border-radius: 11px;
+	background: var(--color-surface-lowest);
+	color: var(--color-text-body);
+	font-size: .9rem;
+}
+.zymarg-vc-field input:focus,
+.zymarg-vc-field select:focus {
+	outline: none;
+	border-color: var(--color-primary);
+	box-shadow: 0 0 0 3px rgba(149, 0, 165, .1);
+}
+.zymarg-vc-submit { border: 0; cursor: pointer; align-self: flex-start; }
+.zymarg-vc-msg { margin: 0; font-size: .84rem; font-weight: 600; }
+.zymarg-vc-msg.is-ok { color: #1a8a52; }
+.zymarg-vc-msg.is-err { color: #c0392b; }
+
+/* ---- Coupon list ----------------------------------------------------- */
+.zymarg-vc-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.zymarg-vc-item {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	padding: 12px 14px;
+	border: 1px dashed var(--color-outline-variant);
+	border-radius: 12px;
+	background: var(--color-surface);
+}
+.zymarg-vc-item__main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.zymarg-vc-code {
+	font-weight: 800;
+	letter-spacing: .04em;
+	color: var(--color-primary);
+	font-size: .92rem;
+}
+.zymarg-vc-meta { font-size: .76rem; color: var(--color-text-muted); }
+.zymarg-vc-del {
+	flex: 0 0 auto;
+	width: 28px; height: 28px;
+	border: 0;
+	border-radius: 8px;
+	background: rgba(192, 57, 43, .1);
+	color: #c0392b;
+	font-size: 1.1rem;
+	line-height: 1;
+	cursor: pointer;
+}
+.zymarg-vc-del:hover { background: rgba(192, 57, 43, .18); }
+
+/* ---- Promotions section — tighter spacing --------------------------- */
+.zymarg-vc-section { gap: 14px; }
+.zymarg-vc-section .zymarg-vendor-card { padding: 16px; }
+.zymarg-vc-section .zymarg-vendor-card__head { margin-bottom: 10px; }
+.zymarg-vc-section .zymarg-vc-form { gap: 10px; }
+.zymarg-vc-section .zymarg-vc-field input,
+.zymarg-vc-section .zymarg-vc-field select { padding: 8px 12px; }
+
+/* ---- Reviews filters ------------------------------------------------- */
+.zymarg-vr-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: var(--zv-gap); }
+
+/* Review pagination. The list used to stop at 40 with no way to reach the rest. */
+.zymarg-vr-pagination { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: var(--zv-gap); flex-wrap: wrap; }
+.zymarg-vr-page-link { display: inline-flex; align-items: center; min-height: 40px; padding: 8px 18px; border: 1px solid var(--zv-border, #e5e7eb); border-radius: 999px; font-size: 13px; font-weight: 600; text-decoration: none; color: inherit; transition: border-color .2s ease, color .2s ease; }
+.zymarg-vr-page-link:hover, .zymarg-vr-page-link:focus-visible { border-color: var(--zv-primary, #7c3aed); color: var(--zv-primary, #7c3aed); }
+.zymarg-vr-page-status { font-size: 12px; opacity: .7; }
+.zymarg-vr-filter {
+	padding: 7px 14px;
+	border-radius: 999px;
+	border: 1px solid var(--zv-border);
+	background: var(--color-surface-lowest);
+	color: var(--color-text-muted);
+	font-weight: 700;
+	font-size: .82rem;
+	cursor: pointer;
+}
+.zymarg-vr-filter:hover { border-color: var(--color-primary); color: var(--color-primary); }
+.zymarg-vr-filter.is-active {
+	background: var(--zv-grad);
+	color: var(--color-on-primary);
+	border-color: transparent;
+}
+
+/* ---- Review cards ---------------------------------------------------- */
+.zymarg-vr-list { display: flex; flex-direction: column; gap: 12px; }
+.zymarg-vr-card {
+	background: var(--zv-card-bg);
+	border: 1px solid var(--zv-border);
+	border-radius: var(--zv-radius);
+	box-shadow: var(--zv-shadow);
+	padding: 16px 18px;
+}
+.zymarg-vr-card.is-hidden { opacity: .6; border-style: dashed; }
+.zymarg-vr-card__top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+.zymarg-vr-author { font-weight: 700; font-size: .9rem; margin-right: 8px; }
+.zymarg-vr-stars .zymarg-vendor-star { font-size: .9rem; }
+.zymarg-vr-date { font-size: .76rem; color: var(--color-text-muted); }
+.zymarg-vr-text { margin: 0 0 10px; font-size: .9rem; color: var(--color-text-body); line-height: 1.5; }
+.zymarg-vr-card__foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.zymarg-vr-product { font-size: .78rem; font-weight: 700; color: var(--color-primary); }
+.zymarg-vr-actions { display: flex; gap: 6px; }
+.zymarg-vr-act {
+	padding: 6px 12px;
+	border: 1px solid var(--zv-border);
+	border-radius: 9px;
+	background: var(--color-surface-lowest);
+	color: var(--color-text-muted);
+	font-size: .8rem;
+	font-weight: 700;
+	cursor: pointer;
+}
+.zymarg-vr-act:hover { border-color: var(--color-primary); color: var(--color-primary); }
+.zymarg-vr-act.is-reported { color: #c0392b; border-color: rgba(192, 57, 43, .4); }
+
+.zymarg-vr-reply { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+.zymarg-vr-reply__text {
+	width: 100%;
+	padding: 10px 12px;
+	border: 1px solid var(--zv-border);
+	border-radius: 11px;
+	background: var(--color-surface-lowest);
+	color: var(--color-text-body);
+	font-size: .88rem;
+	resize: vertical;
+}
+.zymarg-vr-reply__text:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(149, 0, 165, .1); }
+.zymarg-vr-reply__send { border: 0; cursor: pointer; align-self: flex-start; }
+
+@media (max-width: 560px) {
+	.zymarg-vc-row { grid-template-columns: 1fr; }
+}
+
+
+
+/* ==========================================================================
+   Phase 5 — Messages (inbox) & Customers
+   ========================================================================== */
+
+/* ---- Messenger-style inbox ------------------------------------------ */
+.zymarg-vm {
+	display: grid;
+	grid-template-columns: 300px 1fr;
+	gap: 0;
+	height: 560px;
+	max-height: 72vh;
+	background: var(--zv-card-bg);
+	border: 1px solid var(--zv-border);
+	border-radius: var(--zv-radius);
+	box-shadow: var(--zv-shadow);
+	overflow: hidden;
+}
+
+.zymarg-vm__list {
+	border-right: 1px solid var(--zv-border);
+	overflow-y: auto;
+	background: var(--color-surface);
+}
+.zymarg-vm-conv {
+	display: flex;
+	align-items: center;
+	gap: 11px;
+	width: 100%;
+	padding: 12px 14px;
+	border: 0;
+	border-bottom: 1px solid var(--zv-border);
+	background: none;
+	cursor: pointer;
+	text-align: left;
+}
+.zymarg-vm-conv:hover { background: var(--color-surface-container); }
+.zymarg-vm-conv.is-active { background: var(--color-surface-container); }
+.zymarg-vm-conv.is-unread { font-weight: 700; }
+.zymarg-vm-conv.is-unread .zymarg-vm-conv__name { color: var(--color-text, #111827); }
+.zymarg-vm-conv__unread-dot {
+	display: inline-block;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: #2271b1;
+	flex-shrink: 0;
+	margin-left: auto;
+}
+.zymarg-vm-conv:not(.is-unread) .zymarg-vm-conv__unread-dot { display: none; }
+.zymarg-vm-conv__avatar,
+.zymarg-vcu-avatar {
+	flex: 0 0 40px;
+	width: 40px; height: 40px;
+	border-radius: 50%;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	background: var(--zv-grad);
+	color: var(--color-on-primary);
+	font-weight: 800;
+	font-size: .82rem;
+}
+.zymarg-vm-conv__body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.zymarg-vm-conv__name { font-weight: 700; font-size: .88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.zymarg-vm-conv__snippet { font-size: .76rem; color: var(--color-text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.zymarg-vm-conv__time { flex: 0 0 auto; font-size: .68rem; color: var(--color-text-muted); }
+
+.zymarg-vm__thread { display: flex; flex-direction: column; min-width: 0; min-height: 0; overflow: hidden; position: relative; }
+.zymarg-vm__empty {
+	margin: auto;
+	color: var(--color-text-muted);
+	font-size: .9rem;
+	padding: 24px;
+	text-align: center;
+}
+.zymarg-vm__head {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 14px 18px;
+	border-bottom: 1px solid var(--zv-border);
+	font-weight: 800;
+	color: var(--color-on-primary-fixed);
+}
+.zymarg-vm__back { display: none; border: 0; background: none; font-size: 1.3rem; cursor: pointer; color: var(--color-text-muted); }
+.zymarg-vm__messages {
+	flex: 1;
+	min-height: 0;
+	overflow-y: auto;
+	padding: 18px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	background: var(--color-surface);
+}
+.zymarg-vm__hint { margin: auto; color: var(--color-text-muted); font-size: .86rem; }
+
+.zymarg-vm-bubble {
+	max-width: 72%;
+	padding: 9px 13px;
+	border-radius: 16px;
+	font-size: .88rem;
+	line-height: 1.45;
+	position: relative;
+}
+.zymarg-vm-bubble__time { display: block; font-size: .64rem; opacity: .6; margin-top: 3px; }
+.zymarg-vm-bubble.is-them {
+	align-self: flex-start;
+	background: var(--color-surface-container);
+	color: var(--color-text-body);
+	border-bottom-left-radius: 5px;
+}
+.zymarg-vm-bubble.is-mine {
+	align-self: flex-end;
+	background: var(--zv-grad);
+	color: var(--color-on-primary);
+	border-bottom-right-radius: 5px;
+}
+
+.zymarg-vm__composer {
+	display: flex;
+	gap: 10px;
+	align-items: flex-end;
+	padding: 12px 14px;
+	border-top: 1px solid var(--zv-border);
+	background: var(--color-surface-lowest);
+}
+.zymarg-vm__input {
+	flex: 1;
+	resize: none;
+	max-height: 120px;
+	padding: 10px 14px;
+	border: 1px solid var(--zv-border);
+	border-radius: 14px;
+	background: var(--color-surface);
+	color: var(--color-text-body);
+	font-size: .9rem;
+}
+.zymarg-vm__input:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(149, 0, 165, .1); }
+.zymarg-vm__send {
+	flex: 0 0 auto;
+	width: 42px; height: 42px;
+	border: 0;
+	border-radius: 12px;
+	background: var(--zv-grad);
+	color: var(--color-on-primary);
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+@media (max-width: 760px) {
+	.zymarg-vm { grid-template-columns: 1fr; height: 70vh; }
+	.zymarg-vm__thread { display: none; }
+	.zymarg-vm.is-thread-open .zymarg-vm__list { display: none; }
+	.zymarg-vm.is-thread-open .zymarg-vm__thread { display: flex; }
+	.zymarg-vm__back { display: inline-flex; }
+}
+
+/* ---- Customers ------------------------------------------------------- */
+.zymarg-vcu-panel { display: none; }
+.zymarg-vcu-panel.is-active { display: block; }
+.zymarg-vcu-list { display: flex; flex-direction: column; gap: 10px; }
+.zymarg-vcu-row {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 12px 16px;
+	background: var(--zv-card-bg);
+	border: 1px solid var(--zv-border);
+	border-radius: var(--zv-radius);
+	box-shadow: var(--zv-shadow);
+}
+.zymarg-vcu-name { font-weight: 700; font-size: .9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.zymarg-vcu-email { font-size: .76rem; color: var(--color-text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.zymarg-vcu-stat { display: inline-flex; align-items: baseline; gap: 4px; line-height: 1.2; white-space: nowrap; }
+.zymarg-vcu-stat strong { font-weight: 800; font-size: .88rem; color: var(--color-on-primary-fixed); }
+.zymarg-vcu-stat--orders,
+.zymarg-vcu-stat--spent { font-size: .78rem; color: var(--color-text-muted); }
+.zymarg-vcu-last { font-size: .78rem; color: var(--color-text-muted); white-space: nowrap; }
+.zymarg-vcu-row > .zymarg-vo-view { margin-left: auto; flex-shrink: 0; }
+
+@media (max-width: 760px) {
+	.zymarg-vcu-row {
+		display: grid;
+		grid-template-columns: 40px 1fr auto;
+		grid-template-areas:
+			"avatar name msg"
+			". email orders"
+			". spent date";
+		align-items: center;
+		gap: 4px 10px;
+	}
+	.zymarg-vcu-avatar { grid-area: avatar; }
+	.zymarg-vcu-name { grid-area: name; }
+	.zymarg-vcu-row > .zymarg-vo-view { grid-area: msg; margin-left: 0; }
+	.zymarg-vcu-email { grid-area: email; }
+	.zymarg-vcu-stat--orders { grid-area: orders; text-align: right; justify-self: end; }
+	.zymarg-vcu-stat--spent { grid-area: spent; }
+	.zymarg-vcu-last { grid-area: date; text-align: right; justify-self: end; }
+}
+
+
+
+/* ==========================================================================
+   Phase 6 lite — Notifications feed
+   ========================================================================== */
+.zymarg-vn-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: var(--zv-gap); }
+.zymarg-vn-filter {
+	padding: 7px 14px;
+	border-radius: 999px;
+	border: 1px solid var(--zv-border);
+	background: var(--color-surface-lowest);
+	color: var(--color-text-muted);
+	font-weight: 700;
+	font-size: .82rem;
+	cursor: pointer;
+}
+.zymarg-vn-filter:hover { border-color: var(--color-primary); color: var(--color-primary); }
+.zymarg-vn-filter.is-active { background: var(--zv-grad); color: var(--color-on-primary); border-color: transparent; }
+
+.zymarg-vn-list { display: flex; flex-direction: column; gap: 10px; }
+.zymarg-vn-item {
+	display: flex;
+	align-items: center;
+	gap: 13px;
+	padding: 13px 16px;
+	background: var(--zv-card-bg);
+	border: 1px solid var(--zv-border);
+	border-radius: 14px;
+	box-shadow: var(--zv-shadow);
+	text-decoration: none;
+	color: inherit;
+	transition: border-color .16s ease, transform .16s ease;
+}
+.zymarg-vn-item:hover { border-color: var(--color-primary); transform: translateY(-1px); }
+.zymarg-vn-icon {
+	flex: 0 0 40px;
+	width: 40px; height: 40px;
+	display: inline-flex; align-items: center; justify-content: center;
+	border-radius: 12px;
+	background: var(--color-surface-container);
+	color: var(--color-primary);
+}
+.zymarg-vn-icon svg { width: 19px; height: 19px; }
+.zymarg-vn-icon--order { background: #e6f0ff; color: #1657c8; }
+.zymarg-vn-icon--stock { background: #fff3df; color: #b9770a; }
+.zymarg-vn-icon--review { background: #fff7e0; color: #c9920a; }
+.zymarg-vn-icon--message { background: rgba(149, 0, 165, .1); color: var(--color-primary); }
+.zymarg-vn-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.zymarg-vn-title { font-weight: 700; font-size: .9rem; color: var(--color-on-primary-fixed); }
+.zymarg-vn-desc { font-size: .8rem; color: var(--color-text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.zymarg-vn-time { flex: 0 0 auto; font-size: .72rem; color: var(--color-text-muted); }
+
+[data-theme="dark"] .zymarg-vn-icon--order { background: rgba(22, 87, 200, .18); color: #8db4ff; }
+[data-theme="dark"] .zymarg-vn-icon--stock,
+[data-theme="dark"] .zymarg-vn-icon--review { background: rgba(185, 119, 10, .18); color: #f0c074; }
+
+
+
+/* ==========================================================================
+   Contact Seller (product pages)
+   ========================================================================== */
+.zymarg-cs { margin: 16px 0; }
+.zymarg-cs__btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 11px 18px;
+	border: 0;
+	border-radius: 12px;
+	background: var(--zv-grad);
+	color: var(--color-on-primary);
+	font-weight: 700;
+	font-size: .9rem;
+	cursor: pointer;
+	text-decoration: none;
+	box-shadow: 0 6px 16px rgba(149, 0, 165, .22);
+}
+.zymarg-cs__btn:hover { transform: translateY(-1px); color: var(--color-on-primary); }
+.zymarg-cs__btn svg { width: 18px; height: 18px; }
+.zymarg-cs__form {
+	margin-top: 12px;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	max-width: 480px;
+}
+.zymarg-cs__input {
+	width: 100%;
+	padding: 11px 14px;
+	border: 1px solid var(--zv-border);
+	border-radius: 12px;
+	background: var(--color-surface-lowest);
+	color: var(--color-text-body);
+	font-size: .92rem;
+	resize: vertical;
+}
+.zymarg-cs__input:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(149, 0, 165, .1); }
+.zymarg-cs__send { align-self: flex-start; }
+.zymarg-cs__msg { margin: 0; font-size: .85rem; font-weight: 600; }
+.zymarg-cs__msg.is-ok { color: #1a8a52; }
+.zymarg-cs__msg.is-err { color: #c0392b; }
+
+/* ---- Hamburger nudge effect (v1.13.47) ------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+	@keyframes zvdNudge {
+		0%, 100% { transform: translateY(-50%) translateX(0); box-shadow: var(--zv-shadow); }
+		50% { transform: translateY(-50%) translateX(8px); box-shadow: 0 0 0 5px rgba(149,0,165,0.22), 0 0 14px rgba(149,0,165,0.12); }
+	}
+	.zymarg-vendor-hamburger.zvd-nudge-active {
+		animation: zvdNudge 0.5s cubic-bezier(0.25, 1, 0.5, 1) 0.8s 4;
+	}
+}
+
+
+
+/* ---- ZYMARG Insights attribution + install prompt on Analytics ---- */
+.zymarg-vendor-attribution {
+	margin: 12px 0 0;
+	padding: 8px 14px;
+	background: var(--color-surface-container, #eaedff);
+	border-radius: 10px;
+	font-size: 12px;
+	color: var(--color-text-muted, #534152);
+	text-align: center;
+}
+.zymarg-vendor-attribution a {
+	color: var(--color-primary, #9500a5);
+	font-weight: 700;
+	text-decoration: none;
+}
+.zymarg-vendor-attribution a:hover {
+	text-decoration: underline;
+}
+.zymarg-vendor-note--insights {
+	background: var(--color-surface-container, #eaedff);
+	border-left: 3px solid var(--color-primary, #9500a5);
+	padding: 10px 14px;
+	border-radius: 8px;
+}
+
+
+/* ======================================================================
+ * SPA section-loading state (v1.14.0)
+ *
+ * Shown briefly in .zymarg-vendor-content while a section is fetched over
+ * AJAX. Keeps a min-height so the layout doesn't jump/collapse during the
+ * swap, and centres a small brand-purple spinner.
+ * ==================================================================== */
+.zymarg-vendor-content.is-loading {
+	min-height: 60vh;
+}
+
+.zymarg-vendor-loading {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 50vh;
+	width: 100%;
+}
+
+.zymarg-vendor-loading__spinner {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	border: 3px solid rgba(149, 0, 165, 0.18); /* --color-primary @ low alpha */
+	border-top-color: var(--color-primary, #9500a5);
+	animation: zymarg-vendor-spin 0.7s linear infinite;
+}
+
+@keyframes zymarg-vendor-spin {
+	to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.zymarg-vendor-loading__spinner {
+		animation-duration: 1.6s;
+	}
+}
+
+/* ==========================================================================
+   Notification Dot (unread announcements)
+   ========================================================================== */
+.zymarg-vendor-nav__dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: #9500A5;
+	margin-left: auto;
+	flex-shrink: 0;
+	animation: zymarg-dot-pulse 2s ease-in-out infinite;
+}
+@keyframes zymarg-dot-pulse {
+	0%, 100% { opacity: 1; }
+	50% { opacity: .4; }
+}
+
+/* ==========================================================================
+   Vendor Announcement Cards (Notifications section)
+   ========================================================================== */
+.zymarg-announcements-section {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	margin-bottom: var(--zv-gap, 20px);
+}
+.zymarg-announcement-card {
+	position: relative;
+	background: var(--color-surface, #fff);
+	border-radius: 18px;
+	border: 1px solid #D8BFD3;
+	box-shadow: 0 8px 24px rgba(19, 27, 46, .06);
+	overflow: hidden;
+	transition: box-shadow .2s ease, border-color .2s ease;
+}
+.zymarg-announcement-card:hover {
+	box-shadow: 0 12px 30px rgba(149, 0, 165, .1);
+	border-color: rgba(189, 0, 209, .3);
+}
+.zymarg-announcement-card.is-unread {
+	border-color: rgba(149, 0, 165, .35);
+}
+.zymarg-announcement-card__accent {
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	width: 5px;
+	background: linear-gradient(135deg, #9500A5 0%, #BD00D1 60%, #FEA9FF 130%);
+}
+.zymarg-announcement-card__content {
+	padding: 18px 22px 18px 28px;
+}
+.zymarg-announcement-card__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin-bottom: 6px;
+}
+.zymarg-announcement-card__title {
+	font-size: .95rem;
+	font-weight: 700;
+	color: var(--color-on-primary-fixed, #36003d);
+	margin: 0;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+.zymarg-announcement-card__badge {
+	display: inline-block;
+	padding: 2px 8px;
+	font-size: .65rem;
+	font-weight: 700;
+	letter-spacing: .5px;
+	color: #fff;
+	background: linear-gradient(135deg, #9500A5 0%, #BD00D1 100%);
+	border-radius: 6px;
+}
+.zymarg-announcement-card__date {
+	font-size: .75rem;
+	color: var(--color-text-muted, #999);
+	white-space: nowrap;
+}
+.zymarg-announcement-card__body {
+	font-size: .85rem;
+	color: var(--color-text-body, #444);
+	line-height: 1.5;
+	margin: 0 0 10px;
+}
+.zymarg-announcement-mark-read {
+	display: inline-block;
+	padding: 5px 14px;
+	font-size: .75rem;
+	font-weight: 600;
+	color: #9500A5;
+	background: rgba(149, 0, 165, .08);
+	border: 1px solid rgba(149, 0, 165, .2);
+	border-radius: 8px;
+	cursor: pointer;
+	transition: background .15s, color .15s;
+}
+.zymarg-announcement-mark-read:hover {
+	background: linear-gradient(135deg, #9500A5 0%, #BD00D1 100%);
+	color: #fff;
+	border-color: transparent;
+}
+
+[data-theme="dark"] .zymarg-announcement-card {
+	border-color: rgba(216, 191, 211, .2);
+}
+[data-theme="dark"] .zymarg-announcement-card.is-unread {
+	border-color: rgba(189, 0, 209, .4);
+}
+[data-theme="dark"] .zymarg-announcement-card__body {
+	color: var(--color-text-body, #ccc);
+}
+
+/* =============================================================================
+   MESSAGES — Communication plugin live-chat widget inside .zymarg-vm__thread
+   When the Communication plugin is active the thread panel hosts a
+   zymarg-live-chat widget instead of the legacy composer.  These rules
+   make the widget fill and style correctly inside the existing VM layout.
+============================================================================= */
+
+/* The messages panel grows to fill the available thread height */
+.zymarg-vm__messages--comm {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  padding: 0;
+}
+
+/* The injected live-chat widget fills the comm messages panel */
+.zymarg-vm__messages--comm .zymarg-live-chat {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Scrollable message list */
+.zymarg-vm__messages--comm .zymarg-live-chat__messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.75rem 1rem;
+}
+
+/* Status bar */
+.zymarg-vm__messages--comm .zymarg-live-chat__status {
+  font-size: 0.72rem;
+  padding: 2px 1rem 0;
+  color: #9ca3af;
+  flex-shrink: 0;
+}
+
+/* Composer form */
+.zymarg-vm__messages--comm .zymarg-live-chat__form {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
+  padding: 0.625rem 0.75rem;
+  border-top: 1px solid var(--zv-border, #e5e7eb);
+  flex-shrink: 0;
+}
+
+.zymarg-vm__messages--comm .zymarg-live-chat__form textarea {
+  flex: 1;
+  resize: none;
+  border: 1px solid var(--zv-border, #e5e7eb);
+  border-radius: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  outline: none;
+  background: var(--zv-surface-alt, #f9fafb);
+  color: var(--zv-text, #111827);
+  font-family: inherit;
+  transition: border-color 0.15s;
+}
+.zymarg-vm__messages--comm .zymarg-live-chat__form textarea:focus {
+  border-color: var(--zv-accent, #6366f1);
+  background: #fff;
+}
+
+/* Send button */
+.zymarg-vm__messages--comm .zymarg-live-chat__send {
+  background: var(--zv-accent, #6366f1);
+  border: none;
+  border-radius: 0.75rem;
+  color: #fff;
+  cursor: pointer;
+  padding: 0.55rem 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: opacity 0.15s, transform 0.15s;
+}
+.zymarg-vm__messages--comm .zymarg-live-chat__send:hover  { opacity: 0.88; transform: scale(1.05); }
+.zymarg-vm__messages--comm .zymarg-live-chat__send:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+/* Message bubbles */
+.zymarg-vm__messages--comm .zymarg-live-chat__message {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.625rem;
+}
+.zymarg-vm__messages--comm .zymarg-live-chat__message.is-mine   { align-items: flex-end; }
+.zymarg-vm__messages--comm .zymarg-live-chat__message.is-theirs { align-items: flex-start; }
+
+.zymarg-vm__messages--comm .zymarg-live-chat__bubble {
+  max-width: 75%;
+  padding: 0.5rem 0.875rem;
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  word-break: break-word;
+}
+.zymarg-vm__messages--comm .is-mine .zymarg-live-chat__bubble {
+  background: var(--zv-accent, #6366f1);
+  color: #fff;
+  border-bottom-right-radius: 0.25rem;
+}
+.zymarg-vm__messages--comm .is-theirs .zymarg-live-chat__bubble {
+  background: var(--zv-surface-alt, #f3f4f6);
+  color: var(--zv-text, #111827);
+  border-bottom-left-radius: 0.25rem;
+}
+
+.zymarg-vm__messages--comm time {
+  font-size: 0.68rem;
+  color: #9ca3af;
+  margin-top: 2px;
+  padding: 0 0.25rem;
+}
+
+/* Typing indicator */
+.zymarg-vm__messages--comm .zymarg-live-chat__typing {
+  padding: 0 1rem 4px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.zymarg-vm__messages--comm .zymarg-live-chat__typing-label {
+  font-size: 0.75rem;
+  font-style: italic;
+  color: #6b7280;
+}
+
+/* ==========================================================================
+   Phase 6 — Buyer Account Nav Unread Badge                     v1.36.0
+   Styles the <span class="zymarg-nav-badge"> injected by the buyer-nav-badge
+   inline script beside the "Messages" link in WooCommerce My Account nav.
+   ========================================================================== */
+
+/* Make the nav anchor flex so the badge aligns to the right automatically. */
+.woocommerce-MyAccount-navigation-link--zymarg-messages > a {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.zymarg-nav-badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 18px;
+	height: 18px;
+	padding: 0 4px;
+	border-radius: 9px;
+	background: var(--color-primary, #9500a5);
+	color: #fff;
+	font-size: 10px;
+	font-weight: 700;
+	line-height: 1;
+	flex-shrink: 0;
+	margin-left: auto;
+	white-space: nowrap;
+	box-sizing: border-box;
+}
+
+[data-theme="dark"] .zymarg-nav-badge {
+	background: var(--color-primary-inverse, #fea9ff);
+	color: var(--color-on-primary-fixed, #36003d);
+}

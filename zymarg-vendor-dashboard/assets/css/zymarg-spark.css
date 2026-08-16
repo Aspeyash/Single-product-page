@@ -1,0 +1,118 @@
+/**
+ * ZYMARG DISCOVERY SPARK  --  zymarg-spark.css
+ *
+ * The brand mark AND the only loading indicator, front end and back end.
+ * Enqueued with the handle `zymarg-spark`. Never copy this into a plugin,
+ * never rename its classes, never run the SVG through an optimiser.
+ *
+ * Timings, keyframe percentages and transform origins are fixed.
+ *
+ * UPSTREAM PIN: the Discovery Spark package ships the lens as #6833EA with a
+ * glow of 104,51,234. ZYMARG uses #9500A5 / 149,0,165. The fill is read from
+ * --zym-color-primary and the glow is kept in a single variable so the two
+ * cannot drift apart. Do not revert these on an upstream update.
+ */
+
+.zymarg-spark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+
+  --zym-spark-purple: var(--zym-color-primary, #9500A5);
+  --zym-spark-gold:   #FFD166;
+  --zym-spark-glow:   149, 0, 165;
+  --zym-spark-offset: 0.7px;
+  --zym-spark-ease:   var(--zym-ease-spark, cubic-bezier(0.25, 1, 0.5, 1));
+}
+
+.zymarg-spark--sm  { --zym-spark-offset: 0.55px; width: 20px; height: 20px; }
+.zymarg-spark--md  { --zym-spark-offset: 0.70px; width: 24px; height: 24px; }
+.zymarg-spark--lg  { --zym-spark-offset: 0.90px; width: 32px; height: 32px; }
+.zymarg-spark--xl  { --zym-spark-offset: 1.20px; width: 48px; height: 48px; }
+.zymarg-spark--xxl { --zym-spark-offset: 1.50px; width: 60px; height: 60px; }
+
+/* Admin header slot: 44px, offset interpolated between lg and xl. */
+.zymarg-spark--header { --zym-spark-offset: 1.10px; width: 44px; height: 44px; }
+
+.zymarg-spark__svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+/* Sequential pulse in even thirds: accent -> companion -> hero */
+
+@keyframes zymarg-spark-lens--accent {
+  0%,    0%    { opacity: 0;    transform: scale(0.90); filter: drop-shadow(0 0 0px   rgba(var(--zym-spark-glow), 0)); }
+  8.3%,  25%   { opacity: 0.95; transform: scale(1.03); filter: drop-shadow(0 0 1.5px rgba(var(--zym-spark-glow), 0.25)); }
+  33.3%, 100%  { opacity: 0;    transform: scale(0.90); filter: drop-shadow(0 0 0px   rgba(var(--zym-spark-glow), 0)); }
+}
+
+@keyframes zymarg-spark-lens--companion {
+  0%,    33.3% { opacity: 0;    transform: scale(0.90); filter: drop-shadow(0 0 0px   rgba(var(--zym-spark-glow), 0)); }
+  41.6%, 58.3% { opacity: 0.95; transform: scale(1.03); filter: drop-shadow(0 0 1.5px rgba(var(--zym-spark-glow), 0.25)); }
+  66.6%, 100%  { opacity: 0;    transform: scale(0.90); filter: drop-shadow(0 0 0px   rgba(var(--zym-spark-glow), 0)); }
+}
+
+@keyframes zymarg-spark-lens--hero {
+  0%,    66.6% { opacity: 0;    transform: scale(0.90); filter: drop-shadow(0 0 0px   rgba(var(--zym-spark-glow), 0)); }
+  75%,   91.6% { opacity: 0.95; transform: scale(1.03); filter: drop-shadow(0 0 1.5px rgba(var(--zym-spark-glow), 0.25)); }
+  100%,  100%  { opacity: 0;    transform: scale(0.90); filter: drop-shadow(0 0 0px   rgba(var(--zym-spark-glow), 0)); }
+}
+
+.zymarg-spark-item--purple {
+  fill: var(--zym-spark-purple);
+  transform: translate(var(--zym-spark-offset), var(--zym-spark-offset));
+}
+
+.zymarg-spark-item--gold {
+  fill: var(--zym-spark-gold);
+  animation: none !important;
+}
+
+/* Origins are each shape's own geometric centre, so each lens pulses in place */
+
+.zymarg-spark-group--accent .zymarg-spark-item--purple {
+  animation: zymarg-spark-lens--accent 0.20s var(--zym-spark-ease) infinite;
+  transform-origin: 9.68px 7.8px;
+}
+
+.zymarg-spark-group--companion .zymarg-spark-item--purple {
+  animation: zymarg-spark-lens--companion 0.40s var(--zym-spark-ease) infinite;
+  transform-origin: 8.3px 15.04px;
+}
+
+.zymarg-spark-group--hero .zymarg-spark-item--purple {
+  animation: zymarg-spark-lens--hero 0.40s var(--zym-spark-ease) infinite;
+  transform-origin: 13.16px 11.9px;
+}
+
+/* Loading composition. The visible text is required: under reduced motion the
+   pulse is suppressed, so without text there is no feedback at all. */
+
+.zymarg-loading {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.zymarg-loading__text {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--zym-color-text);
+}
+
+.zymarg-admin .zymarg-loading__text {
+  color: var(--zym-color-neutral-text);
+}
+
+/* This block must come after any global reduced-motion block, or the global
+   rule wins and the Spark keeps animating. */
+@media (prefers-reduced-motion: reduce) {
+  .zymarg-spark-item--purple {
+    animation: none !important;
+    opacity: 0.7;
+  }
+}

@@ -1,0 +1,2819 @@
+/**
+ * ZYMARG Vendor Dashboard -- admin (wp-admin) stylesheet.
+ *
+ * Every rule here is scoped to .zymarg-admin so nothing leaks into WordPress
+ * chrome or into the front end. No raw colours, no raw sizes: every value
+ * references a --zym-* token from zymarg-tokens.css.
+ *
+ * Class prefix for this plugin is `zvd-`. Spark classes are brand identity
+ * and deliberately keep their own `zymarg-spark` naming.
+ *
+ * Depends on handle: zymarg-tokens
+ *
+ * @package ZYMARG_Vendor_Dashboard
+ */
+
+/* ---------------------------------------------------------------------- *
+ * Shell
+ * ---------------------------------------------------------------------- */
+
+/* .zymarg-admin itself (margin, max-width, font, colour, line-height) is
+   declared in zymarg-tokens.css alongside the back end tokens. */
+
+.zymarg-admin *,
+.zymarg-admin *::before,
+.zymarg-admin *::after {
+	box-sizing: border-box;
+}
+
+.zymarg-admin p {
+	font-size: var(--zym-font-size-sm);
+	color: var(--zym-color-text);
+	line-height: 1.5;
+}
+
+.zymarg-admin a {
+	color: var(--zym-color-primary);
+}
+
+.zymarg-admin a:focus-visible,
+.zymarg-admin button:focus-visible,
+.zymarg-admin input:focus-visible,
+.zymarg-admin select:focus-visible,
+.zymarg-admin textarea:focus-visible {
+	outline: none;
+	box-shadow: var(--zym-focus-ring);
+	border-color: var(--zym-color-primary);
+}
+
+/* ---------------------------------------------------------------------- *
+ * Header  --  one per screen, identical on every screen including submenus
+ * ---------------------------------------------------------------------- */
+
+.zvd-header {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--zym-gap-card);
+	flex-wrap: wrap;
+	padding: 22px 26px;
+	margin-bottom: 18px;
+	background: var(--zym-color-surface);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-card);
+	box-shadow: var(--zym-shadow-surface);
+	overflow: hidden;
+}
+
+/* 3px gradient strip across the top edge. Never a full-bleed gradient bar. */
+.zvd-header::before {
+	content: "";
+	position: absolute;
+	inset: 0 0 auto 0;
+	height: 3px;
+	background: var(--zym-gradient);
+}
+
+.zvd-header__left {
+	display: flex;
+	align-items: center;
+	gap: var(--zym-gap-small);
+	flex-wrap: wrap;
+	min-width: 0;
+}
+
+.zvd-header__text {
+	min-width: 0;
+}
+
+.zvd-header__right {
+	display: flex;
+	align-items: center;
+	gap: var(--zym-gap-tiny);
+	margin-left: auto;
+	flex-shrink: 0;
+}
+
+/* Wordmark: solid primary. Never gradient-filled text. */
+.zvd-wordmark {
+	margin: 0;
+	padding: 0;
+	font-size: 22px;
+	font-weight: var(--zym-font-weight-bold);
+	letter-spacing: -0.01em;
+	color: var(--zym-color-primary);
+	line-height: 1.5;
+}
+
+.zvd-subtitle {
+	margin: 0;
+	font-size: 13px;
+	font-weight: 400;
+	color: var(--zym-color-neutral-text);
+	line-height: 1.5;
+}
+
+/* Version badge: gradient pill, number only, always right-aligned. */
+.zvd-version {
+	display: inline-block;
+	padding: 6px var(--zym-space-5);
+	background: var(--zym-gradient);
+	color: var(--zym-color-surface);
+	font-size: var(--zym-font-size-xs);
+	font-weight: var(--zym-font-weight-bold);
+	letter-spacing: 0.04em;
+	border-radius: var(--zym-radius-pill);
+	box-shadow: 0 2px 6px rgba(149, 0, 165, 0.20);
+	white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------------- *
+ * Card + section title
+ * ---------------------------------------------------------------------- */
+
+.zvd-card {
+	padding: 22px var(--zym-space-9);
+	margin-bottom: 18px;
+	background: var(--zym-color-surface);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-card);
+	box-shadow: var(--zym-shadow-surface);
+}
+
+.zvd-card + .zvd-card {
+	margin-top: 18px;
+}
+
+.zvd-card__divider {
+	height: 1px;
+	border: 0;
+	margin: var(--zym-space-8) 0;
+	background: var(--zym-color-divider);
+}
+
+.zvd-section-title {
+	margin: 0 0 var(--zym-space-6);
+	font-size: var(--zym-font-size-xs);
+	font-weight: var(--zym-font-weight-bold);
+	text-transform: uppercase;
+	letter-spacing: 0.14em;
+	color: var(--zym-color-primary);
+}
+
+/* ---------------------------------------------------------------------- *
+ * Buttons
+ * ---------------------------------------------------------------------- */
+
+.zvd-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--zym-gap-tiny);
+	min-height: 32px;
+	padding: 9px 18px;
+	font-family: var(--zym-font);
+	font-size: 13px;
+	font-weight: var(--zym-font-weight-semibold);
+	line-height: 1.5;
+	border-radius: var(--zym-radius-control);
+	border: 1px solid transparent;
+	cursor: pointer;
+	text-decoration: none;
+	transition: transform var(--zym-motion-fast) var(--zym-ease),
+				box-shadow var(--zym-motion-fast) var(--zym-ease),
+				background-color var(--zym-motion-fast) var(--zym-ease),
+				border-color var(--zym-motion-fast) var(--zym-ease);
+}
+
+.zvd-btn[disabled],
+.zvd-btn.is-busy {
+	opacity: 0.65;
+	cursor: default;
+	pointer-events: none;
+}
+
+.zvd-btn--primary {
+	background: var(--zym-gradient);
+	color: var(--zym-color-surface);
+	border: none;
+	box-shadow: var(--zym-shadow-btn);
+}
+
+.zvd-btn--primary:hover {
+	transform: translateY(-1px);
+	box-shadow: var(--zym-shadow-btn-hover);
+	color: var(--zym-color-surface);
+}
+
+.zvd-btn--primary:active {
+	transform: translateY(0);
+}
+
+.zvd-btn--secondary {
+	background: var(--zym-color-surface);
+	color: var(--zym-color-primary);
+	border: 1px solid var(--zym-color-border);
+}
+
+.zvd-btn--secondary:hover {
+	background: var(--zym-color-bg);
+	border-color: var(--zym-color-primary);
+	color: var(--zym-color-primary);
+}
+
+.zvd-btn--danger {
+	background: var(--zym-color-error);
+	color: var(--zym-color-error-text);
+	border: none;
+}
+
+.zvd-btn--danger:hover {
+	background: var(--zym-color-error-hover);
+	color: var(--zym-color-error-text);
+}
+
+/* Spark inside a button uses the sm size. */
+.zvd-btn .zymarg-spark {
+	flex-shrink: 0;
+}
+
+/* ---------------------------------------------------------------------- *
+ * Back link
+ * ---------------------------------------------------------------------- */
+
+.zvd-back {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--zym-space-2);
+	min-height: 32px;
+	margin-bottom: var(--zym-space-5);
+	font-size: 13px;
+	font-weight: var(--zym-font-weight-semibold);
+	color: var(--zym-color-primary);
+	text-decoration: none;
+}
+
+.zvd-back:hover {
+	color: var(--zym-color-secondary);
+}
+
+/* ---------------------------------------------------------------------- *
+ * Hub grid
+ * ---------------------------------------------------------------------- */
+
+.zvd-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: var(--zym-gap-grid);
+}
+
+@media (max-width: 900px) {
+	.zvd-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+.zvd-hub-card {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	padding: var(--zym-space-11) var(--zym-space-8) var(--zym-space-10);
+	background: var(--zym-color-surface);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-card);
+	box-shadow: var(--zym-shadow-surface);
+	text-decoration: none;
+	color: var(--zym-color-text);
+	transition: transform var(--zym-motion-standard) var(--zym-ease),
+				border-color var(--zym-motion-standard) var(--zym-ease);
+}
+
+.zvd-hub-card:hover {
+	transform: translateY(-1px);
+	border-color: var(--zym-color-primary);
+	color: var(--zym-color-text);
+}
+
+.zvd-hub-card__icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: var(--zym-space-15);
+	height: var(--zym-space-15);
+	margin-bottom: 18px;
+	border-radius: var(--zym-radius-image);
+	background: var(--zym-gradient);
+	color: var(--zym-color-surface);
+}
+
+.zvd-hub-card__title {
+	margin-bottom: var(--zym-space-3);
+	font-size: var(--zym-font-size-md);
+	font-weight: var(--zym-font-weight-bold);
+	color: var(--zym-color-dark);
+}
+
+.zvd-hub-card__desc {
+	font-size: 13px;
+	color: var(--zym-color-neutral-text);
+	line-height: 1.5;
+}
+
+/* ---------------------------------------------------------------------- *
+ * Forms
+ * ---------------------------------------------------------------------- */
+
+.zvd-field {
+	margin-bottom: var(--zym-space-7);
+}
+
+.zvd-label {
+	display: block;
+	margin-bottom: var(--zym-space-2);
+	font-size: 13px;
+	font-weight: var(--zym-font-weight-semibold);
+	color: var(--zym-color-dark);
+}
+
+.zvd-help {
+	margin-top: var(--zym-space-2);
+	font-size: var(--zym-font-size-xs);
+	color: var(--zym-color-neutral-text);
+}
+
+.zymarg-admin input[type="text"],
+.zymarg-admin input[type="email"],
+.zymarg-admin input[type="url"],
+.zymarg-admin input[type="search"],
+.zymarg-admin input[type="password"],
+.zymarg-admin input[type="number"],
+.zymarg-admin select,
+.zymarg-admin textarea {
+	width: 100%;
+	min-height: 32px;
+	padding: var(--zym-space-4) var(--zym-space-5);
+	background: var(--zym-color-surface);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-control);
+	font-family: var(--zym-font);
+	font-size: var(--zym-font-size-sm);
+	color: var(--zym-color-text);
+	box-shadow: none;
+	transition: border-color var(--zym-motion-input) var(--zym-ease),
+				box-shadow var(--zym-motion-input) var(--zym-ease);
+}
+
+.zymarg-admin input[type="number"] {
+	max-width: 140px;
+	font-weight: var(--zym-font-weight-semibold);
+}
+
+.zymarg-admin textarea {
+	min-height: 90px;
+	resize: vertical;
+	line-height: 1.6;
+}
+
+.zymarg-admin ::placeholder {
+	color: var(--zym-color-neutral-text);
+	opacity: 0.7;
+}
+
+.zymarg-admin input[type="checkbox"] {
+	width: 18px;
+	height: 18px;
+	border-radius: var(--zym-space-2);
+	accent-color: var(--zym-color-primary);
+}
+
+/* Switch */
+
+.zvd-switch {
+	position: relative;
+	display: inline-block;
+	width: 44px;
+	height: var(--zym-space-9);
+	flex-shrink: 0;
+}
+
+.zvd-switch input {
+	position: absolute;
+	opacity: 0;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	cursor: pointer;
+}
+
+.zvd-switch__track {
+	position: absolute;
+	inset: 0;
+	background: var(--zym-color-border);
+	border-radius: var(--zym-space-9);
+	transition: background var(--zym-motion-input) var(--zym-ease);
+	pointer-events: none;
+}
+
+.zvd-switch__track::before {
+	content: "";
+	position: absolute;
+	top: 3px;
+	left: 3px;
+	width: 18px;
+	height: 18px;
+	background: var(--zym-color-surface);
+	border-radius: var(--zym-radius-pill);
+	transition: transform var(--zym-motion-input) var(--zym-ease);
+}
+
+.zvd-switch input:checked + .zvd-switch__track {
+	background: var(--zym-gradient);
+}
+
+.zvd-switch input:checked + .zvd-switch__track::before {
+	transform: translateX(20px);
+}
+
+.zvd-switch input:focus-visible + .zvd-switch__track {
+	box-shadow: var(--zym-focus-ring);
+}
+
+.zvd-toggle-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--zym-gap-card);
+	padding: var(--zym-space-5) 0;
+	border-bottom: 1px solid var(--zym-color-divider);
+}
+
+.zvd-toggle-row:last-child {
+	border-bottom: 0;
+}
+
+.zvd-toggle-label {
+	font-size: var(--zym-font-size-sm);
+	font-weight: var(--zym-font-weight-medium);
+	color: var(--zym-color-dark);
+}
+
+/* ---------------------------------------------------------------------- *
+ * Table
+ * ---------------------------------------------------------------------- */
+
+.zvd-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: var(--zym-font-size-sm);
+}
+
+.zvd-table th {
+	padding: var(--zym-space-4) var(--zym-space-5);
+	background: var(--zym-color-bg);
+	color: var(--zym-color-primary);
+	font-size: 11px;
+	font-weight: var(--zym-font-weight-bold);
+	text-transform: uppercase;
+	letter-spacing: 0.12em;
+	text-align: left;
+	text-shadow: none;
+	border-bottom: 1px solid var(--zym-color-border);
+}
+
+.zvd-table td {
+	padding: var(--zym-space-5);
+	border-bottom: 1px solid var(--zym-color-divider);
+	color: var(--zym-color-text);
+}
+
+.zvd-table tbody tr:nth-child(even) {
+	background: var(--zym-color-bg);
+}
+
+/* ---------------------------------------------------------------------- *
+ * Notices
+ * ---------------------------------------------------------------------- */
+
+.zvd-notice {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--zym-gap-tiny);
+	padding: var(--zym-space-5) var(--zym-space-6);
+	margin-bottom: var(--zym-space-7);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-control);
+	background: var(--zym-color-bg);
+	color: var(--zym-color-text);
+	font-size: var(--zym-font-size-sm);
+}
+
+.zvd-notice--success {
+	background: var(--zym-color-success-bg);
+	border-color: var(--zym-color-success-text);
+	color: var(--zym-color-success-text);
+}
+
+.zvd-notice--error {
+	background: var(--zym-color-error-bg);
+	border-color: var(--zym-color-error);
+	color: var(--zym-color-error);
+}
+
+/* State is never signalled by colour alone: this prefix carries the word. */
+.zvd-notice__label {
+	font-weight: var(--zym-font-weight-bold);
+}
+
+/* ---------------------------------------------------------------------- *
+ * Code + empty state
+ * ---------------------------------------------------------------------- */
+
+.zvd-code,
+.zymarg-admin code {
+	padding: var(--zym-space-3) var(--zym-space-4);
+	background: var(--zym-color-surface-alt);
+	border: 1px solid var(--zym-color-container);
+	border-radius: var(--zym-radius-chip);
+	font-family: var(--zym-font-mono);
+	font-size: var(--zym-font-size-xs);
+	color: var(--zym-color-dark);
+}
+
+.zvd-empty {
+	padding: var(--zym-space-10);
+	text-align: center;
+	background: var(--zym-color-bg);
+	border: 1px dashed var(--zym-color-border);
+	border-radius: var(--zym-radius-control);
+	color: var(--zym-color-neutral-text);
+	font-size: var(--zym-font-size-sm);
+}
+
+/* ---------------------------------------------------------------------- *
+ * Modal
+ * ---------------------------------------------------------------------- */
+
+/* If JavaScript appends a modal to document.body it lands outside the admin
+   wrapper, so the modal class is added to the token wrapper selector too
+   (see zymarg-tokens.css usage note) and restated here. */
+.zvd-modal {
+	background: var(--zym-color-surface);
+	border-radius: var(--zym-radius-card);
+	box-shadow: var(--zym-shadow-modal);
+	padding: 22px var(--zym-space-9);
+}
+
+/* ---------------------------------------------------------------------- *
+ * Chips
+ * ---------------------------------------------------------------------- */
+
+.zvd-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--zym-space-2);
+	padding: var(--zym-space-1) var(--zym-space-4);
+	border-radius: var(--zym-radius-pill);
+	background: var(--zym-color-neutral-bg);
+	color: var(--zym-color-neutral-text);
+	font-size: var(--zym-font-size-xs);
+	font-weight: var(--zym-font-weight-semibold);
+	letter-spacing: var(--zym-tracking-normal);
+}
+
+.zvd-chip--success {
+	background: var(--zym-color-success-bg);
+	color: var(--zym-color-success-text);
+}
+
+.zvd-chip--error {
+	background: var(--zym-color-error-bg);
+	color: var(--zym-color-error);
+}
+
+/* ---------------------------------------------------------------------- *
+ * Ajax navigation loading region
+ *
+ * NO SPINNER. The Discovery Spark is the only loading indicator in ZYMARG.
+ * ---------------------------------------------------------------------- */
+
+.zvd-loading-region {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	gap: var(--zym-gap-small);
+	min-height: 300px;
+	padding: var(--zym-space-15) var(--zym-space-8);
+}
+
+/* Keep the outgoing screen readable but inert while the next one loads. */
+.zvd-is-swapping {
+	opacity: 0.5;
+	pointer-events: none;
+	transition: opacity var(--zym-motion-fast) var(--zym-ease);
+}
+
+/* ---------------------------------------------------------------------- *
+ * Sidebar menu item  --  the only place we intentionally beat a core style.
+ * Beating: #adminmenu a.menu-top colour rules from wp-admin/css/colors.
+ * ---------------------------------------------------------------------- */
+
+#adminmenu #toplevel_page_zymarg-vendor-hub > a.menu-top,
+#adminmenu #toplevel_page_zymarg-vendor-hub > a.menu-top .wp-menu-name,
+#adminmenu #toplevel_page_zymarg-vendor-hub > a.menu-top .wp-menu-image::before {
+	color: var(--zym-color-secondary, #BD00D1) !important;
+	font-weight: 700;
+}
+
+#adminmenu #toplevel_page_zymarg-vendor-hub:hover > a.menu-top,
+#adminmenu #toplevel_page_zymarg-vendor-hub:hover > a.menu-top .wp-menu-name,
+#adminmenu #toplevel_page_zymarg-vendor-hub:hover > a.menu-top .wp-menu-image::before,
+#adminmenu #toplevel_page_zymarg-vendor-hub.current > a.menu-top,
+#adminmenu #toplevel_page_zymarg-vendor-hub.current > a.menu-top .wp-menu-name,
+#adminmenu #toplevel_page_zymarg-vendor-hub.current > a.menu-top .wp-menu-image::before,
+#adminmenu #toplevel_page_zymarg-vendor-hub.wp-has-current-submenu > a.menu-top,
+#adminmenu #toplevel_page_zymarg-vendor-hub.wp-has-current-submenu > a.menu-top .wp-menu-name,
+#adminmenu #toplevel_page_zymarg-vendor-hub.wp-has-current-submenu > a.menu-top .wp-menu-image::before {
+	color: var(--zym-color-surface, #FFFFFF) !important;
+}
+
+/* ---------------------------------------------------------------------- *
+ * Reduced motion
+ * ---------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+	.zymarg-admin *,
+	.zymarg-admin *::before,
+	.zymarg-admin *::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+}
+
+/* ---------------------------------------------------------------------------
+ * Admin header Spark slot -- 44px.
+ *
+ * The mark is rendered by the THEME's zymarg_discovery_spark() whenever the
+ * theme is active, so we cannot assume our own wrapper markup. We ask the theme
+ * for its 'lg' size plus the .zymarg-spark--header class and then pin the slot
+ * here, matching on both the class and the header's direct child so the size
+ * holds even if the theme wraps the SVG differently.
+ *
+ * Sized with width/height, never transform: scale() -- scaling would drag the
+ * lens offset out of alignment.
+ * ------------------------------------------------------------------------ */
+.zymarg-admin .zvd-header__left > .zymarg-spark,
+.zymarg-admin .zvd-header__left > .zymarg-spark--header,
+.zymarg-admin .zymarg-spark--header {
+	width: 44px;
+	height: 44px;
+	flex: 0 0 44px;
+	--zym-spark-offset: 1.10px;
+}
+
+.zymarg-admin .zvd-header__left > .zymarg-spark > svg,
+.zymarg-admin .zymarg-spark--header > svg,
+.zymarg-admin .zymarg-spark--header .zymarg-spark__svg {
+	width: 100%;
+	height: 100%;
+	display: block;
+}
+
+
+/* ===========================================================================
+ * SCREEN MODULES
+ *
+ * These rules used to live in <style> blocks printed inline by each admin
+ * screen's render callback. They are moved here and rewritten against tokens.
+ *
+ * The legacy class names (zvds-, zvdp-, zymarg-vendor-card, zymarg-announce-)
+ * are kept deliberately: the markup and the section JS both key off them, so
+ * renaming them would be a large, risky change for no visual gain. What
+ * matters for brand compliance is that every value below is a token.
+ *
+ * Everything is scoped under .zymarg-admin so nothing leaks into core screens.
+ *
+ * Off-brand values that were replaced, for the record:
+ *   #666 #888 #555 #333 #999 #ccc  -> --zym-color-neutral-text / border
+ *   #e7d9e5                        -> --zym-color-border
+ *   #f3ecf2                        -> --zym-color-divider
+ *   #faf5fa #faf8ff                -> --zym-color-bg
+ *   #fff3cd/#856404 #e2e3e5/#383d41-> neutral (no warning token exists)
+ *   #d4edda/#155724 #00a550 #0a8a3e-> success tokens
+ *   #f8d7da/#721c24 #d63638 #c0392b-> error tokens
+ *   #28a745 #ffc107                -> success / neutral status dots
+ * ======================================================================== */
+
+/* --- Shared: page hero banner (settings + payouts) ---------------------- */
+.zymarg-admin .zvds-hero,
+.zymarg-admin .zvdp-hero {
+	display: flex;
+	align-items: center;
+	gap: var(--zym-space-7);
+	margin: var(--zym-space-8) 0 var(--zym-space-9);
+	padding: var(--zym-space-10) var(--zym-space-10);
+	border-radius: var(--zym-radius-card);
+	color: var(--zym-color-surface);
+	background: var(--zym-gradient);
+	box-shadow: var(--zym-shadow-btn-hover);
+}
+
+.zymarg-admin .zvds-hero__icon,
+.zymarg-admin .zvdp-hero__icon {
+	width: var(--zym-space-14);
+	height: var(--zym-space-14);
+	flex: 0 0 var(--zym-space-14);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: var(--zym-radius-card);
+	background: rgba(255, 255, 255, 0.18);
+}
+
+.zymarg-admin .zvds-hero h1,
+.zymarg-admin .zvdp-hero h1 {
+	margin: 0;
+	color: var(--zym-color-surface);
+	font-size: var(--zym-font-size-xl);
+	font-weight: var(--zym-font-weight-extrabold);
+}
+
+.zymarg-admin .zvds-hero p,
+.zymarg-admin .zvdp-hero p {
+	margin: var(--zym-space-2) 0 0;
+	color: rgba(255, 255, 255, 0.90);
+	font-size: var(--zym-font-size-sm);
+}
+
+@media (max-width: 600px) {
+	.zymarg-admin .zvds-hero,
+	.zymarg-admin .zvdp-hero {
+		flex-direction: column;
+		text-align: center;
+	}
+}
+
+/* --- Settings screen ---------------------------------------------------- */
+.zymarg-admin .zymarg-vd-settings { max-width: 820px; }
+
+.zymarg-admin .zvds-toggles {
+	background: var(--zym-color-surface);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-card);
+	padding: var(--zym-space-3) 0;
+	box-shadow: var(--zym-shadow-surface);
+	margin-bottom: var(--zym-space-9);
+}
+
+.zymarg-admin .zvds-toggle-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: var(--zym-space-6) var(--zym-space-9);
+	border-bottom: 1px solid var(--zym-color-divider);
+}
+
+.zymarg-admin .zvds-toggle-row:last-child { border-bottom: none; }
+
+.zymarg-admin .zvds-toggle-label {
+	font-size: var(--zym-font-size-sm);
+	font-weight: var(--zym-font-weight-semibold);
+	color: var(--zym-color-dark);
+}
+
+/* Toggle switch. 44x24 track, 18x18 thumb, 20px travel -- matches .zvd-switch. */
+.zymarg-admin .zvds-switch {
+	position: relative;
+	display: inline-block;
+	width: 44px;
+	height: var(--zym-space-9);
+	flex-shrink: 0;
+}
+
+.zymarg-admin .zvds-switch input { opacity: 0; width: 0; height: 0; }
+
+.zymarg-admin .zvds-switch__slider {
+	position: absolute;
+	inset: 0;
+	cursor: pointer;
+	background: var(--zym-color-neutral-bg);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-pill);
+	transition: background var(--zym-motion-input) var(--zym-ease);
+}
+
+.zymarg-admin .zvds-switch__slider::before {
+	content: "";
+	position: absolute;
+	width: 18px;
+	height: 18px;
+	left: 2px;
+	bottom: 2px;
+	background: var(--zym-color-surface);
+	border-radius: 50%;
+	box-shadow: var(--zym-shadow-input);
+	transition: transform var(--zym-motion-input) var(--zym-ease);
+}
+
+.zymarg-admin .zvds-switch input:checked + .zvds-switch__slider {
+	background: var(--zym-gradient);
+	border-color: transparent;
+}
+
+.zymarg-admin .zvds-switch input:checked + .zvds-switch__slider::before {
+	transform: translateX(20px);
+}
+
+.zymarg-admin .zvds-switch input:focus-visible + .zvds-switch__slider {
+	box-shadow: var(--zym-focus-ring);
+}
+
+.zymarg-admin .zvds-save-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--zym-gap-tiny);
+	padding: var(--zym-space-5) var(--zym-space-10);
+	border: none;
+	border-radius: var(--zym-radius-control);
+	font-size: var(--zym-font-size-sm);
+	font-weight: var(--zym-font-weight-bold);
+	color: var(--zym-color-surface);
+	cursor: pointer;
+	background: var(--zym-gradient);
+	box-shadow: var(--zym-shadow-btn);
+	transition: box-shadow var(--zym-motion-fast) var(--zym-ease);
+}
+
+.zymarg-admin .zvds-save-btn:hover { box-shadow: var(--zym-shadow-btn-hover); }
+.zymarg-admin .zvds-save-btn:focus-visible { outline: none; box-shadow: var(--zym-focus-ring); }
+
+/* AI Greeting Intelligence panel */
+.zymarg-admin .zvds-ai-section {
+	margin-top: var(--zym-space-11);
+	background: var(--zym-color-surface);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-card);
+	padding: var(--zym-space-10) var(--zym-space-10) var(--zym-space-9);
+	box-shadow: var(--zym-shadow-surface);
+}
+
+.zymarg-admin .zvds-ai-header {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--zym-space-7);
+	margin-bottom: var(--zym-space-9);
+}
+
+.zymarg-admin .zvds-ai-header__icon {
+	flex: 0 0 44px;
+	width: 44px;
+	height: 44px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: var(--zym-radius-control);
+	background: var(--zym-gradient);
+	color: var(--zym-color-surface);
+}
+
+.zymarg-admin .zvds-ai-title {
+	margin: 0 0 var(--zym-space-2);
+	font-size: var(--zym-font-size-md);
+	font-weight: var(--zym-font-weight-bold);
+	color: var(--zym-color-dark);
+}
+
+.zymarg-admin .zvds-ai-desc {
+	margin: 0;
+	font-size: 13px;
+	color: var(--zym-color-text);
+	line-height: 1.55;
+}
+
+.zymarg-admin .zvds-ai-fields { display: flex; flex-direction: column; }
+
+.zymarg-admin .zvds-ai-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--zym-space-9);
+	padding: var(--zym-space-7) 0;
+	border-bottom: 1px solid var(--zym-color-divider);
+}
+
+.zymarg-admin .zvds-ai-row:last-child { border-bottom: none; }
+
+.zymarg-admin .zvds-ai-row__label {
+	display: flex;
+	flex-direction: column;
+	gap: var(--zym-space-1);
+	font-size: var(--zym-font-size-sm);
+	font-weight: var(--zym-font-weight-semibold);
+	color: var(--zym-color-dark);
+}
+
+.zymarg-admin .zvds-ai-row__label small {
+	font-weight: 400;
+	font-size: var(--zym-font-size-xs);
+	color: var(--zym-color-neutral-text);
+}
+
+.zymarg-admin .zvds-ai-row__label code {
+	font-size: 11px;
+	font-family: var(--zym-font-mono);
+	background: var(--zym-color-divider);
+	padding: var(--zym-space-1) var(--zym-space-2);
+	border-radius: var(--zym-radius-chip);
+	color: var(--zym-color-primary);
+}
+
+.zymarg-admin .zvds-ai-input,
+.zymarg-admin .zvds-ai-select {
+	width: 280px;
+	padding: var(--zym-space-4) var(--zym-space-6);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-control);
+	font-size: 13px;
+	color: var(--zym-color-dark);
+	background: var(--zym-color-surface);
+	transition: border-color var(--zym-motion-input) var(--zym-ease),
+	            box-shadow var(--zym-motion-input) var(--zym-ease);
+}
+
+.zymarg-admin .zvds-ai-select { cursor: pointer; }
+
+.zymarg-admin .zvds-ai-input:focus,
+.zymarg-admin .zvds-ai-select:focus {
+	outline: none;
+	border-color: var(--zym-color-primary);
+	box-shadow: var(--zym-focus-ring);
+}
+
+.zymarg-admin .zvds-ai-key-wrap { position: relative; width: 280px; }
+.zymarg-admin .zvds-ai-key-wrap .zvds-ai-input {
+	width: 100%;
+	padding-right: var(--zym-space-12);
+	box-sizing: border-box;
+}
+
+.zymarg-admin .zvds-ai-eye {
+	position: absolute;
+	right: var(--zym-space-4);
+	top: 50%;
+	transform: translateY(-50%);
+	background: none;
+	border: none;
+	cursor: pointer;
+	color: var(--zym-color-neutral-text);
+	/* Icon-only control: keep the 32px minimum target from the spec. */
+	min-width: 32px;
+	min-height: 32px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.zymarg-admin .zvds-ai-eye:hover { color: var(--zym-color-primary); }
+.zymarg-admin .zvds-ai-eye:focus-visible { outline: none; box-shadow: var(--zym-focus-ring); border-radius: var(--zym-radius-chip); }
+
+.zymarg-admin .zvds-ai-status {
+	display: flex;
+	align-items: center;
+	gap: var(--zym-gap-tiny);
+	margin-top: var(--zym-space-7);
+	padding: var(--zym-space-5) var(--zym-space-7);
+	border-radius: var(--zym-radius-control);
+	background: var(--zym-color-bg);
+	font-size: 13px;
+	color: var(--zym-color-text);
+}
+
+.zymarg-admin .zvds-ai-status__dot {
+	flex: 0 0 var(--zym-space-4);
+	width: var(--zym-space-4);
+	height: var(--zym-space-4);
+	border-radius: 50%;
+}
+
+/* Status is also spelled out in the adjacent text, never colour alone. */
+.zymarg-admin .zvds-ai-status__dot--on   { background: var(--zym-color-success-text); }
+.zymarg-admin .zvds-ai-status__dot--warn { background: var(--zym-color-primary); }
+.zymarg-admin .zvds-ai-status__dot--off  { background: var(--zym-color-neutral-text); }
+
+@media (max-width: 700px) {
+	.zymarg-admin .zvds-ai-row { flex-direction: column; align-items: flex-start; gap: var(--zym-space-4); }
+	.zymarg-admin .zvds-ai-input,
+	.zymarg-admin .zvds-ai-select,
+	.zymarg-admin .zvds-ai-key-wrap { width: 100%; }
+	.zymarg-admin .zvds-ai-header { flex-direction: column; }
+}
+
+/* --- Payouts screen ----------------------------------------------------- */
+.zymarg-admin .zymarg-vd-payouts { max-width: var(--zym-container); }
+
+.zymarg-admin .zvdp-tabs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--zym-gap-tiny);
+	margin-bottom: var(--zym-space-8);
+}
+
+.zymarg-admin .zvdp-tab {
+	display: inline-block;
+	padding: var(--zym-space-3) var(--zym-space-7);
+	border-radius: var(--zym-radius-pill);
+	font-size: 13px;
+	font-weight: var(--zym-font-weight-semibold);
+	text-decoration: none;
+	color: var(--zym-color-text);
+	background: var(--zym-color-surface);
+	border: 1px solid var(--zym-color-border);
+	transition: border-color var(--zym-motion-input) var(--zym-ease),
+	            color var(--zym-motion-input) var(--zym-ease);
+}
+
+.zymarg-admin .zvdp-tab:hover {
+	border-color: var(--zym-color-secondary);
+	color: var(--zym-color-primary);
+}
+
+.zymarg-admin .zvdp-tab:focus-visible { outline: none; box-shadow: var(--zym-focus-ring); }
+
+.zymarg-admin .zvdp-tab--active {
+	color: var(--zym-color-surface);
+	border-color: transparent;
+	background: var(--zym-gradient);
+	box-shadow: var(--zym-shadow-btn);
+}
+
+.zymarg-admin .zvdp-table-card {
+	background: var(--zym-color-surface);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-card);
+	box-shadow: var(--zym-shadow-surface);
+	overflow: hidden;
+}
+
+.zymarg-admin .zvdp-table { width: 100%; border-collapse: collapse; }
+
+.zymarg-admin .zvdp-table thead th {
+	padding: var(--zym-space-6) var(--zym-space-7);
+	text-align: left;
+	font-size: 11px;
+	font-weight: var(--zym-font-weight-bold);
+	color: var(--zym-color-text);
+	text-transform: uppercase;
+	letter-spacing: 0.12em;
+	background: var(--zym-color-bg);
+	border-bottom: 1px solid var(--zym-color-border);
+}
+
+.zymarg-admin .zvdp-table tbody td {
+	padding: var(--zym-space-6) var(--zym-space-7);
+	font-size: var(--zym-font-size-sm);
+	color: var(--zym-color-dark);
+	border-bottom: 1px solid var(--zym-color-divider);
+	vertical-align: top;
+}
+
+.zymarg-admin .zvdp-table tbody tr:last-child td { border-bottom: none; }
+
+.zymarg-admin .zvdp-email { font-size: var(--zym-font-size-xs); color: var(--zym-color-text); }
+.zymarg-admin .zvdp-note  { font-size: var(--zym-font-size-xs); color: var(--zym-color-text); font-style: italic; }
+
+.zymarg-admin .zvdp-empty {
+	text-align: center;
+	padding: var(--zym-space-11) var(--zym-space-7);
+	color: var(--zym-color-text);
+}
+
+/* Status badges. Each badge also carries its status as text. */
+.zymarg-admin .zvdp-badge {
+	display: inline-block;
+	padding: var(--zym-space-2) var(--zym-space-4);
+	border-radius: var(--zym-radius-chip);
+	font-size: var(--zym-font-size-xs);
+	font-weight: var(--zym-font-weight-bold);
+	line-height: 1.4;
+	white-space: nowrap;
+}
+
+.zymarg-admin .zvdp-badge--approved,
+.zymarg-admin .zvdp-badge--paid {
+	background: var(--zym-color-success-bg);
+	color: var(--zym-color-success-text);
+}
+
+.zymarg-admin .zvdp-badge--rejected {
+	background: var(--zym-color-error-bg);
+	color: var(--zym-color-error);
+}
+
+/* No warning token exists in the system, so pending and cancelled use the
+ * neutral pair rather than inventing an amber. */
+.zymarg-admin .zvdp-badge--pending,
+.zymarg-admin .zvdp-badge--cancelled {
+	background: var(--zym-color-neutral-bg);
+	color: var(--zym-color-neutral-text);
+}
+
+.zymarg-admin .zvdp-badge--pending { color: var(--zym-color-dark); }
+
+.zymarg-admin .zvdp-action-form { display: flex; flex-direction: column; gap: var(--zym-space-2); }
+
+.zymarg-admin .zvdp-note-input {
+	width: 100%;
+	padding: var(--zym-space-3) var(--zym-space-4);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-chip);
+	font-size: var(--zym-font-size-xs);
+	outline: none;
+	transition: border-color var(--zym-motion-input) var(--zym-ease);
+}
+
+.zymarg-admin .zvdp-note-input:focus {
+	border-color: var(--zym-color-primary);
+	box-shadow: var(--zym-focus-ring);
+}
+
+.zymarg-admin .zvdp-action-btns { display: flex; gap: var(--zym-space-2); flex-wrap: wrap; }
+
+.zymarg-admin .zvdp-btn {
+	padding: var(--zym-space-3) var(--zym-space-6);
+	border-radius: var(--zym-radius-chip);
+	font-size: var(--zym-font-size-xs);
+	font-weight: var(--zym-font-weight-bold);
+	cursor: pointer;
+	border: none;
+	/* Spec minimum interactive target. */
+	min-height: 32px;
+	transition: box-shadow var(--zym-motion-fast) var(--zym-ease);
+}
+
+.zymarg-admin .zvdp-btn:focus-visible { outline: none; box-shadow: var(--zym-focus-ring); }
+
+.zymarg-admin .zvdp-btn--primary {
+	color: var(--zym-color-surface);
+	background: var(--zym-gradient);
+	box-shadow: var(--zym-shadow-btn);
+}
+
+.zymarg-admin .zvdp-btn--primary:hover { box-shadow: var(--zym-shadow-btn-hover); }
+
+.zymarg-admin .zvdp-btn--ghost {
+	color: var(--zym-color-primary);
+	background: transparent;
+	border: 1px solid var(--zym-color-border);
+}
+
+.zymarg-admin .zvdp-btn--ghost:hover {
+	border-color: var(--zym-color-primary);
+	background: var(--zym-color-bg);
+}
+
+@media (max-width: 600px) {
+	.zymarg-admin .zvdp-table-card { overflow-x: auto; }
+}
+
+/* --- Vendors screen ----------------------------------------------------- */
+.zymarg-admin .zymarg-admin-vendors-wrap { max-width: 900px; }
+
+.zymarg-admin .zymarg-admin-vendors-header { margin-bottom: var(--zym-space-10); }
+
+.zymarg-admin .zymarg-admin-vendors-title {
+	font-size: var(--zym-font-size-xl);
+	font-weight: var(--zym-font-weight-bold);
+	color: var(--zym-color-primary);
+	margin-bottom: var(--zym-space-2);
+}
+
+.zymarg-admin .zymarg-admin-vendors-subtitle {
+	font-size: 13px;
+	color: var(--zym-color-neutral-text);
+	margin: 0;
+}
+
+.zymarg-admin .zymarg-admin-vendors-empty {
+	background: var(--zym-color-surface);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-card);
+	padding: var(--zym-space-12) var(--zym-space-9);
+	text-align: center;
+	color: var(--zym-color-neutral-text);
+	box-shadow: var(--zym-shadow-surface);
+}
+
+.zymarg-admin .zymarg-admin-vendors-grid {
+	display: flex;
+	flex-direction: column;
+	gap: var(--zym-space-8);
+}
+
+.zymarg-admin .zymarg-vendor-card {
+	background: var(--zym-color-surface);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-card);
+	padding: var(--zym-space-9) var(--zym-space-10);
+	box-shadow: var(--zym-shadow-surface);
+	transition: border-color var(--zym-motion-input) var(--zym-ease),
+	            box-shadow var(--zym-motion-input) var(--zym-ease);
+}
+
+.zymarg-admin .zymarg-vendor-card:hover {
+	border-color: var(--zym-color-secondary);
+	box-shadow: var(--zym-shadow-card-hover);
+}
+
+.zymarg-admin .zymarg-vendor-card__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: var(--zym-space-7);
+	gap: var(--zym-space-5);
+	flex-wrap: wrap;
+}
+
+.zymarg-admin .zymarg-vendor-card__info { display: flex; flex-direction: column; gap: var(--zym-space-1); }
+
+.zymarg-admin .zymarg-vendor-card__name {
+	font-size: var(--zym-font-size-md);
+	font-weight: var(--zym-font-weight-bold);
+	color: var(--zym-color-dark);
+}
+
+.zymarg-admin .zymarg-vendor-card__email {
+	font-size: 13px;
+	color: var(--zym-color-neutral-text);
+}
+
+.zymarg-admin .zymarg-vendor-card__badge {
+	display: inline-block;
+	padding: var(--zym-space-2) var(--zym-space-5);
+	font-size: var(--zym-font-size-xs);
+	font-weight: var(--zym-font-weight-semibold);
+	border-radius: var(--zym-radius-pill);
+	white-space: nowrap;
+}
+
+.zymarg-admin .zymarg-vendor-card__badge--global {
+	background: var(--zym-color-bg);
+	color: var(--zym-color-primary);
+}
+
+.zymarg-admin .zymarg-vendor-card__badge--custom {
+	background: var(--zym-color-container);
+	color: var(--zym-color-secondary);
+}
+
+.zymarg-admin .zymarg-vendor-card__fields {
+	display: flex;
+	gap: var(--zym-space-7);
+	flex-wrap: wrap;
+	align-items: flex-end;
+	margin-bottom: var(--zym-space-7);
+}
+
+.zymarg-admin .zymarg-vendor-card__field {
+	display: flex;
+	flex-direction: column;
+	gap: var(--zym-space-2);
+	min-width: 160px;
+	flex: 1;
+}
+
+.zymarg-admin .zymarg-vendor-card__label {
+	font-size: var(--zym-font-size-xs);
+	font-weight: var(--zym-font-weight-semibold);
+	color: var(--zym-color-text);
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+}
+
+.zymarg-admin .zymarg-vendor-card__select,
+.zymarg-admin .zymarg-vendor-card__input {
+	padding: var(--zym-space-3) var(--zym-space-5);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-control);
+	font-size: var(--zym-font-size-sm);
+	color: var(--zym-color-dark);
+	background: var(--zym-color-surface);
+	transition: border-color var(--zym-motion-input) var(--zym-ease);
+	outline: none;
+}
+
+.zymarg-admin .zymarg-vendor-card__select:focus,
+.zymarg-admin .zymarg-vendor-card__input:focus {
+	border-color: var(--zym-color-primary);
+	box-shadow: var(--zym-focus-ring);
+}
+
+.zymarg-admin .zymarg-vendor-card__actions {
+	display: flex;
+	align-items: center;
+	gap: var(--zym-space-5);
+}
+
+.zymarg-admin .zymarg-vendor-card__save {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: var(--zym-space-3) var(--zym-space-9);
+	min-height: 32px;
+	font-size: 13px;
+	font-weight: var(--zym-font-weight-semibold);
+	color: var(--zym-color-surface);
+	background: var(--zym-gradient);
+	border: none;
+	border-radius: var(--zym-radius-control);
+	cursor: pointer;
+	box-shadow: var(--zym-shadow-btn);
+	transition: box-shadow var(--zym-motion-fast) var(--zym-ease);
+}
+
+.zymarg-admin .zymarg-vendor-card__save:hover { box-shadow: var(--zym-shadow-btn-hover); }
+.zymarg-admin .zymarg-vendor-card__save:focus-visible { outline: none; box-shadow: var(--zym-focus-ring); }
+.zymarg-admin .zymarg-vendor-card__save:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+
+.zymarg-admin .zymarg-vendor-card__feedback {
+	font-size: 13px;
+	font-weight: var(--zym-font-weight-medium);
+	opacity: 0;
+	transition: opacity var(--zym-motion-standard) var(--zym-ease);
+}
+
+.zymarg-admin .zymarg-vendor-card__feedback--success { color: var(--zym-color-success-text); opacity: 1; }
+.zymarg-admin .zymarg-vendor-card__feedback--error   { color: var(--zym-color-error); opacity: 1; }
+
+.zymarg-admin .zymarg-vendor-card__verification {
+	border-top: 1px solid var(--zym-color-divider);
+	margin-top: var(--zym-space-2);
+	padding-top: var(--zym-space-6);
+	margin-bottom: var(--zym-space-7);
+}
+
+.zymarg-admin .zymarg-vendor-card__verification .zymarg-vendor-card__fields { margin-bottom: 0; }
+
+.zymarg-admin .zymarg-vendor-card__verification textarea.zymarg-vendor-card__input {
+	resize: vertical;
+	min-height: var(--zym-space-11);
+}
+
+@media (max-width: 600px) {
+	.zymarg-admin .zymarg-vendor-card { padding: var(--zym-space-7) var(--zym-space-7); }
+	.zymarg-admin .zymarg-vendor-card__fields { flex-direction: column; }
+	.zymarg-admin .zymarg-vendor-card__field { min-width: unset; }
+	.zymarg-admin .zymarg-vendor-card__header { flex-direction: column; align-items: flex-start; }
+}
+
+/* --- Announcements screen ----------------------------------------------- */
+.zymarg-admin .zymarg-admin-announcements-wrap { max-width: 820px; }
+
+.zymarg-admin .zymarg-announce-form-card,
+.zymarg-admin .zymarg-announce-list-card {
+	position: relative;
+	background: var(--zym-color-surface);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-card);
+	box-shadow: var(--zym-shadow-surface);
+	padding: var(--zym-space-10);
+	margin-bottom: var(--zym-space-10);
+	overflow: hidden;
+}
+
+.zymarg-admin .zymarg-announce-list-card { margin-bottom: 0; }
+
+.zymarg-admin .zymarg-announce-form-card__accent {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 3px;
+	background: var(--zym-gradient);
+}
+
+.zymarg-admin .zymarg-announce-form-card__title,
+.zymarg-admin .zymarg-announce-list-card__title {
+	font-size: var(--zym-font-size-md);
+	font-weight: var(--zym-font-weight-bold);
+	color: var(--zym-color-dark);
+	margin: 0 0 var(--zym-space-7);
+}
+
+.zymarg-admin .zymarg-announce-form__field { margin-bottom: var(--zym-space-6); }
+
+.zymarg-admin .zymarg-announce-form__field label {
+	display: block;
+	font-weight: var(--zym-font-weight-semibold);
+	font-size: 13px;
+	color: var(--zym-color-dark);
+	margin-bottom: var(--zym-space-2);
+}
+
+.zymarg-admin .zymarg-announce-form__field input[type="text"],
+.zymarg-admin .zymarg-announce-form__field textarea,
+.zymarg-admin .zymarg-announce-form__field select {
+	width: 100%;
+	padding: var(--zym-space-4) var(--zym-space-6);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-control);
+	font-size: var(--zym-font-size-sm);
+	color: var(--zym-color-dark);
+	background: var(--zym-color-surface);
+	transition: border-color var(--zym-motion-input) var(--zym-ease);
+}
+
+.zymarg-admin .zymarg-announce-form__field input[type="text"]:focus,
+.zymarg-admin .zymarg-announce-form__field textarea:focus,
+.zymarg-admin .zymarg-announce-form__field select:focus {
+	border-color: var(--zym-color-primary);
+	outline: none;
+	box-shadow: var(--zym-focus-ring);
+}
+
+.zymarg-admin .zymarg-announce-form__field select[multiple] { min-height: 100px; }
+
+.zymarg-admin .zymarg-announce-form__actions {
+	display: flex;
+	align-items: center;
+	gap: var(--zym-space-5);
+	margin-top: var(--zym-space-3);
+}
+
+/* !important is retained here only to beat WP core's .button rules. */
+.zymarg-admin .zymarg-announce-submit {
+	background: var(--zym-gradient) !important;
+	border: none !important;
+	color: var(--zym-color-surface) !important;
+	border-radius: var(--zym-radius-control) !important;
+	padding: var(--zym-space-4) var(--zym-space-9) !important;
+	font-weight: var(--zym-font-weight-semibold) !important;
+	min-height: 32px;
+	cursor: pointer;
+	box-shadow: var(--zym-shadow-btn);
+	transition: box-shadow var(--zym-motion-fast) var(--zym-ease);
+}
+
+.zymarg-admin .zymarg-announce-submit:hover { box-shadow: var(--zym-shadow-btn-hover); }
+.zymarg-admin .zymarg-announce-submit:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+
+.zymarg-admin .zymarg-announce-form__feedback {
+	font-size: 13px;
+	font-weight: var(--zym-font-weight-semibold);
+}
+
+.zymarg-admin .zymarg-announce-form__feedback--success { color: var(--zym-color-success-text); }
+.zymarg-admin .zymarg-announce-form__feedback--error   { color: var(--zym-color-error); }
+
+.zymarg-admin .zymarg-announce-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: var(--zym-space-6) 0;
+	border-bottom: 1px solid var(--zym-color-divider);
+	gap: var(--zym-space-5);
+}
+
+.zymarg-admin .zymarg-announce-row:last-child { border-bottom: none; }
+
+.zymarg-admin .zymarg-announce-row__title {
+	display: block;
+	font-size: var(--zym-font-size-sm);
+	color: var(--zym-color-dark);
+}
+
+.zymarg-admin .zymarg-announce-row__meta {
+	font-size: var(--zym-font-size-xs);
+	color: var(--zym-color-neutral-text);
+}
+
+.zymarg-admin .zymarg-announce-status--active {
+	color: var(--zym-color-success-text);
+	font-weight: var(--zym-font-weight-semibold);
+}
+
+.zymarg-admin .zymarg-announce-status--expired {
+	color: var(--zym-color-neutral-text);
+	font-weight: var(--zym-font-weight-semibold);
+}
+
+.zymarg-admin .zymarg-announce-row__actions { display: flex; gap: var(--zym-gap-tiny); flex-shrink: 0; }
+
+.zymarg-admin .zymarg-announce-row__actions .button {
+	font-size: var(--zym-font-size-xs);
+	padding: var(--zym-space-2) var(--zym-space-5);
+	border-radius: var(--zym-radius-chip);
+}
+
+.zymarg-admin .zymarg-announce-delete {
+	color: var(--zym-color-error) !important;
+	border-color: var(--zym-color-error) !important;
+}
+
+.zymarg-admin .zymarg-announce-empty {
+	text-align: center;
+	color: var(--zym-color-neutral-text);
+	padding: var(--zym-space-8);
+}
+
+
+/* --- D-Instruction screen ----------------------------------------------- */
+/* NOTE: this screen already used .zvd-card / .zvd-grid / .zvd-hero locally,
+ * which now collide with the shared components above. That is intentional and
+ * harmless -- it picks up the shared card, and only the doc-specific extras
+ * are declared here. */
+.zymarg-admin .zymarg-vd-doc { max-width: var(--zym-container); }
+
+.zymarg-admin .zymarg-vd-doc .zvd-hero {
+	display: flex;
+	align-items: center;
+	gap: var(--zym-space-7);
+	margin: var(--zym-space-8) 0 var(--zym-space-9);
+	padding: var(--zym-space-10);
+	border-radius: var(--zym-radius-card);
+	color: var(--zym-color-surface);
+	background: var(--zym-gradient);
+	box-shadow: var(--zym-shadow-btn-hover);
+}
+
+.zymarg-admin .zymarg-vd-doc .zvd-hero__icon {
+	width: var(--zym-space-14);
+	height: var(--zym-space-14);
+	flex: 0 0 var(--zym-space-14);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: var(--zym-radius-card);
+	background: rgba(255, 255, 255, 0.18);
+}
+
+.zymarg-admin .zymarg-vd-doc .zvd-hero h1 {
+	margin: 0;
+	color: var(--zym-color-surface);
+	font-size: var(--zym-font-size-xl);
+	font-weight: var(--zym-font-weight-extrabold);
+}
+
+.zymarg-admin .zymarg-vd-doc .zvd-hero p {
+	margin: var(--zym-space-2) 0 0;
+	color: rgba(255, 255, 255, 0.90);
+	font-size: var(--zym-font-size-sm);
+}
+
+.zymarg-admin .zymarg-vd-doc .zvd-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+	gap: var(--zym-space-7);
+}
+
+.zymarg-admin .zymarg-vd-doc .zvd-card:hover {
+	border-color: var(--zym-color-primary);
+	box-shadow: var(--zym-shadow-card-hover);
+}
+
+.zymarg-admin .zymarg-vd-doc .zvd-card__icon {
+	width: var(--zym-space-13);
+	height: var(--zym-space-13);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: var(--zym-radius-control);
+	color: var(--zym-color-surface);
+	margin-bottom: var(--zym-space-5);
+	background: var(--zym-gradient);
+}
+
+.zymarg-admin .zymarg-vd-doc .zvd-card__title {
+	margin: 0 0 var(--zym-space-3);
+	font-size: var(--zym-font-size-md);
+	font-weight: var(--zym-font-weight-extrabold);
+	color: var(--zym-color-dark);
+}
+
+.zymarg-admin .zymarg-vd-doc .zvd-card__desc {
+	margin: 0 0 var(--zym-space-5);
+	font-size: 13px;
+	color: var(--zym-color-text);
+	line-height: 1.5;
+}
+
+.zymarg-admin .zvd-card__list { margin: 0; padding: 0; list-style: none; }
+
+.zymarg-admin .zvd-card__list li {
+	position: relative;
+	padding: var(--zym-space-2) 0 var(--zym-space-2) var(--zym-space-9);
+	font-size: 13px;
+	color: var(--zym-color-dark);
+	line-height: 1.5;
+}
+
+.zymarg-admin .zvd-card__list li::before {
+	content: "";
+	position: absolute;
+	left: var(--zym-space-2);
+	top: 9px;
+	width: var(--zym-space-3);
+	height: var(--zym-space-3);
+	border-radius: 50%;
+	background: var(--zym-gradient);
+}
+
+@media (max-width: 600px) {
+	.zymarg-admin .zymarg-vd-doc .zvd-grid { grid-template-columns: 1fr; }
+	.zymarg-admin .zymarg-vd-doc .zvd-hero { flex-direction: column; text-align: center; }
+}
+
+/* REST API reference panel */
+.zymarg-admin .zvd-api {
+	margin-top: var(--zym-space-10);
+	background: var(--zym-color-surface);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-card);
+	padding: var(--zym-space-10);
+	box-shadow: var(--zym-shadow-surface);
+}
+
+.zymarg-admin .zvd-api__head h2 {
+	margin: 0 0 var(--zym-space-3);
+	font-size: var(--zym-font-size-lg);
+	font-weight: var(--zym-font-weight-extrabold);
+	color: var(--zym-color-dark);
+}
+
+.zymarg-admin .zvd-api__head p {
+	margin: 0 0 var(--zym-space-3);
+	font-size: var(--zym-font-size-sm);
+	color: var(--zym-color-text);
+	line-height: 1.6;
+	max-width: 880px;
+}
+
+.zymarg-admin .zvd-api__block { margin-top: var(--zym-space-9); }
+
+.zymarg-admin .zvd-api__block h3 {
+	margin: 0 0 var(--zym-space-4);
+	font-size: var(--zym-font-size-sm);
+	font-weight: var(--zym-font-weight-bold);
+	color: var(--zym-color-primary);
+}
+
+.zymarg-admin .zvd-api__block ol,
+.zymarg-admin .zvd-api__block ul {
+	margin: 0 0 0 var(--zym-space-7);
+	color: var(--zym-color-dark);
+	font-size: 13px;
+	line-height: 1.7;
+}
+
+.zymarg-admin .zvd-api__note {
+	margin: var(--zym-space-3) 0 0;
+	font-size: 13px;
+	color: var(--zym-color-text);
+	line-height: 1.6;
+	max-width: 880px;
+}
+
+/* The code block was #1f1030 on #f3e8f7 -- both invented. Uses the dark
+ * neutral and the accent from the palette instead. */
+.zymarg-admin .zvd-api__code {
+	background: var(--zym-color-dark);
+	color: var(--zym-color-accent);
+	border: 1px solid var(--zym-color-dark);
+	border-radius: var(--zym-radius-control);
+	padding: var(--zym-space-7) var(--zym-space-7);
+	font-family: var(--zym-font-mono);
+	font-size: var(--zym-font-size-xs);
+	line-height: 1.6;
+	overflow-x: auto;
+	white-space: pre;
+}
+
+.zymarg-admin .zvd-api__table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-top: var(--zym-space-3);
+}
+
+.zymarg-admin .zvd-api__table th,
+.zymarg-admin .zvd-api__table td {
+	text-align: left;
+	padding: var(--zym-space-4) var(--zym-space-5);
+	border-bottom: 1px solid var(--zym-color-divider);
+	font-size: 13px;
+	color: var(--zym-color-dark);
+	vertical-align: top;
+}
+
+.zymarg-admin .zvd-api__table th {
+	font-size: 11px;
+	text-transform: uppercase;
+	letter-spacing: 0.12em;
+	color: var(--zym-color-text);
+	font-weight: var(--zym-font-weight-bold);
+}
+
+.zymarg-admin .zvd-api__table code {
+	background: var(--zym-color-bg);
+	color: var(--zym-color-primary);
+	font-family: var(--zym-font-mono);
+	padding: var(--zym-space-1) var(--zym-space-3);
+	border-radius: var(--zym-radius-chip);
+	font-size: var(--zym-font-size-xs);
+}
+
+.zymarg-admin .zvd-api-method {
+	display: inline-block;
+	min-width: var(--zym-space-13);
+	text-align: center;
+	padding: var(--zym-space-1) var(--zym-space-3);
+	border-radius: var(--zym-radius-chip);
+	font-size: 11px;
+	font-weight: var(--zym-font-weight-bold);
+	color: var(--zym-color-surface);
+}
+
+/* Method is spelled out in the badge text, so colour is decoration only. */
+.zymarg-admin .zvd-api-method--get  { background: var(--zym-color-success-text); }
+.zymarg-admin .zvd-api-method--post { background: var(--zym-color-primary); }
+
+/* --- Timezone panel (settings hub) --------------------------------------
+ * The originals referenced --color-on-primary-fixed, --color-outline-variant
+ * and --color-on-surface. Those belong to a different design system and were
+ * never defined here, so every one of them silently fell back to its hardcoded
+ * hex. Replaced with real ZYMARG tokens.
+ * ------------------------------------------------------------------------ */
+.zymarg-admin .zymarg-vd-tz { margin-top: var(--zym-space-9); max-width: 640px; }
+
+.zymarg-admin .zymarg-vd-tz__label {
+	display: block;
+	font-weight: var(--zym-font-weight-semibold);
+	color: var(--zym-color-dark);
+	font-size: 13px;
+	margin-bottom: var(--zym-space-3);
+}
+
+.zymarg-admin .zymarg-vd-tz__row {
+	display: flex;
+	gap: var(--zym-gap-tiny);
+	flex-wrap: wrap;
+	align-items: center;
+}
+
+.zymarg-admin .zymarg-vd-tz__select {
+	flex: 1 1 260px;
+	min-width: 200px;
+	padding: var(--zym-space-4) var(--zym-space-5);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-control);
+	background: var(--zym-color-surface);
+	font-size: var(--zym-font-size-sm);
+	color: var(--zym-color-dark);
+}
+
+.zymarg-admin .zymarg-vd-tz__select:focus {
+	outline: none;
+	border-color: var(--zym-color-primary);
+	box-shadow: var(--zym-focus-ring);
+}
+
+.zymarg-admin .zymarg-vd-tz__save,
+.zymarg-admin .zymarg-vd-tz__reset {
+	padding: var(--zym-space-4) var(--zym-space-7);
+	min-height: 32px;
+	border-radius: var(--zym-radius-control);
+	font-size: 13px;
+	font-weight: var(--zym-font-weight-semibold);
+	cursor: pointer;
+	border: 1px solid transparent;
+	transition: box-shadow var(--zym-motion-fast) var(--zym-ease);
+}
+
+.zymarg-admin .zymarg-vd-tz__save {
+	background: var(--zym-gradient);
+	color: var(--zym-color-surface);
+	box-shadow: var(--zym-shadow-btn);
+}
+
+.zymarg-admin .zymarg-vd-tz__save:hover { box-shadow: var(--zym-shadow-btn-hover); }
+
+.zymarg-admin .zymarg-vd-tz__reset {
+	background: var(--zym-color-surface);
+	color: var(--zym-color-text);
+	border-color: var(--zym-color-border);
+}
+
+.zymarg-admin .zymarg-vd-tz__reset:hover { background: var(--zym-color-container); }
+
+.zymarg-admin .zymarg-vd-tz__save:focus-visible,
+.zymarg-admin .zymarg-vd-tz__reset:focus-visible { outline: none; box-shadow: var(--zym-focus-ring); }
+
+.zymarg-admin .zymarg-vd-tz-flash {
+	margin: 0 0 var(--zym-space-4);
+	padding: var(--zym-space-3) var(--zym-space-5);
+	border-radius: var(--zym-radius-chip);
+	font-size: 13px;
+}
+
+.zymarg-admin .zymarg-vd-tz-flash--ok {
+	background: var(--zym-color-success-bg);
+	color: var(--zym-color-success-text);
+	border: 1px solid var(--zym-color-success-text);
+}
+
+.zymarg-admin .zymarg-vd-tz-flash--err {
+	background: var(--zym-color-error-bg);
+	color: var(--zym-color-error);
+	border: 1px solid var(--zym-color-error);
+}
+
+@media (max-width: 640px) {
+	.zymarg-admin .zymarg-vd-tz__save,
+	.zymarg-admin .zymarg-vd-tz__reset { width: 100%; }
+}
+
+/* --- Auto-disbursement card (payouts) ----------------------------------- */
+.zymarg-admin .zvdp-auto-card {
+	margin-top: var(--zym-space-9);
+	background: var(--zym-color-surface);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-card);
+	padding: var(--zym-space-9) var(--zym-space-10);
+	box-shadow: var(--zym-shadow-surface);
+}
+
+.zymarg-admin .zvdp-auto-card__header {
+	display: flex;
+	align-items: center;
+	gap: var(--zym-space-4);
+	margin-bottom: var(--zym-space-3);
+}
+
+.zymarg-admin .zvdp-auto-card__header svg { color: var(--zym-color-primary); }
+
+.zymarg-admin .zvdp-auto-card__header h3 {
+	margin: 0;
+	font-size: var(--zym-font-size-md);
+	font-weight: var(--zym-font-weight-bold);
+	color: var(--zym-color-dark);
+}
+
+.zymarg-admin .zvdp-auto-card__desc {
+	margin: 0 0 var(--zym-space-7);
+	font-size: 13px;
+	color: var(--zym-color-text);
+}
+
+.zymarg-admin .zvdp-auto-form {
+	display: flex;
+	flex-direction: column;
+	gap: var(--zym-space-6);
+	max-width: 420px;
+}
+
+.zymarg-admin .zvdp-auto-field {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--zym-space-5);
+}
+
+.zymarg-admin .zvdp-auto-field__label {
+	font-size: 13px;
+	font-weight: var(--zym-font-weight-semibold);
+	color: var(--zym-color-dark);
+}
+
+.zymarg-admin .zvdp-auto-field select,
+.zymarg-admin .zvdp-auto-field input[type="number"] {
+	padding: var(--zym-space-3) var(--zym-space-5);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-chip);
+	font-size: 13px;
+	color: var(--zym-color-dark);
+	background: var(--zym-color-surface);
+	outline: none;
+	transition: border-color var(--zym-motion-input) var(--zym-ease);
+	width: 200px;
+}
+
+.zymarg-admin .zvdp-auto-field select:focus,
+.zymarg-admin .zvdp-auto-field input[type="number"]:focus {
+	border-color: var(--zym-color-primary);
+	box-shadow: var(--zym-focus-ring);
+}
+
+.zymarg-admin .zvdp-toggle {
+	position: relative;
+	display: inline-block;
+	width: 44px;
+	height: var(--zym-space-9);
+}
+
+.zymarg-admin .zvdp-toggle input { opacity: 0; width: 0; height: 0; }
+
+.zymarg-admin .zvdp-toggle__slider {
+	position: absolute;
+	cursor: pointer;
+	inset: 0;
+	background: var(--zym-color-neutral-bg);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-pill);
+	transition: background var(--zym-motion-input) var(--zym-ease);
+}
+
+.zymarg-admin .zvdp-toggle__slider::before {
+	content: "";
+	position: absolute;
+	height: 18px;
+	width: 18px;
+	left: 2px;
+	bottom: 2px;
+	background: var(--zym-color-surface);
+	border-radius: 50%;
+	box-shadow: var(--zym-shadow-input);
+	transition: transform var(--zym-motion-input) var(--zym-ease);
+}
+
+.zymarg-admin .zvdp-toggle input:checked + .zvdp-toggle__slider {
+	background: var(--zym-gradient);
+	border-color: transparent;
+}
+
+.zymarg-admin .zvdp-toggle input:checked + .zvdp-toggle__slider::before { transform: translateX(20px); }
+
+.zymarg-admin .zvdp-toggle input:focus-visible + .zvdp-toggle__slider { box-shadow: var(--zym-focus-ring); }
+
+.zymarg-admin .zvdp-auto-actions { display: flex; gap: var(--zym-space-4); margin-top: var(--zym-space-2); }
+
+.zymarg-admin .zvdp-auto-msg { font-size: 13px; min-height: var(--zym-space-8); }
+.zymarg-admin .zvdp-auto-msg--success { color: var(--zym-color-success-text); }
+.zymarg-admin .zvdp-auto-msg--error   { color: var(--zym-color-error); }
+
+.zymarg-admin .zvdp-auto-status {
+	margin-top: var(--zym-space-7);
+	padding-top: var(--zym-space-6);
+	border-top: 1px solid var(--zym-color-divider);
+}
+
+.zymarg-admin .zvdp-auto-status__item {
+	font-size: 13px;
+	color: var(--zym-color-text);
+	margin-bottom: var(--zym-space-3);
+}
+
+.zymarg-admin .zvdp-auto-status__item strong { color: var(--zym-color-dark); }
+
+.zymarg-admin .zvdp-auto-skipped { color: var(--zym-color-neutral-text); font-size: var(--zym-font-size-xs); }
+
+
+/* ===========================================================================
+ * UTILITIES + PUSH NOTIFICATIONS PANELS
+ *
+ * These replace the last of the inline style="" attributes in the admin PHP.
+ * The spec bans inline styles, including the display:none toggles that were
+ * being printed conditionally from PHP -- those are now .zvd-is-hidden, which
+ * the section JS toggles instead.
+ * ======================================================================== */
+
+.zymarg-admin .zvd-is-hidden { display: none !important; }
+
+.zymarg-admin .zvd-narrow { max-width: 820px; }
+
+.zymarg-admin .zvd-field--grow { flex: 2; }
+
+.zymarg-admin .zvd-rule {
+	border: 0;
+	border-top: 1px solid var(--zym-color-divider);
+	margin: var(--zym-space-9) 0;
+	max-width: 820px;
+}
+
+.zymarg-admin .zvd-section-heading {
+	margin: 0 0 var(--zym-space-3);
+	font-size: var(--zym-font-size-md);
+	font-weight: var(--zym-font-weight-bold);
+	color: var(--zym-color-dark);
+}
+
+.zymarg-admin .zvd-body-text {
+	font-size: 13px;
+	color: var(--zym-color-text);
+	line-height: 1.6;
+}
+
+.zymarg-admin .zvd-hint {
+	margin: var(--zym-space-3) 0 var(--zym-space-7);
+	font-size: var(--zym-font-size-xs);
+	color: var(--zym-color-neutral-text);
+}
+
+/* Vertical checkbox list */
+.zymarg-admin .zvd-checklist label {
+	display: block;
+	margin: var(--zym-space-1) 0;
+	font-size: 13px;
+	color: var(--zym-color-dark);
+}
+
+/* Single checkbox + label row */
+.zymarg-admin .zvd-check-row {
+	display: flex;
+	align-items: center;
+	gap: var(--zym-space-4);
+	cursor: pointer;
+	font-size: 13px;
+	font-weight: var(--zym-font-weight-semibold);
+	color: var(--zym-color-dark);
+}
+
+.zymarg-admin .zvd-check-row input[type="checkbox"] {
+	width: 18px;
+	height: 18px;
+	accent-color: var(--zym-color-primary);
+}
+
+.zymarg-admin .zvd-textarea-code {
+	width: 100%;
+	font-family: var(--zym-font-mono);
+	font-size: var(--zym-font-size-xs);
+	color: var(--zym-color-dark);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-control);
+}
+
+.zymarg-admin .zvd-textarea-code:focus {
+	outline: none;
+	border-color: var(--zym-color-primary);
+	box-shadow: var(--zym-focus-ring);
+}
+
+.zymarg-admin .zvd-locked-note {
+	color: var(--zym-color-success-text);
+	font-weight: var(--zym-font-weight-semibold);
+}
+
+/* Inline status text next to a button (e.g. "Send test push"). */
+.zymarg-admin .zvd-status-msg {
+	margin-left: var(--zym-space-4);
+	font-weight: var(--zym-font-weight-semibold);
+	font-size: 13px;
+}
+
+.zymarg-admin .zvd-status-msg--ok  { color: var(--zym-color-success-text); }
+.zymarg-admin .zvd-status-msg--err { color: var(--zym-color-error); }
+
+/* Tinted callout inside a panel */
+.zymarg-admin .zvd-callout {
+	background: var(--zym-color-bg);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-control);
+	padding: var(--zym-space-6) var(--zym-space-7);
+	margin-bottom: var(--zym-space-7);
+	font-size: var(--zym-font-size-xs);
+	color: var(--zym-color-text);
+	line-height: 1.6;
+}
+
+.zymarg-admin .zvd-callout strong { color: var(--zym-color-primary); }
+
+.zymarg-admin .zvd-inline-code {
+	background: var(--zym-color-surface);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-chip);
+	padding: var(--zym-space-1) var(--zym-space-3);
+	font-family: var(--zym-font-mono);
+	font-size: 11px;
+	color: var(--zym-color-primary);
+}
+
+/* Panel: header strip + body, used by the Push Notifications screen. */
+.zymarg-admin .zvd-panel {
+	max-width: 820px;
+	background: var(--zym-color-surface);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-card);
+	overflow: hidden;
+	margin-bottom: var(--zym-space-9);
+	box-shadow: var(--zym-shadow-surface);
+}
+
+.zymarg-admin .zvd-panel__head {
+	display: flex;
+	align-items: center;
+	gap: var(--zym-space-4);
+	padding: var(--zym-space-6) var(--zym-space-8);
+	border-bottom: 1px solid var(--zym-color-border);
+	background: var(--zym-color-bg);
+}
+
+.zymarg-admin .zvd-panel__icon {
+	width: var(--zym-space-11);
+	height: var(--zym-space-11);
+	border-radius: var(--zym-radius-chip);
+	background: var(--zym-gradient);
+	color: var(--zym-color-surface);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.zymarg-admin .zvd-panel__title {
+	margin: 0;
+	font-size: var(--zym-font-size-sm);
+	font-weight: var(--zym-font-weight-bold);
+	color: var(--zym-color-dark);
+}
+
+.zymarg-admin .zvd-panel__body { padding: var(--zym-space-8); }
+
+/* Compat monitor lists */
+.zymarg-admin .zvd-list-disc {
+	list-style: disc;
+	padding-left: var(--zym-space-9);
+	margin: var(--zym-space-3) 0 var(--zym-space-4);
+	font-size: 13px;
+	color: var(--zym-color-text);
+}
+
+/* Checklist item (used by the Push Notifications events list). */
+.zymarg-admin .zvd-checklist__item {
+	display: block;
+	margin: var(--zym-space-1) 0;
+	font-size: 13px;
+	color: var(--zym-color-dark);
+}
+
+/* Spacing utilities. Only values from the spec's spacing scale exist here --
+ * that is why the old 6px and 14px inline margins snap to 8px and 16px. */
+.zymarg-admin .zvd-mt-3 { margin-top: var(--zym-space-3); }
+.zymarg-admin .zvd-mt-8 { margin-top: var(--zym-space-8); }
+.zymarg-admin .zvd-mt-9 { margin-top: var(--zym-space-9); }
+.zymarg-admin .zvd-mb-7 { margin-bottom: var(--zym-space-7); }
+.zymarg-admin .zvd-m-0  { margin: 0; }
+
+/* Open Graph image preview (settings hub). The original inline style referenced
+ * --zv-border, which is not a token in this system and had no fallback. */
+.zymarg-admin .zymarg-vs-og-preview {
+	max-width: 200px;
+	height: auto;
+	border-radius: var(--zym-radius-chip);
+	border: 1px solid var(--zym-color-border);
+}
+
+
+/* ===========================================================================
+ * WORDPRESS CORE PRIMITIVES
+ *
+ * Screens like Push Notifications are built almost entirely out of WordPress
+ * core markup: table.form-table, bare <label> + <input type="checkbox">,
+ * p.description, and submit_button() (which prints WP's blue .button-primary).
+ * Tokenising only the plugin's own classes left all of that rendering in stock
+ * wp-admin grey and blue.
+ *
+ * Everything below is scoped to .zymarg-admin, so it restyles the core markup
+ * on ZYMARG screens only and never leaks into the rest of wp-admin.
+ * ======================================================================== */
+
+.zymarg-admin,
+.zymarg-admin .wrap {
+	color: var(--zym-color-text);
+	font-size: var(--zym-font-size-sm);
+}
+
+.zymarg-admin .wrap > p {
+	max-width: 820px;
+	font-size: 13px;
+	color: var(--zym-color-text);
+	line-height: 1.6;
+}
+
+/* Core headings inside our screens (submit_button sections, panel titles). */
+.zymarg-admin .wrap > h2 {
+	font-size: var(--zym-font-size-md);
+	font-weight: var(--zym-font-weight-bold);
+	color: var(--zym-color-dark);
+}
+
+/* --- form-table -------------------------------------------------------- */
+
+.zymarg-admin .form-table {
+	max-width: 820px;
+	background: var(--zym-color-surface);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-card);
+	box-shadow: var(--zym-shadow-surface);
+	border-collapse: separate;
+	border-spacing: 0;
+	overflow: hidden;
+	margin-top: var(--zym-space-3);
+}
+
+.zymarg-admin .form-table tr + tr th,
+.zymarg-admin .form-table tr + tr td {
+	border-top: 1px solid var(--zym-color-divider);
+}
+
+.zymarg-admin .form-table th {
+	width: 220px;
+	padding: var(--zym-space-7) var(--zym-space-8);
+	font-size: 13px;
+	font-weight: var(--zym-font-weight-semibold);
+	color: var(--zym-color-dark);
+	vertical-align: top;
+	background: var(--zym-color-bg);
+}
+
+.zymarg-admin .form-table td {
+	padding: var(--zym-space-7) var(--zym-space-8);
+	font-size: 13px;
+	color: var(--zym-color-text);
+}
+
+/* WP core sets its own description colour; ours must win. */
+.zymarg-admin p.description,
+.zymarg-admin .form-table td p.description {
+	margin-top: var(--zym-space-3);
+	font-size: var(--zym-font-size-xs);
+	font-style: normal;
+	color: var(--zym-color-neutral-text);
+	line-height: 1.6;
+}
+
+/* --- inputs ------------------------------------------------------------ */
+
+.zymarg-admin input[type="text"],
+.zymarg-admin input[type="email"],
+.zymarg-admin input[type="url"],
+.zymarg-admin input[type="number"],
+.zymarg-admin input[type="password"],
+.zymarg-admin input[type="search"],
+.zymarg-admin textarea,
+.zymarg-admin select {
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-control);
+	background: var(--zym-color-surface);
+	color: var(--zym-color-dark);
+	font-size: 13px;
+	padding: var(--zym-space-4) var(--zym-space-6);
+	box-shadow: none;
+	min-height: 36px;
+	transition: border-color var(--zym-motion-input) var(--zym-ease),
+		box-shadow var(--zym-motion-input) var(--zym-ease);
+}
+
+.zymarg-admin input[type="text"]:focus,
+.zymarg-admin input[type="email"]:focus,
+.zymarg-admin input[type="url"]:focus,
+.zymarg-admin input[type="number"]:focus,
+.zymarg-admin input[type="password"]:focus,
+.zymarg-admin input[type="search"]:focus,
+.zymarg-admin textarea:focus,
+.zymarg-admin select:focus {
+	border-color: var(--zym-color-primary);
+	/* The focus ring is never removed -- it is re-tinted to the brand. */
+	box-shadow: var(--zym-focus-ring);
+	outline: none;
+}
+
+.zymarg-admin textarea::placeholder,
+.zymarg-admin input::placeholder {
+	color: var(--zym-color-neutral-text);
+	opacity: 1;
+}
+
+/* Checkboxes and radios: brand tick, brand focus ring, 18px hit area. */
+.zymarg-admin input[type="checkbox"],
+.zymarg-admin input[type="radio"] {
+	width: 18px;
+	height: 18px;
+	margin: 0 var(--zym-space-2) 0 0;
+	border: 1px solid var(--zym-color-border);
+	border-radius: 4px;
+	background: var(--zym-color-surface);
+	accent-color: var(--zym-color-primary);
+	box-shadow: none;
+}
+
+.zymarg-admin input[type="radio"] { border-radius: var(--zym-radius-pill); }
+
+.zymarg-admin input[type="checkbox"]:checked,
+.zymarg-admin input[type="radio"]:checked {
+	border-color: var(--zym-color-primary);
+	background: var(--zym-color-primary);
+}
+
+.zymarg-admin input[type="checkbox"]:checked::before {
+	/* Replaces the core dashicon tick, which is drawn in WP blue. */
+	content: "";
+	display: block;
+	width: 5px;
+	height: 9px;
+	margin: 2px 0 0 5px;
+	border: solid var(--zym-color-surface);
+	border-width: 0 2px 2px 0;
+	transform: rotate(45deg);
+	background: none;
+}
+
+.zymarg-admin input[type="checkbox"]:focus,
+.zymarg-admin input[type="radio"]:focus {
+	border-color: var(--zym-color-primary);
+	box-shadow: var(--zym-focus-ring);
+	outline: none;
+}
+
+/* Core checkbox rows: give the label a real hit target and brand text. */
+.zymarg-admin .form-table td > label,
+.zymarg-admin .form-table td .zvd-checklist__item {
+	display: flex;
+	align-items: center;
+	gap: var(--zym-space-3);
+	min-height: var(--zym-space-11);
+	font-size: 13px;
+	color: var(--zym-color-dark);
+	cursor: pointer;
+}
+
+/* --- buttons ----------------------------------------------------------- */
+
+/* submit_button() prints .button-primary, which is WordPress blue. */
+.zymarg-admin .button-primary,
+.zymarg-admin .button-primary:hover,
+.zymarg-admin .button-primary:focus,
+.zymarg-admin .wp-core-ui .button-primary {
+	background: var(--zym-gradient);
+	border: none;
+	color: var(--zym-color-surface);
+	border-radius: var(--zym-radius-control);
+	padding: var(--zym-space-4) var(--zym-space-9);
+	height: auto;
+	min-height: var(--zym-space-11);
+	font-size: 13px;
+	font-weight: var(--zym-font-weight-semibold);
+	line-height: 1.6;
+	text-shadow: none;
+	box-shadow: var(--zym-shadow-btn);
+	transition: box-shadow var(--zym-motion-standard) var(--zym-ease),
+		transform var(--zym-motion-fast) var(--zym-ease);
+}
+
+.zymarg-admin .button-primary:hover {
+	/* The gradient angle never changes on hover -- only the lift. */
+	box-shadow: var(--zym-shadow-btn-hover);
+	transform: translateY(-1px);
+}
+
+.zymarg-admin .button-primary:focus {
+	box-shadow: var(--zym-shadow-btn), var(--zym-focus-ring);
+	outline: none;
+}
+
+.zymarg-admin .button,
+.zymarg-admin .button-secondary,
+.zymarg-admin .wp-core-ui .button-secondary {
+	background: var(--zym-color-surface);
+	border: 1px solid var(--zym-color-border);
+	color: var(--zym-color-primary);
+	border-radius: var(--zym-radius-control);
+	padding: var(--zym-space-4) var(--zym-space-8);
+	height: auto;
+	min-height: var(--zym-space-11);
+	font-size: 13px;
+	font-weight: var(--zym-font-weight-semibold);
+	line-height: 1.6;
+	box-shadow: none;
+	transition: background var(--zym-motion-standard) var(--zym-ease),
+		border-color var(--zym-motion-standard) var(--zym-ease);
+}
+
+.zymarg-admin .button:hover,
+.zymarg-admin .button-secondary:hover {
+	background: var(--zym-color-bg);
+	border-color: var(--zym-color-primary);
+	color: var(--zym-color-primary);
+}
+
+.zymarg-admin .button:focus,
+.zymarg-admin .button-secondary:focus {
+	border-color: var(--zym-color-primary);
+	box-shadow: var(--zym-focus-ring);
+	outline: none;
+}
+
+.zymarg-admin .button:disabled,
+.zymarg-admin .button-primary:disabled,
+.zymarg-admin .button[disabled] {
+	opacity: 0.55;
+	cursor: not-allowed;
+	transform: none;
+}
+
+.zymarg-admin p.submit {
+	margin: var(--zym-space-8) 0 0;
+	padding: 0;
+	max-width: 820px;
+}
+
+/* --- core notices ------------------------------------------------------ */
+
+.zymarg-admin .notice,
+.zymarg-admin div.updated,
+.zymarg-admin div.error {
+	max-width: 820px;
+	border-radius: var(--zym-radius-control);
+	border: 1px solid var(--zym-color-border);
+	border-left-width: 4px;
+	background: var(--zym-color-surface);
+	box-shadow: none;
+}
+
+.zymarg-admin .notice-success,
+.zymarg-admin div.updated {
+	border-left-color: var(--zym-color-success-text);
+	background: var(--zym-color-success-bg);
+}
+
+.zymarg-admin .notice-error,
+.zymarg-admin div.error {
+	border-left-color: var(--zym-color-error);
+	background: var(--zym-color-error-bg);
+}
+
+.zymarg-admin .notice p {
+	font-size: 13px;
+	color: var(--zym-color-dark);
+}
+
+/* --- misc core ---------------------------------------------------------- */
+
+.zymarg-admin code,
+.zymarg-admin kbd {
+	background: var(--zym-color-bg);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-chip);
+	padding: var(--zym-space-1) var(--zym-space-3);
+	font-family: var(--zym-font-mono);
+	font-size: 11px;
+	color: var(--zym-color-primary);
+}
+
+.zymarg-admin a {
+	color: var(--zym-color-primary);
+	text-decoration: none;
+}
+
+.zymarg-admin a:hover { color: var(--zym-color-secondary); }
+
+.zymarg-admin a:focus-visible {
+	box-shadow: var(--zym-focus-ring);
+	border-radius: 4px;
+	outline: none;
+}
+
+.zymarg-admin hr {
+	border: 0;
+	border-top: 1px solid var(--zym-color-divider);
+}
+
+/* ====================================================================== *
+ * PREMIUM SCREEN (v1.40.0)
+ *
+ * Only the handful of classes the Premium screen needs that did not
+ * already exist. Everything else reuses .zvd-card, .zvd-table, .zvd-btn,
+ * .zvd-chip, .zvd-status-msg and the WordPress core primitive layer.
+ * ====================================================================== */
+
+.zymarg-admin .zvd-save-row {
+	display: flex;
+	align-items: center;
+	gap: var(--zym-gap-small);
+	margin-top: var(--zym-space-9);
+}
+
+.zymarg-admin .zvd-premium-note {
+	width: 100%;
+	min-width: var(--zym-space-15);
+}
+
+/*
+ * Keep the decision column from collapsing when the row status message
+ * appears, so approving a request does not shift the table under the
+ * cursor mid-click.
+ */
+.zymarg-admin .zvd-premium-row td {
+	vertical-align: middle;
+}
+
+.zymarg-admin .zvd-premium-row-status {
+	display: inline-block;
+	margin-left: var(--zym-space-3);
+	min-height: var(--zym-space-6);
+}
+
+/* ==========================================================================
+   STORE PAGE BADGES (v1.42.0)
+
+   Per-vendor trust marks granted by the admin inside each vendor card.
+   Scoped to .zymarg-admin so nothing leaks onto other wp-admin screens.
+   ========================================================================== */
+
+.zymarg-admin .zymarg-vendor-card__badges {
+	margin-top: var(--zym-space-7);
+	padding-top: var(--zym-space-7);
+	border-top: 1px solid var(--zym-color-divider);
+}
+
+.zymarg-admin .zymarg-vendor-card__badge-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--zym-space-6);
+	margin-top: var(--zym-space-5);
+}
+
+.zymarg-admin .zymarg-vendor-card__badge-toggle {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--zym-space-4);
+	padding: var(--zym-space-4) var(--zym-space-7);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-pill);
+	background: var(--zym-color-surface);
+	color: var(--zym-color-text);
+	font-size: var(--zym-font-size-sm);
+	font-weight: var(--zym-font-weight-medium);
+	line-height: 1.2;
+	cursor: pointer;
+	/* Comfortably clears the 32px minimum touch target. */
+	min-height: var(--zym-space-11);
+	transition: border-color var(--zym-motion-input) var(--zym-ease),
+		background-color var(--zym-motion-input) var(--zym-ease);
+}
+
+.zymarg-admin .zymarg-vendor-card__badge-toggle:hover {
+	border-color: var(--zym-color-secondary);
+	background: var(--zym-color-bg);
+}
+
+/* Granted state reads at a glance when scanning a long vendor list. */
+.zymarg-admin .zymarg-vendor-card__badge-toggle:has(.zymarg-store-badge:checked) {
+	border-color: var(--zym-color-primary);
+	background: var(--zym-color-container);
+	color: var(--zym-color-dark);
+	font-weight: var(--zym-font-weight-semibold);
+}
+
+.zymarg-admin .zymarg-vendor-card__badge-toggle:focus-within {
+	outline: none;
+	box-shadow: var(--zym-focus-ring);
+}
+
+.zymarg-admin .zymarg-store-badge {
+	margin: 0;
+	flex: 0 0 auto;
+	accent-color: var(--zym-color-primary);
+}
+
+/* ==========================================================================
+   SELLER SEARCH + PAGING (v1.43.0)
+   The Commission screen renders 20 seller cards per batch instead of every
+   seller at once. These styles cover the search field, the live status text,
+   and the Load more control.
+   ========================================================================== */
+
+.zymarg-admin .zvd-vendor-search {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--zym-gap-small);
+	margin-bottom: var(--zym-space-9);
+}
+
+.zymarg-admin .zvd-vendor-search__label {
+	font-size: var(--zym-font-size-sm);
+	font-weight: var(--zym-font-weight-semibold);
+	color: var(--zym-color-dark);
+}
+
+.zymarg-admin .zvd-vendor-search__field {
+	flex: 1 1 260px;
+	max-width: 420px;
+	min-height: var(--zym-space-11);
+	padding: var(--zym-space-3) var(--zym-space-5);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-input);
+	background: var(--zym-color-surface);
+	color: var(--zym-color-text);
+	font-size: var(--zym-font-size-sm);
+	box-shadow: var(--zym-shadow-input);
+	transition: border-color var(--zym-motion-input) var(--zym-ease);
+}
+
+.zymarg-admin .zvd-vendor-search__field:focus {
+	outline: none;
+	border-color: var(--zym-color-primary);
+	box-shadow: var(--zym-focus-ring);
+}
+
+.zymarg-admin .zvd-vendor-search__status {
+	font-size: var(--zym-font-size-xs);
+	color: var(--zym-color-text);
+}
+
+.zymarg-admin .zvd-vendor-more {
+	display: flex;
+	justify-content: center;
+	margin-top: var(--zym-space-9);
+}
+
+.zymarg-admin .zvd-vendor-load-more {
+	min-height: var(--zym-space-11);
+}
+
+
+/* ---------------------------------------------------------------------- *
+ * Sidebar menu order (drag-to-sort on the settings screen)
+ * ---------------------------------------------------------------------- */
+
+.zymarg-admin .zvds-navorder {
+	background: var(--zym-color-surface);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-card);
+	padding: var(--zym-space-9) var(--zym-space-9) var(--zym-space-8);
+	box-shadow: var(--zym-shadow-surface);
+	margin-bottom: var(--zym-space-9);
+}
+
+.zymarg-admin .zvds-navorder__head {
+	display: flex;
+	align-items: center;
+	gap: var(--zym-gap-small);
+	flex-wrap: wrap;
+}
+
+.zymarg-admin .zvds-navorder__title {
+	margin: 0;
+	font-size: var(--zym-font-size-md);
+	font-weight: var(--zym-font-weight-bold);
+	color: var(--zym-color-dark);
+}
+
+.zymarg-admin .zvds-navorder__badge {
+	display: inline-flex;
+	align-items: center;
+	padding: 2px var(--zym-space-4);
+	border-radius: var(--zym-radius-pill);
+	font-size: var(--zym-font-size-xxs);
+	font-weight: var(--zym-font-weight-semibold);
+	letter-spacing: var(--zym-tracking-wide);
+	text-transform: uppercase;
+	background: var(--zym-color-success-bg);
+	color: var(--zym-color-success-text);
+}
+
+.zymarg-admin .zvds-navorder__badge--default {
+	background: var(--zym-color-neutral-bg);
+	color: var(--zym-color-neutral-text);
+}
+
+.zymarg-admin .zvds-navorder__desc {
+	margin: var(--zym-space-3) 0 var(--zym-space-7);
+	font-size: var(--zym-font-size-xs);
+	color: var(--zym-color-text);
+	max-width: 74ch;
+}
+
+.zymarg-admin .zvds-navorder__list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	border: 1px solid var(--zym-color-divider);
+	border-radius: var(--zym-radius-control);
+	overflow: hidden;
+}
+
+.zymarg-admin .zvds-navorder__item {
+	display: flex;
+	align-items: center;
+	gap: var(--zym-gap-small);
+	margin: 0;
+	padding: var(--zym-space-5) var(--zym-space-6);
+	background: var(--zym-color-surface);
+	border-bottom: 1px solid var(--zym-color-divider);
+	cursor: grab;
+	transition: background var(--zym-motion-fast) var(--zym-ease);
+}
+
+.zymarg-admin .zvds-navorder__item:last-child {
+	border-bottom: none;
+}
+
+.zymarg-admin .zvds-navorder__item:hover {
+	background: var(--zym-color-surface-alt);
+}
+
+.zymarg-admin .zvds-navorder__item.is-dragging {
+	opacity: 0.55;
+	cursor: grabbing;
+	background: var(--zym-color-container);
+}
+
+.zymarg-admin .zvds-navorder__grip {
+	display: inline-flex;
+	flex: 0 0 auto;
+	color: var(--zym-color-secondary);
+}
+
+.zymarg-admin .zvds-navorder__label {
+	flex: 1 1 auto;
+	font-size: var(--zym-font-size-sm);
+	font-weight: var(--zym-font-weight-semibold);
+	color: var(--zym-color-dark);
+}
+
+.zymarg-admin .zvds-navorder__key {
+	flex: 0 0 auto;
+	padding: 1px var(--zym-space-3);
+	border-radius: var(--zym-radius-chip);
+	font-family: var(--zym-font-mono);
+	font-size: var(--zym-font-size-xxs);
+	background: var(--zym-color-neutral-bg);
+	color: var(--zym-color-neutral-text);
+}
+
+.zymarg-admin .zvds-navorder__btns {
+	display: inline-flex;
+	flex: 0 0 auto;
+	gap: 4px;
+}
+
+.zymarg-admin .zvds-navorder__btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 26px;
+	height: 26px;
+	padding: 0;
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-control);
+	background: var(--zym-color-surface);
+	color: var(--zym-color-dark);
+	font-size: var(--zym-font-size-xs);
+	line-height: 1;
+	cursor: pointer;
+	transition: border-color var(--zym-motion-fast) var(--zym-ease), color var(--zym-motion-fast) var(--zym-ease);
+}
+
+.zymarg-admin .zvds-navorder__btn:hover:not([disabled]) {
+	border-color: var(--zym-color-primary);
+	color: var(--zym-color-primary);
+}
+
+.zymarg-admin .zvds-navorder__btn:focus-visible {
+	outline: none;
+	box-shadow: var(--zym-focus-ring);
+}
+
+.zymarg-admin .zvds-navorder__btn[disabled] {
+	opacity: 0.35;
+	cursor: default;
+}
+
+.zymarg-admin .zvds-actions {
+	display: flex;
+	align-items: center;
+	gap: var(--zym-gap-small);
+	flex-wrap: wrap;
+}
+
+.zymarg-admin .zvds-navorder__reset {
+	padding: var(--zym-space-4) var(--zym-space-7);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-control);
+	background: var(--zym-color-surface);
+	color: var(--zym-color-dark);
+	font-size: var(--zym-font-size-xs);
+	font-weight: var(--zym-font-weight-semibold);
+	cursor: pointer;
+	transition: border-color var(--zym-motion-fast) var(--zym-ease), color var(--zym-motion-fast) var(--zym-ease);
+}
+
+.zymarg-admin .zvds-navorder__reset:hover {
+	border-color: var(--zym-color-primary);
+	color: var(--zym-color-primary);
+}
+
+.zymarg-admin .zvds-navorder__reset:focus-visible {
+	outline: none;
+	box-shadow: var(--zym-focus-ring);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.zymarg-admin .zvds-navorder__item,
+	.zymarg-admin .zvds-navorder__btn,
+	.zymarg-admin .zvds-navorder__reset {
+		transition: none;
+	}
+}
