@@ -3,7 +3,7 @@
  * Plugin Name:       ZYMARG Vendor Dashboard
  * Plugin URI:        https://github.com/Aspeyash/Wordpress-Theme
  * Description:       A custom, on-brand vendor "business operating system" for WooCommerce + Dokan marketplaces — Dashboard, Products (native add/edit), Orders, Earnings, Analytics, Promotions (native coupons), Reviews, Messages, Customers, native Store Settings and native Payouts (bKash / Nagad / Rocket / bank). Pairs with the ZYMARG OS theme but works standalone on any theme.
- * Version: 1.46.13
+ * Version: 1.46.14
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            ZYMARG

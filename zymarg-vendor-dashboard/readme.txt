@@ -3,7 +3,7 @@ Contributors: zymarg
 Requires at least: 6.0
 Tested up to: 6.6
 Requires PHP: 7.4
-Stable tag: 1.46.13
+Stable tag: 1.46.14
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -29,6 +29,10 @@ Sections:
 Requires WooCommerce. Dokan (Lite or Pro) is recommended for full multi-vendor data (per-vendor order amounts, store info, balances). Designed to pair with the ZYMARG OS theme for full branding, but works standalone on any theme via built-in fallback styling.
 
 == Changelog ==
+
+= 1.46.14 =
+* Added: three new fields on the Premium "Limits and display" screen -- Columns: desktop / tablet / mobile (1 to 6 each, defaults 4/3/2). Only meaningful when Layout above is Grid, and shared between Flash Sale and Featured Items since both render on the same store page grid. Requires ZYMARG Store Page 1.24.2 or newer to actually apply on the front end -- older Store Page versions ignore these and keep rendering a flat 4-column grid, same as before.
+* Added: a live pending-request count bubble on the "Vendor Hub" and "Premium" admin sidebar items, matching the same visual style WordPress core uses for its Plugins-update count and WooCommerce uses for its order count (an `.update-plugins`/`.plugin-count` bubble). Updates automatically while sitting on any admin page, with no page reload, by riding WordPress core's own Heartbeat API -- the same polling loop already running on every wp-admin screen for post-lock and autosave -- rather than adding a second independent polling loop. Ticks every 15-60 seconds depending on the site's own Heartbeat interval, matching the responsiveness of WordPress's and WooCommerce's own equivalents.
 
 = 1.46.13 =
 * Fix: the Support section's inline inbox sat inside a rounded, shadowed card with the section's 28px frame around it and a 1180px width cap, while the Messages section's inbox ran edge to edge and full width. The two never matched, and neither did the seller Support surface versus the buyer's My Account Support panel.
