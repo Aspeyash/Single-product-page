@@ -1,0 +1,3168 @@
+/**
+ * ZYMARG Vendor Dashboard — Add-on modules (Payouts, Store Settings, Shipping…).
+ * -----------------------------------------------------------------------------
+ * Reuses the core dashboard design tokens (--color-*, --zv-radius, --zv-shadow,
+ * --zv-grad) so every add-on screen matches the ZYMARG brand and flips with
+ * dark mode. No hardcoded brand colours.
+ */
+
+/* ---- Two-column grid for cards --------------------------------------- */
+.zymarg-vendor-grid--2 {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--zv-gap, 20px);
+	margin-bottom: var(--zv-gap, 20px);
+}
+
+@media (max-width: 880px) {
+	.zymarg-vendor-grid--2 {
+		grid-template-columns: 1fr;
+	}
+}
+
+/* ---- Ghost CTA variant ----------------------------------------------- */
+.zymarg-vendor-cta--ghost {
+	background: var(--color-surface-container);
+	color: var(--color-on-primary-fixed);
+	box-shadow: none;
+}
+
+.zymarg-vendor-cta--ghost:hover {
+	background: var(--color-surface-low);
+}
+
+/* ---- Forms ----------------------------------------------------------- */
+.zymarg-zp-card {
+	display: flex;
+	flex-direction: column;
+}
+
+.zymarg-zp-form {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+}
+
+.zymarg-zp-field {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.zymarg-zp-field__label {
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--color-text-muted);
+}
+
+.zymarg-zp-field input,
+.zymarg-zp-field select {
+	width: 100%;
+	padding: 11px 13px;
+	border: 1px solid var(--zv-border, var(--color-outline-variant));
+	border-radius: 12px;
+	background: var(--color-surface-lowest);
+	color: var(--color-text-body);
+	font-size: 15px;
+	transition: border-color .15s ease, box-shadow .15s ease;
+	box-sizing: border-box;
+}
+
+.zymarg-zp-field input:focus,
+.zymarg-zp-field select:focus {
+	outline: none;
+	border-color: var(--color-primary);
+	box-shadow: 0 0 0 3px rgba(149, 0, 165, .14);
+}
+
+.zymarg-zp-field__hint {
+	font-size: 12px;
+	color: var(--color-text-muted);
+}
+
+.zymarg-zp-fields {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+}
+
+.zymarg-zp-check {
+	display: flex;
+	align-items: center;
+	gap: 9px;
+	font-size: 14px;
+	color: var(--color-text-body);
+	cursor: pointer;
+}
+
+.zymarg-zp-check input {
+	width: 17px;
+	height: 17px;
+	accent-color: var(--color-primary);
+}
+
+.zymarg-zp-form__foot {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	flex-wrap: wrap;
+	margin-top: 2px;
+}
+
+.zymarg-zp-msg {
+	font-size: 13px;
+	font-weight: 600;
+}
+
+.zymarg-zp-msg.is-ok {
+	color: var(--zym-color-success-text);
+}
+
+.zymarg-zp-msg.is-err {
+	color: var(--zym-color-error);
+}
+
+/* ---- History table --------------------------------------------------- */
+.zymarg-zp-history {
+	margin-top: var(--zv-gap, 20px);
+}
+
+.zymarg-zp-table-wrap {
+	overflow-x: auto;
+}
+
+.zymarg-zp-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 14px;
+}
+
+.zymarg-zp-table th,
+.zymarg-zp-table td {
+	text-align: left;
+	padding: 12px 14px;
+	border-bottom: 1px solid var(--color-outline-variant);
+	vertical-align: middle;
+}
+
+.zymarg-zp-table th {
+	font-size: 12px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: .04em;
+	color: var(--color-text-muted);
+}
+
+.zymarg-zp-table tr:last-child td {
+	border-bottom: none;
+}
+
+/* ---- Status badges --------------------------------------------------- */
+.zymarg-zp-badge {
+	display: inline-block;
+	padding: 3px 11px;
+	border-radius: 999px;
+	font-size: 12px;
+	font-weight: 700;
+	line-height: 1.5;
+}
+
+.zymarg-zp-badge--pending {
+	background: #fff4cc;
+	color: var(--zym-color-warning);
+}
+
+.zymarg-zp-badge--approved {
+	background: var(--color-surface-container);
+	color: var(--color-on-primary-fixed);
+}
+
+.zymarg-zp-badge--paid {
+	background: var(--zym-color-success-bg);
+	color: var(--zym-color-success-text);
+}
+
+.zymarg-zp-badge--rejected,
+.zymarg-zp-badge--cancelled {
+	background: var(--zym-color-error-bg);
+	color: var(--zym-color-error);
+}
+
+.zymarg-zp-badge--auto {
+	background: var(--zym-color-surface-alt);
+	color: var(--zym-color-primary);
+	font-size: 11px;
+	margin-left: 4px;
+}
+
+.zymarg-zp-adminnote {
+	display: block;
+	margin-top: 4px;
+	font-size: 12px;
+	color: var(--color-text-muted);
+}
+
+.zymarg-zp-cancel {
+	border: 1px solid var(--color-outline-variant);
+	background: var(--color-surface-lowest);
+	color: var(--color-text-muted);
+	border-radius: 9px;
+	padding: 6px 12px;
+	font-size: 13px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: border-color .15s ease, color .15s ease;
+}
+
+.zymarg-zp-cancel:hover {
+	border-color: var(--color-primary);
+	color: var(--color-primary);
+}
+
+/* ---- Responsive table -> cards -------------------------------------- */
+@media (max-width: 700px) {
+	.zymarg-zp-table thead {
+		display: none;
+	}
+
+	.zymarg-zp-table,
+	.zymarg-zp-table tbody,
+	.zymarg-zp-table tr,
+	.zymarg-zp-table td {
+		display: block;
+		width: 100%;
+	}
+
+	.zymarg-zp-table tr {
+		border: 1px solid var(--color-outline-variant);
+		border-radius: 14px;
+		margin-bottom: 12px;
+		padding: 6px 4px;
+	}
+
+	.zymarg-zp-table td {
+		border-bottom: none;
+		display: flex;
+		justify-content: space-between;
+		gap: 16px;
+		padding: 8px 14px;
+	}
+
+	.zymarg-zp-table td::before {
+		content: attr(data-th);
+		font-size: 12px;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: .04em;
+		color: var(--color-text-muted);
+	}
+}
+
+
+/* ====================================================================== *
+ * Product editor (v1.6.0) — Grouped card layout
+ * ====================================================================== */
+
+/* -- Layout (two-column desktop, single-column mobile) -------------- */
+.zymarg-zpe-layout {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: var(--zv-gap, 20px);
+	margin-bottom: var(--zv-gap, 20px);
+	width: 100%;
+}
+
+.zymarg-zpe-card--left {
+	grid-column: 1;
+}
+
+.zymarg-zpe-card--right {
+	grid-column: 2;
+}
+
+@media (max-width: 1100px) {
+	.zymarg-zpe-layout {
+		grid-template-columns: 1fr;
+	}
+
+	.zymarg-zpe-card--left,
+	.zymarg-zpe-card--right {
+		grid-column: 1;
+	}
+}
+
+/* -- Card component ------------------------------------------------- */
+.zymarg-zpe-card {
+	background: var(--color-surface-lowest, var(--zym-color-surface));
+	border: 1px solid var(--zv-border, var(--color-outline-variant, var(--zym-color-border)));
+	border-radius: var(--zv-radius, 18px);
+	box-shadow: var(--zv-shadow, 0 1px 2px rgba(19,27,46,.04), 0 8px 24px rgba(19,27,46,.06));
+	overflow: hidden;
+	transition: transform .15s ease, box-shadow .2s ease, border-color .15s ease;
+}
+
+.zymarg-zpe-card:hover {
+	transform: translateY(-2px);
+	border-color: var(--color-primary, var(--zym-color-primary));
+	box-shadow: 0 1px 2px rgba(19,27,46,.04), 0 8px 24px rgba(149,0,165,.16);
+}
+
+.zymarg-zpe-card__accent {
+	height: 3px;
+	background: linear-gradient(to right, var(--color-primary, var(--zym-color-primary)), var(--color-primary-inverse, var(--zym-color-accent)));
+}
+
+.zymarg-zpe-card__header {
+	padding: 20px 20px 0;
+	font-size: 15px;
+	font-weight: 700;
+	color: var(--color-on-primary-fixed, var(--zym-color-dark));
+}
+
+.zymarg-zpe-card__body {
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: var(--zv-gap-inner, 12px);
+}
+
+/* -- Form elements inside cards ------------------------------------- */
+.zymarg-zpe-form {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: var(--zv-gap-inner, 12px);
+}
+
+.zymarg-zpe-form textarea {
+	width: 100%;
+	padding: 9px 13px;
+	border: 1px solid var(--zv-border, var(--color-outline-variant));
+	border-radius: 12px;
+	background: var(--color-surface-lowest);
+	color: var(--color-text-body);
+	font-size: 15px;
+	font-family: inherit;
+	line-height: 1.5;
+	resize: vertical;
+	box-sizing: border-box;
+	transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.zymarg-zpe-form textarea:focus {
+	outline: none;
+	border-color: var(--color-primary);
+	box-shadow: 0 0 0 3px rgba(149, 0, 165, .14);
+}
+
+.zymarg-zpe-form .zymarg-zp-field input,
+.zymarg-zpe-form .zymarg-zp-field select,
+.zymarg-zpe-form textarea {
+	padding: 11px 13px;
+}
+
+/* Form breathing (v1.23.4).
+ * The old "nuclear zero-gap reset" forced line-height:1.2 + margin:0 on every
+ * element inside the form cards to fight wpautop's phantom <p> tags. wpautop
+ * was removed in v1.23.1, so that hack is obsolete. We keep comfortable
+ * line-height and use flex/grid `gap` for clean, even breathing. */
+.zymarg-zpe-form .zymarg-zpe-card__body,
+.zymarg-zpe-card__body .zymarg-zpe-form {
+	line-height: 1.5 !important;
+}
+
+.zymarg-zpe-form .zymarg-zp-field,
+.zymarg-zpe-card__body .zymarg-zpe-form .zymarg-zp-field {
+	line-height: 1.5 !important;
+	padding: 0 !important;
+	gap: 7px;
+}
+
+.zymarg-zpe-form .zymarg-zp-field__label,
+.zymarg-zpe-card__body .zymarg-zpe-form .zymarg-zp-field__label {
+	display: block !important;
+	padding: 0 !important;
+	line-height: 1.45 !important;
+	margin-bottom: 2px !important;
+}
+
+.zymarg-zpe-form .zymarg-zp-field input,
+.zymarg-zpe-form .zymarg-zp-field select,
+.zymarg-zpe-card__body .zymarg-zpe-form .zymarg-zp-field input,
+.zymarg-zpe-card__body .zymarg-zpe-form .zymarg-zp-field select {
+	display: block !important;
+	line-height: normal !important;
+}
+
+.zymarg-zpe-form textarea,
+.zymarg-zpe-card__body .zymarg-zpe-form textarea {
+	display: block !important;
+	line-height: 1.5 !important;
+}
+
+.zymarg-zpe-form .zymarg-zp-check,
+.zymarg-zpe-card__body .zymarg-zpe-form .zymarg-zp-check {
+	padding: 0 !important;
+	line-height: 1.45 !important;
+	margin: 10px 0 0 0 !important;
+	gap: 9px;
+}
+.zymarg-zpe-form .zymarg-zp-check:first-of-type,
+.zymarg-zpe-card__body .zymarg-zpe-form .zymarg-zp-check:first-of-type {
+	margin-top: 12px !important;
+}
+
+/* -- Row grid ------------------------------------------------------- */
+.zymarg-zpe-row {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: var(--zv-gap-inner, 12px);
+}
+
+.zymarg-zpe-row--half {
+	grid-template-columns: 1fr;
+}
+
+@media (max-width: 520px) {
+	.zymarg-zpe-row {
+		grid-template-columns: 1fr;
+	}
+}
+
+/* -- Inventory stock group ------------------------------------------ */
+.zymarg-zpe-inv {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+}
+
+/* -- Product image -------------------------------------------------- */
+.zymarg-zpe-image {
+	margin: 0;
+}
+
+.zymarg-zpe-image__preview-wrap {
+	position: relative;
+	cursor: pointer;
+}
+
+.zymarg-zpe-image__preview {
+	width: 100%;
+	border-radius: 14px;
+	display: block;
+	border: 1px solid var(--color-outline-variant);
+}
+
+.zymarg-zpe-image__remove-popup {
+	position: absolute;
+	bottom: 12px;
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 10;
+}
+
+.zymarg-zpe-image__remove-popup[hidden] {
+	display: none;
+}
+
+.zymarg-zpe-image__remove-btn {
+	display: inline-flex;
+	align-items: center;
+	padding: 6px 14px;
+	border: none;
+	border-radius: 8px;
+	background: rgba(19, 27, 46, 0.85);
+	color: #fff;
+	font-size: 12px;
+	font-weight: 600;
+	cursor: pointer;
+	white-space: nowrap;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+	transition: background 0.15s ease;
+}
+
+.zymarg-zpe-image__remove-btn:hover {
+	background: rgba(179, 38, 30, 0.9);
+}
+
+.zymarg-zpe-image__upload {
+	width: 100%;
+	height: 120px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	border: 2px dashed var(--color-outline-variant, var(--zym-color-border));
+	border-radius: 14px;
+	background: var(--color-surface-low, var(--zym-color-surface-alt));
+	color: var(--color-text-muted, var(--zym-color-text));
+	font-size: 13px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.zymarg-zpe-image__upload:hover {
+	border-color: var(--color-primary, var(--zym-color-primary));
+	background: var(--color-surface-container, var(--zym-color-container));
+	color: var(--color-primary, var(--zym-color-primary));
+}
+
+.zymarg-zpe-image__upload svg {
+	color: var(--color-primary, var(--zym-color-primary));
+	opacity: 0.7;
+}
+
+.zymarg-zpe-image__upload[hidden] {
+	display: none;
+}
+
+.zymarg-zpe-image__preview-wrap[hidden] {
+	display: none;
+}
+
+/* -- Gallery thumbnails --------------------------------------------- */
+.zymarg-zpe-gallery__thumbs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 3px;
+	margin-bottom: 3px;
+}
+
+.zymarg-zpe-gallery__item {
+	position: relative;
+	display: inline-block;
+}
+
+.zymarg-zpe-gallery__item .zymarg-zpe-gallery__thumb {
+	display: block;
+}
+
+.zymarg-zpe-gallery__remove {
+	position: absolute;
+	top: 2px;
+	right: 2px;
+	width: 20px;
+	height: 20px;
+	border: none;
+	border-radius: 50%;
+	background: rgba(179, 38, 30, 0.9);
+	color: #fff;
+	font-size: 14px;
+	font-weight: 700;
+	line-height: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	opacity: 0;
+	transition: opacity 0.15s ease;
+	padding: 0;
+}
+
+.zymarg-zpe-gallery__item:hover .zymarg-zpe-gallery__remove {
+	opacity: 1;
+}
+
+.zymarg-zpe-gallery__thumb {
+	width: 60px;
+	height: 60px;
+	object-fit: cover;
+	border-radius: 8px;
+	border: 1px solid var(--color-outline-variant);
+}
+
+/* -- Gallery upload zone -------------------------------------------- */
+.zymarg-zpe-gallery__upload {
+	width: 100%;
+	height: 80px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	border: 2px dashed var(--color-outline-variant, var(--zym-color-border));
+	border-radius: 14px;
+	background: var(--color-surface-low, var(--zym-color-surface-alt));
+	color: var(--color-text-muted, var(--zym-color-text));
+	font-size: 13px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+	margin-bottom: 6px;
+}
+
+.zymarg-zpe-gallery__upload:hover {
+	border-color: var(--color-primary, var(--zym-color-primary));
+	background: var(--color-surface-container, var(--zym-color-container));
+	color: var(--color-primary, var(--zym-color-primary));
+}
+
+.zymarg-zpe-gallery__upload svg {
+	color: var(--color-primary, var(--zym-color-primary));
+	opacity: 0.7;
+}
+
+/* -- Categories ----------------------------------------------------- */
+.zymarg-zpe-cats {
+	border: none;
+	margin: 0;
+	padding: 0;
+}
+
+.zymarg-zpe-cats__search {
+	width: 100%;
+	padding: 8px 12px;
+	border: 1px solid var(--zv-border, var(--color-outline-variant));
+	border-radius: 10px;
+	background: var(--color-surface-lowest);
+	color: var(--color-text-body);
+	font-size: 13px;
+	margin-bottom: 3px;
+	box-sizing: border-box;
+	transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.zymarg-zpe-cats__search:focus {
+	outline: none;
+	border-color: var(--color-primary);
+	box-shadow: 0 0 0 3px rgba(149, 0, 165, .14);
+}
+
+.zymarg-zpe-cats__list {
+	max-height: 220px;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	padding: 4px;
+	border: 1px solid var(--color-outline-variant);
+	border-radius: 12px;
+	background: var(--color-surface-lowest);
+}
+
+.zymarg-zpe-cat {
+	display: flex;
+	align-items: center;
+	gap: 9px;
+	font-size: 14px;
+	color: var(--color-text-body);
+	cursor: pointer;
+}
+
+.zymarg-zpe-cat input {
+	width: 16px;
+	height: 16px;
+	accent-color: var(--color-primary);
+}
+
+.zymarg-zpe-cat--child {
+	font-size: 13px;
+}
+
+/* -- Actions inside Publish card ------------------------------------ */
+.zymarg-zpe-actions {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex-wrap: wrap;
+	margin-top: 0;
+}
+
+.zymarg-zpe-save {
+	padding: 10px 16px;
+	font-size: 0.81rem;
+	border-radius: 11px;
+	gap: 7px;
+	border: none;
+	outline: none;
+	cursor: pointer;
+}
+
+.zymarg-zpe-save svg {
+	width: 16px;
+	height: 16px;
+}
+
+/* -- Shipping card (hidden when virtual) ---------------------------- */
+.zymarg-zpe-card--shipping[hidden] {
+	display: none;
+}
+
+
+/* ====================================================================== *
+ * v1.32.0 — Section 5 "Store Profile" (folded in from the old standalone
+ * Store Settings screen; the .zymarg-zss-* rules that screen used are gone
+ * with it — this section's markup reuses the shared .zymarg-vs-* / .zymarg-zp-*
+ * classes already defined elsewhere in this file, plus the address grid
+ * below and the banner uploader further down (v1.33.0 rewrite).
+ * ====================================================================== */
+.zymarg-vs-addr-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 10px;
+	margin-top: 6px;
+}
+
+.zymarg-vs-addr-grid input {
+	padding: 9px 13px;
+	border: 1px solid var(--zv-border, var(--color-outline-variant));
+	border-radius: 10px;
+	background: var(--color-surface-lowest);
+	color: var(--color-text-body);
+	font-size: 14px;
+	box-sizing: border-box;
+}
+
+@media (max-width: 640px) {
+	.zymarg-vs-addr-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+/* v1.33.0 — Store banner uploader. Card-style aspect-ratio box driven by
+   store-upload.js's shared crop+compress+AJAX flow (same one that powers
+   the sidebar avatar) — NOT the WordPress admin Media Library, and NOT a
+   raw <img> floating with buttons above it (both were mistakes in the
+   v1.32.0 first pass). Visibility (empty-state vs. image vs. hover overlay
+   vs. Remove button) is driven entirely by the .has-image class that
+   store-upload.js toggles on the wrapper — no inline styles, no [hidden]
+   attribute juggling. */
+.zymarg-vs-banner {
+	position: relative;
+	border-radius: 14px;
+	overflow: hidden;
+	margin-top: 6px;
+}
+
+.zymarg-vs-banner__area {
+	display: block;
+	width: 100%;
+	aspect-ratio: 4 / 1;
+	padding: 0;
+	margin: 0;
+	border: 1px dashed var(--zv-border, var(--color-outline-variant, var(--zym-color-border)));
+	border-radius: 14px;
+	background: var(--color-surface-low, var(--zym-color-surface-alt));
+	cursor: pointer;
+	position: relative;
+	overflow: hidden;
+	transition: border-color .15s ease, background .15s ease;
+}
+
+.zymarg-vs-banner__area:hover,
+.zymarg-vs-banner__area:focus-visible {
+	border-color: var(--color-primary, var(--zym-color-primary));
+}
+
+.zymarg-vs-banner.has-image .zymarg-vs-banner__area {
+	border-style: solid;
+	border-color: var(--zv-border, var(--color-outline-variant, var(--zym-color-border)));
+}
+
+.zymarg-vs-banner-img {
+	display: none;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.zymarg-vs-banner.has-image .zymarg-vs-banner-img {
+	display: block;
+}
+
+.zymarg-vs-banner__empty {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	width: 100%;
+	height: 100%;
+	color: var(--color-text-muted, var(--zym-color-text));
+	font-size: 13px;
+	font-weight: 600;
+}
+
+.zymarg-vs-banner__empty svg {
+	color: var(--color-primary, var(--zym-color-primary));
+	opacity: .7;
+}
+
+.zymarg-vs-banner.has-image .zymarg-vs-banner__empty {
+	display: none;
+}
+
+.zymarg-vs-banner__overlay {
+	position: absolute;
+	inset: 0;
+	display: none;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	background: rgba(19, 27, 46, .55);
+	color: #fff;
+	font-size: 13px;
+	font-weight: 600;
+	opacity: 0;
+	transition: opacity .15s ease;
+}
+
+.zymarg-vs-banner.has-image .zymarg-vs-banner__overlay {
+	display: flex;
+}
+
+.zymarg-vs-banner__area:hover .zymarg-vs-banner__overlay,
+.zymarg-vs-banner__area:focus-visible .zymarg-vs-banner__overlay {
+	opacity: 1;
+}
+
+.zymarg-vs-banner__remove {
+	display: none;
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	z-index: 2;
+	padding: 6px 14px;
+	border: none;
+	border-radius: 999px;
+	background: rgba(19, 27, 46, .85);
+	color: #fff;
+	font-size: 12px;
+	font-weight: 600;
+	cursor: pointer;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, .2);
+	transition: background .15s ease;
+}
+
+.zymarg-vs-banner.has-image .zymarg-vs-banner__remove {
+	display: inline-flex;
+}
+
+.zymarg-vs-banner__remove:hover {
+	background: rgba(179, 38, 30, .9);
+}
+
+@media (max-width: 640px) {
+	.zymarg-vs-banner__area {
+		aspect-ratio: 2 / 1;
+	}
+}
+
+/* Still consumed live by zymarg_vd_vacation_product_notice() in
+   store-settings.php (the vacation runtime effect that survived the
+   Store Settings screen removal) — DO NOT remove. */
+.zymarg-vacation-notice {
+	margin: 0 0 16px;
+	border-left: 4px solid var(--color-primary, var(--zym-color-primary));
+}
+
+
+/* ====================================================================== *
+ * Refund requests (v1.8.0)
+ * ====================================================================== */
+.zymarg-zr-buyer {
+	margin-top: 22px;
+	padding: 20px;
+	border: 1px solid var(--color-outline-variant, var(--zym-color-border));
+	border-radius: var(--zv-radius, 18px);
+	background: var(--color-surface-lowest, var(--zym-color-surface));
+}
+
+.zymarg-zr-buyer__title {
+	margin: 0 0 14px;
+	font-size: 18px;
+	font-weight: 800;
+	color: var(--color-on-primary-fixed, var(--zym-color-dark));
+}
+
+.zymarg-zr-buyer__form {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	max-width: 520px;
+}
+
+.zymarg-zr-buyer__form textarea,
+.zymarg-zr-buyer__form input,
+.zymarg-zr-buyer__form select {
+	width: 100%;
+	padding: 11px 13px;
+	border: 1px solid var(--color-outline-variant, var(--zym-color-border));
+	border-radius: 12px;
+	background: var(--zym-color-surface);
+	color: var(--color-text-body, var(--zym-color-dark));
+	font-size: 15px;
+	font-family: inherit;
+	box-sizing: border-box;
+}
+
+.zymarg-zr-btn,
+.zymarg-zr-approve,
+.zymarg-zr-reject {
+	border: none;
+	border-radius: 10px;
+	padding: 9px 16px;
+	font-size: 14px;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.zymarg-zr-btn,
+.zymarg-zr-approve {
+	background: var(--zv-grad, linear-gradient(135deg, var(--zym-color-primary), var(--zym-color-accent)));
+	color: #fff;
+	box-shadow: 0 6px 16px rgba(149, 0, 165, .28);
+}
+
+.zymarg-zr-reject {
+	background: var(--color-surface-container, var(--zym-color-container));
+	color: var(--color-on-primary-fixed, var(--zym-color-dark));
+}
+
+.zymarg-zr-btn:disabled,
+.zymarg-zr-approve:disabled,
+.zymarg-zr-reject:disabled {
+	opacity: .6;
+	cursor: default;
+}
+
+.zymarg-zr-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	align-items: center;
+}
+
+.zymarg-zr-actions .zymarg-zr-amount {
+	width: 100px;
+}
+
+.zymarg-zr-actions .zymarg-zr-note {
+	width: 130px;
+}
+
+.zymarg-zr-actions input {
+	padding: 7px 9px;
+	border: 1px solid var(--color-outline-variant, var(--zym-color-border));
+	border-radius: 9px;
+	background: var(--color-surface-lowest, var(--zym-color-surface));
+	color: var(--color-text-body, var(--zym-color-dark));
+	font-size: 13px;
+}
+
+
+/* ====================================================================== *
+ * Shipping + SEO (v1.9.0)
+ * ====================================================================== */
+.zymarg-zsh-form textarea {
+	width: 100%;
+	padding: 11px 13px;
+	border: 1px solid var(--zv-border, var(--color-outline-variant));
+	border-radius: 12px;
+	background: var(--color-surface-lowest);
+	color: var(--color-text-body);
+	font-size: 15px;
+	font-family: inherit;
+	line-height: 1.5;
+	resize: vertical;
+	box-sizing: border-box;
+	transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.zymarg-zsh-form textarea:focus {
+	outline: none;
+	border-color: var(--color-primary);
+	box-shadow: 0 0 0 3px rgba(149, 0, 165, .14);
+}
+
+/* ====================================================================== *
+ * Settings Hub (v1.13.7)
+ * ====================================================================== */
+
+.zymarg-zsh-account {
+	margin-bottom: 20px;
+}
+
+.zymarg-zsh-account__body {
+	padding: 16px 20px;
+}
+
+.zymarg-zsh-account__row {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 8px 0;
+	border-bottom: 1px solid var(--zv-border, var(--color-outline-variant, var(--zym-color-border)));
+}
+
+.zymarg-zsh-account__row:last-of-type {
+	border-bottom: none;
+}
+
+.zymarg-zsh-account__label {
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--color-text-muted, var(--zym-color-neutral-text));
+	min-width: 110px;
+}
+
+.zymarg-zsh-account__value {
+	font-size: 15px;
+	color: var(--color-text-body, var(--zym-color-dark));
+}
+
+.zymarg-zsh-account__link {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	margin-top: 12px;
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--zym-color-primary);
+	text-decoration: none;
+	transition: color .15s ease;
+}
+
+.zymarg-zsh-account__link:hover {
+	color: var(--zym-color-secondary);
+}
+
+.zymarg-zsh-grid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 12px;
+	margin-top: 4px;
+}
+
+@media (max-width: 600px) {
+	.zymarg-zsh-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+.zymarg-zsh-card {
+	display: flex;
+	align-items: flex-start;
+	gap: 16px;
+	padding: 20px;
+	border-radius: var(--zv-radius, 18px);
+	background: var(--color-surface-lowest, var(--zym-color-surface));
+	border: 1px solid var(--zv-border, var(--color-outline-variant, var(--zym-color-border)));
+	box-shadow: var(--zv-shadow, 0 1px 2px rgba(19,27,46,.04), 0 8px 24px rgba(19,27,46,.06));
+	text-decoration: none;
+	color: inherit;
+	cursor: pointer;
+	transition: transform .15s ease, box-shadow .2s ease, border-color .15s ease;
+}
+
+.zymarg-zsh-card:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 6px 20px rgba(149, 0, 165, .10);
+	border-color: var(--zym-color-secondary);
+}
+
+.zymarg-zsh-card__icon {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 48px;
+	height: 48px;
+	border-radius: 14px;
+	background: linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-secondary) 100%);
+	color: #fff;
+}
+
+.zymarg-zsh-card__body {
+	flex: 1;
+	min-width: 0;
+}
+
+.zymarg-zsh-card__title {
+	margin: 0 0 4px;
+	font-size: 15px;
+	font-weight: 700;
+	color: var(--color-text-body, var(--zym-color-dark));
+}
+
+.zymarg-zsh-card__desc {
+	margin: 0;
+	font-size: 13px;
+	line-height: 1.4;
+	color: var(--color-text-muted, var(--zym-color-neutral-text));
+}
+
+@media (max-width: 600px) {
+	.zymarg-zsh-account__row {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 2px;
+	}
+	.zymarg-zsh-card {
+		padding: 16px;
+	}
+	.zymarg-zsh-card__icon {
+		width: 40px;
+		height: 40px;
+		border-radius: 12px;
+	}
+}
+
+
+/* ====================================================================== *
+ * Product Variations (v1.17.0 - Stage 2)
+ * ====================================================================== */
+
+.zymarg-zpe-card--variations .zymarg-zpe-card__body {
+	gap: 10px !important;
+}
+
+/* -- Top actions (generate button + message) ------------------------ */
+.zymarg-zpe-var-actions {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	flex-wrap: wrap;
+}
+
+.zymarg-zpe-var-msg,
+.zymarg-zpe-var-save-msg {
+	font-size: 13px;
+	font-weight: 600;
+}
+
+.zymarg-zpe-var-msg.is-ok,
+.zymarg-zpe-var-save-msg.is-ok {
+	color: var(--zym-color-success-text);
+}
+
+.zymarg-zpe-var-msg.is-err,
+.zymarg-zpe-var-save-msg.is-err {
+	color: var(--zym-color-error);
+}
+
+/* -- Variations list ------------------------------------------------ */
+.zymarg-zpe-var-list {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.zymarg-zpe-var-empty {
+	font-size: 13px;
+	color: var(--color-text-muted, var(--zym-color-text));
+	padding: 8px 0;
+}
+
+/* -- Single variation row ------------------------------------------- */
+.zymarg-zpe-var-row {
+	border: 1px solid var(--color-outline-variant, var(--zym-color-border));
+	border-radius: 12px;
+	background: var(--color-surface-low, var(--zym-color-surface-alt));
+	overflow: hidden;
+	transition: opacity 0.3s ease, max-height 0.3s ease;
+}
+
+.zymarg-zpe-var-row__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 8px 12px;
+	background: var(--color-surface-container, var(--zym-color-container));
+	border-bottom: 1px solid var(--color-outline-variant, var(--zym-color-border));
+}
+
+.zymarg-zpe-var-row__combo {
+	font-size: 13px;
+	font-weight: 700;
+	color: var(--color-on-primary-fixed, var(--zym-color-dark));
+}
+
+.zymarg-zpe-var-row__remove {
+	border: none;
+	background: none;
+	color: var(--zym-color-error);
+	font-size: 18px;
+	font-weight: 700;
+	cursor: pointer;
+	padding: 0 4px;
+	line-height: 1;
+	opacity: 0.7;
+	transition: opacity 0.15s ease;
+}
+
+.zymarg-zpe-var-row__remove:hover {
+	opacity: 1;
+}
+
+/* -- Fields inside a variation row ---------------------------------- */
+.zymarg-zpe-var-row__fields {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+	gap: 8px;
+	padding: 10px 12px;
+	align-items: end;
+}
+
+.zymarg-zpe-var-field {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+}
+
+.zymarg-zpe-var-field .zymarg-zp-field__label {
+	font-size: 11px !important;
+}
+
+.zymarg-zpe-var-field input[type="number"],
+.zymarg-zpe-var-field input[type="text"] {
+	width: 100%;
+	padding: 7px 9px !important;
+	font-size: 13px !important;
+	border-radius: 9px !important;
+}
+
+/* -- Stock wrap (checkbox + qty inline) ----------------------------- */
+.zymarg-zpe-var-stock-wrap {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.zymarg-zpe-var-stock-wrap .zymarg-zp-check {
+	font-size: 12px;
+	margin: 0 !important;
+}
+
+.zymarg-zpe-var-qty-field {
+	margin: 0 !important;
+}
+
+.zymarg-zpe-var-qty-field[hidden] {
+	display: none;
+}
+
+.zymarg-zpe-var-qty-field input {
+	width: 100%;
+	padding: 6px 8px !important;
+	font-size: 13px !important;
+	border-radius: 9px !important;
+}
+
+/* -- Save variations wrap ------------------------------------------- */
+.zymarg-zpe-var-save-wrap {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	flex-wrap: wrap;
+	margin-top: 4px;
+}
+
+/* -- Mobile: stack variation fields vertically ---------------------- */
+@media (max-width: 600px) {
+	.zymarg-zpe-var-row__fields {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
+@media (max-width: 400px) {
+	.zymarg-zpe-var-row__fields {
+		grid-template-columns: 1fr;
+	}
+}
+
+/* -- Centered empty state ------------------------------------------- */
+.zymarg-vendor-empty--centered {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	padding: 40px 20px;
+	min-height: 200px;
+}
+
+/* -- Promotions coupon form breathing (scoped) ---------------------- */
+#zymarg-vc-form {
+	display: flex;
+	flex-direction: column;
+	gap: var(--zv-gap-inner, 12px);
+}
+
+#zymarg-vc-form .zymarg-zpe-row {
+	gap: var(--zv-gap-inner, 12px);
+}
+
+.zymarg-vc-layout {
+	gap: var(--zv-gap, 20px);
+	margin-bottom: var(--zv-gap, 20px);
+}
+
+.zymarg-vc-layout .zymarg-zpe-card__header {
+	padding: 20px 20px 0;
+}
+
+.zymarg-vc-layout .zymarg-zpe-card__body {
+	padding: 20px;
+	gap: var(--zv-gap-inner, 12px);
+}
+
+/* -- Staff permissions grid ----------------------------------------- */
+.zymarg-staff-perms {
+	border: none;
+	margin: 0;
+	padding: 0;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 10px;
+}
+.zymarg-staff-perms > legend {
+	grid-column: 1 / -1;
+	margin-bottom: 4px;
+}
+.zymarg-staff-perm-check {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: .84rem;
+	font-weight: 600;
+	color: var(--color-text-body, var(--zym-color-dark));
+	cursor: pointer;
+	padding: 8px 10px;
+	border-radius: 10px;
+	border: 1px solid var(--zv-border, var(--zym-color-border));
+	background: var(--color-surface-lowest, var(--zym-color-surface));
+	transition: border-color .15s ease, background .15s ease;
+}
+.zymarg-staff-perm-check:last-child {
+	grid-column: 1 / -1;
+	width: fit-content;
+}
+.zymarg-staff-perm-check:has(input:checked) {
+	border-color: var(--color-primary, var(--zym-color-primary));
+	background: rgba(149, 0, 165, .06);
+}
+.zymarg-staff-perm-check input[type="checkbox"] {
+	width: 16px;
+	height: 16px;
+	accent-color: var(--color-primary, var(--zym-color-primary));
+	margin: 0;
+	flex-shrink: 0;
+}
+@media (max-width: 560px) {
+	.zymarg-staff-perms {
+		grid-template-columns: repeat(3, 1fr);
+		gap: 8px;
+	}
+	.zymarg-staff-perm-check {
+		padding: 7px 8px;
+		font-size: .74rem;
+		gap: 5px;
+		border-radius: 8px;
+	}
+	.zymarg-staff-perm-check:last-child {
+		grid-column: 1 / -1;
+		width: fit-content;
+	}
+	.zymarg-staff-perm-check input[type="checkbox"] {
+		width: 14px;
+		height: 14px;
+	}
+}
+
+
+/* =====================================================================
+ * Native Settings page (v1.28.0 Phase 1) — accordion.
+ * See includes/settings-hub.php (accordion of 11 collapsible cards) and
+ * assets/js/vendor-settings.js (open/close + AJAX + strength meter).
+ * ===================================================================== */
+
+/* -- Accordion card ------------------------------------------------- */
+.zymarg-vs {
+	display: block;
+	margin: 8px 0 24px;
+}
+
+.zymarg-vs-card {
+	position: relative;
+	background: var(--color-surface-lowest, var(--zym-color-surface));
+	border: 1px solid var(--zv-border, var(--color-outline-variant, var(--zym-color-border)));
+	border-radius: var(--zv-radius, 18px);
+	box-shadow: var(--zv-shadow, 0 1px 2px rgba(19,27,46,.04), 0 8px 24px rgba(19,27,46,.06));
+	overflow: hidden;
+	margin-bottom: 16px;
+	transition: box-shadow .2s ease, border-color .15s ease;
+}
+
+.zymarg-vs-card::before {
+	content: "";
+	display: block;
+	height: 3px;
+	background: linear-gradient(to right, var(--color-primary, var(--zym-color-primary)), var(--color-primary-inverse, var(--zym-color-accent)));
+}
+
+.zymarg-vs-card:hover {
+	border-color: var(--color-primary, var(--zym-color-primary));
+}
+
+.zymarg-vs-card__toggle {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	width: 100%;
+	padding: 16px 20px;
+	background: transparent;
+	border: 0;
+	border-radius: 0;
+	cursor: pointer;
+	text-align: left;
+	font: inherit;
+	color: inherit;
+	transition: background-color .15s ease;
+}
+
+.zymarg-vs-card__toggle:hover {
+	background: var(--color-surface-container, rgba(149, 0, 165, .04));
+}
+
+.zymarg-vs-card__toggle:focus-visible {
+	outline: 2px solid var(--color-primary, var(--zym-color-primary));
+	outline-offset: -2px;
+}
+
+.zymarg-vs-card__num {
+	flex: 0 0 auto;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	background: var(--color-primary, var(--zym-color-primary));
+	color: #ffffff;
+	font-weight: 700;
+	font-size: 13px;
+	line-height: 1;
+}
+
+.zymarg-vs-card__title {
+	flex: 1 1 auto;
+	text-align: left;
+	font-weight: 700;
+	font-size: 15px;
+	color: var(--color-on-primary-fixed, var(--zym-color-dark));
+}
+
+.zymarg-vs-card__chevron {
+	flex: 0 0 auto;
+	display: inline-block;
+	font-size: 18px;
+	line-height: 1;
+	color: var(--color-on-primary-fixed, var(--zym-color-dark));
+	transition: transform .2s ease;
+}
+
+.zymarg-vs-card.is-open .zymarg-vs-card__chevron {
+	transform: rotate(180deg);
+}
+
+.zymarg-vs-card__body {
+	padding: 0 20px 20px 20px;
+	display: none;
+}
+
+.zymarg-vs-card.is-open .zymarg-vs-card__body {
+	display: block;
+}
+
+/* -- Placeholder body (Phase 2/3 cards) ---------------------------- */
+.zymarg-vs-placeholder {
+	margin: 4px 0 0;
+	font-style: italic;
+	font-size: 13px;
+	color: var(--color-text-muted, var(--zym-color-text));
+}
+
+/* -- Shared form scaffolding inside cards -------------------------- */
+.zymarg-vs-form {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+}
+
+.zymarg-vs-hint {
+	margin: 4px 0 0;
+	font-size: 12px;
+	color: var(--color-text-muted, var(--zym-color-text));
+}
+
+/* -- Buttons ------------------------------------------------------- */
+.zymarg-vs-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 10px 18px;
+	border-radius: 12px;
+	border: 1px solid transparent;
+	background: transparent;
+	color: inherit;
+	font-size: 14px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background-color .15s ease, color .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+
+.zymarg-vs-btn--primary {
+	background: var(--color-primary, var(--zym-color-primary));
+	color: #ffffff;
+}
+
+.zymarg-vs-btn--primary:hover {
+	background: var(--zym-color-primary);
+}
+
+.zymarg-vs-btn--primary:disabled {
+	opacity: .55;
+	cursor: default;
+}
+
+.zymarg-vs-btn--ghost {
+	background: transparent;
+	color: var(--color-primary, var(--zym-color-primary));
+	border-color: var(--color-outline-variant, var(--zym-color-border));
+}
+
+.zymarg-vs-btn--ghost:hover {
+	border-color: var(--color-primary, var(--zym-color-primary));
+	background: rgba(149, 0, 165, .06);
+}
+
+.zymarg-vs-linkbtn {
+	background: none;
+	border: 0;
+	padding: 0 6px;
+	color: var(--color-primary, var(--zym-color-primary));
+	font-size: 13px;
+	font-weight: 600;
+	cursor: pointer;
+	text-decoration: underline;
+}
+.zymarg-vs-linkbtn:hover { color: var(--zym-color-primary); }
+
+/* -- Section 1: Account -------------------------------------------- */
+.zymarg-vs-avatar-row {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	flex-wrap: wrap;
+}
+
+.zymarg-vs-avatar {
+	width: 96px;
+	height: 96px;
+	border-radius: 50%;
+	object-fit: cover;
+	border: 2px solid var(--color-outline-variant, var(--zym-color-border));
+	background: var(--color-surface-container, var(--zym-color-neutral-bg));
+}
+
+.zymarg-vs-avatar-actions {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.zymarg-vs-email-row {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+
+.zymarg-vs-email-row input[type="email"] {
+	flex: 1 1 240px;
+	min-width: 200px;
+}
+
+.zymarg-vs-email-confirm {
+	margin-top: 10px;
+	padding: 12px;
+	border: 1px dashed var(--color-outline-variant, var(--zym-color-border));
+	border-radius: 12px;
+	background: var(--color-surface-container, rgba(149, 0, 165, .03));
+}
+
+.zymarg-vs-phone-row {
+	display: flex;
+	align-items: stretch;
+	gap: 0;
+	border: 1px solid var(--zv-border, var(--color-outline-variant, var(--zym-color-border)));
+	border-radius: 12px;
+	overflow: hidden;
+	background: var(--color-surface-lowest, var(--zym-color-surface));
+	transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.zymarg-vs-phone-row:focus-within {
+	border-color: var(--color-primary, var(--zym-color-primary));
+	box-shadow: 0 0 0 3px rgba(149, 0, 165, .14);
+}
+
+.zymarg-vs-phone-cc {
+	display: inline-flex;
+	align-items: center;
+	padding: 0 12px;
+	background: var(--color-surface-container, var(--zym-color-surface-alt));
+	color: var(--color-on-primary-fixed, var(--zym-color-dark));
+	font-weight: 600;
+	font-size: 14px;
+	border-right: 1px solid var(--color-outline-variant, var(--zym-color-border));
+}
+
+.zymarg-vs-phone-row input {
+	flex: 1;
+	border: 0 !important;
+	border-radius: 0 !important;
+	background: transparent;
+	padding: 11px 13px;
+	font-size: 15px;
+	outline: none;
+}
+
+/* -- Password inputs (eye toggle + strength meter) ----------------- */
+.zymarg-vs-pw-wrap {
+	position: relative;
+	display: block;
+}
+
+.zymarg-vs-pw-wrap input {
+	width: 100%;
+	padding-right: 44px !important;
+}
+
+.zymarg-vs-pw-toggle {
+	position: absolute;
+	right: 6px;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 34px;
+	height: 34px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border: 0;
+	background: transparent;
+	cursor: pointer;
+	color: var(--color-text-muted, var(--zym-color-text));
+	border-radius: 8px;
+	transition: background-color .15s ease, color .15s ease;
+}
+
+.zymarg-vs-pw-toggle:hover {
+	background: var(--color-surface-container, rgba(149, 0, 165, .06));
+	color: var(--color-primary, var(--zym-color-primary));
+}
+
+.zymarg-vs-pw-toggle.is-showing {
+	color: var(--color-primary, var(--zym-color-primary));
+}
+
+.zymarg-vs-pw-toggle__icon {
+	font-size: 15px;
+	line-height: 1;
+}
+
+.zymarg-vs-strength {
+	display: flex;
+	gap: 6px;
+	margin-top: 8px;
+}
+
+.zymarg-vs-strength > span {
+	flex: 1;
+	height: 6px;
+	border-radius: 999px;
+	background: var(--color-outline-variant, var(--zym-color-border));
+	transition: background-color .2s ease;
+}
+
+.zymarg-vs-strength.is-lit-1 > span:nth-child(-n+1) { background: var(--zym-color-error); }
+.zymarg-vs-strength.is-lit-2 > span:nth-child(-n+2) { background: var(--zym-color-warning); }
+.zymarg-vs-strength.is-lit-3 > span:nth-child(-n+3) { background: var(--zym-color-warning); }
+.zymarg-vs-strength.is-lit-4 > span:nth-child(-n+4) { background: var(--zym-color-success-text); }
+
+/* -- Section 3: Notification Preferences banner -------------------- */
+.zymarg-vs-notif-banner {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	padding: 10px 12px;
+	margin: 0 0 12px;
+	border: 1px solid var(--color-outline-variant, var(--zym-color-border));
+	border-radius: 10px;
+	font-size: 13px;
+	line-height: 1.45;
+	color: var(--color-text-body, var(--zym-color-text));
+}
+
+.zymarg-vs-notif-banner--info {
+	background: rgba(149, 0, 165, .06);
+}
+
+.zymarg-vs-notif-banner__icon {
+	flex: 0 0 auto;
+	font-size: 15px;
+	line-height: 1.2;
+	color: var(--color-primary, var(--zym-color-primary));
+	font-weight: 700;
+}
+
+.zymarg-vs-notif-banner__text {
+	flex: 1 1 auto;
+}
+
+/* -- Section 3: Notification Preferences grid ---------------------- */
+.zymarg-vs-notif-grid {
+	display: grid;
+	grid-template-columns: 1fr 80px 80px 80px;
+	gap: 10px 18px;
+	align-items: center;
+	margin-top: 4px;
+}
+
+.zymarg-vs-notif-grid__head {
+	display: contents;
+	font-size: 12px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: .04em;
+	color: var(--color-text-muted, var(--zym-color-text));
+}
+
+.zymarg-vs-notif-grid__head .zymarg-vs-notif-grid__event,
+.zymarg-vs-notif-grid__head .zymarg-vs-notif-grid__col {
+	padding-bottom: 8px;
+	border-bottom: 1px solid var(--color-outline-variant, var(--zym-color-border));
+}
+
+.zymarg-vs-notif-grid__head .zymarg-vs-notif-grid__col {
+	text-align: center;
+}
+
+.zymarg-vs-notif-grid__row {
+	display: contents;
+}
+
+.zymarg-vs-notif-grid__event {
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--color-on-primary-fixed, var(--zym-color-dark));
+}
+
+.zymarg-vs-notif-grid__col {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+/* Mobile: stack each event as a mini-card with labeled channel rows.
+ *
+ * At <=560px we abandon the desktop grid entirely -- the 4-column layout
+ * (event + email + push + sms) becomes unreadable on a phone with 9 events.
+ * Instead, each row becomes a self-contained card and the channel toggles
+ * become labeled rows (icon + name on the left, switch on the right).
+ * Labels are injected via ::before so the PHP markup stays unchanged. */
+@media (max-width: 560px) {
+	.zymarg-vs-notif-grid {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+	}
+
+	.zymarg-vs-notif-grid__head {
+		display: none;
+	}
+
+	.zymarg-vs-notif-grid__row {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		background: var(--zym-color-surface);
+		border: 1px solid var(--zv-border, var(--zym-color-border));
+		border-radius: 12px;
+		padding: 12px;
+	}
+
+	.zymarg-vs-notif-grid__row .zymarg-vs-notif-grid__event {
+		font-size: 14px;
+		font-weight: 700;
+		color: var(--color-on-primary-fixed, var(--zym-color-dark));
+		padding-bottom: 6px;
+		border-bottom: 1px solid var(--color-outline-variant, var(--zym-color-border));
+	}
+
+	.zymarg-vs-notif-grid__row .zymarg-vs-notif-grid__col {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 2px 0;
+	}
+
+	.zymarg-vs-notif-grid__row .zymarg-vs-notif-grid__col::before {
+		flex: 1;
+		font-size: 13px;
+		font-weight: 600;
+		color: var(--color-text-body, var(--zym-color-text));
+	}
+
+	.zymarg-vs-notif-grid__row .zymarg-vs-notif-grid__col:nth-of-type(2)::before {
+		content: "✉ Email";
+	}
+
+	.zymarg-vs-notif-grid__row .zymarg-vs-notif-grid__col:nth-of-type(3)::before {
+		content: "🔔 Push";
+	}
+
+	.zymarg-vs-notif-grid__row .zymarg-vs-notif-grid__col:nth-of-type(4)::before {
+		content: "📱 SMS";
+	}
+}
+
+/* -- Toggle switch (checkbox → switch) ----------------------------- */
+.zymarg-vs-toggle {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	cursor: pointer;
+	user-select: none;
+}
+
+.zymarg-vs-toggle input[type="checkbox"] {
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
+	width: 0;
+	height: 0;
+}
+
+.zymarg-vs-toggle__track {
+	position: relative;
+	display: inline-block;
+	width: 36px;
+	height: 20px;
+	border-radius: 999px;
+	background: var(--zym-color-border);
+	transition: background-color .18s ease;
+}
+
+.zymarg-vs-toggle__thumb {
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	width: 16px;
+	height: 16px;
+	border-radius: 50%;
+	background: var(--zym-color-surface);
+	box-shadow: 0 1px 2px rgba(19, 27, 46, .16);
+	transition: transform .18s ease;
+}
+
+.zymarg-vs-toggle input[type="checkbox"]:checked + .zymarg-vs-toggle__track {
+	background: var(--color-primary, var(--zym-color-primary));
+}
+
+.zymarg-vs-toggle input[type="checkbox"]:checked + .zymarg-vs-toggle__track .zymarg-vs-toggle__thumb {
+	transform: translateX(16px);
+}
+
+.zymarg-vs-toggle input[type="checkbox"]:focus-visible + .zymarg-vs-toggle__track {
+	box-shadow: 0 0 0 3px rgba(149, 0, 165, .28);
+}
+
+/* -- Save row + flash ---------------------------------------------- */
+.zymarg-vs-save-row {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	flex-wrap: wrap;
+	margin-top: 6px;
+}
+
+.zymarg-vs-flash {
+	font-size: 13px;
+	font-weight: 500;
+	transition: opacity .3s ease;
+}
+
+.zymarg-vs-flash.is-ok {
+	color: var(--zym-color-success-text);
+}
+
+.zymarg-vs-flash.is-ok::before {
+	content: "\2713\00A0";
+	font-weight: 700;
+}
+
+.zymarg-vs-flash.is-err {
+	color: var(--zym-color-error);
+}
+
+/* -- Baseline inputs inside the settings shell --------------------- */
+.zymarg-vs .zymarg-zp-field input[type="text"],
+.zymarg-vs .zymarg-zp-field input[type="email"],
+.zymarg-vs .zymarg-zp-field input[type="tel"],
+.zymarg-vs .zymarg-zp-field input[type="password"] {
+	width: 100%;
+	padding: 11px 13px;
+	border: 1px solid var(--zv-border, var(--color-outline-variant, var(--zym-color-border)));
+	border-radius: 12px;
+	background: var(--color-surface-lowest, var(--zym-color-surface));
+	color: var(--color-on-surface, var(--zym-color-dark));
+	font-size: 15px;
+	line-height: 1.4;
+	transition: border-color .15s ease, box-shadow .15s ease;
+	box-sizing: border-box;
+}
+
+.zymarg-vs .zymarg-zp-field input:focus {
+	outline: none;
+	border-color: var(--color-primary, var(--zym-color-primary));
+	box-shadow: 0 0 0 3px rgba(149, 0, 165, .14);
+}
+
+.zymarg-vs .zymarg-zp-field input:disabled {
+	background: var(--color-surface-container, var(--zym-color-surface-alt));
+	color: var(--color-text-muted, var(--zym-color-text));
+	cursor: default;
+}
+
+/* -- Mobile tweaks ------------------------------------------------- */
+@media (max-width: 899px) {
+	.zymarg-vs-notif-grid {
+		grid-template-columns: 1fr;
+		gap: 10px;
+	}
+	.zymarg-vs-notif-grid__head {
+		display: none;
+	}
+	.zymarg-vs-notif-grid__row {
+		display: grid;
+		grid-template-columns: 1fr auto auto;
+		align-items: center;
+		gap: 10px 16px;
+		padding: 10px 12px;
+		border: 1px solid var(--color-outline-variant, var(--zym-color-border));
+		border-radius: 12px;
+		background: var(--color-surface-lowest, var(--zym-color-surface));
+	}
+}
+
+@media (max-width: 560px) {
+	.zymarg-vs-card__toggle {
+		padding: 14px 14px;
+		gap: 10px;
+	}
+	.zymarg-vs-card__body {
+		padding: 0 14px 16px 14px;
+	}
+	.zymarg-vs-toggle__track {
+		width: 44px;
+		height: 24px;
+	}
+	.zymarg-vs-toggle__thumb {
+		width: 20px;
+		height: 20px;
+	}
+	.zymarg-vs-toggle input[type="checkbox"]:checked + .zymarg-vs-toggle__track .zymarg-vs-toggle__thumb {
+		transform: translateX(20px);
+	}
+	.zymarg-vs-notif-grid__row {
+		padding: 10px 12px;
+	}
+	.zymarg-vs-avatar {
+		width: 80px;
+		height: 80px;
+	}
+}
+
+
+
+/* =====================================================================
+ * v1.29.0 additions — Settings sections 4-7 (Store Prefs, Business, SEO,
+ * Social). See includes/settings-hub.php for the card markup and
+ * assets/js/vendor-settings.js for the client-side behaviour.
+ * ===================================================================== */
+
+/* -- Section 4: BDT currency prefix (mirrors .zymarg-vs-phone-row) --- */
+.zymarg-vs-currency-row {
+	display: flex;
+	align-items: stretch;
+	gap: 0;
+	border: 1px solid var(--zv-border, var(--color-outline-variant, var(--zym-color-border)));
+	border-radius: 12px;
+	overflow: hidden;
+	background: var(--color-surface-lowest, var(--zym-color-surface));
+	transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.zymarg-vs-currency-row:focus-within {
+	border-color: var(--color-primary, var(--zym-color-primary));
+	box-shadow: 0 0 0 3px rgba(149, 0, 165, .14);
+}
+
+.zymarg-vs-currency-cc {
+	display: inline-flex;
+	align-items: center;
+	padding: 0 12px;
+	background: var(--color-surface-container, var(--zym-color-surface-alt));
+	color: var(--color-on-primary-fixed, var(--zym-color-dark));
+	font-weight: 600;
+	font-size: 15px;
+	border-right: 1px solid var(--color-outline-variant, var(--zym-color-border));
+}
+
+.zymarg-vs-currency-row input {
+	flex: 1;
+	border: 0 !important;
+	border-radius: 0 !important;
+	background: transparent;
+	padding: 11px 13px;
+	font-size: 15px;
+	outline: none;
+	color: var(--color-on-surface, var(--zym-color-dark));
+}
+
+/* -- Section 4: Auto-accept label-left / toggle-right row ------------ */
+.zymarg-vs-toggle-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+/* -- Sections 4 & 6: live character counter --------------------------- */
+.zymarg-vs-counter {
+	font-size: 12px;
+	color: var(--color-text-muted, var(--zym-color-text));
+	text-align: right;
+	margin-top: 4px;
+}
+
+.zymarg-vs-counter.is-over {
+	color: var(--zym-color-error-hover);
+	font-weight: 600;
+}
+
+/* -- Section 5: private-info banner (mirrors .zymarg-vs-notif-banner) -- */
+.zymarg-vs-business-notice {
+	display: flex;
+	align-items: flex-start;
+	gap: 8px;
+	background: rgba(149, 0, 165, .06);
+	border: 1px solid var(--color-outline-variant, var(--zym-color-border));
+	border-radius: 10px;
+	padding: 10px 12px;
+	font-size: 13px;
+	color: var(--color-text-body, var(--zym-color-text));
+	margin-bottom: 6px;
+}
+
+.zymarg-vs-business-notice__icon {
+	flex-shrink: 0;
+	color: var(--color-primary, var(--zym-color-primary));
+	font-size: 15px;
+	line-height: 1;
+}
+
+/* -- Section 5: multi-line address textarea (matches inputs) --------- */
+.zymarg-vs #zymarg-vs-biz-address,
+.zymarg-vs #zymarg-vs-default-order-note,
+.zymarg-vs #zymarg-vs-seo-desc,
+.zymarg-vs #zymarg-vs-og-desc {
+	width: 100%;
+	padding: 11px 13px;
+	border: 1px solid var(--zv-border, var(--color-outline-variant, var(--zym-color-border)));
+	border-radius: 12px;
+	background: var(--color-surface-lowest, var(--zym-color-surface));
+	color: var(--color-on-surface, var(--zym-color-dark));
+	font-size: 15px;
+	font-family: inherit;
+	line-height: 1.5;
+	resize: vertical;
+	box-sizing: border-box;
+	transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.zymarg-vs #zymarg-vs-biz-address:focus,
+.zymarg-vs #zymarg-vs-default-order-note:focus,
+.zymarg-vs #zymarg-vs-seo-desc:focus,
+.zymarg-vs #zymarg-vs-og-desc:focus {
+	outline: none;
+	border-color: var(--color-primary, var(--zym-color-primary));
+	box-shadow: 0 0 0 3px rgba(149, 0, 165, .14);
+}
+
+/* -- Section 6: OG image preview + remove button --------------------- */
+.zymarg-vs-og-actions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+	margin-bottom: 4px;
+}
+
+.zymarg-vs-og-preview {
+	margin-top: 10px;
+	display: block;
+}
+
+.zymarg-vs-og-remove {
+	background: none;
+	border: 0;
+	padding: 0 6px;
+	color: var(--zym-color-error-hover);
+	font-size: 12px;
+	font-weight: 600;
+	cursor: pointer;
+	text-decoration: underline;
+	margin-left: 8px;
+}
+
+/* -- Section 7: url<input> baseline inside the settings shell -------- */
+.zymarg-vs .zymarg-zp-field input[type="url"],
+.zymarg-vs .zymarg-zp-field input[type="number"] {
+	width: 100%;
+	padding: 11px 13px;
+	border: 1px solid var(--zv-border, var(--color-outline-variant, var(--zym-color-border)));
+	border-radius: 12px;
+	background: var(--color-surface-lowest, var(--zym-color-surface));
+	color: var(--color-on-surface, var(--zym-color-dark));
+	font-size: 15px;
+	line-height: 1.4;
+	transition: border-color .15s ease, box-shadow .15s ease;
+	box-sizing: border-box;
+}
+
+.zymarg-vs .zymarg-zp-field input[type="url"]:focus,
+.zymarg-vs .zymarg-zp-field input[type="number"]:focus {
+	outline: none;
+	border-color: var(--color-primary, var(--zym-color-primary));
+	box-shadow: 0 0 0 3px rgba(149, 0, 165, .14);
+}
+
+/* -- Section 7: inline validation error under a field ---------------- */
+.zymarg-vs-fielderr {
+	display: block;
+	color: var(--zym-color-error-hover);
+	font-size: 12px;
+	margin-top: 4px;
+	min-height: 0;
+}
+
+.zymarg-vs-fielderr:empty {
+	display: none;
+}
+
+
+/* =======================================================================
+   v1.30.0 — Settings Sections 8-10 (Data Export, Danger Zone, ZLS Bridge).
+   All rules scoped under .zymarg-vs-* so they don't leak. (Section 11
+   "Push Opt-in" was removed in v1.31.0 — see note further down.)
+   ======================================================================= */
+
+/* -- Section 8: Data Export -------------------------------------------- */
+.zymarg-vs-export-intro {
+	margin: 0 0 12px;
+	color: var(--color-text-body, var(--zym-color-text));
+	font-size: 14px;
+	line-height: 1.5;
+}
+
+.zymarg-vs-export-grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 10px;
+}
+
+@media (min-width: 720px) {
+	.zymarg-vs-export-grid {
+		grid-template-columns: repeat(3, 1fr);
+	}
+}
+
+.zymarg-vs-export-form {
+	margin: 0;
+}
+
+.zymarg-vs-export-btn {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	width: 100%;
+	padding: 14px 16px;
+	background: linear-gradient(135deg, rgba(149, 0, 165, .06), rgba(149, 0, 165, .02));
+	border: 1px solid var(--zv-border, var(--zym-color-border));
+	border-radius: var(--zv-radius, 12px);
+	color: var(--color-on-surface, var(--zym-color-dark));
+	text-align: left;
+	cursor: pointer;
+	transition: border-color .15s ease, background .15s ease, transform .12s ease;
+	box-sizing: border-box;
+	min-height: 88px;
+}
+
+.zymarg-vs-export-btn:hover {
+	border-color: var(--zv-primary, var(--zym-color-primary));
+	background: rgba(149, 0, 165, .08);
+	transform: translateY(-1px);
+}
+
+.zymarg-vs-export-btn__icon {
+	font-size: 22px;
+	line-height: 1;
+	margin-bottom: 6px;
+}
+
+.zymarg-vs-export-btn__label {
+	display: block;
+	font-weight: 600;
+	font-size: 14.5px;
+	color: var(--zv-primary, var(--zym-color-primary));
+	margin-bottom: 2px;
+}
+
+.zymarg-vs-export-btn__sub {
+	display: block;
+	font-size: 12.5px;
+	color: var(--color-text-body, var(--zym-color-text));
+	line-height: 1.4;
+}
+
+.zymarg-vs-export-note {
+	margin-top: 12px;
+}
+
+.zymarg-vs-export-error {
+	margin-top: 10px;
+	padding: 10px 12px;
+	background: var(--zym-color-error-bg);
+	color: var(--zym-color-error);
+	border: 1px solid var(--zym-color-error-bg);
+	border-radius: 10px;
+	font-size: 13.5px;
+}
+
+/* -- Section 9: Danger Zone -------------------------------------------- */
+.zymarg-vs-card.zymarg-vs-danger {
+	border-color: var(--zym-color-error);
+	background: var(--zym-color-error-bg);
+}
+
+.zymarg-vs-card.zymarg-vs-danger .zymarg-vs-card__toggle {
+	background: transparent;
+}
+
+.zymarg-vs-card.zymarg-vs-danger .zymarg-vs-card__num {
+	background: var(--zym-color-error);
+	color: #fff;
+}
+
+.zymarg-vs-card.zymarg-vs-danger .zymarg-vs-card__title {
+	color: var(--zym-color-error);
+}
+
+.zymarg-vs-danger-intro {
+	margin: 0 0 14px;
+	font-size: 13.5px;
+	color: var(--zym-color-error);
+}
+
+.zymarg-vs-danger-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 14px;
+	padding: 14px;
+	background: var(--zym-color-surface);
+	border: 1px solid var(--zym-color-error-bg);
+	border-radius: 12px;
+	margin-bottom: 12px;
+	align-items: flex-start;
+}
+
+.zymarg-vs-danger-row:last-child {
+	margin-bottom: 0;
+}
+
+.zymarg-vs-danger-row__text {
+	flex: 1 1 260px;
+	min-width: 0;
+}
+
+.zymarg-vs-danger-row__title {
+	margin: 0 0 4px;
+	font-size: 15px;
+	font-weight: 700;
+	color: var(--zym-color-error);
+}
+
+.zymarg-vs-danger-row__desc {
+	margin: 0 0 6px;
+	font-size: 13.5px;
+	line-height: 1.5;
+	color: var(--color-text-body, var(--zym-color-text));
+}
+
+.zymarg-vs-danger-row__status {
+	margin: 4px 0 0;
+	font-size: 12.5px;
+	color: var(--color-text-body, var(--zym-color-text));
+}
+
+.zymarg-vs-danger-row__status.is-warning {
+	color: var(--zym-color-warning);
+	font-weight: 600;
+}
+
+.zymarg-vs-danger-row__action {
+	flex: 0 0 auto;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	align-items: flex-end;
+	min-width: 200px;
+}
+
+.zymarg-vs-danger-row__action--wide {
+	flex: 1 1 320px;
+	align-items: stretch;
+}
+
+.zymarg-vs-btn--danger {
+	background: var(--zym-color-error);
+	color: #fff;
+	border: 1px solid var(--zym-color-error);
+	padding: 10px 16px;
+	border-radius: 10px;
+	font-weight: 600;
+	font-size: 14px;
+	cursor: pointer;
+	transition: background .15s ease, border-color .15s ease;
+}
+
+.zymarg-vs-btn--danger:hover:not(:disabled) {
+	background: var(--zym-color-error);
+	border-color: var(--zym-color-error);
+}
+
+.zymarg-vs-btn--danger:disabled {
+	opacity: .55;
+	cursor: not-allowed;
+}
+
+.zymarg-vs-btn--danger-lg {
+	background: var(--zym-color-error);
+	color: #fff;
+	border: 1px solid var(--zym-color-error);
+	padding: 12px 20px;
+	border-radius: 12px;
+	font-weight: 700;
+	font-size: 15px;
+	cursor: pointer;
+	transition: background .15s ease;
+}
+
+.zymarg-vs-btn--danger-lg:hover {
+	background: var(--zym-color-error);
+}
+
+.zymarg-vs-danger-form textarea,
+.zymarg-vs-danger-form input[type="text"] {
+	width: 100%;
+	padding: 10px 12px;
+	border: 1px solid var(--zym-color-error-bg);
+	border-radius: 10px;
+	background: var(--zym-color-surface);
+	font-size: 14px;
+	box-sizing: border-box;
+	transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.zymarg-vs-typedconfirm {
+	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+	letter-spacing: .05em;
+	background: var(--zym-color-surface);
+}
+
+.zymarg-vs-typedconfirm.is-match {
+	border-color: var(--zym-color-success-text) !important;
+	box-shadow: 0 0 0 3px rgba(22, 163, 74, .12);
+}
+
+.zymarg-vs-hint--confirm {
+	color: var(--zym-color-error);
+	font-weight: 500;
+}
+
+.zymarg-vs-hint--confirm code {
+	background: var(--zym-color-surface);
+	padding: 1px 6px;
+	border-radius: 4px;
+	border: 1px solid var(--zym-color-error-bg);
+	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.zymarg-vs-danger-status {
+	padding: 12px 14px;
+	border-radius: 10px;
+	border: 1px solid transparent;
+	background: var(--zym-color-surface);
+}
+
+.zymarg-vs-danger-status--pending {
+	background: #eff6ff;
+	border-color: #93c5fd;
+	color: #1e3a8a;
+}
+
+.zymarg-vs-danger-status--countdown {
+	background: #fffbeb;
+	border-color: var(--zym-color-warning);
+	color: var(--zym-color-warning);
+}
+
+.zymarg-vs-danger-status__title {
+	margin: 0 0 4px;
+	font-weight: 700;
+	font-size: 14.5px;
+}
+
+.zymarg-vs-danger-status__desc {
+	margin: 0 0 10px;
+	font-size: 13.5px;
+	line-height: 1.5;
+}
+
+/* -- Section 10: ZLS Bridge (display-only) ----------------------------- */
+.zymarg-vs-zls-empty {
+	padding: 16px;
+	background: rgba(149, 0, 165, .04);
+	border: 1px dashed var(--zv-border, var(--zym-color-border));
+	border-radius: 12px;
+	text-align: center;
+}
+
+.zymarg-vs-zls-empty__title {
+	margin: 0 0 6px;
+	font-weight: 700;
+	font-size: 15px;
+	color: var(--color-on-surface, var(--zym-color-dark));
+}
+
+.zymarg-vs-zls-empty__desc {
+	margin: 0 0 10px;
+	font-size: 13.5px;
+	color: var(--color-text-body, var(--zym-color-text));
+	line-height: 1.5;
+}
+
+.zymarg-vs-zls-lead {
+	margin: 0 0 14px;
+	font-size: 13.5px;
+	color: var(--color-text-body, var(--zym-color-text));
+	line-height: 1.5;
+}
+
+.zymarg-vs-zls-block {
+	margin-bottom: 18px;
+}
+
+.zymarg-vs-zls-block:last-child {
+	margin-bottom: 0;
+}
+
+.zymarg-vs-zls-block__title {
+	margin: 0 0 8px;
+	font-size: 14px;
+	font-weight: 700;
+	color: var(--color-on-surface, var(--zym-color-dark));
+}
+
+.zymarg-vs-zls-table {
+	width: 100%;
+	border-collapse: collapse;
+	background: var(--zym-color-surface);
+	border-radius: 10px;
+	overflow: hidden;
+	font-size: 13px;
+}
+
+.zymarg-vs-zls-table th,
+.zymarg-vs-zls-table td {
+	padding: 8px 10px;
+	text-align: left;
+	border-bottom: 1px solid var(--zym-color-surface-alt);
+	vertical-align: top;
+}
+
+.zymarg-vs-zls-table th {
+	background: rgba(149, 0, 165, .05);
+	font-weight: 600;
+	color: var(--color-on-surface, var(--zym-color-dark));
+	font-size: 12px;
+	text-transform: uppercase;
+	letter-spacing: .04em;
+}
+
+.zymarg-vs-zls-table tr:last-child td {
+	border-bottom: 0;
+}
+
+.zymarg-vs-zls-badge {
+	display: inline-block;
+	padding: 2px 8px;
+	border-radius: 999px;
+	font-size: 11px;
+	font-weight: 600;
+	background: var(--zym-color-neutral-bg);
+	color: var(--zym-color-text);
+}
+
+.zymarg-vs-zls-badge--success {
+	background: var(--zym-color-success-bg);
+	color: var(--zym-color-success-text);
+}
+
+.zymarg-vs-zls-badge--fail,
+.zymarg-vs-zls-badge--failed {
+	background: var(--zym-color-error-bg);
+	color: var(--zym-color-error);
+}
+
+.zymarg-vs-zls-badge--logout {
+	background: #eff6ff;
+	color: #1e3a8a;
+}
+
+/* -- v1.31.0: Section 11 "Push Opt-in" removed (duplicated Section 3's
+   Push column). Its .zymarg-vs-push-* rules and the .zymarg-vs-notif-
+   banner--warn variant it was the sole user of were removed with it. -- */
+
+/* -- Mobile: stack tightly --------------------------------------------- */
+@media (max-width: 640px) {
+	.zymarg-vs-danger-row {
+		flex-direction: column;
+	}
+	.zymarg-vs-danger-row__action,
+	.zymarg-vs-danger-row__action--wide {
+		width: 100%;
+		align-items: stretch;
+		min-width: 0;
+	}
+	.zymarg-vs-btn--danger,
+	.zymarg-vs-btn--danger-lg {
+		width: 100%;
+	}
+	.zymarg-vs-typedconfirm {
+		width: 100%;
+	}
+	.zymarg-vs-zls-table {
+		font-size: 12.5px;
+	}
+	.zymarg-vs-zls-table th,
+	.zymarg-vs-zls-table td {
+		padding: 6px 8px;
+	}
+}
+
+
+/* =======================================================================
+   v1.30.2 — Section 10 session/passkey action buttons
+   ======================================================================= */
+.zymarg-vs-zls-revoke,
+.zymarg-vs-zls-remove-pk {
+	border: 1px solid var(--zym-color-error);
+	background: transparent;
+	color: var(--zym-color-error);
+	border-radius: 8px;
+	padding: 4px 10px;
+	font-size: 12px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background .15s, color .15s;
+	white-space: nowrap;
+}
+.zymarg-vs-zls-revoke:hover:not(:disabled),
+.zymarg-vs-zls-remove-pk:hover:not(:disabled) {
+	background: var(--zym-color-error);
+	color: #fff;
+}
+.zymarg-vs-zls-revoke:disabled,
+.zymarg-vs-zls-remove-pk:disabled {
+	opacity: .5;
+	cursor: default;
+}
+.zymarg-vs-zls-current {
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--zym-color-primary);
+	background: var(--zym-color-surface-alt);
+	border-radius: 8px;
+	padding: 4px 10px;
+	white-space: nowrap;
+}
+
+/* ====================================================================== *
+ * PREMIUM SECTION -- vendor dashboard (v1.40.0)
+ *
+ * The vendor dashboard has no .zvd-btn / .zvd-chip / .zvd-status-msg
+ * layer of its own -- those live in the admin stylesheet, which is not
+ * loaded on the front end. So the Premium section defines the few it
+ * needs, scoped to .zvd-premium so nothing leaks into the rest of the
+ * dashboard.
+ *
+ * Tokens only: no raw colours, no inline styles.
+ * ====================================================================== */
+
+.zvd-premium {
+	display: flex;
+	flex-direction: column;
+	gap: var(--zym-gap-card);
+}
+
+.zvd-premium__intro {
+	margin-bottom: var(--zym-space-4);
+}
+
+.zvd-premium__title {
+	margin: 0 0 var(--zym-space-3);
+	font-size: var(--zym-font-size-xl);
+	font-weight: var(--zym-font-weight-bold);
+	color: var(--zym-color-dark);
+}
+
+.zvd-premium__lead {
+	margin: 0;
+	font-size: var(--zym-font-size-sm);
+	color: var(--zym-color-text);
+}
+
+.zvd-premium-item {
+	background: var(--zym-color-surface);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-card);
+	box-shadow: var(--zym-shadow-surface);
+	padding: var(--zym-space-9) var(--zym-space-10);
+}
+
+.zvd-premium-item__head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--zym-gap-small);
+}
+
+.zvd-premium-item__title {
+	margin: 0;
+	font-size: var(--zym-font-size-md);
+	font-weight: var(--zym-font-weight-semibold);
+	color: var(--zym-color-dark);
+}
+
+.zvd-premium-item__help {
+	margin: var(--zym-space-3) 0 0;
+	font-size: var(--zym-font-size-sm);
+	color: var(--zym-color-text);
+}
+
+.zvd-premium-item__note {
+	margin: var(--zym-space-3) 0 0;
+	padding: var(--zym-space-4) var(--zym-space-5);
+	background: var(--zym-color-bg);
+	border-radius: var(--zym-radius-chip);
+	font-size: var(--zym-font-size-sm);
+	color: var(--zym-color-text);
+}
+
+.zvd-premium-item__actions {
+	display: flex;
+	align-items: center;
+	gap: var(--zym-gap-small);
+	margin-top: var(--zym-space-7);
+}
+
+/* --- Controls, scoped to the Premium section ------------------------- */
+
+.zvd-premium .zvd-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: var(--zym-space-11);
+	padding: var(--zym-space-4) var(--zym-space-9);
+	border: 1px solid transparent;
+	border-radius: var(--zym-radius-button);
+	font-size: var(--zym-font-size-sm);
+	font-weight: var(--zym-font-weight-semibold);
+	cursor: pointer;
+	transition: box-shadow var(--zym-motion-input) var(--zym-ease);
+}
+
+.zvd-premium .zvd-btn--primary {
+	background: var(--zym-gradient);
+	color: var(--zym-color-surface);
+	box-shadow: var(--zym-shadow-btn);
+}
+
+.zvd-premium .zvd-btn--primary:hover {
+	box-shadow: var(--zym-shadow-btn-hover);
+}
+
+.zvd-premium .zvd-btn--secondary {
+	background: var(--zym-color-surface);
+	border-color: var(--zym-color-border);
+	color: var(--zym-color-primary);
+}
+
+.zvd-premium .zvd-btn:focus-visible {
+	outline: none;
+	box-shadow: var(--zym-focus-ring);
+}
+
+.zvd-premium .zvd-btn:disabled {
+	opacity: 0.6;
+	cursor: default;
+}
+
+.zvd-premium .zvd-chip {
+	display: inline-flex;
+	align-items: center;
+	padding: var(--zym-space-2) var(--zym-space-6);
+	border-radius: var(--zym-radius-pill);
+	background: var(--zym-color-neutral-bg);
+	color: var(--zym-color-neutral-text);
+	font-size: var(--zym-font-size-xs);
+	font-weight: var(--zym-font-weight-semibold);
+	white-space: nowrap;
+}
+
+.zvd-premium .zvd-chip--success {
+	background: var(--zym-color-success-bg);
+	color: var(--zym-color-success-text);
+}
+
+.zvd-premium .zvd-chip--error {
+	background: var(--zym-color-error-bg);
+	color: var(--zym-color-error);
+}
+
+.zvd-premium .zvd-status-msg {
+	font-size: var(--zym-font-size-sm);
+	color: var(--zym-color-text);
+}
+
+.zvd-premium .zvd-status-msg--ok {
+	color: var(--zym-color-success-text);
+}
+
+.zvd-premium .zvd-status-msg--err {
+	color: var(--zym-color-error);
+}
+
+/* --- Product controls (Phase 4) -------------------------------------- */
+
+.zvd-premium-products {
+	margin-top: var(--zym-space-9);
+	padding-top: var(--zym-space-9);
+	border-top: 1px solid var(--zym-color-divider);
+}
+
+.zvd-premium-products__title {
+	margin: 0 0 var(--zym-space-3);
+	font-size: var(--zym-font-size-sm);
+	font-weight: var(--zym-font-weight-semibold);
+	color: var(--zym-color-dark);
+}
+
+.zvd-premium-products__hint {
+	margin: 0 0 var(--zym-space-7);
+	font-size: var(--zym-font-size-xs);
+	color: var(--zym-color-neutral-text);
+}
+
+.zvd-premium-products__list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--zym-gap-tiny);
+}
+
+.zvd-premium-products__actions {
+	display: flex;
+	align-items: center;
+	gap: var(--zym-gap-small);
+	margin-top: var(--zym-space-8);
+	flex-wrap: wrap;
+}
+
+.zvd-premium-product {
+	display: flex;
+	align-items: center;
+	gap: var(--zym-gap-tiny);
+	padding: var(--zym-space-4) 0;
+}
+
+.zvd-premium-product__label {
+	font-size: var(--zym-font-size-sm);
+	color: var(--zym-color-text);
+	cursor: pointer;
+}
+
+/*
+ * The checkboxes are core browser controls. On the admin side the v1.39.3
+ * primitive layer would style them, but that layer is scoped to
+ * .zymarg-admin and this screen is on the front end -- so they need
+ * brand treatment here or they render as raw default controls.
+ */
+.zvd-premium-pick {
+	width: var(--zym-space-9);
+	height: var(--zym-space-9);
+	flex: 0 0 auto;
+	accent-color: var(--zym-color-primary);
+	cursor: pointer;
+}
+
+.zvd-premium-pick:focus-visible {
+	outline: none;
+	box-shadow: var(--zym-focus-ring);
+}
+
+/* Flash rows stack: a header line, then the price and date fields. */
+.zvd-premium-product--flash {
+	flex-direction: column;
+	align-items: stretch;
+	gap: var(--zym-gap-tiny);
+	padding: var(--zym-space-6) 0;
+	border-bottom: 1px solid var(--zym-color-divider);
+}
+
+.zvd-premium-product__head {
+	display: flex;
+	align-items: center;
+	gap: var(--zym-gap-tiny);
+	flex-wrap: wrap;
+}
+
+.zvd-premium-product__regular {
+	margin-left: auto;
+	font-size: var(--zym-font-size-xs);
+	color: var(--zym-color-neutral-text);
+}
+
+.zvd-premium-product__fields {
+	display: flex;
+	gap: var(--zym-gap-small);
+	flex-wrap: wrap;
+	padding-left: var(--zym-space-8);
+}
+
+.zvd-premium-field {
+	display: flex;
+	flex-direction: column;
+	gap: var(--zym-space-1);
+	font-size: var(--zym-font-size-xs);
+	font-weight: var(--zym-font-weight-semibold);
+	color: var(--zym-color-dark);
+}
+
+.zvd-premium-field input {
+	padding: var(--zym-space-3) var(--zym-space-5);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-control);
+	background: var(--zym-color-surface);
+	font-size: var(--zym-font-size-sm);
+	color: var(--zym-color-text);
+}
+
+.zvd-premium-field input:focus-visible {
+	outline: none;
+	border-color: var(--zym-color-primary);
+	box-shadow: var(--zym-focus-ring);
+}
+
+.zvd-premium-empty {
+	margin: var(--zym-space-7) 0 0;
+	font-size: var(--zym-font-size-sm);
+	color: var(--zym-color-neutral-text);
+}
+
+/* --- Approval popup --------------------------------------------------- *
+ *
+ * Mirrors the dashboard's existing confirm-modal structure, but styled
+ * from brand tokens. The overlay tint is mixed from --zym-color-dark
+ * because there is no overlay token -- inventing one would put a colour
+ * in this file that the token document does not define.
+ * ---------------------------------------------------------------------- */
+
+.zvd-premium-modal {
+	position: fixed;
+	inset: 0;
+	z-index: 100;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: var(--zym-space-8);
+}
+
+.zvd-premium-modal[hidden] {
+	display: none;
+}
+
+.zvd-premium-modal__overlay {
+	position: absolute;
+	inset: 0;
+	background: color-mix(in srgb, var(--zym-color-dark) 55%, transparent);
+}
+
+.zvd-premium-modal__dialog {
+	position: relative;
+	width: 100%;
+	max-width: 26rem;
+	padding: var(--zym-space-11) var(--zym-space-10) var(--zym-space-10);
+	background: var(--zym-color-surface);
+	border-radius: var(--zym-radius-card);
+	box-shadow: var(--zym-shadow-modal);
+	text-align: center;
+}
+
+.zvd-premium-modal__close {
+	position: absolute;
+	top: var(--zym-space-4);
+	right: var(--zym-space-5);
+	min-width: var(--zym-space-11);
+	min-height: var(--zym-space-11);
+	border: 0;
+	background: none;
+	font-size: var(--zym-font-size-lg);
+	color: var(--zym-color-neutral-text);
+	cursor: pointer;
+	border-radius: var(--zym-radius-control);
+}
+
+.zvd-premium-modal__close:focus-visible {
+	outline: none;
+	box-shadow: var(--zym-focus-ring);
+}
+
+.zvd-premium-modal__icon {
+	display: flex;
+	justify-content: center;
+	margin-bottom: var(--zym-space-6);
+}
+
+.zvd-premium-modal__title {
+	margin: 0 0 var(--zym-space-4);
+	font-size: var(--zym-font-size-lg);
+	font-weight: var(--zym-font-weight-bold);
+	color: var(--zym-color-dark);
+}
+
+.zvd-premium-modal__text {
+	margin: 0 0 var(--zym-space-10);
+	font-size: var(--zym-font-size-sm);
+	color: var(--zym-color-text);
+}
+
+.zvd-premium-modal__actions {
+	display: flex;
+	justify-content: center;
+	gap: var(--zym-gap-small);
+	flex-wrap: wrap;
+}
+
+/* ---------------------------------------------------------------------- *
+ * PREMIUM PRODUCT PICKER (v1.41.0)
+ *
+ * The chosen products sit in a tray above the search results, so a search
+ * never hides what has already been picked. Tokens only -- no raw colour,
+ * no raw size.
+ * ---------------------------------------------------------------------- */
+
+.zvd-premium-count {
+	margin: 0 0 var(--zym-space-6);
+	font-size: var(--zym-font-size-sm);
+	font-weight: var(--zym-font-weight-semibold);
+	color: var(--zym-color-primary);
+}
+
+.zvd-premium-tray__title,
+.zvd-premium-products__title {
+	margin: 0 0 var(--zym-space-4);
+	font-size: var(--zym-font-size-md);
+	font-weight: var(--zym-font-weight-semibold);
+	color: var(--zym-color-dark);
+}
+
+/*
+ * The tray is tinted and outlined so it reads as a container that holds a
+ * selection, not just another list of results.
+ */
+.zvd-premium-tray {
+	margin: 0 0 var(--zym-space-6);
+	padding: var(--zym-space-4);
+	list-style: none;
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-card);
+	background: var(--zym-color-bg);
+	min-height: var(--zym-space-11);
+}
+
+.zvd-premium-tray:empty {
+	padding: 0;
+	border: 0;
+	min-height: 0;
+}
+
+.zvd-premium-tray__empty,
+.zvd-premium-results__empty {
+	margin: 0 0 var(--zym-space-6);
+	font-size: var(--zym-font-size-sm);
+	color: var(--zym-color-text);
+}
+
+.zvd-premium-search__field {
+	display: block;
+	margin: 0 0 var(--zym-space-6);
+}
+
+.zvd-premium-search {
+	width: 100%;
+	padding: var(--zym-space-5) var(--zym-space-6);
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-input);
+	background: var(--zym-color-surface);
+	color: var(--zym-color-dark);
+	font-size: var(--zym-font-size-sm);
+	transition: border-color var(--zym-motion-input) var(--zym-ease),
+		box-shadow var(--zym-motion-input) var(--zym-ease);
+}
+
+.zvd-premium-search:focus {
+	outline: none;
+	border-color: var(--zym-color-primary);
+	box-shadow: var(--zym-focus-ring);
+}
+
+.zvd-premium-results {
+	margin: 0 0 var(--zym-space-6);
+	padding: 0;
+	list-style: none;
+	/*
+	 * Capped height with its own scroll: a long result list must not push
+	 * the Save button off the bottom of a phone screen.
+	 */
+	max-height: 22rem;
+	overflow-y: auto;
+}
+
+.zvd-premium-results__more {
+	margin: 0 0 var(--zym-space-6);
+}
+
+/* A disabled pick means the vendor is at their limit -- say so visually. */
+.zvd-premium-pick:disabled {
+	cursor: not-allowed;
+	opacity: 0.45;
+}
+
+.zvd-premium-pick:disabled + .zvd-premium-product__label {
+	color: var(--zym-color-text);
+	opacity: 0.6;
+}
+
+/* ===================================================================
+ * STORY FIELDS + WORD COUNTERS (v1.45.0)
+ *
+ * The settings shell had no textarea rule at all, so the story boxes
+ * fell back to the browser default: a small fixed-width box that does
+ * not match the inputs beside it and can overflow the card on a phone.
+ * These rules give the textareas the same treatment as the inputs and
+ * keep everything inside the card at any width.
+ * =================================================================== */
+
+.zymarg-vs .zymarg-zp-field textarea {
+	width: 100%;
+	max-width: 100%;
+	padding: 11px 13px;
+	border: 1px solid var(--zym-color-border);
+	border-radius: var(--zym-radius-input);
+	background: var(--zym-color-surface);
+	color: var(--zym-color-dark);
+	font-family: inherit;
+	font-size: 15px;
+	line-height: 1.5;
+	resize: vertical;
+	min-height: 96px;
+	transition: border-color var(--zym-motion-input) var(--zym-ease),
+		box-shadow var(--zym-motion-input) var(--zym-ease);
+	box-sizing: border-box;
+}
+
+.zymarg-vs .zymarg-zp-field textarea:focus {
+	outline: none;
+	border-color: var(--zym-color-primary);
+	box-shadow: var(--zym-focus-ring);
+}
+
+/* -- Word counter --------------------------------------------------- */
+
+.zymarg-vs-wordcount {
+	display: block;
+	font-size: var(--zym-font-size-xs);
+	font-variant-numeric: tabular-nums;
+	color: var(--zym-color-neutral-text);
+}
+
+.zymarg-vs-wordcount.is-ok {
+	color: var(--zym-color-success-text);
+}
+
+.zymarg-vs-wordcount.is-under,
+.zymarg-vs-wordcount.is-over {
+	color: var(--zym-color-error);
+	font-weight: var(--zym-font-weight-semibold);
+}
+
+.zymarg-vs .zymarg-zp-field input.has-word-error,
+.zymarg-vs .zymarg-zp-field textarea.has-word-error {
+	border-color: var(--zym-color-error);
+}
+
+/* -- Phones ---------------------------------------------------------
+ * iOS Safari zooms the whole page when a field smaller than 16px takes
+ * focus, which leaves the seller scrolled sideways inside the form.
+ * Bumping to 16px on small screens only stops that and does not change
+ * the desktop layout. The counter also steps up a size so it stays
+ * legible on a phone.
+ * ------------------------------------------------------------------- */
+
+@media (max-width: 560px) {
+	.zymarg-vs .zymarg-zp-field input[type="text"],
+	.zymarg-vs .zymarg-zp-field input[type="email"],
+	.zymarg-vs .zymarg-zp-field input[type="tel"],
+	.zymarg-vs .zymarg-zp-field input[type="password"],
+	.zymarg-vs .zymarg-zp-field textarea {
+		font-size: 16px;
+	}
+
+	.zymarg-vs .zymarg-zp-field textarea {
+		min-height: 120px;
+	}
+
+	.zymarg-vs-wordcount {
+		font-size: var(--zym-font-size-sm);
+	}
+}
