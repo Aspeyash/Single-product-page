@@ -36,7 +36,7 @@ require_once ZYMARG_VD_DIR . 'includes/spark.php';
 function zymarg_vd_register_admin_hub_menu() {
 	add_menu_page(
 		__( 'Vendor Hub', 'zymarg-vendor-dashboard' ),
-		__( 'Vendor Hub', 'zymarg-vendor-dashboard' ),
+		zymarg_vd_premium_menu_title_with_badge( __( 'Vendor Hub', 'zymarg-vendor-dashboard' ) ),
 		'manage_options',
 		'zymarg-vendor-hub',
 		'zymarg_vd_render_admin_hub_page',
@@ -82,6 +82,30 @@ function zymarg_vd_enqueue_menu_branding() {
 		array( 'zymarg-tokens' ),
 		ZYMARG_VD_VERSION
 	);
+
+	/*
+	 * v1.46.14: live Premium pending-request badge.
+	 *
+	 * Same reasoning as the branding CSS above: the "Vendor Hub" and
+	 * "Premium" sidebar items exist on every admin screen, not only on the
+	 * plugin's own screens, so the script that keeps their live badge count
+	 * in sync also has to load everywhere, not just where the branding CSS
+	 * does above -- and for the same reason.
+	 *
+	 * 'heartbeat' as a dependency both loads core's Heartbeat script here and
+	 * (via WordPress's own Heartbeat bootstrap) enables the periodic tick
+	 * this relies on -- Heartbeat itself is not otherwise guaranteed to be
+	 * running on every wp-admin screen.
+	 */
+	if ( function_exists( 'zymarg_vd_premium_pending_count' ) ) {
+		wp_enqueue_script(
+			'zymarg-vd-premium-badge',
+			ZYMARG_VD_URL . 'assets/js/premium-badge.js',
+			array( 'jquery', 'heartbeat' ),
+			ZYMARG_VD_VERSION,
+			true
+		);
+	}
 }
 add_action( 'admin_enqueue_scripts', 'zymarg_vd_enqueue_menu_branding' );
 
