@@ -1,0 +1,239 @@
+/* ZYMARG Reviews Engine - admin control page */
+
+.zymarg-re {
+	--zre-primary: #9500a5;
+	--zre-primary-hover: #bd00d1;
+	--zre-border: #dcdce6;
+	--zre-surface: #fff;
+	--zre-surface-alt: #f7f7fb;
+	--zre-text: #1a1a2e;
+	--zre-muted: #6c757d;
+	--zre-radius: 10px;
+}
+
+.zymarg-re__title {
+	margin-bottom: 4px;
+}
+
+.zymarg-re__sub {
+	margin: 0 0 18px;
+	color: var(--zre-muted);
+	max-width: 720px;
+}
+
+.zymarg-re__layout {
+	display: grid;
+	grid-template-columns: 200px minmax(0, 1fr);
+	gap: 20px;
+	align-items: start;
+}
+
+/* Tabs */
+.zymarg-re__tabs {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	position: sticky;
+	top: 46px;
+	background: var(--zre-surface);
+	border: 1px solid var(--zre-border);
+	border-radius: var(--zre-radius);
+	padding: 8px;
+}
+
+.zymarg-re__tab {
+	appearance: none;
+	background: transparent;
+	border: 0;
+	border-radius: 8px;
+	padding: 9px 12px;
+	text-align: left;
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--zre-text);
+	cursor: pointer;
+}
+
+.zymarg-re__tab:hover {
+	background: var(--zre-surface-alt);
+}
+
+.zymarg-re__tab.is-active {
+	background: var(--zre-primary);
+	color: #fff;
+}
+
+.zymarg-re__tab:focus-visible {
+	outline: 2px solid var(--zre-primary-hover);
+	outline-offset: 1px;
+}
+
+/* Panels */
+.zymarg-re__panel {
+	display: none;
+}
+
+.zymarg-re__panel.is-active {
+	display: block;
+}
+
+.zymarg-re__section {
+	background: var(--zre-surface);
+	border: 1px solid var(--zre-border);
+	border-radius: var(--zre-radius);
+	padding: 16px 18px;
+	margin: 0 0 16px;
+}
+
+.zymarg-re__section h2 {
+	margin: 0 0 12px;
+	font-size: 14px;
+	text-transform: uppercase;
+	letter-spacing: .04em;
+	color: var(--zre-muted);
+}
+
+/* Fields */
+.zymarg-re__field {
+	display: grid;
+	grid-template-columns: 260px minmax(0, 1fr);
+	gap: 12px;
+	padding: 10px 0;
+	border-top: 1px solid #f0f0f5;
+}
+
+.zymarg-re__field:first-of-type {
+	border-top: 0;
+}
+
+.zymarg-re__label {
+	font-weight: 600;
+	color: var(--zre-text);
+	padding-top: 4px;
+}
+
+.zymarg-re__control input[type="text"],
+.zymarg-re__control input[type="email"],
+.zymarg-re__control input[type="url"],
+.zymarg-re__control input[type="number"],
+.zymarg-re__control select,
+.zymarg-re__control textarea {
+	width: 100%;
+	max-width: 460px;
+}
+
+.zymarg-re__control input[type="number"] {
+	max-width: 140px;
+}
+
+.zymarg-re__desc {
+	margin: 6px 0 0;
+	color: var(--zre-muted);
+	font-size: 12px;
+	max-width: 520px;
+}
+
+.zymarg-re__json {
+	width: 100%;
+	max-width: 720px;
+	font-family: Menlo, Consolas, monospace;
+	font-size: 12px;
+}
+
+/* Switch */
+.zymarg-re__switch {
+	display: inline-block;
+	position: relative;
+	width: 42px;
+	height: 24px;
+}
+
+.zymarg-re__switch input {
+	position: absolute;
+	opacity: 0;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	cursor: pointer;
+}
+
+.zymarg-re__slider {
+	position: absolute;
+	inset: 0;
+	background: #c9c9d6;
+	border-radius: 999px;
+	transition: background .18s ease;
+	pointer-events: none;
+}
+
+.zymarg-re__slider::after {
+	content: "";
+	position: absolute;
+	top: 3px;
+	left: 3px;
+	width: 18px;
+	height: 18px;
+	background: #fff;
+	border-radius: 50%;
+	transition: transform .18s ease;
+}
+
+.zymarg-re__switch input:checked + .zymarg-re__slider {
+	background: var(--zre-primary);
+}
+
+.zymarg-re__switch input:checked + .zymarg-re__slider::after {
+	transform: translateX(18px);
+}
+
+.zymarg-re__switch input:focus-visible + .zymarg-re__slider {
+	box-shadow: 0 0 0 2px var(--zre-primary-hover);
+}
+
+/* Save bar */
+.zymarg-re__bar {
+	position: sticky;
+	bottom: 0;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	background: var(--zre-surface);
+	border: 1px solid var(--zre-border);
+	border-radius: var(--zre-radius);
+	padding: 12px 16px;
+	box-shadow: 0 -2px 12px rgba(0, 0, 0, .05);
+}
+
+.zymarg-re__status {
+	font-size: 13px;
+	color: var(--zre-muted);
+}
+
+.zymarg-re__status.is-ok {
+	color: #1a7f37;
+}
+
+.zymarg-re__status.is-err {
+	color: #b32d2e;
+}
+
+.zymarg-re__status.is-warn {
+	color: #a06000;
+}
+
+@media (max-width: 782px) {
+	.zymarg-re__layout {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.zymarg-re__tabs {
+		position: static;
+		flex-direction: row;
+		flex-wrap: wrap;
+	}
+
+	.zymarg-re__field {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 6px;
+	}
+}
