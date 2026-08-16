@@ -38,7 +38,7 @@ function zymarg_vd_premium_register_admin_menu() {
 	add_submenu_page(
 		'zymarg-vendor-hub',
 		__( 'Premium', 'zymarg-vendor-dashboard' ),
-		__( 'Premium', 'zymarg-vendor-dashboard' ),
+		zymarg_vd_premium_menu_title_with_badge( __( 'Premium', 'zymarg-vendor-dashboard' ) ),
 		'manage_options',
 		'zymarg-vd-premium',
 		'zymarg_vd_premium_render_admin_page'
@@ -300,6 +300,48 @@ function zymarg_vd_premium_render_admin_page() {
 				</div>
 				<p class="zvd-hint">
 					<?php esc_html_e( 'This applies to every vendor store page.', 'zymarg-vendor-dashboard' ); ?>
+				</p>
+			</div>
+
+			<?php
+			/*
+			 * v1.46.14: Grid column counts.
+			 *
+			 * Only meaningful when Layout above is Grid -- Carousel has no
+			 * column count of its own, the same way marquee/glide speed above
+			 * only meaningfully apply to Carousel. This screen does not hide
+			 * fields based on the Layout/Rotation selection anywhere else, so
+			 * these three follow that same always-visible-with-a-hint pattern
+			 * rather than introducing a new show/hide behaviour just for them.
+			 * Shared between Flash Sale and Featured Items: both sections
+			 * render on the same store page grid, so one set of three numbers
+			 * covers both.
+			 */
+			?>
+			<div class="zvd-field zvd-narrow">
+				<label class="zvd-label" for="zvd-columns-desktop">
+					<?php esc_html_e( 'Columns: desktop', 'zymarg-vendor-dashboard' ); ?>
+				</label>
+				<input type="number" id="zvd-columns-desktop" name="columns_desktop" min="1" max="6" step="1"
+					value="<?php echo esc_attr( $display['columns_desktop'] ); ?>" />
+			</div>
+
+			<div class="zvd-field zvd-narrow">
+				<label class="zvd-label" for="zvd-columns-tablet">
+					<?php esc_html_e( 'Columns: tablet', 'zymarg-vendor-dashboard' ); ?>
+				</label>
+				<input type="number" id="zvd-columns-tablet" name="columns_tablet" min="1" max="6" step="1"
+					value="<?php echo esc_attr( $display['columns_tablet'] ); ?>" />
+			</div>
+
+			<div class="zvd-field zvd-narrow">
+				<label class="zvd-label" for="zvd-columns-mobile">
+					<?php esc_html_e( 'Columns: mobile', 'zymarg-vendor-dashboard' ); ?>
+				</label>
+				<input type="number" id="zvd-columns-mobile" name="columns_mobile" min="1" max="6" step="1"
+					value="<?php echo esc_attr( $display['columns_mobile'] ); ?>" />
+				<p class="zvd-hint">
+					<?php esc_html_e( '1 to 6 for each. Used by Flash Sale and Featured Items together on the store page grid. Only applies when Layout above is Grid.', 'zymarg-vendor-dashboard' ); ?>
 				</p>
 			</div>
 
@@ -636,7 +678,7 @@ function zymarg_vd_premium_ajax_save_display() {
 	zymarg_vd_premium_admin_ajax_guard();
 
 	$raw = array();
-	foreach ( array( 'featured_min', 'featured_max', 'flash_max', 'layout', 'rotation', 'marquee_speed', 'glide_speed' ) as $key ) {
+	foreach ( array( 'featured_min', 'featured_max', 'flash_max', 'layout', 'rotation', 'marquee_speed', 'glide_speed', 'columns_desktop', 'columns_tablet', 'columns_mobile' ) as $key ) {
 		if ( isset( $_POST[ $key ] ) ) {
 			$raw[ $key ] = sanitize_text_field( wp_unslash( $_POST[ $key ] ) );
 		}
@@ -655,6 +697,44 @@ function zymarg_vd_premium_ajax_save_display() {
 	);
 }
 add_action( 'wp_ajax_zymarg_vd_premium_save_display', 'zymarg_vd_premium_ajax_save_display' );
+
+/**
+ * Feed the live pending-request count into WordPress's own Heartbeat tick.
+ *
+ * Heartbeat is core's own polling loop (already running on every admin
+ * screen for post-lock and autosave), so this rides that existing loop
+ * instead of adding a second independent setInterval/AJAX cycle. It ticks
+ * every 15-60 seconds depending on wp-admin's own Heartbeat interval setting
+ * -- close to real time, but not sub-second, exactly like WordPress core's
+ * own Plugins-update bubble and WooCommerce's own order-count bubble, both
+ * of which refresh no faster than a page load unless something like this
+ * hooks Heartbeat for them.
+ *
+ * Scoped to admin-side Heartbeat only ('admin_enqueue_scripts' registers the
+ * script with 'heartbeat' as a dependency below) so this never fires on the
+ * front end, where Heartbeat can also run for other purposes.
+ *
+ * @param array $response Existing Heartbeat response payload.
+ * @return array Response with the pending count appended.
+ */
+function zymarg_vd_premium_heartbeat_received( $response ) {
+	$response['zymarg_vd_premium_pending'] = zymarg_vd_premium_pending_count();
+
+	return $response;
+}
+add_filter( 'heartbeat_received', 'zymarg_vd_premium_heartbeat_received' );
+
+/**
+ * Also answer the very first tick, which core sends before any handler has
+ * run once -- 'heartbeat_send' fires unconditionally on every tick, whereas
+ * 'heartbeat_received' only fires when the browser's tick payload already
+ * contains a matching key. Filtering both means the badge starts updating
+ * from the very first Heartbeat tick after page load, not the second one.
+ *
+ * @param array $response Existing Heartbeat response payload.
+ * @return array Response with the pending count appended.
+ */
+add_filter( 'heartbeat_send', 'zymarg_vd_premium_heartbeat_received' );
 
 /**
  * AJAX: save one vendor's limit overrides.

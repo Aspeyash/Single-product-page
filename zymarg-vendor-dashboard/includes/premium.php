@@ -503,6 +503,38 @@ function zymarg_vd_premium_pending_count() {
 	return count( zymarg_vd_premium_pending_requests() );
 }
 
+/**
+ * Build a menu label with the WordPress-core-style count bubble appended.
+ *
+ * Matches the markup WordPress core itself uses for the Plugins update count
+ * and WooCommerce's own order count (an <span class="update-plugins"> wrapping
+ * a <span class="plugin-count">), so the bubble inherits WordPress's own menu
+ * styling for free -- no bespoke CSS needed to look "native" in the sidebar.
+ *
+ * The bubble's own wrapper carries a stable class + data attribute so the
+ * front-end JS (zymarg_vd_premium_admin_enqueue()) can find and update it
+ * live without a page reload, the same way WooCommerce's own order badge
+ * would need to be found and patched by any JS wanting to update it live.
+ *
+ * @param string $label Menu label text.
+ * @return string Label HTML, with the bubble appended only when count > 0.
+ */
+function zymarg_vd_premium_menu_title_with_badge( $label ) {
+	$count = zymarg_vd_premium_pending_count();
+
+	if ( $count <= 0 ) {
+		// Still wrap in the same markup, just empty and hidden, so the live
+		// JS has one consistent element to find and show/update/hide later
+		// without ever needing to inject brand-new markup into the DOM.
+		return $label . ' <span class="update-plugins zvd-premium-badge zvd-is-hidden" data-zvd-premium-badge="1"><span class="plugin-count"></span></span>';
+	}
+
+	return $label . sprintf(
+		' <span class="update-plugins zvd-premium-badge" data-zvd-premium-badge="1"><span class="plugin-count">%s</span></span>',
+		esc_html( number_format_i18n( $count ) )
+	);
+}
+
 /* ---------------------------------------------------------------------- *
  * 4. PRODUCT-LEVEL STATE
  * ---------------------------------------------------------------------- */
@@ -940,13 +972,22 @@ const ZYMARG_VD_PREMIUM_META_LIMITS    = '_zymarg_vd_premium_limits';
  */
 function zymarg_vd_premium_display_defaults() {
 	return array(
-		'featured_min'  => 6,
-		'featured_max'  => 10,
-		'flash_max'     => 10,
-		'layout'        => 'grid',
-		'rotation'      => 'step',
-		'marquee_speed' => 40,
-		'glide_speed'   => 400,
+		'featured_min'    => 6,
+		'featured_max'    => 10,
+		'flash_max'       => 10,
+		'layout'          => 'grid',
+		'rotation'        => 'step',
+		'marquee_speed'   => 40,
+		'glide_speed'     => 400,
+		// v1.46.14: responsive column counts, used only when layout is 'grid'.
+		// Carousel has no column count of its own -- it already has its own
+		// speed/rotation controls above, which is why these three are only
+		// ever read by the store page's grid layout, never its carousel one.
+		// Shared between the Flash Sale and Featured Items sections, since
+		// both render on the same store page and both use the same grid.
+		'columns_desktop' => 4,
+		'columns_tablet'  => 3,
+		'columns_mobile'  => 2,
 	);
 }
 
@@ -1029,6 +1070,28 @@ function zymarg_vd_premium_sanitize_display( array $raw ) {
 			100,
 			3000,
 			$defaults['glide_speed']
+		),
+		// v1.46.14: 1-6 mirrors the column bound the Product Grid engine
+		// itself enforces (Config_Normalizer::NUMERIC_BOUNDS, 'layout.columns'
+		// => [1, 6]), so a value saved here can never be clamped a second time,
+		// silently, further down the pipeline.
+		'columns_desktop' => zymarg_vd_premium_clamp_int(
+			isset( $raw['columns_desktop'] ) ? $raw['columns_desktop'] : null,
+			1,
+			6,
+			$defaults['columns_desktop']
+		),
+		'columns_tablet'  => zymarg_vd_premium_clamp_int(
+			isset( $raw['columns_tablet'] ) ? $raw['columns_tablet'] : null,
+			1,
+			6,
+			$defaults['columns_tablet']
+		),
+		'columns_mobile'  => zymarg_vd_premium_clamp_int(
+			isset( $raw['columns_mobile'] ) ? $raw['columns_mobile'] : null,
+			1,
+			6,
+			$defaults['columns_mobile']
 		),
 	);
 }
