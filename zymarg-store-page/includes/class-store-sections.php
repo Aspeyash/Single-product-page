@@ -88,7 +88,7 @@ class ZYMARG_SP_Store_Sections {
 				'heading'   => 'Trending',
 				'show_link' => false,
 				'link_url'  => '',
-				'shortcode' => '[zymarg_products source="current_vendor" current_vendor_subset="trending" layout="slider" limit="8" columns="5" columns_tablet="4" columns_mobile="2" card_template="zymarg"]',
+				'shortcode' => '[zymarg_products source="current_vendor" current_vendor_subset="trending" layout="slider" limit="8" columns="5" columns_tablet="4" columns_mobile="2" card_template="zymarg" show_vendor="no"]',
 			),
 			array(
 				'id'        => 'sec_best_selling',
@@ -97,7 +97,7 @@ class ZYMARG_SP_Store_Sections {
 				'heading'   => 'Best Selling',
 				'show_link' => false,
 				'link_url'  => '',
-				'shortcode' => '[zymarg_products source="current_vendor" current_vendor_subset="best_selling" layout="slider" limit="8" columns="5" columns_tablet="4" columns_mobile="2" card_template="zymarg"]',
+				'shortcode' => '[zymarg_products source="current_vendor" current_vendor_subset="best_selling" layout="slider" limit="8" columns="5" columns_tablet="4" columns_mobile="2" card_template="zymarg" show_vendor="no"]',
 			),
 			array(
 				'id'        => 'sec_all_products',
@@ -110,7 +110,7 @@ class ZYMARG_SP_Store_Sections {
 				'heading'   => '',
 				'show_link' => false,
 				'link_url'  => '',
-				'shortcode' => '[zymarg_products source="current_vendor" current_vendor_subset="all" layout="grid" columns="4" columns_tablet="3" columns_mobile="2" pagination="infinite" max_products="40" max_products_tablet="30" max_products_mobile="20" batch_size="20" batch_size_tablet="20" batch_size_mobile="10" card_template="zymarg"]',
+				'shortcode' => '[zymarg_products source="current_vendor" current_vendor_subset="all" layout="grid" columns="4" columns_tablet="3" columns_mobile="2" pagination="infinite" max_products="40" max_products_tablet="30" max_products_mobile="20" batch_size="20" batch_size_tablet="20" batch_size_mobile="10" card_template="zymarg" show_vendor="no"]',
 			),
 		);
 	}

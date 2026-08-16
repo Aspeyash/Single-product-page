@@ -4,7 +4,7 @@ Tags:              dokan, vendor, store, marketplace, activewear
 Requires at least: 6.0
 Tested up to:      6.7
 Requires PHP:      7.4
-Stable tag:        1.24.3
+Stable tag:        1.25.0
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,6 +73,13 @@ Yes. Edit the `@theme` block inside `templates/store.php` to change the design t
 4. Admin settings page under Dokan → ZYMARG Store Page
 
 == Changelog ==
+
+= 1.25.0 — Fix: old-price position; hide vendor row on Handpicked cards + section defaults; unify Trending/Best Selling heading style =
+
+* Fixed: the old/strikethrough price on every product card rendered visibly lower and squashed compared to the same card on a page that does not load Tailwind (e.g. a plain WooCommerce single-product page). Root cause: the card markup wraps the old price in a native `<sub class="zymarg-wcpg__price-old">` element, and this plugin's compiled Tailwind preflight (`store-tailwind.css`) resets every `<sub>` tag on the page with `position:relative;bottom:-.25em;line-height:0` — a bare tag selector that wins by default because neither the Product Grid engine nor the Template Pack ever declares `position`/`bottom` for that class. Fixed with a scoped `.zymarg-wcpg__price-old { position:static; bottom:auto; line-height:1; }` rule in `store-page.css`, which as a class selector beats Tailwind's tag selector regardless of load order. Scoped to this plugin only; the shared Product Grid engine and Template Pack are unchanged.
+* Changed: the Handpicked/Featured Items section's product cards no longer show the "sold by {vendor}" row. Every card on a store page already belongs to the vendor whose store is being viewed, so the row was redundant. Flash Sale cards are unaffected — only Featured Items was scoped in.
+* Changed: the Trending, Best Selling, and All Products sections' default `[zymarg_products]` shortcodes now include `show_vendor="no"`. This only applies to fresh installs (or a section manually re-saved from the admin panel) — existing saved section rows on a live site are not retroactively changed.
+* Fixed: the Trending and Best Selling section headings (and any section added later through the admin panel's "Add Section") now use the same eyebrow-label + visually-hidden-heading pattern as Limited Time, Handpicked, and All Products, instead of the bold/dark/larger heading style they previously rendered with. Because Trending, Best Selling, and every future admin-managed section share one render loop (`ZYMARG_SP_Store_Sections::get_generic_rows()` in `templates/store.php`), this is a single change that applies to all of them, now and going forward — nothing section-specific to maintain. The Reviews ("What buyers are saying") and Our Story headings are untouched, as they render through a separate code path.
 
 = 1.24.3 — Fix: Columns settings had no effect when Premium Layout is Carousel =
 
