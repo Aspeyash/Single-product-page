@@ -2235,3 +2235,46 @@ input.zsp-sheet__input[type="search"] {
 	bottom: auto;
 	line-height: 1;
 }
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   ALL PRODUCTS -- "Sort" CONTROL: KEEP ON ONE LINE ON MOBILE          v1.26.0
+
+   Scoped to templates/store.php's Sort <label class="zy-products-sort">
+   (the "Sort  [Most Popular ▾]" control next to the "All Products" label).
+   That label and its <select> are plain Tailwind utility classes with no
+   explicit flex-wrap/min-width, so at narrow (~320-375px) widths the label's
+   own text and its <select> were breaking onto two lines. This rule only
+   targets that one control by its dedicated class -- the "All Products"
+   eyebrow label/heading above it, and every other section on the page, are
+   untouched.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.zy-products-sort {
+	flex-wrap: nowrap;
+}
+
+.zy-products-sort span {
+	flex-shrink: 0;
+	white-space: nowrap;
+}
+
+.zy-products-sort select {
+	flex: 1 1 auto;
+	min-width: 0;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+@media (max-width: 640px) {
+	.zy-products-sort {
+		gap: 6px;
+	}
+
+	.zy-products-sort select {
+		padding-left: 10px;
+		padding-right: 8px;
+		font-size: 13px;
+	}
+}

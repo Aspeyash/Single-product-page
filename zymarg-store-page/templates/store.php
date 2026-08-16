@@ -742,7 +742,7 @@ if ( class_exists( 'ZYMARG_SP_Store_Sections' ) && shortcode_exists( 'zymarg_pro
             <?php esc_html_e( 'Products in store', 'zymarg-store-page' ); ?>
           </h2>
         </div>
-        <label class="flex items-center gap-2 text-sm">
+        <label class="zy-products-sort flex items-center gap-2 text-sm">
           <span class="text-zy-body/70"><?php esc_html_e( 'Sort', 'zymarg-store-page' ); ?></span>
           <?php
           // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only sort preference, no state change.
