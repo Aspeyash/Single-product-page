@@ -1081,12 +1081,54 @@
     const chevron = document.querySelector("[data-story-chevron]");
     if (!btn) return;
 
-    btn.addEventListener("click", () => {
+    btn.addEventListener("click", (e) => {
+      // Story toggle can live inside a .zy-rs-combo__panel (combined
+      // Reviews + Our Story layout, v1.28.0). Its own click must not also
+      // bubble up and flip the panel's collapse state.
+      e.stopPropagation();
+
       const expanded = btn.getAttribute("aria-expanded") === "true";
       btn.setAttribute("aria-expanded", String(!expanded));
       if (more) more.classList.toggle("hidden", expanded);
       if (label) label.textContent = expanded ? "Read More" : "Show Less";
       if (chevron) chevron.classList.toggle("rotate-180", !expanded);
+    });
+  }
+
+  /* ══════════════════════════════════════════════════════════════════════════
+     COMBINED REVIEWS + OUR STORY — split panel collapse/expand (v1.28.0)
+     - Only present when a vendor has both a rated review feed AND story
+       content (see $zy_combine_panels in templates/store.php).
+     - Each panel (#zy-rs-combo-story / #zy-rs-combo-reviews) opens and
+       closes independently — no "only one open" restriction.
+     - Both panels default to collapsed (data-state="closed" server-side);
+       this only toggles state on click, at every breakpoint identically.
+     - Uses the same CSS grid-rows collapse mechanic as the sidebar
+       categories drawer, generalised via the shared .zy-collapse class.
+     ══════════════════════════════════════════════════════════════════════════ */
+  function initReviewsStoryCombo() {
+    const root = document.getElementById("zy-rs-combo");
+    if (!root) return; // vendor doesn't qualify for the combined layout
+
+    const triggers = root.querySelectorAll("[data-combo-toggle]");
+
+    triggers.forEach((trigger) => {
+      const collapse = document.getElementById(trigger.getAttribute("aria-controls"));
+      if (!collapse) return;
+
+      const toggle = () => {
+        const isOpen = collapse.getAttribute("data-state") !== "closed";
+        collapse.setAttribute("data-state", isOpen ? "closed" : "open");
+        trigger.setAttribute("aria-expanded", String(!isOpen));
+      };
+
+      trigger.addEventListener("click", toggle);
+      trigger.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          toggle();
+        }
+      });
     });
   }
 
@@ -2342,6 +2384,7 @@
     fetchStoreDetails();
     initStickyHeader();
     initStoryToggle();
+    initReviewsStoryCombo();
     initShareButton();
     initFollowButton();
     initAuraSearch();
