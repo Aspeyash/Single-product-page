@@ -859,53 +859,149 @@ if ( class_exists( 'ZYMARG_SP_Store_Sections' ) && shortcode_exists( 'zymarg_pro
 </div>
 
 <!-- ============================================================
-     REVIEWS
+     REVIEWS + OUR STORY
 
-     v1.27.0: this section now delegates entirely to the ZYMARG Reviews
-     Engine's own renderer (zymarg_reviews_render(['vendor_id'=>...])) instead
-     of hand-rolling review cards from zymarg_reviews_get_data(). The site
-     owner's Single Product page already gets the engine's full feature set
-     this way -- customer photo/video media strip, the full-screen/mini-player
-     lightbox viewer, filters, sort, and AJAX Load More -- and the store page
-     was the one surface still missing all of it, rendering bare <img>/
-     <video controls> thumbnails with no click-to-enlarge at all.
+     v1.28.0: when a vendor has BOTH a rated review feed AND story content
+     filled in, these two sections combine into a single "split panel"
+     block -- Our Story (~38%) and Customer Reviews (~62%) side-by-side on
+     desktop (>=1024px), stacking to full width below that breakpoint.
+     Collapse/expand is identical and fully active at every breakpoint --
+     only the outer layout (grid vs. stacked) changes by screen size. Both
+     panels default to COLLAPSED on load, everywhere; clicking a panel's
+     header row expands it independently of the other (no "only one open"
+     restriction).
 
-     The engine's vendor scope (Data_Builder::build_vendor()) returns the
-     exact same review set this section always showed: every approved review
-     left on any product this vendor owns, aggregated into one feed, each
-     card still tagged with which product it is about. Nothing about WHICH
-     reviews display has changed -- only how much richer the engine's own
-     card/media/lightbox markup is compared to the bespoke Tailwind cards
-     this section used to draw by hand.
+     If only ONE of the two exists, that section falls back to its
+     original, unwrapped, non-collapsible markup -- pixel-identical to the
+     v1.27.0 behaviour for that section. If NEITHER exists, nothing renders,
+     same as always. The two single-section code paths below are therefore
+     left completely intact rather than forcing one template to cover
+     every case.
 
-     $has_rating (computed above from the same zymarg_reviews_get_data() call,
-     since the header/stats card elsewhere on this page still needs it) is
-     used only to decide whether to show this section container at all --
-     the engine's own template makes the identical “no rated reviews yet”
-     decision internally once it renders.
+     v1.27.0 history preserved: the Reviews panel still delegates entirely
+     to the ZYMARG Reviews Engine's own renderer (zymarg_reviews_render()),
+     giving this page the engine's full feature set -- media strip,
+     lightbox, filters, sort, AJAX Load More. The engine's vendor scope
+     (Data_Builder::build_vendor()) returns every approved review left on
+     any product this vendor owns, aggregated into one feed.
 ============================================================ -->
-<?php if ( $show_reviews && $has_rating && function_exists( 'zymarg_reviews_render' ) ) : ?>
+<?php
+$zy_show_reviews_panel = $show_reviews && $has_rating && function_exists( 'zymarg_reviews_render' );
+$zy_show_story_panel   = $has_story;
+$zy_combine_panels      = $zy_show_reviews_panel && $zy_show_story_panel;
+
+/*
+ * The engine's own summary card carries its own "Customer Reviews" title
+ * by default (Settings -> reviews_summary_heading), which would print a
+ * second, visually redundant "Customer Reviews" directly under the
+ * eyebrow label this template already renders above it. Blanked out here,
+ * scoped to this exact render call only via vendor_id -- the admin's
+ * saved setting, and every other consumer of the engine (including this
+ * store's own Single Product pages), is untouched. Shared by both the
+ * combined panel and the standalone-Reviews fallback below so the fix
+ * applies no matter which path renders.
+ */
+$zy_blank_summary_heading = function ( $settings, $args ) use ( $store_id ) {
+	if ( (int) ( $args['vendor_id'] ?? 0 ) === $store_id ) {
+		$settings['summary_heading'] = '';
+	}
+	return $settings;
+};
+?>
+
+<?php if ( $zy_combine_panels ) : ?>
+<section aria-label="<?php esc_attr_e( 'Store story and customer reviews', 'zymarg-store-page' ); ?>" class="zy-section mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+  <div class="zy-rs-combo zy-rs-combo--split" id="zy-rs-combo">
+
+    <!-- STORY PANEL -->
+    <div class="zy-rs-combo__panel" id="zy-rs-combo-story">
+      <div class="zy-rs-combo__head" data-combo-toggle role="button" tabindex="0" aria-expanded="false" aria-controls="zy-rs-combo-story-collapse">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-[0.2em] text-zy-secondary"><?php esc_html_e( 'Our Story', 'zymarg-store-page' ); ?></p>
+          <?php if ( '' !== trim( $story_headline ) ) : ?>
+            <h2 id="story-heading" class="zy-section-heading mt-2 font-bold tracking-tight text-zy-dark"><?php echo esc_html( $story_headline ); ?></h2>
+          <?php else : ?>
+            <?php /* No headline written, but the landmark still needs a name. */ ?>
+            <h2 id="story-heading" class="zy-section-heading mt-2 font-bold tracking-tight text-zy-dark"><?php
+              /* translators: %s: store name. */
+              printf( esc_html__( 'About %s', 'zymarg-store-page' ), esc_html( $store_name ) );
+            ?></h2>
+          <?php endif; ?>
+        </div>
+        <span class="zy-rs-combo__toggle" aria-hidden="true">
+          <svg class="zy-rs-combo__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg>
+        </span>
+      </div>
+      <div class="zy-collapse" id="zy-rs-combo-story-collapse" data-state="closed">
+        <div class="zy-collapse__inner">
+          <?php if ( '' !== trim( $store_description ) ) : ?>
+            <p class="zy-section-content max-w-3xl leading-relaxed" data-store-desc><?php echo esc_html( $store_description ); ?></p>
+          <?php endif; ?>
+          <?php if ( '' !== trim( $story_more ) ) : ?>
+            <p data-story-more class="mt-3 hidden max-w-3xl leading-relaxed"><?php echo esc_html( $story_more ); ?></p>
+            <button type="button" data-story-toggle aria-expanded="false"
+              class="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-zy-primary transition duration-300 ease-in-out hover:text-zy-secondary focus:outline-none focus-visible:ring-2 focus-visible:ring-zy-secondary rounded-xl">
+              <span data-story-label><?php esc_html_e( 'Read More', 'zymarg-store-page' ); ?></span>
+              <svg data-story-chevron class="h-4 w-4 transition-transform duration-300 ease-in-out" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg>
+            </button>
+          <?php endif; ?>
+        </div>
+      </div>
+    </div>
+
+    <!-- REVIEWS PANEL -->
+    <div class="zy-rs-combo__panel" id="zy-rs-combo-reviews">
+      <div class="zy-rs-combo__head" data-combo-toggle role="button" tabindex="0" aria-expanded="false" aria-controls="zy-rs-combo-reviews-collapse">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-[0.2em] text-zy-secondary"><?php esc_html_e( 'Customer Reviews', 'zymarg-store-page' ); ?></p>
+          <h2 id="reviews-heading" class="zy-section-heading mt-2 font-bold tracking-tight text-zy-dark"><?php esc_html_e( 'What buyers are saying', 'zymarg-store-page' ); ?></h2>
+          <span class="zy-rs-combo__panel-meta"><?php
+            printf(
+              /* translators: 1: average rating (one decimal), 2: total review count. */
+              esc_html__( '%1$s ★ · %2$s reviews', 'zymarg-store-page' ),
+              esc_html( number_format( $store_rating, 1 ) ),
+              esc_html( number_format( $rating_count ) )
+            );
+          ?></span>
+        </div>
+        <span class="zy-rs-combo__toggle" aria-hidden="true">
+          <svg class="zy-rs-combo__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg>
+        </span>
+      </div>
+      <div class="zy-collapse" id="zy-rs-combo-reviews-collapse" data-state="closed">
+        <div class="zy-collapse__inner">
+          <?php
+          add_filter( 'zymarg_reviews_render_settings', $zy_blank_summary_heading, 10, 2 );
+
+          zymarg_reviews_render(
+            array(
+              'vendor_id'    => $store_id,
+              'page'         => $reviews_page,
+              // Read-only by design: buyers write reviews from My Account
+              // against an order they placed, never from the store page.
+              'show_form'    => false,
+              'show_summary' => true,
+              'show_filters' => true,
+            )
+          );
+
+          remove_filter( 'zymarg_reviews_render_settings', $zy_blank_summary_heading, 10 );
+          ?>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+<?php endif; // zy_combine_panels ?>
+
+<?php if ( ! $zy_combine_panels && $zy_show_reviews_panel ) : ?>
 <section aria-labelledby="reviews-heading" class="zy-section mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
   <p class="text-xs font-semibold uppercase tracking-[0.2em] text-zy-secondary"><?php esc_html_e( 'Customer Reviews', 'zymarg-store-page' ); ?></p>
   <h2 id="reviews-heading" class="zy-section-heading mt-2 font-bold tracking-tight text-zy-dark"><?php esc_html_e( 'What buyers are saying', 'zymarg-store-page' ); ?></h2>
 
   <div class="zy-section-content mt-6">
     <?php
-    /*
-     * The engine's own summary card carries its own "Customer Reviews" title
-     * by default (Settings -> reviews_summary_heading), which would print a
-     * second, visually redundant "Customer Reviews" directly under the
-     * eyebrow label this section already renders above. Blanked out here,
-     * scoped to this exact render call only via vendor_id -- the admin's
-     * saved setting, and every other consumer of the engine (including this
-     * store's own Single Product pages), is untouched.
-     */
-    $zy_blank_summary_heading = function ( $settings, $args ) use ( $store_id ) {
-      if ( (int) ( $args['vendor_id'] ?? 0 ) === $store_id ) {
-        $settings['summary_heading'] = '';
-      }
-      return $settings;
-    };
     add_filter( 'zymarg_reviews_render_settings', $zy_blank_summary_heading, 10, 2 );
 
     zymarg_reviews_render(
@@ -927,12 +1023,9 @@ if ( class_exists( 'ZYMARG_SP_Store_Sections' ) && shortcode_exists( 'zymarg_pro
     ?>
   </div>
 </section>
-<?php endif; // show_reviews ?>
+<?php endif; // zy_show_reviews_panel standalone fallback ?>
 
-<!-- ============================================================
-     STORE STORY
-============================================================ -->
-<?php if ( $has_story ) : ?>
+<?php if ( ! $zy_combine_panels && $zy_show_story_panel ) : ?>
 <section aria-labelledby="story-heading" class="zy-section mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
   <div class="rounded-2xl bg-zy-surface p-6 shadow-lg sm:p-8">
     <p class="text-xs font-semibold uppercase tracking-[0.2em] text-zy-secondary"><?php esc_html_e( 'Our Story', 'zymarg-store-page' ); ?></p>
@@ -960,7 +1053,7 @@ if ( class_exists( 'ZYMARG_SP_Store_Sections' ) && shortcode_exists( 'zymarg_pro
     <?php endif; ?>
   </div>
 </section>
-<?php endif; // has_story ?>
+<?php endif; // zy_show_story_panel standalone fallback ?>
 
 </main>
 
