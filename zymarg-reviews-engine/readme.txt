@@ -3,7 +3,7 @@ Contributors: zymarg
 Requires at least: 6.0
 Tested up to: 6.6
 Requires PHP: 8.0
-Stable tag: 1.3.2
+Stable tag: 1.3.3
 License: GPLv2 or later
 
 The review engine behind the ZYMARG plugins: data, settings, submission, media, moderation and rendering, in one place.
@@ -73,6 +73,9 @@ It is parked until explicitly called for. Three decisions listed in section 10
 of that document must be answered before any code is written.
 
 == Changelog ==
+
+= 1.3.3 — Hide the customer media strip's horizontal scrollbar =
+* Fixed: `.zymarg-media-strip__row` (the "Customer photos & videos" horizontal strip) showed a visible scrollbar in some browsers — `scrollbar-width:thin` still painted a bar in Firefox, and Chrome/Edge/Safari had no equivalent rule at all, so they showed their native bar. Switched to `scrollbar-width:none` + a new `::-webkit-scrollbar{display:none}` rule, matching the same hide-but-keep-scrollable treatment `.zymarg-col-left` already used. The strip still scrolls by touch/drag/wheel exactly as before; only the visible bar is gone. Affects every consumer of this shared widget (ZYMARG Single Product, ZYMARG Store Page, any other placement) — fixed once, here, rather than per-host.
 
 = 1.3.2 — Store-wide (vendor) scope now gets the full review experience =
 * New: `Data_Builder::get_grouped_review_media_for_vendor()` and `get_vendor_media()` — the store-wide (vendor) equivalents of `get_grouped_review_media()`/`get_product_media()`. `build_vendor()` now populates `media_gallery`/`media_reviews` on a vendor-scoped payload exactly as `build()` already did for a single product, so the customer photo/video strip and the full-screen/mini-player lightbox viewer now work identically on a store-wide feed as on one product's reviews.
