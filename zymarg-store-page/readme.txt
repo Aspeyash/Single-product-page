@@ -4,7 +4,7 @@ Tags:              dokan, vendor, store, marketplace, activewear
 Requires at least: 6.0
 Tested up to:      6.7
 Requires PHP:      7.4
-Stable tag:        1.28.0
+Stable tag:        1.28.1
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,6 +73,11 @@ Yes. Edit the `@theme` block inside `templates/store.php` to change the design t
 4. Admin settings page under Dokan → ZYMARG Store Page
 
 == Changelog ==
+
+= 1.28.1 — Fix sticky rating summary and oversized padding inside the split panel =
+* Fixed: the ZYMARG Reviews Engine's sticky rating-summary column (`.zymarg-col-left`, its two-column layout at >=768px) never actually stuck while scrolling inside the combined split panel's Reviews collapse panel. Root cause: `.zy-collapse__inner` (the collapse-trick wrapper this panel introduced in 1.28.0) carries `overflow: hidden` so the panel can animate through zero height while closing — but `position: sticky` is clipped to the nearest ancestor with overflow other than `visible`, so it was silently breaking every sticky element rendered inside it. Fixed by letting an open, settled panel (`.zy-collapse[data-state="open"] .zy-collapse__inner`) overflow freely again; the clip still applies while closed/collapsing so the height animation is unaffected.
+* Fixed: the Reviews panel showed excessive left/right padding on every viewport while in the combined split panel (screenshot-confirmed) — the Reviews Engine's own `.zymarg-container` carries a fixed 32px padding on every side, stacked on top of this panel's own 22px card padding, for ~54px of combined inset each side inside a column that is only ~62% of the page width. Zeroed out with `.zy-rs-combo__panel .zymarg-container { padding: 0; }`, scoped to only this panel — the engine's default padding is untouched everywhere else (the standalone full-width Reviews section, Single Product's accordion, any other placement).
+* Companion fix (ships in ZYMARG Reviews Engine 1.3.3): the customer photos/videos media strip's visible horizontal scrollbar is now hidden while remaining scrollable — affects this panel and every other consumer of the shared widget.
 
 = 1.28.0 — Desktop: combine Customer Reviews + Our Story into one collapsible split panel =
 * Added: when a vendor has BOTH a rated review feed (`$has_rating`) AND story content filled in (`$has_story`), the Customer Reviews and Our Story sections now render as a single combined block — Our Story (~38% width) and Customer Reviews (~62% width) side-by-side on desktop (>=1024px), stacking to full width below that breakpoint. Each panel has its own collapse/expand toggle (a click on the panel's header row), fully independent of the other panel — expanding one does not affect the other. Both panels load collapsed by default, at every screen size.
@@ -482,6 +487,9 @@ until you deliberately edit it. Upgrading is visually a no-op.
 * Initial release.
 
 == Upgrade Notice ==
+
+= 1.28.1 =
+Fixes two visual bugs in the 1.28.0 combined Reviews + Our Story split panel: the rating summary now sticks correctly while scrolling on desktop/tablet, and excess padding around the Reviews content is removed. Requires ZYMARG Reviews Engine 1.3.3+ for the companion media-strip scrollbar fix.
 
 = 1.28.0 =
 Desktop-only visual change for vendors who have both a rated review feed and story content filled in: Customer Reviews + Our Story now combine into one collapsible split panel, collapsed by default. Vendors with only one of the two, or neither, see no change.
