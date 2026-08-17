@@ -406,6 +406,19 @@ svg.zymarg-sp-star--empty, .zymarg-sp-star--empty svg { fill: var(--zymarg-borde
 .acc:not([open]) summary::after { content: "+"; }
 .acc[open] summary { border-bottom: 1px solid var(--zymarg-border); }
 .acc-body { padding: 20px; font-size: .92rem; }
+/* v2.4.8 - Once open and settled, let the panel overflow again. `.acc`'s
+ * unconditional overflow:hidden above was clipping position:sticky content
+ * rendered inside .acc-body (e.g. the ZYMARG Reviews Engine's sticky rating
+ * summary column at >=768px) -- sticky is clipped to its nearest ancestor
+ * with overflow other than visible, and .acc was that ancestor. Since
+ * .acc's own background and .acc summary's background are the same
+ * --zymarg-surface token, removing the clip once open introduces no visible
+ * corner seam. Overflow still returns to hidden while animating (rule
+ * below, same specificity, later in source order wins) so the slide
+ * animation's reveal-by-growing-box effect is unaffected, and while closed
+ * (falls back to the base .acc rule above) so the closed rounded card looks
+ * exactly as before. */
+.acc[open] { overflow: visible; }
 /* v1.1.16 - JS slide animation drives the height; keep the panel clipped. */
 .acc[data-zsp-animating] { overflow: hidden; }
 .acc summary::after { transition: transform .25s ease; }

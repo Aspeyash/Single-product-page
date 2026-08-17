@@ -44,6 +44,10 @@ Key features:
 
 == Changelog ==
 
+= 2.4.8 =
+* Fixed: the ZYMARG Reviews Engine's sticky rating-summary column (its two-column layout at >=768px, `.zymarg-col-left`) never actually stuck while scrolling inside the Reviews accordion tab. Root cause: `.acc` (this plugin's accordion wrapper) carries an unconditional `overflow: hidden`, and `position: sticky` is clipped to the nearest ancestor whose overflow is anything other than `visible` — so `.acc` was silently breaking every sticky element rendered inside it, review summary included. Fixed by letting an open, settled `.acc[open]` overflow freely again; overflow still clips while the panel is closed or mid-slide-animation (`.acc[data-zsp-animating]`), so the rounded-card corner clip and the existing open/close animation are both unaffected.
+* Fixed: (companion fix, ships in ZYMARG Reviews Engine 1.3.3) the customer photos/videos strip inside the Reviews accordion showed a visible horizontal scrollbar in some browsers.
+
 = 2.4.7 =
 * Added: the seller card's "Chat" button now connects directly to the ZYMARG Communication plugin when it is active. It renders as `[data-chat-btn data-seller-id="{vendor_user_id}"]`, the same contract the ZYMARG Store Page plugin already implements - Communication's own live-chat.js listens for clicks on this attribute anywhere on the page and opens (or creates) the buyer/vendor conversation via `POST /marketplace/store-chat`, automatically resolving to whichever vendor's product the shopper is currently viewing. No configuration required: the vendor user ID is the same post-author ID this plugin already reads for the seller card's name, avatar and rating.
 * Added: logged-out shoppers see a "Chat" link that sends them to log in and returns them to the exact product they were viewing, instead of a button with no effect - the Communication plugin only loads its chat JS for logged-in visitors.

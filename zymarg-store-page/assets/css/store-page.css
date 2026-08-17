@@ -1959,8 +1959,33 @@ input.zsp-sheet__input[type="search"] {
 	min-height: 0;
 }
 
+/* v1.28.1 - Once a panel is open and settled, let it overflow again.
+   position:sticky inside .zy-collapse__inner (e.g. the ZYMARG Reviews
+   Engine's sticky rating-summary column at >=768px, .zymarg-col-left) was
+   being clipped to this ancestor's box, because sticky positioning stops
+   working the instant any ancestor between it and the viewport has
+   overflow other than visible. The clip is still needed WHILE collapsed/
+   collapsing (grid-template-rows animates through 0fr), so it only lifts
+   once the panel has fully opened. */
+.zy-collapse[data-state="open"] .zy-collapse__inner {
+	overflow: visible;
+}
+
 .zy-rs-combo--split .zy-rs-combo__panel .zy-collapse__inner {
 	padding-top: 0.875rem; /* 14px — breathing room once expanded */
+}
+
+/* v1.28.1 - The ZYMARG Reviews Engine's own .zymarg-container carries a
+   fixed 32px padding on every side, always (assets/css/zymarg-reviews.css).
+   Stacked on top of this panel's own 22px card padding, that is ~54px of
+   inset on each side -- barely visible in the full-width standalone
+   Reviews section (a 1200px+ container absorbs it), but very visible once
+   the same widget renders inside this panel's ~62%-width column (see
+   screenshot: 08-17-2026). Zeroed out here, scoped to ONLY this panel, so
+   the engine's own default padding is untouched for every other consumer
+   (Single Product's accordion, a standalone Elementor placement, etc.). */
+.zy-rs-combo__panel .zymarg-container {
+	padding: 0;
 }
 
 /*

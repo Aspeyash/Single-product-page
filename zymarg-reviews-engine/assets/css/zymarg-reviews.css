@@ -1130,7 +1130,13 @@
 	font-size:.82rem;font-weight:700;color:var(--z-primary);
 }
 .zymarg-media-strip__all:hover{color:var(--z-primary-hover);text-decoration:none}
-.zymarg-media-strip__row{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:thin}
+/* v1.3.3 - Hide the horizontal scrollbar visually while keeping the strip
+ * fully scrollable (same treatment already used on .zymarg-col-left above).
+ * scrollbar-width:none replaces the old :thin, which still painted a visible
+ * bar in Firefox; the new ::-webkit-scrollbar rule covers Chrome/Edge/Safari,
+ * which never had a :thin equivalent and were showing their native bar. */
+.zymarg-media-strip__row{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;-ms-overflow-style:none}
+.zymarg-media-strip__row::-webkit-scrollbar{display:none}
 .zymarg-media-strip__tile{
 	position:relative;flex:0 0 auto;width:72px;height:72px;padding:0;overflow:hidden;cursor:pointer;
 	border:1px solid var(--z-border);border-radius:var(--z-radius-sm);background:var(--z-surface-alt);

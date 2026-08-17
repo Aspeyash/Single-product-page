@@ -3,7 +3,7 @@
  * Plugin Name:       ZYMARG Reviews Engine
  * Plugin URI:        https://zymarg.com/
  * Description:       Product review engine: data, settings, submission, media, moderation and rendering. Consumed by ZYMARG Single Product, ZYMARG Single Store and any other plugin, page or shortcode.
- * Version:           1.3.2
+ * Version:           1.3.3
  * Requires at least: 6.0
  * Requires PHP:      8.0
  * Author:            ZYMARG
@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // -- Constants ---------------------------------------------------------------
-define( 'ZYMARG_RE_VERSION',    '1.3.2' );
+define( 'ZYMARG_RE_VERSION',    '1.3.3' );
 define( 'ZYMARG_RE_FILE',       __FILE__ );
 define( 'ZYMARG_RE_PATH',       plugin_dir_path( __FILE__ ) );
 define( 'ZYMARG_RE_URL',        plugin_dir_url( __FILE__ ) );
