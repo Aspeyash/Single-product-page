@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en" data-viewport="desktop">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZYMARG Store Page — Reviews + Our Story Combo (Desktop) — 3 Approaches</title>
+<style>
+/* =========================================================================
+   ZYMARG BRAND TOKENS
+   ========================================================================= */
+:root{
+  --zy-primary:#9500a5;
+  --zy-primary-container:#bd00d1;
+  --zy-inverse-primary:#fea9ff;
+  --zy-secondary:#505f76;
+  --zy-secondary-container:#d0e1fb;
+  --zy-text-body:#131b2e;
+  --zy-text-muted:#534152;
+  --zy-outline:#857183;
+  --zy-outline-variant:#d8bfd3;
+  --zy-surface:#faf8ff;
+  --zy-surface-container:#eaedff;
+  --zy-surface-lowest:#ffffff;
+  --zy-star:#F6AD55;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  color:var(--zy-text-body);
+  background:
+    radial-gradient(circle at 8% 10%, #E8D5F5 0%, rgba(232,213,245,0) 45%),
+    radial-gradient(circle at 92% 18%, #C9A8E8 0%, rgba(201,168,232,0) 40%),
+    radial-gradient(circle at 50% 95%, #E8D5F5 0%, rgba(232,213,245,0) 45%),
+    #ffffff;
+}
+img{max-width:100%;display:block;}
+
+/* =========================================================================
+   MOCKUP CHROME (banner + controls) — not part of the shipped design
+   ========================================================================= */
+.zy-mockup-banner{
+  background:var(--zy-text-body);color:#fff;font-size:13px;padding:10px 20px;
+  text-align:center;position:sticky;top:0;z-index:999;
+}
+.zy-mockup-banner strong{color:var(--zy-inverse-primary);}
+
+.zy-controls{
+  position:sticky;top:34px;z-index:998;
+  background:rgba(255,255,255,0.92);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--zy-outline-variant);
+  padding:12px 24px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+}
+.zy-controls__group{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.zy-controls__label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--zy-text-muted);margin-right:4px;}
+.zy-switch-btn{
+  font-size:13px;font-weight:600;padding:8px 14px;border-radius:9999px;
+  border:1px solid var(--zy-outline-variant);background:#fff;color:var(--zy-text-muted);
+  cursor:pointer;transition:all .15s ease;
+}
+.zy-switch-btn:hover{border-color:var(--zy-primary);color:var(--zy-primary);}
+.zy-switch-btn.is-active{background:var(--zy-primary);border-color:var(--zy-primary);color:#fff;}
+.zy-viewport-btn{
+  font-size:12.5px;font-weight:600;padding:8px 12px;border-radius:8px;
+  border:1px solid var(--zy-outline-variant);background:#fff;color:var(--zy-text-muted);
+  cursor:pointer;display:inline-flex;align-items:center;gap:6px;
+}
+.zy-viewport-btn.is-active{background:var(--zy-text-body);border-color:var(--zy-text-body);color:#fff;}
+
+.zy-approach-note{
+  max-width:1120px;margin:20px auto 0;padding:0 24px;
+}
+.zy-approach-note__card{
+  background:#fff;border:1px dashed var(--zy-outline-variant);border-radius:12px;
+  padding:12px 16px;font-size:12.5px;color:var(--zy-text-muted);line-height:1.5;
+}
+.zy-approach-note__card b{color:var(--zy-text-body);}
+
+/* =========================================================================
+   PAGE SHELL / STORE MINI HERO (context only)
+   ========================================================================= */
+.zy-page{max-width:1120px;margin:0 auto;padding:32px 24px 80px;}
+.zy-mini-hero{
+  display:flex;align-items:center;gap:14px;padding:16px 20px;background:#fff;
+  border-radius:16px;box-shadow:0 4px 20px rgba(53,0,61,.08);margin-bottom:36px;
+}
+.zy-mini-hero__avatar{
+  width:48px;height:48px;border-radius:12px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--zy-primary),var(--zy-primary-container));
+  color:#fff;font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center;
+}
+.zy-mini-hero__name{font-weight:800;font-size:16px;margin:0;}
+.zy-mini-hero__sub{font-size:12.5px;color:var(--zy-text-muted);margin:2px 0 0;}
+.zy-mini-hero__stats{margin-left:auto;display:flex;gap:22px;text-align:right;}
+.zy-mini-hero__stats b{display:block;font-size:14px;}
+.zy-mini-hero__stats span{font-size:10.5px;color:var(--zy-text-muted);text-transform:uppercase;letter-spacing:.04em;}
+
+/* =========================================================================
+   SHARED .zy-section CONVENTIONS (mirrors store-page.css)
+   ========================================================================= */
+.zy-section{padding-top:40px;}
+.zy-section-heading{font-size:22px;}
+.zy-eyebrow{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.2em;color:var(--zy-secondary);margin:0;}
+
+/* =========================================================================
+   SHARED STAR RATING (mini)
+   ========================================================================= */
+.zy-stars{position:relative;display:inline-block;font-size:14px;line-height:1;color:var(--zy-outline-variant);letter-spacing:2px;}
+.zy-stars::before{content:"\2605\2605\2605\2605\2605";}
+.zy-stars-fill{position:absolute;top:0;left:0;height:100%;overflow:hidden;color:var(--zy-star);white-space:nowrap;}
+.zy-stars-fill::before{content:"\2605\2605\2605\2605\2605";}
+
+/* =========================================================================
+   SHARED COLLAPSE MECHANIC (grid-rows trick, no JS height measuring)
+   ========================================================================= */
+.zy-collapse{display:grid;grid-template-rows:1fr;transition:grid-template-rows .35s ease;}
+.zy-collapse[data-state="closed"]{grid-template-rows:0fr;}
+.zy-collapse__inner{overflow:hidden;min-height:0;}
+
+.zy-chevron{transition:transform .3s ease;flex-shrink:0;}
+[aria-expanded="false"] .zy-chevron{transform:rotate(-180deg);}
+
+/* Force-open / block-stacked on the simulated mobile viewport, regardless
+   of whatever JS state was left from desktop interaction. */
+[data-viewport="mobile"] .zy-collapse{grid-template-rows:1fr !important;}
+[data-viewport="mobile"] .zy-rs-combo__toggle,
+[data-viewport="mobile"] .zy-rs-combo__master-toggle,
+[data-viewport="mobile"] .zy-rs-combo__bar{display:none !important;}
+[data-viewport="mobile"] .zy-rs-combo--split{display:block !important;}
+[data-viewport="mobile"] .zy-rs-combo__panel[hidden]{display:block !important;}
+[data-viewport="mobile"] .zy-rs-combo--split .zy-rs-combo__panel{margin-bottom:24px;}
+
+/* =========================================================================
+   OUR STORY — shared inner content styling across all 3 approaches
+   ========================================================================= */
+.zy-story-body p{margin:12px 0 0;max-width:640px;line-height:1.7;color:var(--zy-text-body);}
+.zy-story-more{display:none;}
+.zy-story-more.is-visible{display:block;}
+.zy-story-toggle{
+  margin-top:14px;display:inline-flex;align-items:center;gap:6px;
+  background:none;border:none;padding:0;font-size:13.5px;font-weight:700;color:var(--zy-primary);cursor:pointer;
+}
+
+/* =========================================================================
+   CUSTOMER REVIEWS — shared inner content styling across all 3 approaches
+   (mimics the ZYMARG Reviews Engine's own rendered structure)
+   ========================================================================= */
+.zy-reviews-body{display:flex;gap:32px;align-items:flex-start;}
+.zy-reviews-summary{width:220px;flex-shrink:0;}
+.zy-reviews-summary__avg{font-size:44px;font-weight:800;line-height:1;color:var(--zy-text-body);}
+.zy-reviews-summary__stars{margin-top:6px;}
+.zy-reviews-summary__count{font-size:12.5px;color:var(--zy-text-muted);margin-top:4px;}
+.zy-reviews-bars{margin-top:18px;display:flex;flex-direction:column;gap:6px;}
+.zy-reviews-bar-row{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--zy-text-muted);}
+.zy-reviews-bar-row span:first-child{width:14px;flex-shrink:0;}
+.zy-reviews-bar-track{flex:1;height:6px;border-radius:4px;background:var(--zy-surface-container);overflow:hidden;}
+.zy-reviews-bar-fill{height:100%;background:var(--zy-star);border-radius:4px;}
+.zy-reviews-bar-row span:last-child{width:24px;text-align:right;flex-shrink:0;}
+
+.zy-reviews-main{flex:1;min-width:0;}
+.zy-reviews-filters{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.zy-reviews-chip{
+  font-size:12px;font-weight:600;padding:6px 12px;border-radius:9999px;
+  border:1px solid var(--zy-outline-variant);background:#fff;color:var(--zy-text-muted);cursor:pointer;
+}
+.zy-reviews-chip.is-active{background:var(--zy-surface-container);border-color:var(--zy-primary);color:var(--zy-primary);}
+
+.zy-review-card{padding:16px 0;border-bottom:1px solid var(--zy-outline-variant);}
+.zy-review-card:last-child{border-bottom:none;padding-bottom:0;}
+.zy-review-card__head{display:flex;align-items:center;gap:10px;}
+.zy-review-card__avatar{
+  width:34px;height:34px;border-radius:50%;background:var(--zy-secondary-container);
+  color:var(--zy-secondary);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.zy-review-card__name{font-size:13.5px;font-weight:700;margin:0;}
+.zy-review-card__date{font-size:11.5px;color:var(--zy-text-muted);margin-left:auto;}
+.zy-review-card__stars{margin:8px 0 6px;}
+.zy-review-card__text{font-size:13.5px;line-height:1.6;color:var(--zy-text-body);margin:0;}
+.zy-review-card__photos{display:flex;gap:6px;margin-top:10px;}
+.zy-review-card__photos img{width:56px;height:56px;object-fit:cover;border-radius:8px;}
+
+.zy-reviews-loadmore{
+  margin-top:18px;width:100%;padding:10px;border-radius:10px;border:1px solid var(--zy-outline-variant);
+  background:#fff;font-size:13px;font-weight:700;color:var(--zy-primary);cursor:pointer;
+}
+
+@media (max-width:640px){
+  .zy-reviews-body{flex-direction:column;}
+  .zy-reviews-summary{width:100%;}
+}
+
+/* =========================================================================
+   APPROACH SWITCHER — only the active approach's container is shown
+   ========================================================================= */
+.zy-approach{display:none;}
+.zy-approach.is-active{display:block;}
+
+/* -------------------------------------------------------------------------
+   APPROACH A — Split panel (desktop grid, each panel independently
+   collapsible)
+   ------------------------------------------------------------------------- */
+.zy-rs-combo--split{display:block;}
+[data-viewport="desktop"] .zy-rs-combo--split{
+  display:grid;grid-template-columns:minmax(0,38%) minmax(0,62%);gap:28px;align-items:start;
+}
+.zy-rs-combo--split .zy-rs-combo__panel{
+  border:1px solid var(--zy-outline-variant);border-radius:16px;padding:24px;
+  background:#fff;box-shadow:0 4px 20px rgba(53,0,61,.05);
+}
+.zy-rs-combo__head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+.zy-rs-combo__toggle{
+  flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;
+  border-radius:9999px;border:1px solid var(--zy-outline-variant);color:var(--zy-secondary);
+  background:transparent;cursor:pointer;transition:background-color .2s ease;
+}
+.zy-rs-combo__toggle:hover{background:rgba(0,0,0,.04);}
+.zy-rs-combo__toggle svg{width:16px;height:16px;}
+
+/* -------------------------------------------------------------------------
+   APPROACH B — Stacked accordion (whole head row is the trigger)
+   ------------------------------------------------------------------------- */
+.zy-rs-combo--accordion{background:#fff;border-radius:16px;box-shadow:0 4px 20px rgba(53,0,61,.05);overflow:hidden;}
+.zy-rs-combo--accordion .zy-rs-combo__panel{border-bottom:1px solid var(--zy-outline-variant);}
+.zy-rs-combo--accordion .zy-rs-combo__panel:last-child{border-bottom:none;}
+.zy-rs-combo__trigger{
+  width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;
+  background:none;border:none;padding:22px 24px;cursor:pointer;text-align:left;
+}
+[data-viewport="mobile"] .zy-rs-combo__trigger{cursor:default;pointer-events:none;}
+.zy-rs-combo__trigger svg{width:18px;height:18px;color:var(--zy-secondary);}
+.zy-rs-combo--accordion .zy-collapse__inner{padding:0 24px 24px;}
+.zy-rs-combo__trigger-meta{font-size:12px;font-weight:700;color:var(--zy-secondary);}
+
+/* -------------------------------------------------------------------------
+   APPROACH C — Tabbed switcher with master collapse
+   ------------------------------------------------------------------------- */
+.zy-rs-combo--tabs{background:#fff;border-radius:16px;box-shadow:0 4px 20px rgba(53,0,61,.05);overflow:hidden;padding:0 24px;}
+.zy-rs-combo__bar{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--zy-outline-variant);}
+.zy-rs-combo__tablist{display:flex;gap:28px;}
+.zy-rs-combo__tab{
+  background:none;border:none;padding:20px 2px;font-size:14.5px;font-weight:700;color:var(--zy-secondary);
+  border-bottom:2px solid transparent;cursor:pointer;display:flex;align-items:center;gap:6px;
+}
+.zy-rs-combo__tab.is-active{color:var(--zy-text-body);border-bottom-color:var(--zy-primary);}
+.zy-rs-combo__tab-count{
+  font-size:11px;font-weight:700;color:var(--zy-primary);background:var(--zy-surface-container);
+  padding:1px 7px;border-radius:9999px;
+}
+.zy-rs-combo__master-toggle{
+  flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;
+  border-radius:9999px;border:none;background:transparent;color:var(--zy-secondary);cursor:pointer;
+}
+.zy-rs-combo__master-toggle svg{width:16px;height:16px;}
+.zy-rs-combo--tabs .zy-collapse__inner{padding:24px 0;}
+.zy-rs-combo__panel[hidden]{display:none;}
+</style>
+</head>
+<body>
+
+<div class="zy-mockup-banner">
+  🎨 <strong>Interactive Mockup</strong> — Reviews + Our Story combined section, desktop-only behaviour. Use the switcher below to compare all 3 approaches; use the viewport buttons to preview the mobile fallback (unchanged, stacked, no collapse UI). Not connected to WordPress.
+</div>
+
+<div class="zy-controls">
+  <div class="zy-controls__group">
+    <span class="zy-controls__label">Approach</span>
+    <button class="zy-switch-btn is-active" data-approach-btn="a">A — Split Panel</button>
+    <button class="zy-switch-btn" data-approach-btn="b">B — Accordion</button>
+    <button class="zy-switch-btn" data-approach-btn="c">C — Tabs</button>
+  </div>
+  <div class="zy-controls__group">
+    <span class="zy-controls__label">Viewport</span>
+    <button class="zy-viewport-btn is-active" data-viewport-btn="desktop">🖥 Desktop (≥1024px)</button>
+    <button class="zy-viewport-btn" data-viewport-btn="mobile">📱 Mobile fallback</button>
+  </div>
+</div>
+
+<div class="zy-approach-note">
+  <div class="zy-approach-note__card" id="approach-note">
+    <b>Approach A — Split Panel:</b> Our Story (left, ~38%) and Customer Reviews (right, ~62%) sit side by side in one bordered block. Each has its own collapse toggle (chevron, top-right of its panel) — either can be shrunk independently while the other stays open.
+  </div>
+</div>
+
+<div class="zy-page">
+
+  <div class="zy-mini-hero">
+    <div class="zy-mini-hero__avatar">Z</div>
+    <div>
+      <p class="zy-mini-hero__name">ZYMARG Home &amp; Living Co.</p>
+      <p class="zy-mini-hero__sub">Dhaka, Bangladesh · Joined 2024</p>
+    </div>
+    <div class="zy-mini-hero__stats">
+      <div><b>4.6</b><span>Rating</span></div>
+      <div><b>128</b><span>Reviews</span></div>
+      <div><b>612</b><span>Products</span></div>
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       APPROACH A — SPLIT PANEL
+       =================================================================== -->
+  <div class="zy-approach is-active" id="approach-a" data-approach="a">
+    <section class="zy-section">
+      <div class="zy-rs-combo zy-rs-combo--split" id="combo-a">
+
+        <!-- STORY PANEL -->
+        <div class="zy-rs-combo__panel" id="panel-story-a">
+          <div class="zy-rs-combo__head">
+            <div>
+              <p class="zy-eyebrow">Our Story</p>
+              <h2 class="zy-section-heading" style="margin:8px 0 0;font-weight:800;">Crafting quality, one product at a time</h2>
+            </div>
+            <button type="button" class="zy-rs-combo__toggle" data-combo-toggle aria-expanded="true" aria-controls="collapse-story-a">
+              <svg class="zy-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg>
+            </button>
+          </div>
+          <div class="zy-collapse" id="collapse-story-a" data-state="open">
+            <div class="zy-collapse__inner zy-story-body">
+              <p>We started as a two-person workshop in Old Dhaka in 2018, hand-finishing home goods that our neighbours couldn't find anywhere else. Six years later we still test every product ourselves before it goes up for sale.</p>
+              <p class="zy-story-more" data-story-more>Every item in our catalogue is sourced from local artisans we've worked with for years. We believe in fair pricing for both makers and buyers, and we personally respond to every question sent to our store chat — usually within the hour.</p>
+              <button type="button" class="zy-story-toggle" data-story-toggle aria-expanded="false">
+                <span data-story-label>Read More</span>
+                <svg class="zy-chevron" style="width:14px;height:14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- REVIEWS PANEL -->
+        <div class="zy-rs-combo__panel" id="panel-reviews-a">
+          <div class="zy-rs-combo__head">
+            <div>
+              <p class="zy-eyebrow">Customer Reviews</p>
+              <h2 class="zy-section-heading" style="margin:8px 0 0;font-weight:800;">What buyers are saying</h2>
+            </div>
+            <button type="button" class="zy-rs-combo__toggle" data-combo-toggle aria-expanded="true" aria-controls="collapse-reviews-a">
+              <svg class="zy-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg>
+            </button>
+          </div>
+          <div class="zy-collapse" id="collapse-reviews-a" data-state="open">
+            <div class="zy-collapse__inner">
+              <div id="reviews-slot-a"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
+  <!-- ===================================================================
+       APPROACH B — STACKED ACCORDION
+       =================================================================== -->
+  <div class="zy-approach" id="approach-b" data-approach="b">
+    <section class="zy-section">
+      <div class="zy-rs-combo zy-rs-combo--accordion" id="combo-b" data-combo-mode="single">
+
+        <div class="zy-rs-combo__panel" id="panel-story-b">
+          <button type="button" class="zy-rs-combo__trigger" data-combo-toggle aria-expanded="true" aria-controls="collapse-story-b">
+            <span>
+              <span class="zy-eyebrow">Our Story</span>
+              <span style="display:block;margin-top:8px;font-weight:800;font-size:18px;">Crafting quality, one product at a time</span>
+            </span>
+            <svg class="zy-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg>
+          </button>
+          <div class="zy-collapse" id="collapse-story-b" data-state="open">
+            <div class="zy-collapse__inner zy-story-body">
+              <p>We started as a two-person workshop in Old Dhaka in 2018, hand-finishing home goods that our neighbours couldn't find anywhere else. Six years later we still test every product ourselves before it goes up for sale.</p>
+              <p class="zy-story-more" data-story-more>Every item in our catalogue is sourced from local artisans we've worked with for years. We believe in fair pricing for both makers and buyers, and we personally respond to every question sent to our store chat — usually within the hour.</p>
+              <button type="button" class="zy-story-toggle" data-story-toggle aria-expanded="false">
+                <span data-story-label>Read More</span>
+                <svg class="zy-chevron" style="width:14px;height:14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="zy-rs-combo__panel" id="panel-reviews-b">
+          <button type="button" class="zy-rs-combo__trigger" data-combo-toggle aria-expanded="false" aria-controls="collapse-reviews-b">
+            <span>
+              <span class="zy-eyebrow">Customer Reviews</span>
+              <span style="display:block;margin-top:8px;font-weight:800;font-size:18px;">What buyers are saying <span class="zy-rs-combo__trigger-meta">(4.6 · 128)</span></span>
+            </span>
+            <svg class="zy-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg>
+          </button>
+          <div class="zy-collapse" id="collapse-reviews-b" data-state="closed">
+            <div class="zy-collapse__inner">
+              <div id="reviews-slot-b"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
+  <!-- ===================================================================
+       APPROACH C — TABBED SWITCHER + MASTER COLLAPSE
+       =================================================================== -->
+  <div class="zy-approach" id="approach-c" data-approach="c">
+    <section class="zy-section">
+      <div class="zy-rs-combo zy-rs-combo--tabs" id="combo-c">
+
+        <div class="zy-rs-combo__bar">
+          <div class="zy-rs-combo__tablist" role="tablist">
+            <button type="button" role="tab" class="zy-rs-combo__tab is-active" data-combo-tab aria-selected="true" aria-controls="panel-story-c">Our Story</button>
+            <button type="button" role="tab" class="zy-rs-combo__tab" data-combo-tab aria-selected="false" aria-controls="panel-reviews-c">
+              Customer Reviews <span class="zy-rs-combo__tab-count">128</span>
+            </button>
+          </div>
+          <button type="button" class="zy-rs-combo__master-toggle" data-combo-toggle aria-expanded="true" aria-controls="collapse-panels-c">
+            <svg class="zy-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg>
+          </button>
+        </div>
+
+        <div class="zy-collapse" id="collapse-panels-c" data-state="open">
+          <div class="zy-collapse__inner">
+
+            <div class="zy-rs-combo__panel" id="panel-story-c">
+              <div class="zy-story-body" style="margin-top:0;">
+                <p style="margin-top:0;">We started as a two-person workshop in Old Dhaka in 2018, hand-finishing home goods that our neighbours couldn't find anywhere else. Six years later we still test every product ourselves before it goes up for sale.</p>
+                <p class="zy-story-more" data-story-more>Every item in our catalogue is sourced from local artisans we've worked with for years. We believe in fair pricing for both makers and buyers, and we personally respond to every question sent to our store chat — usually within the hour.</p>
+                <button type="button" class="zy-story-toggle" data-story-toggle aria-expanded="false">
+                  <span data-story-label>Read More</span>
+                  <svg class="zy-chevron" style="width:14px;height:14px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="zy-rs-combo__panel" id="panel-reviews-c" hidden>
+              <div id="reviews-slot-c"></div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
+</div>
+
+<script>
+/* =========================================================================
+   MOCK REVIEW DATA — mirrors what zymarg_reviews_render() actually outputs
+   (rating summary card, star breakdown bars, filter chips, review cards
+   with optional photo strip, Load More button)
+   ========================================================================= */
+const REVIEWS = {
+  avg: 4.6,
+  total: 128,
+  breakdown: { 5: 84, 4: 28, 3: 10, 2: 4, 1: 2 },
+  items: [
+    { name: "Farhana R.", initials: "FR", rating: 5, date: "2 weeks ago",
+      text: "Beautiful finish and exactly as pictured. Packaging was careful too — nothing arrived damaged.",
+      photos: ["https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=120&h=120&fit=crop"] },
+    { name: "Tanvir H.", initials: "TH", rating: 5, date: "3 weeks ago",
+      text: "Second time ordering from this store. Consistent quality, fast shipping within Dhaka.", photos: [] },
+    { name: "Sadia K.", initials: "SK", rating: 4, date: "1 month ago",
+      text: "Good product overall, one small scuff on arrival but the seller responded quickly when I messaged.",
+      photos: ["https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=120&h=120&fit=crop","https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=120&h=120&fit=crop"] },
+  ],
+};
+
+function starsHtml(rating, size){
+  const pct = Math.min(100, Math.max(0, (rating/5)*100));
+  const fs = size || 14;
+  return `<span class="zy-stars" style="font-size:${fs}px;"><span class="zy-stars-fill" style="width:${pct}%;"></span></span>`;
+}
+
+function renderReviewsBlock(){
+  const barsHtml = [5,4,3,2,1].map(n => {
+    const count = REVIEWS.breakdown[n] || 0;
+    const pct = Math.round((count / REVIEWS.total) * 100);
+    return `<div class="zy-reviews-bar-row">
+      <span>${n}★</span>
+      <span class="zy-reviews-bar-track"><span class="zy-reviews-bar-fill" style="width:${pct}%;"></span></span>
+      <span>${count}</span>
+    </div>`;
+  }).join("");
+
+  const cardsHtml = REVIEWS.items.map(r => `
+    <div class="zy-review-card">
+      <div class="zy-review-card__head">
+        <div class="zy-review-card__avatar">${r.initials}</div>
+        <p class="zy-review-card__name">${r.name}</p>
+        <span class="zy-review-card__date">${r.date}</span>
+      </div>
+      <div class="zy-review-card__stars">${starsHtml(r.rating, 13)}</div>
+      <p class="zy-review-card__text">${r.text}</p>
+      ${r.photos.length ? `<div class="zy-review-card__photos">${r.photos.map(p=>`<img src="${p}" alt="Review photo">`).join("")}</div>` : ""}
+    </div>
+  `).join("");
+
+  return `
+    <div class="zy-reviews-body">
+      <div class="zy-reviews-summary">
+        <div class="zy-reviews-summary__avg">${REVIEWS.avg}</div>
+        <div class="zy-reviews-summary__stars">${starsHtml(REVIEWS.avg, 18)}</div>
+        <div class="zy-reviews-summary__count">Based on ${REVIEWS.total} reviews</div>
+        <div class="zy-reviews-bars">${barsHtml}</div>
+      </div>
+      <div class="zy-reviews-main">
+        <div class="zy-reviews-filters">
+          <button class="zy-reviews-chip is-active">All (${REVIEWS.total})</button>
+          <button class="zy-reviews-chip">5★ (84)</button>
+          <button class="zy-reviews-chip">4★ (28)</button>
+          <button class="zy-reviews-chip">With Photos (19)</button>
+        </div>
+        ${cardsHtml}
+        <button type="button" class="zy-reviews-loadmore">Load more reviews</button>
+      </div>
+    </div>`;
+}
+
+["a","b","c"].forEach(letter => {
+  const slot = document.getElementById("reviews-slot-" + letter);
+  if (slot) slot.innerHTML = renderReviewsBlock();
+});
+
+/* =========================================================================
+   APPROACH SWITCHER
+   ========================================================================= */
+const approachNotes = {
+  a: "<b>Approach A — Split Panel:</b> Our Story (left, ~38%) and Customer Reviews (right, ~62%) sit side by side in one bordered block. Each has its own collapse toggle (chevron, top-right of its panel) — either can be shrunk independently while the other stays open.",
+  b: "<b>Approach B — Stacked Accordion:</b> One card, two rows. The entire header row is the click target. Only one panel is open at a time (FAQ-style) — opening Reviews auto-closes Story. Story starts open (short/branding), Reviews starts collapsed (heaviest content).",
+  c: "<b>Approach C — Tabbed Switcher:</b> A tab bar swaps which content shows below — most compact, and the review count badge on the tab teases what's inside before clicking. A master chevron (top-right) can collapse the whole combined block at once.",
+};
+
+document.querySelectorAll('[data-approach-btn]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = btn.getAttribute('data-approach-btn');
+    document.querySelectorAll('[data-approach-btn]').forEach(b => b.classList.toggle('is-active', b === btn));
+    document.querySelectorAll('.zy-approach').forEach(el => el.classList.toggle('is-active', el.dataset.approach === target));
+    document.getElementById('approach-note').innerHTML = approachNotes[target];
+  });
+});
+
+/* =========================================================================
+   VIEWPORT SIMULATOR (desktop vs. mobile fallback)
+   ========================================================================= */
+document.querySelectorAll('[data-viewport-btn]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const mode = btn.getAttribute('data-viewport-btn');
+    document.querySelectorAll('[data-viewport-btn]').forEach(b => b.classList.toggle('is-active', b === btn));
+    document.documentElement.setAttribute('data-viewport', mode);
+  });
+});
+
+/* =========================================================================
+   COLLAPSE / ACCORDION LOGIC (shared by A, B, C — mode read per-container)
+   ========================================================================= */
+function initCombo(root){
+  if (!root) return;
+  const singleMode = root.getAttribute('data-combo-mode') === 'single';
+  const toggles = root.querySelectorAll('[data-combo-toggle]');
+
+  toggles.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const collapse = document.getElementById(btn.getAttribute('aria-controls'));
+      if (!collapse) return;
+      const isOpen = collapse.getAttribute('data-state') !== 'closed';
+
+      if (singleMode && !isOpen) {
+        toggles.forEach(other => {
+          if (other === btn) return;
+          const otherCollapse = document.getElementById(other.getAttribute('aria-controls'));
+          if (otherCollapse) otherCollapse.setAttribute('data-state', 'closed');
+          other.setAttribute('aria-expanded', 'false');
+        });
+      }
+
+      collapse.setAttribute('data-state', isOpen ? 'closed' : 'open');
+      btn.setAttribute('aria-expanded', String(!isOpen));
+    });
+  });
+}
+
+['combo-a', 'combo-b', 'combo-c'].forEach(id => initCombo(document.getElementById(id)));
+
+/* =========================================================================
+   TABS LOGIC (Approach C only)
+   ========================================================================= */
+(function initTabs(){
+  const root = document.getElementById('combo-c');
+  if (!root) return;
+  const tabs = root.querySelectorAll('[data-combo-tab]');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => { t.classList.remove('is-active'); t.setAttribute('aria-selected', 'false'); });
+      tab.classList.add('is-active');
+      tab.setAttribute('aria-selected', 'true');
+      root.querySelectorAll('.zy-rs-combo__panel').forEach(p => { p.hidden = true; });
+      const active = document.getElementById(tab.getAttribute('aria-controls'));
+      if (active) active.hidden = false;
+    });
+  });
+})();
+
+/* =========================================================================
+   "READ MORE" STORY TOGGLE — identical pattern already used in
+   store-page.js's initStoryToggle(), applied to every instance on the page
+   ========================================================================= */
+document.querySelectorAll('[data-story-toggle]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const wrap = btn.closest('.zy-story-body');
+    const more = wrap ? wrap.querySelector('[data-story-more]') : null;
+    const label = btn.querySelector('[data-story-label]');
+    if (!more) return;
+    const isOpen = more.classList.contains('is-visible');
+    more.classList.toggle('is-visible', !isOpen);
+    btn.setAttribute('aria-expanded', String(!isOpen));
+    if (label) label.textContent = isOpen ? 'Read More' : 'Read Less';
+  });
+});
+</script>
+</body>
+</html>
