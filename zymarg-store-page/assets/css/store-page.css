@@ -1843,6 +1843,126 @@ input.zsp-sheet__input[type="search"] {
 	}
 }
 
+/* ══════════════════════════════════════════════════════════════════════════
+   REVIEWS + OUR STORY — COMBINED SPLIT PANEL (v1.28.0)
+
+   Only rendered when a vendor has BOTH a rated review feed AND story
+   content filled in (see $zy_combine_panels in templates/store.php). Two
+   independently-collapsible panels: Our Story + Customer Reviews.
+
+   Layout: side-by-side grid on desktop (>=1024px), stacked full-width
+   below that. The collapse/expand mechanic itself (.zy-collapse) is
+   IDENTICAL and fully active at every breakpoint — only the outer layout
+   changes. Both panels default to collapsed (data-state="closed" in the
+   markup); JS toggles the state on click, no breakpoint-specific override.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.zy-rs-combo--split {
+	display: block;
+}
+
+@media (min-width: 1024px) {
+	.zy-rs-combo--split {
+		display: grid;
+		grid-template-columns: minmax(0, 38%) minmax(0, 62%);
+		gap: 1.75rem; /* 28px */
+		align-items: start;
+	}
+}
+
+@media (max-width: 1023.98px) {
+	.zy-rs-combo--split .zy-rs-combo__panel {
+		margin-bottom: 1.25rem; /* 20px */
+	}
+
+	.zy-rs-combo--split .zy-rs-combo__panel:last-child {
+		margin-bottom: 0;
+	}
+}
+
+.zy-rs-combo--split .zy-rs-combo__panel {
+	border: 1px solid var(--color-zy-border, #d8bfd3);
+	border-radius: 1rem; /* 16px */
+	padding: 1.375rem; /* 22px */
+	background: var(--color-zy-surface, #ffffff);
+	box-shadow: 0 4px 20px rgba(53, 0, 61, 0.05);
+}
+
+.zy-rs-combo__head {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 0.75rem;
+	cursor: pointer;
+}
+
+.zy-rs-combo__head:focus-visible {
+	outline: 2px solid var(--color-zy-secondary, #bd00d1);
+	outline-offset: 4px;
+	border-radius: 0.5rem;
+}
+
+.zy-rs-combo__toggle {
+	flex-shrink: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2rem; /* 32px */
+	height: 2rem;
+	border-radius: 9999px;
+	border: 1px solid var(--color-zy-border, #d8bfd3);
+	color: var(--color-zy-body, #534152);
+	background: transparent;
+	transition: background-color 0.2s ease;
+}
+
+.zy-rs-combo__head:hover .zy-rs-combo__toggle {
+	background: rgba(0, 0, 0, 0.04);
+}
+
+.zy-rs-combo__chevron {
+	width: 1rem; /* 16px */
+	height: 1rem;
+	transition: transform 0.3s ease;
+}
+
+[data-combo-toggle][aria-expanded="false"] .zy-rs-combo__chevron {
+	transform: rotate(-180deg);
+}
+
+.zy-rs-combo__panel-meta {
+	display: inline-block;
+	margin-top: 0.375rem; /* 6px */
+	font-size: 0.719rem; /* 11.5px */
+	font-weight: 700;
+	color: var(--color-zy-body, #534152);
+	background: var(--color-zy-container, #eaedff);
+	padding: 0.125rem 0.563rem; /* 2px 9px */
+	border-radius: 9999px;
+}
+
+/* Grid-rows collapse trick — animates smoothly without JS height
+   measuring. Same mechanic already used by #sidebar-cats-drawer, just
+   generalised so it isn't tied to max-height + a fixed drawer height. */
+.zy-collapse {
+	display: grid;
+	grid-template-rows: 1fr;
+	transition: grid-template-rows 0.35s ease;
+}
+
+.zy-collapse[data-state="closed"] {
+	grid-template-rows: 0fr;
+}
+
+.zy-collapse__inner {
+	overflow: hidden;
+	min-height: 0;
+}
+
+.zy-rs-combo--split .zy-rs-combo__panel .zy-collapse__inner {
+	padding-top: 0.875rem; /* 14px — breathing room once expanded */
+}
+
 /*
  * The image box. This is what stops a single product filling the viewport:
  * without it the <img> is laid out at its natural pixel size, which on a

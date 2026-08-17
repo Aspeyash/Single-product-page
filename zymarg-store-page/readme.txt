@@ -4,7 +4,7 @@ Tags:              dokan, vendor, store, marketplace, activewear
 Requires at least: 6.0
 Tested up to:      6.7
 Requires PHP:      7.4
-Stable tag:        1.27.0
+Stable tag:        1.28.0
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,6 +73,12 @@ Yes. Edit the `@theme` block inside `templates/store.php` to change the design t
 4. Admin settings page under Dokan → ZYMARG Store Page
 
 == Changelog ==
+
+= 1.28.0 — Desktop: combine Customer Reviews + Our Story into one collapsible split panel =
+* Added: when a vendor has BOTH a rated review feed (`$has_rating`) AND story content filled in (`$has_story`), the Customer Reviews and Our Story sections now render as a single combined block — Our Story (~38% width) and Customer Reviews (~62% width) side-by-side on desktop (>=1024px), stacking to full width below that breakpoint. Each panel has its own collapse/expand toggle (a click on the panel's header row), fully independent of the other panel — expanding one does not affect the other. Both panels load collapsed by default, at every screen size.
+* Unchanged by design: if a vendor has only ONE of the two (story with no rated reviews yet, or rated reviews with no story written), that single section renders exactly as it did in 1.27.0 — full width, no collapse UI, unwrapped markup. If a vendor has neither, nothing renders, same as always. Only the "both present" case gets the new combined layout; the existing single-section code paths are untouched.
+* The Reviews panel inside the combined layout still delegates entirely to `zymarg_reviews_render()` (ZYMARG Reviews Engine 1.3.2+) exactly as introduced in 1.27.0 — same media strip, lightbox, filters, sort, and AJAX Load More. The combined layout only changes the surrounding collapse/panel chrome, never the engine's own rendered content.
+* New markup: `.zy-rs-combo`, `.zy-rs-combo--split`, `.zy-rs-combo__panel`, `.zy-rs-combo__head`, `.zy-rs-combo__toggle`, `.zy-rs-combo__panel-meta`, and a reusable `.zy-collapse` grid-rows collapse mechanic (`assets/css/store-page.css`) — the same non-measuring, transition-friendly technique the existing sidebar-categories drawer (`#sidebar-cats-drawer`) already used, generalised so future collapsible panels can reuse it too. New `initReviewsStoryCombo()` in `assets/js/store-page.js` wires the two independent toggles; `initStoryToggle()`'s click handler now calls `stopPropagation()` so the "Read More" button inside the Story panel doesn't also collapse the whole panel.
 
 = 1.27.0 — Reviews section now uses the Reviews Engine's full renderer (photos, videos, lightbox) =
 * Changed: the Customer Reviews section on the store page now renders through `zymarg_reviews_render(['vendor_id'=>...])` (ZYMARG Reviews Engine 1.3.2+) instead of hand-rolled Tailwind markup built from `zymarg_reviews_get_data()`. Which reviews display is unchanged -- every approved review left on any product this vendor owns, aggregated into one feed, each card still tagged with which product it is about -- but the section now gets the same customer photo/video media strip and full-screen/mini-player lightbox viewer that ZYMARG Single Product's review section already has, instead of bare `<img>`/`<video controls>` thumbnails with no click-to-enlarge.
@@ -476,6 +482,9 @@ until you deliberately edit it. Upgrading is visually a no-op.
 * Initial release.
 
 == Upgrade Notice ==
+
+= 1.28.0 =
+Desktop-only visual change for vendors who have both a rated review feed and story content filled in: Customer Reviews + Our Story now combine into one collapsible split panel, collapsed by default. Vendors with only one of the two, or neither, see no change.
 
 = 1.1.0 =
 Upgrade immediately — fixes a critical double HTML document bug and several JavaScript wiring gaps. Deactivate and re-activate the plugin after uploading.
