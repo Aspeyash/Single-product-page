@@ -406,9 +406,9 @@ function zymarg_sp_premium_section( $store_id, $which ) {
 	?>
 	<section id="<?php echo esc_attr( $anchor ); ?>"
 		aria-labelledby="<?php echo esc_attr( $anchor ); ?>-heading"
-		class="zsp-premium mx-auto max-w-7xl px-4 pt-12 sm:px-6 lg:px-8">
+		class="zsp-premium zy-section mx-auto max-w-7xl px-2 lg:px-8">
 
-		<div class="zsp-premium__head flex flex-wrap items-end justify-between gap-3">
+		<div class="zsp-premium__head zy-section-heading-row flex flex-wrap items-end justify-between gap-3">
 			<div>
 				<p class="text-xs font-semibold uppercase tracking-[0.2em] text-zy-secondary">
 					<?php echo esc_html( $eyebrow ); ?>
@@ -435,7 +435,7 @@ function zymarg_sp_premium_section( $store_id, $which ) {
 			<?php endif; ?>
 		</div>
 
-		<div class="zsp-premium-grid mt-6">
+		<div class="zsp-premium-grid zy-section-content">
 			<?php
 			// Pre-escaped by the engine's own template layer.
 			echo $grid; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped

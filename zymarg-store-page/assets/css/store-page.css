@@ -1612,26 +1612,37 @@ input.zsp-sheet__input[type="search"] {
    to the same values once the compiler catches up.
    ══════════════════════════════════════════════════════════════════════════ */
 
+/* v1.28.3 - padding-left/right/top used to be hardcoded here as their own
+   pre-Tailwind px-4/sm:px-6/lg:px-8 + pt-12 first-paint safety net (see the
+   note above this block). That predates the shared .zy-section / px-2
+   lg:px-8 system every other section (Trending, All Products, Our Story +
+   Reviews) now uses, and was never updated to match it -- so Handpicked /
+   Flash Sale / Trending premium sections rendered with 16px side padding
+   and a flat 48px top padding at every breakpoint while every sibling
+   section used 8px side padding on mobile/tablet and a 16/20/32px
+   responsive top padding. Side and top padding are removed here so this
+   class defers entirely to .zy-section (already on the same markup, see
+   premium-sections.php) and the shared px-2 lg:px-8 utilities once Tailwind
+   compiles -- both now render identically to every other section. */
 .zsp-premium {
 	margin-left: auto;
 	margin-right: auto;
 	max-width: 80rem;      /* Tailwind max-w-7xl */
-	padding-left: 1rem;    /* px-4 */
-	padding-right: 1rem;
-	padding-top: 3rem;     /* pt-12 */
+	padding-left: 0.25rem; /* 4px — v1.28.4: matches .zy-section's mobile-only 4px (was 8px) */
+	padding-right: 0.25rem;
 	box-sizing: border-box;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 640px) and (max-width: 1023.98px) {
 	.zsp-premium {
-		padding-left: 1.5rem;  /* sm:px-6 */
-		padding-right: 1.5rem;
+		padding-left: 0.5rem;  /* 8px — tablet, unchanged; matches .zy-section */
+		padding-right: 0.5rem;
 	}
 }
 
 @media (min-width: 1024px) {
 	.zsp-premium {
-		padding-left: 2rem;    /* lg:px-8 */
+		padding-left: 2rem;    /* 32px — matches .zy-section's shared lg:px-8 */
 		padding-right: 2rem;
 	}
 }
@@ -1772,18 +1783,41 @@ input.zsp-sheet__input[type="search"] {
    ══════════════════════════════════════════════════════════════════════════ */
 
 .zy-section {
-	padding-top: 1.5rem; /* 24px — mobile */
+	padding-top: 1rem; /* 16px — mobile */
 }
 
 @media (min-width: 640px) {
 	.zy-section {
-		padding-top: 2rem; /* 32px — tablet */
+		padding-top: 1.25rem; /* 20px — tablet */
 	}
 }
 
 @media (min-width: 1024px) {
 	.zy-section {
-		padding-top: 3rem; /* 48px — desktop, matches the previous pt-12 default */
+		padding-top: 2rem; /* 32px — desktop */
+	}
+}
+
+/* v1.28.4 - Mobile-only side gap: every section using the shared px-2
+   Tailwind utility (8px) now uses 4px on mobile instead. Tablet is
+   deliberately left untouched at 8px -- px-2 has no separate sm: tier of
+   its own, so without this rule tightening mobile would also tighten
+   tablet; the explicit >=640px rule below re-locks tablet at 8px so the
+   two can't drift together again later. Desktop (lg:px-8, 32px) is
+   unaffected either way. Covers every section built on .zy-section,
+   including .zsp-premium (Handpicked / Flash Sale / Trending, see the
+   note near that class) since it defers to this same system. */
+@media (max-width: 639.98px) {
+	.zy-section {
+		padding-left: 0.25rem !important;  /* 4px — mobile only, was 8px */
+		padding-right: 0.25rem !important;
+	}
+}
+
+@media (min-width: 640px) and (max-width: 1023.98px) {
+	.zy-section {
+		padding-left: 0.5rem !important;   /* 8px — tablet, unchanged */
+		padding-right: 0.5rem !important;
 	}
 }
 
@@ -1808,12 +1842,12 @@ input.zsp-sheet__input[type="search"] {
    Single-purpose (margin-bottom only) so it is safe to combine with
    .zy-section-content below without ever double-spacing the same gap. */
 .zy-section-heading-row {
-	margin-bottom: 0.75rem; /* 12px — mobile */
+	margin-bottom: 0.5rem; /* 8px — mobile */
 }
 
 @media (min-width: 640px) {
 	.zy-section-heading-row {
-		margin-bottom: 1.25rem; /* 20px — tablet */
+		margin-bottom: 0.75rem; /* 12px — tablet */
 	}
 }
 
@@ -1828,12 +1862,12 @@ input.zsp-sheet__input[type="search"] {
    grid, or the store story description paragraph. Margin-top only, so a
    section using both classes on adjacent elements never double-spaces. */
 .zy-section-content {
-	margin-top: 0.75rem; /* 12px — mobile */
+	margin-top: 0.5rem; /* 8px — mobile */
 }
 
 @media (min-width: 640px) {
 	.zy-section-content {
-		margin-top: 1.25rem; /* 20px — tablet */
+		margin-top: 0.75rem; /* 12px — tablet */
 	}
 }
 
@@ -1870,9 +1904,19 @@ input.zsp-sheet__input[type="search"] {
 	}
 }
 
-@media (max-width: 1023.98px) {
+@media (max-width: 639.98px) {
 	.zy-rs-combo--split .zy-rs-combo__panel {
-		margin-bottom: 1.25rem; /* 20px */
+		margin-bottom: 0.75rem; /* 12px — mobile stacked gap */
+	}
+
+	.zy-rs-combo--split .zy-rs-combo__panel:last-child {
+		margin-bottom: 0;
+	}
+}
+
+@media (min-width: 640px) and (max-width: 1023.98px) {
+	.zy-rs-combo--split .zy-rs-combo__panel {
+		margin-bottom: 1rem; /* 16px — tablet stacked gap */
 	}
 
 	.zy-rs-combo--split .zy-rs-combo__panel:last-child {
@@ -1883,9 +1927,15 @@ input.zsp-sheet__input[type="search"] {
 .zy-rs-combo--split .zy-rs-combo__panel {
 	border: 1px solid var(--color-zy-border, #d8bfd3);
 	border-radius: 1rem; /* 16px */
-	padding: 1.375rem; /* 22px */
+	padding: 0.5rem; /* 8px — mobile & tablet */
 	background: var(--color-zy-surface, #ffffff);
 	box-shadow: 0 4px 20px rgba(53, 0, 61, 0.05);
+}
+
+@media (min-width: 1024px) {
+	.zy-rs-combo--split .zy-rs-combo__panel {
+		padding: 1rem; /* 16px — desktop */
+	}
 }
 
 .zy-rs-combo__head {

@@ -493,7 +493,7 @@ if ( class_exists( 'ZYMARG_SP_Store_Sections' ) && shortcode_exists( 'zymarg_pro
 		$zy_section_link    = ZYMARG_SP_Store_Sections::link( $zy_section_row );
 		$zy_section_anchor  = sanitize_key( (string) $zy_section_row['id'] ) . '-heading';
 		?>
-		<section class="zy-store-section zy-section mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" data-zy-section-id="<?php echo esc_attr( $zy_section_row['id'] ); ?>"<?php echo ( '' !== $zy_section_heading ) ? ' aria-labelledby="' . esc_attr( $zy_section_anchor ) . '"' : ''; ?>>
+		<section class="zy-store-section zy-section mx-auto max-w-7xl px-2 lg:px-8" data-zy-section-id="<?php echo esc_attr( $zy_section_row['id'] ); ?>"<?php echo ( '' !== $zy_section_heading ) ? ' aria-labelledby="' . esc_attr( $zy_section_anchor ) . '"' : ''; ?>>
 			<?php if ( '' !== $zy_section_heading || ! empty( $zy_section_link ) ) : ?>
 			<div class="zy-section-heading-row flex flex-wrap items-end justify-between gap-3">
 				<?php if ( '' !== $zy_section_heading ) : ?>
@@ -538,7 +538,7 @@ if ( class_exists( 'ZYMARG_SP_Store_Sections' ) && shortcode_exists( 'zymarg_pro
 <!-- ============================================================
      PRODUCTS & CATEGORIES LAYOUT
 ============================================================ -->
-<div id="products-layout-container" class="zy-section mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+<div id="products-layout-container" class="zy-section mx-auto max-w-7xl px-2 lg:px-8">
   <div class="flex flex-col lg:flex-row gap-8">
 
     <!-- LEFT SIDEBAR -->
@@ -910,7 +910,7 @@ $zy_blank_summary_heading = function ( $settings, $args ) use ( $store_id ) {
 ?>
 
 <?php if ( $zy_combine_panels ) : ?>
-<section aria-label="<?php esc_attr_e( 'Store story and customer reviews', 'zymarg-store-page' ); ?>" class="zy-section mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+<section aria-label="<?php esc_attr_e( 'Store story and customer reviews', 'zymarg-store-page' ); ?>" class="zy-section mx-auto max-w-7xl px-2 pb-16 lg:px-8">
   <div class="zy-rs-combo zy-rs-combo--split" id="zy-rs-combo">
 
     <!-- STORY PANEL -->
@@ -996,11 +996,11 @@ $zy_blank_summary_heading = function ( $settings, $args ) use ( $store_id ) {
 <?php endif; // zy_combine_panels ?>
 
 <?php if ( ! $zy_combine_panels && $zy_show_reviews_panel ) : ?>
-<section aria-labelledby="reviews-heading" class="zy-section mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+<section aria-labelledby="reviews-heading" class="zy-section mx-auto max-w-7xl px-2 pb-16 lg:px-8">
   <p class="text-xs font-semibold uppercase tracking-[0.2em] text-zy-secondary"><?php esc_html_e( 'Customer Reviews', 'zymarg-store-page' ); ?></p>
   <h2 id="reviews-heading" class="zy-section-heading mt-2 font-bold tracking-tight text-zy-dark"><?php esc_html_e( 'What buyers are saying', 'zymarg-store-page' ); ?></h2>
 
-  <div class="zy-section-content mt-6">
+  <div class="zy-section-content">
     <?php
     add_filter( 'zymarg_reviews_render_settings', $zy_blank_summary_heading, 10, 2 );
 
@@ -1026,7 +1026,7 @@ $zy_blank_summary_heading = function ( $settings, $args ) use ( $store_id ) {
 <?php endif; // zy_show_reviews_panel standalone fallback ?>
 
 <?php if ( ! $zy_combine_panels && $zy_show_story_panel ) : ?>
-<section aria-labelledby="story-heading" class="zy-section mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+<section aria-labelledby="story-heading" class="zy-section mx-auto max-w-7xl px-2 pb-16 lg:px-8">
   <div class="rounded-2xl bg-zy-surface p-6 shadow-lg sm:p-8">
     <p class="text-xs font-semibold uppercase tracking-[0.2em] text-zy-secondary"><?php esc_html_e( 'Our Story', 'zymarg-store-page' ); ?></p>
     <?php if ( '' !== trim( $story_headline ) ) : ?>

@@ -4,7 +4,7 @@ Tags:              dokan, vendor, store, marketplace, activewear
 Requires at least: 6.0
 Tested up to:      6.7
 Requires PHP:      7.4
-Stable tag:        1.28.1
+Stable tag:        1.28.4
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,6 +73,21 @@ Yes. Edit the `@theme` block inside `templates/store.php` to change the design t
 4. Admin settings page under Dokan → ZYMARG Store Page
 
 == Changelog ==
+
+= 1.28.4 — Mobile side gap reduced to 4px (tablet unchanged) =
+* Changed: every section built on the shared `.zy-section` system (Trending, All Products, Our Story + Reviews, and the Handpicked/Flash Sale/Trending premium sections via `.zsp-premium`) now uses **4px** left/right side gap on mobile, down from 8px. This was previously the same 8px value as tablet, since the shared `px-2` Tailwind utility has no separate mobile tier of its own.
+* Unchanged: tablet stays at 8px, explicitly re-locked with its own rule so it can no longer drift together with mobile. Desktop stays at 32px (`lg:px-8`), untouched.
+* Scoped to `.zy-section` (and `.zsp-premium`, which defers to it) only — no other spacing token changes.
+
+= 1.28.3 — Fix: Handpicked / Flash Sale / Trending premium sections didn't match the shared side-padding scale =
+* Fixed: the `.zsp-premium` section wrapper (Handpicked, Flash Sale, Trending -- any section rendered by premium-sections.php) had its own hardcoded plain-CSS padding left over from before the shared `.zy-section` / `px-2 lg:px-8` spacing system existed, and was never updated to match it. It rendered with 16px side padding on mobile/tablet (vs. 8px on every other section -- Trending's own grid-based rows, All Products, Our Story + Reviews) and a flat 48px top padding at every breakpoint (vs. the shared 16/20/32px responsive scale). Screenshot-confirmed as a visible inconsistency against sections immediately above/below it on the same page.
+* Fixed by removing the section's own hardcoded padding entirely; `.zsp-premium` now only sets margin/max-width, and the padding comes from the `.zy-section` class and `px-2 lg:px-8` utilities already present on the same markup (see premium-sections.php) -- identical to every other section. A first-paint safety net (8px mobile/tablet, 32px desktop) is kept in plain CSS so the section doesn't flash at 0px padding before Tailwind's browser JIT compiler finishes, matching how `.zy-section` itself already handles first paint.
+* Scoped to `.zsp-premium` only -- no other section's spacing changes.
+
+= 1.28.2 — Store-wide spacing pass: unified section gaps, split panel padding =
+* Changed: desktop section-to-section gap (Trending, All Products, Our Story + Reviews) reduced from 48px to 32px. Heading-to-content gap (8/12/24px across mobile/tablet/desktop) and the split panel's panel-to-panel gap (12/16/28px) are unchanged from 1.28.1.
+* Changed: the Our Story / Customer Reviews split panel's own inner padding is now 8px on mobile and tablet, 16px on desktop (was 22px flat via the panel's own card padding in 1.28.1). Intentionally not matched to the section side-padding scale — kept tighter since the panel already sits inside the section's own side padding.
+* Unchanged by design: side padding stays 8px on mobile and tablet (no separate tablet tier), 32px on desktop. The sidebar-to-product-grid gap on the All Products section stays a flat 32px at every breakpoint, not scaled down for mobile/tablet. The bottom-of-page padding after the last section stays a flat 64px at every breakpoint. All three were evaluated against a tighter responsive scale during this pass and kept as-is.
 
 = 1.28.1 — Fix sticky rating summary and oversized padding inside the split panel =
 * Fixed: the ZYMARG Reviews Engine's sticky rating-summary column (`.zymarg-col-left`, its two-column layout at >=768px) never actually stuck while scrolling inside the combined split panel's Reviews collapse panel. Root cause: `.zy-collapse__inner` (the collapse-trick wrapper this panel introduced in 1.28.0) carries `overflow: hidden` so the panel can animate through zero height while closing — but `position: sticky` is clipped to the nearest ancestor with overflow other than `visible`, so it was silently breaking every sticky element rendered inside it. Fixed by letting an open, settled panel (`.zy-collapse[data-state="open"] .zy-collapse__inner`) overflow freely again; the clip still applies while closed/collapsing so the height animation is unaffected.
