@@ -48,9 +48,53 @@
 		$('#zymarg-sp-qty, #zymarg-sp-qty-sticky').val(val);
 	}
 
-	function showToast(msg) {
-		const $toast = $('#zymarg-sp-toast');
+	/**
+	 * Show a toast message.
+	 *
+	 * v2.4.8 - this now delegates to the ZYMARG OS theme's shared toast system
+	 * (`window.ZymargToast`), tagging every toast with the source
+	 * "zymarg-single-product". That means these messages:
+	 *
+	 *   - look identical to every other toast on the site (one design language
+	 *     instead of this plugin's own `#zymarg-sp-toast` bar);
+	 *   - appear in the theme's Toast Notification activity log, so you can see
+	 *     what fired and when;
+	 *   - can be switched off from Theme -> Toast Notification without editing
+	 *     any plugin code.
+	 *
+	 * The signature is unchanged, so all existing call sites keep working. Every
+	 * current caller passes an error/failure message (the success toasts were
+	 * intentionally removed in v2.4.4, and wishlist success is owned by the
+	 * theme's own `zymarg_wcpg:wishlist:changed` listener), so the default type
+	 * is "error". Pass `opts` to override.
+	 *
+	 * @param {string} msg    Message to display.
+	 * @param {Object} [opts] Optional extras forwarded to the theme toast:
+	 *                        {string} type     "error" (default), "success", "info".
+	 *                        {string} title    Optional heading.
+	 *                        {number} duration Milliseconds on screen.
+	 *                        {Object} action   { label, url } for an action button.
+	 */
+	function showToast(msg, opts) {
 		if (!msg) { return; }
+
+		opts = opts || {};
+
+		const api = window.ZymargToast;
+
+		if (api && typeof api.show === 'function') {
+			api.show($.extend({}, opts, {
+				message: msg,
+				type:    opts.type || 'error',
+				source:  'zymarg-single-product'
+			}));
+			return;
+		}
+
+		// ---- Fallback: theme toast unavailable (a different theme is active) ----
+		// Keeps this plugin fully self-sufficient on any theme, using the original
+		// #zymarg-sp-toast bar and its CSS exactly as before.
+		const $toast = $('#zymarg-sp-toast');
 		$toast.html(msg).addClass('is-visible');
 		clearTimeout($toast.data('timer'));
 		$toast.data('timer', setTimeout(function () { $toast.removeClass('is-visible'); }, 4000));

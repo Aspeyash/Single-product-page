@@ -4,7 +4,7 @@ Tags: woocommerce, single product, template, swatches, buy now, reviews
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.0
-Stable tag: 2.4.7
+Stable tag: 2.4.9
 WC requires at least: 8.0
 WC tested up to: 9.9
 License: GPL-2.0-or-later
@@ -44,9 +44,16 @@ Key features:
 
 == Changelog ==
 
+= 2.4.9 =
+* Fixed: the ZYMARG Reviews Engine's sticky rating-summary column (its two-column layout at >=768px, `.zymarg-col-left`) never actually stuck while scrolling inside the Reviews accordion tab. Root cause: `.acc` (this plugin's accordion wrapper) carries an unconditional `overflow: hidden`, and `position: sticky` is clipped to the nearest ancestor whose overflow is anything other than `visible` — so `.acc` was silently breaking every sticky element rendered inside it, review summary included. Fixed by letting an open, settled accordion (`.acc[open]:not([data-zsp-animating])`) overflow freely again; overflow still clips while the panel is closed or mid-slide-animation, so the rounded-card corner clip and the existing open/close animation are both unaffected. Mirrors the identical fix shipped in ZYMARG Store Page 1.28.1 for its own collapse wrapper.
+
 = 2.4.8 =
-* Fixed: the ZYMARG Reviews Engine's sticky rating-summary column (its two-column layout at >=768px, `.zymarg-col-left`) never actually stuck while scrolling inside the Reviews accordion tab. Root cause: `.acc` (this plugin's accordion wrapper) carries an unconditional `overflow: hidden`, and `position: sticky` is clipped to the nearest ancestor whose overflow is anything other than `visible` — so `.acc` was silently breaking every sticky element rendered inside it, review summary included. Fixed by letting an open, settled `.acc[open]` overflow freely again; overflow still clips while the panel is closed or mid-slide-animation (`.acc[data-zsp-animating]`), so the rounded-card corner clip and the existing open/close animation are both unaffected.
-* Fixed: (companion fix, ships in ZYMARG Reviews Engine 1.3.3) the customer photos/videos strip inside the Reviews accordion showed a visible horizontal scrollbar in some browsers.
+* **Change: single product page toasts now use the ZYMARG OS theme's shared toast system.** This plugin previously rendered its own `#zymarg-sp-toast` bar, so a shopper could see a different-looking notice here than on shop/archive pages, and none of these messages were visible to the theme's Toast Notification screen - they could not be reviewed or switched off there.
+* Every message (add-to-cart failure, Buy Now failure, wishlist failure and rollback) is now emitted through `window.ZymargToast` tagged with the source `zymarg-single-product`, so it appears in the theme's toast activity log and can be turned on or off from Theme -> Toast Notification.
+* The `showToast( msg )` signature is unchanged, so all existing call sites keep working. Because every current caller reports a failure, these toasts are now correctly styled as errors rather than as neutral messages.
+* New: an optional second argument forwards `type`, `title`, `duration` and `action` to the theme toast, so future messages can carry a heading or an action button.
+* Unchanged: the wishlist *success* feedback still belongs to the theme, fired via the shared `zymarg_wcpg:wishlist:changed` event exactly as in 2.4.5, and the `zymarg_sp_wishlist_toggle` action still fires for third-party wishlist plugins.
+* **No loss of standalone support:** the original `#zymarg-sp-toast` bar is retained as an automatic fallback. If the ZYMARG OS theme is not active, notices render exactly as before, so the plugin still works on any theme.
 
 = 2.4.7 =
 * Added: the seller card's "Chat" button now connects directly to the ZYMARG Communication plugin when it is active. It renders as `[data-chat-btn data-seller-id="{vendor_user_id}"]`, the same contract the ZYMARG Store Page plugin already implements - Communication's own live-chat.js listens for clicks on this attribute anywhere on the page and opens (or creates) the buyer/vendor conversation via `POST /marketplace/store-chat`, automatically resolving to whichever vendor's product the shopper is currently viewing. No configuration required: the vendor user ID is the same post-author ID this plugin already reads for the seller card's name, avatar and rating.
