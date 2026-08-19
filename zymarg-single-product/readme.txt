@@ -4,7 +4,7 @@ Tags: woocommerce, single product, template, swatches, buy now, reviews
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.0
-Stable tag: 2.4.9
+Stable tag: 2.5.0
 WC requires at least: 8.0
 WC tested up to: 9.9
 License: GPL-2.0-or-later
@@ -43,6 +43,14 @@ Key features:
 3. Go to Single Product in the WordPress admin menu to configure settings
 
 == Changelog ==
+
+= 2.5.0 =
+* Changed: page width, side gap, section-to-section gap, and product-grid heading (gap + font-size) are now unified with ZYMARG Store Page's shared spacing system, so both plugins render identical content width and spacing at every breakpoint.
+* Page width is now 100% at every breakpoint (was 98% on tablet/mobile via a width-percentage trick). Side gap is now a true responsive padding value on every tier instead: 4px mobile, 8px tablet, 32px desktop (was 24px desktop, 0px tablet/mobile).
+* Section-to-section gap is now responsive — 16px mobile, 20px tablet, 32px desktop (was a flat 32px on every device). Applies uniformly to every section on the page: Product Info/Buy Box, Seller Card, Description/Reviews Accordion, and both product-grid sections alike — there is no "only sections with a heading get the responsive gap" distinction.
+* Product-grid section headings (the only headings on this page — e.g. "You may also like", "Related Products"): heading-to-grid gap is now responsive at 8px/12px/24px mobile/tablet/desktop (was a flat 16px). Heading font-size is now 18px/20px/24px mobile/tablet/desktop (was 19px/22px/28px), and the mobile breakpoint moved from 600px to 640px so it switches tiers at the exact same viewport width as Store Page.
+* Confirmed unchanged: the mobile sticky action bar's existing bottom-clearance reservation (`body { padding-bottom: 74px; }`, active together with `.sticky-bar { display: flex; }` in the same `max-width: 640px` rule) still applies after these spacing changes — the last product-grid section on the page continues to clear the fixed sticky bar exactly as before. No new padding was added; this was verified, not modified.
+* Unchanged by design: gallery, buy box, seller card, and the description/reviews accordion's own internal layout and typography are untouched. `.product-section`'s separate internal 16px mobile padding (a distinct layout mechanism from the page-level side gap) is untouched.
 
 = 2.4.9 =
 * Fixed: the ZYMARG Reviews Engine's sticky rating-summary column (its two-column layout at >=768px, `.zymarg-col-left`) never actually stuck while scrolling inside the Reviews accordion tab. Root cause: `.acc` (this plugin's accordion wrapper) carries an unconditional `overflow: hidden`, and `position: sticky` is clipped to the nearest ancestor whose overflow is anything other than `visible` — so `.acc` was silently breaking every sticky element rendered inside it, review summary included. Fixed by letting an open, settled accordion (`.acc[open]:not([data-zsp-animating])`) overflow freely again; overflow still clips while the panel is closed or mid-slide-animation, so the rounded-card corner clip and the existing open/close animation are both unaffected. Mirrors the identical fix shipped in ZYMARG Store Page 1.28.1 for its own collapse wrapper.
