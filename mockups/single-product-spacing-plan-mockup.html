@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZYMARG Single Product — Spacing Plan Mockup (Current vs Planned v2.5.0)</title>
+<style>
+/* =========================================================================
+   ZYMARG BRAND TOKENS (shared)
+   ========================================================================= */
+:root{
+  --zym-primary:#9500A5;
+  --zym-secondary:#BD00D1;
+  --zym-accent:#FEA9FF;
+  --zym-dark:#36003D;
+  --zym-text:#534152;
+  --zym-border:#D8BFD3;
+  --zym-surface:#FFFFFF;
+  --zym-bg:#FAF5FB;
+  --zym-star:#F6AD55;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  color:var(--zym-dark);
+  background:#f1eef7;
+}
+img{max-width:100%;display:block;}
+
+/* =========================================================================
+   MOCKUP CHROME
+   ========================================================================= */
+.zy-mockup-banner{
+  background:var(--zym-dark);color:#fff;font-size:13px;padding:10px 20px;
+  text-align:center;position:sticky;top:0;z-index:999;
+}
+.zy-mockup-banner strong{color:var(--zym-accent);}
+
+.zy-controls{
+  position:sticky;top:34px;z-index:998;
+  background:rgba(255,255,255,0.97);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--zym-border);
+  padding:12px 24px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+}
+.zy-controls__group{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.zy-controls__label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--zym-text);margin-right:4px;}
+.zy-switch-btn{
+  font-size:13px;font-weight:600;padding:8px 14px;border-radius:9999px;
+  border:1px solid var(--zym-border);background:#fff;color:var(--zym-text);
+  cursor:pointer;transition:all .15s ease;
+}
+.zy-switch-btn:hover{border-color:var(--zym-primary);color:var(--zym-primary);}
+.zy-switch-btn.is-active{background:var(--zym-primary);border-color:var(--zym-primary);color:#fff;}
+.zy-switch-btn.is-planned.is-active{background:#1a7f37;border-color:#1a7f37;}
+.zy-viewport-btn{
+  font-size:12.5px;font-weight:600;padding:8px 12px;border-radius:8px;
+  border:1px solid var(--zym-border);background:#fff;color:var(--zym-text);
+  cursor:pointer;display:inline-flex;align-items:center;gap:6px;
+}
+.zy-viewport-btn.is-active{background:var(--zym-dark);border-color:var(--zym-dark);color:#fff;}
+.zy-viewport-width{font-size:11.5px;color:var(--zym-text);font-weight:600;}
+
+.zy-measure-toggle{
+  font-size:12.5px;font-weight:600;padding:8px 12px;border-radius:8px;
+  border:1px solid var(--zym-border);background:#fff;color:var(--zym-text);cursor:pointer;
+}
+.zy-measure-toggle.is-active{background:#B3261E;border-color:#B3261E;color:#fff;}
+
+.zy-value-panel{max-width:1200px;margin:20px auto 0;padding:0 24px;}
+.zy-value-panel__card{
+  background:#fff;border:1px solid var(--zym-border);border-radius:12px;
+  padding:16px 20px;font-size:12.5px;color:var(--zym-text);line-height:1.7;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;
+}
+.zy-value-panel__item b{display:block;color:var(--zym-dark);font-size:11px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;}
+.zy-value-panel__item span{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;font-weight:700;color:var(--zym-primary);}
+.zy-value-panel__item.is-changed span{color:#1a7f37;}
+.zy-value-panel__note{grid-column:1/-1;font-size:11.5px;color:var(--zym-text);padding-top:8px;border-top:1px dashed var(--zym-border);margin-top:4px;}
+
+/* =========================================================================
+   DEVICE FRAME SIMULATOR (container-query driven, same technique as the
+   Store Page mockup — real breakpoints, not a fake class toggle)
+   ========================================================================= */
+.zy-frame-shell{display:flex;justify-content:center;padding:24px 16px 90px;}
+.zy-device-frame{
+  container-type:inline-size;container-name:zyvp;
+  width:1200px;max-width:100%;
+  background:#fff;
+  border:1px solid var(--zym-border);border-radius:16px;
+  box-shadow:0 24px 60px rgba(53,0,61,.12);
+  transition:width .35s ease;overflow:hidden;
+}
+.zy-device-frame__bar{
+  display:flex;align-items:center;gap:8px;padding:10px 16px;
+  border-bottom:1px solid var(--zym-border);background:rgba(250,245,251,.7);
+}
+.zy-device-frame__dot{width:9px;height:9px;border-radius:50%;background:var(--zym-border);}
+.zy-device-frame__tag{
+  margin-left:auto;font-size:11px;font-weight:700;color:var(--zym-text);
+  background:var(--zym-bg);padding:3px 10px;border-radius:9999px;
+}
+
+/* =========================================================================
+   MEASUREMENT OVERLAY — visualizes the actual gap sizes as colored guides
+   ========================================================================= */
+.zy-guide{position:relative;}
+.zy-guide::before,.zy-guide::after{
+  content:'';position:absolute;top:0;bottom:0;background:rgba(179,38,30,0.12);
+  border-left:1px dashed rgba(179,38,30,.5);border-right:1px dashed rgba(179,38,30,.5);
+  display:none;z-index:5;pointer-events:none;
+}
+body.show-measure .zy-guide-side::before{display:block;left:0;width:var(--gap-side);}
+body.show-measure .zy-guide-side::after{display:block;right:0;width:var(--gap-side);}
+.zy-guide-gap{position:relative;}
+body.show-measure .zy-guide-gap::before{
+  content:attr(data-gap-label);display:block;position:relative;
+  background:repeating-linear-gradient(45deg,rgba(179,38,30,.15) 0 6px,transparent 6px 12px);
+  border-top:1px dashed rgba(179,38,30,.6);border-bottom:1px dashed rgba(179,38,30,.6);
+  height:var(--gap-h);margin:0;
+  font-size:10px;font-weight:700;color:#B3261E;text-align:center;line-height:var(--gap-h);
+}
+
+/* =========================================================================
+   MOCK PAGE CONTENT
+   ========================================================================= */
+.zy-sp-page{width:100%;}
+.zy-sp-container{margin:0 auto;}
+
+/* CURRENT (2.4.9) values */
+.mode-current .zy-sp-container{ max-width:100%; padding:0 24px; }
+@container zyvp (max-width:1023.98px){
+  .mode-current .zy-sp-container{ max-width:98%; padding:0; }
+}
+.mode-current .zy-sp-section{ margin-bottom:32px; }
+.mode-current .zy-sp-grid-head{ margin-bottom:16px; }
+.mode-current .zy-sp-grid-head__title{ font-size:28px; }
+@container zyvp (max-width:1023.98px){
+  .mode-current .zy-sp-grid-head__title{ font-size:22px; }
+}
+@container zyvp (max-width:599.98px){
+  .mode-current .zy-sp-grid-head__title{ font-size:19px; }
+}
+
+/* PLANNED (2.5.0) values -- matches Store Page's .zy-section system exactly,
+   breakpoints aligned to 640px/1024px (Option A) */
+.mode-planned .zy-sp-container{ max-width:100%; padding:0 32px; }
+@container zyvp (max-width:1023.98px){
+  .mode-planned .zy-sp-container{ padding:0 8px; }
+}
+@container zyvp (max-width:639.98px){
+  .mode-planned .zy-sp-container{ padding:0 4px; }
+}
+.mode-planned .zy-sp-section{ margin-bottom:32px; }
+@container zyvp (max-width:1023.98px){
+  .mode-planned .zy-sp-section{ margin-bottom:20px; }
+}
+@container zyvp (max-width:639.98px){
+  .mode-planned .zy-sp-section{ margin-bottom:16px; }
+}
+.mode-planned .zy-sp-grid-head{ margin-bottom:24px; }
+@container zyvp (max-width:1023.98px){
+  .mode-planned .zy-sp-grid-head{ margin-bottom:12px; }
+}
+@container zyvp (max-width:639.98px){
+  .mode-planned .zy-sp-grid-head{ margin-bottom:8px; }
+}
+.mode-planned .zy-sp-grid-head__title{ font-size:24px; }
+@container zyvp (max-width:1023.98px){
+  .mode-planned .zy-sp-grid-head__title{ font-size:20px; }
+}
+@container zyvp (max-width:639.98px){
+  .mode-planned .zy-sp-grid-head__title{ font-size:18px; }
+}
+
+/* =========================================================================
+   SHARED VISUAL STYLING (same in both modes -- only spacing differs)
+   ========================================================================= */
+.zy-sp-topbar{
+  background:linear-gradient(135deg,var(--zym-primary),var(--zym-secondary));
+  color:#fff;padding:10px 24px;font-size:12px;font-weight:700;letter-spacing:.02em;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.zy-sp-topbar span:last-child{font-size:11px;font-weight:600;opacity:.85;background:rgba(255,255,255,.18);padding:2px 8px;border-radius:9999px;}
+
+.zy-sp-section{
+  background:#fff;
+}
+.zy-sp-product-block{
+  display:grid;grid-template-columns:1fr 1fr 300px;gap:20px;
+  border:1px solid var(--zym-border);border-radius:16px;padding:20px;
+  background:var(--zym-bg);
+}
+@container zyvp (max-width:1023.98px){
+  .zy-sp-product-block{grid-template-columns:1fr 1fr;}
+}
+@container zyvp (max-width:639.98px){
+  .zy-sp-product-block{grid-template-columns:1fr;}
+}
+.zy-sp-ph{
+  border-radius:12px;background:repeating-linear-gradient(135deg,#eee0f3,#eee0f3 10px,#f7eefa 10px,#f7eefa 20px);
+  min-height:220px;display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:var(--zym-text);text-transform:uppercase;letter-spacing:.04em;
+}
+.zy-sp-ph--tall{min-height:280px;}
+.zy-sp-ph--short{min-height:120px;}
+
+.zy-sp-untouched-badge{
+  display:inline-block;margin-top:8px;font-size:10.5px;font-weight:700;color:#1a7f37;
+  background:#e6f4ea;padding:2px 8px;border-radius:9999px;
+}
+
+.zy-sp-grid-head{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.zy-sp-grid-head__title{font-weight:800;color:var(--zym-dark);margin:0;}
+.zy-sp-grid-head__link{font-size:13px;font-weight:700;color:var(--zym-primary);text-decoration:none;flex-shrink:0;}
+
+.zy-sp-grid{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:16px;
+}
+@container zyvp (max-width:1023.98px){
+  .zy-sp-grid{grid-template-columns:repeat(3,1fr);}
+}
+@container zyvp (max-width:639.98px){
+  .zy-sp-grid{grid-template-columns:repeat(2,1fr);}
+}
+.zy-sp-card{
+  border:1px solid var(--zym-border);border-radius:12px;overflow:hidden;background:#fff;
+}
+.zy-sp-card__img{
+  aspect-ratio:1/1;background:repeating-linear-gradient(135deg,#eee0f3,#eee0f3 8px,#f7eefa 8px,#f7eefa 16px);
+}
+.zy-sp-card__body{padding:8px;}
+.zy-sp-card__title{font-size:12px;font-weight:600;margin:0 0 4px;color:var(--zym-dark);}
+.zy-sp-card__price{font-size:13px;font-weight:800;color:var(--zym-primary);margin:0;}
+
+.zy-sp-nogap{margin-bottom:0 !important;}
+</style>
+</head>
+<body>
+
+<div class="zy-mockup-banner">
+  🎨 <strong>Planning Mockup — NOT LIVE CODE</strong> — ZYMARG Single Product spacing plan for v2.5.0. Compare Current (2.4.9) vs Planned (2.5.0) side-by-side across real breakpoints before this plan is locked in.
+</div>
+
+<div class="zy-controls">
+  <div class="zy-controls__group">
+    <span class="zy-controls__label">Mode</span>
+    <button class="zy-switch-btn is-active" data-mode-btn="current">Current (v2.4.9)</button>
+    <button class="zy-switch-btn is-planned" data-mode-btn="planned">Planned (v2.5.0)</button>
+  </div>
+  <div class="zy-controls__group">
+    <span class="zy-controls__label">Viewport</span>
+    <button class="zy-viewport-btn is-active" data-viewport-btn="1200">🖥 Desktop</button>
+    <button class="zy-viewport-btn" data-viewport-btn="800">📱 Tablet</button>
+    <button class="zy-viewport-btn" data-viewport-btn="375">📱 Mobile</button>
+    <span class="zy-viewport-width" id="viewport-width-label">1200px (≥1024px tier)</span>
+  </div>
+  <div class="zy-controls__group">
+    <button class="zy-measure-toggle" id="measure-toggle">📏 Show measurement guides</button>
+  </div>
+</div>
+
+<div class="zy-value-panel">
+  <div class="zy-value-panel__card" id="value-panel">
+    <!-- populated by JS -->
+  </div>
+</div>
+
+<div class="zy-frame-shell">
+  <div class="zy-device-frame" id="device-frame">
+    <div class="zy-device-frame__bar">
+      <span class="zy-device-frame__dot"></span><span class="zy-device-frame__dot"></span><span class="zy-device-frame__dot"></span>
+      <span class="zy-device-frame__tag" id="device-frame-tag">Desktop preview</span>
+    </div>
+
+    <div class="zy-sp-page mode-current" id="sp-page">
+      <div class="zy-sp-topbar">
+        <span>zymarg.com/product/handwoven-ceramic-vase</span>
+        <span>Single Product Page</span>
+      </div>
+
+      <div class="zy-sp-container zy-guide zy-guide-side" id="sp-container" style="--gap-side:24px;">
+
+        <!-- SECTION 1: Product block (gallery + info + buybox) — NO heading, untouched -->
+        <section class="zy-sp-section" id="sec-product">
+          <div class="zy-sp-product-block">
+            <div class="zy-sp-ph zy-sp-ph--tall">Gallery</div>
+            <div class="zy-sp-ph zy-sp-ph--tall">Product Info + Swatches</div>
+            <div class="zy-sp-ph zy-sp-ph--tall">Buy Box</div>
+          </div>
+          <span class="zy-sp-untouched-badge">✓ Untouched — no heading, no spacing change</span>
+        </section>
+
+        <!-- Section gap indicator -->
+        <div class="zy-guide-gap" data-gap-label="section gap" style="--gap-h:32px;"></div>
+
+        <!-- SECTION 2: Seller card — NO heading, untouched -->
+        <section class="zy-sp-section" id="sec-seller">
+          <div class="zy-sp-ph zy-sp-ph--short">Seller Card</div>
+          <span class="zy-sp-untouched-badge">✓ Untouched — no heading, no spacing change</span>
+        </section>
+
+        <div class="zy-guide-gap" data-gap-label="section gap" style="--gap-h:32px;"></div>
+
+        <!-- SECTION 3: Description / Reviews accordion — NO heading, untouched -->
+        <section class="zy-sp-section" id="sec-accordion">
+          <div class="zy-sp-ph zy-sp-ph--short">Description / Reviews Accordion</div>
+          <span class="zy-sp-untouched-badge">✓ Untouched — no heading, no spacing change</span>
+        </section>
+
+        <div class="zy-guide-gap" data-gap-label="section gap" style="--gap-h:32px;"></div>
+
+        <!-- SECTION 4: Product Grid (has a heading — THIS is what changes) -->
+        <section class="zy-sp-section zy-sp-nogap" id="sec-grid-1">
+          <div class="zy-sp-grid-head" id="grid-head-1">
+            <h2 class="zy-sp-grid-head__title" id="grid-title-1">You may also like</h2>
+            <a href="#" class="zy-sp-grid-head__link">View all →</a>
+          </div>
+          <div class="zy-guide-gap" data-gap-label="heading→grid gap" style="--gap-h:16px;" id="heading-gap-1"></div>
+          <div class="zy-sp-grid">
+            <div class="zy-sp-card"><div class="zy-sp-card__img"></div><div class="zy-sp-card__body"><p class="zy-sp-card__title">Ceramic Bowl Set</p><p class="zy-sp-card__price">৳1,240</p></div></div>
+            <div class="zy-sp-card"><div class="zy-sp-card__img"></div><div class="zy-sp-card__body"><p class="zy-sp-card__title">Woven Basket</p><p class="zy-sp-card__price">৳890</p></div></div>
+            <div class="zy-sp-card"><div class="zy-sp-card__img"></div><div class="zy-sp-card__body"><p class="zy-sp-card__title">Clay Vase</p><p class="zy-sp-card__price">৳1,050</p></div></div>
+            <div class="zy-sp-card"><div class="zy-sp-card__img"></div><div class="zy-sp-card__body"><p class="zy-sp-card__title">Linen Runner</p><p class="zy-sp-card__price">৳650</p></div></div>
+            <div class="zy-sp-card"><div class="zy-sp-card__img"></div><div class="zy-sp-card__body"><p class="zy-sp-card__title">Copper Tray</p><p class="zy-sp-card__price">৳1,480</p></div></div>
+          </div>
+        </section>
+
+        <div class="zy-guide-gap" data-gap-label="section gap" style="--gap-h:32px;"></div>
+
+        <!-- SECTION 5: Second Product Grid (Related Products) -->
+        <section class="zy-sp-section zy-sp-nogap" id="sec-grid-2">
+          <div class="zy-sp-grid-head" id="grid-head-2">
+            <h2 class="zy-sp-grid-head__title" id="grid-title-2">Related Products</h2>
+            <a href="#" class="zy-sp-grid-head__link">View all →</a>
+          </div>
+          <div class="zy-guide-gap" data-gap-label="heading→grid gap" style="--gap-h:16px;" id="heading-gap-2"></div>
+          <div class="zy-sp-grid">
+            <div class="zy-sp-card"><div class="zy-sp-card__img"></div><div class="zy-sp-card__body"><p class="zy-sp-card__title">Table Lamp</p><p class="zy-sp-card__price">৳2,100</p></div></div>
+            <div class="zy-sp-card"><div class="zy-sp-card__img"></div><div class="zy-sp-card__body"><p class="zy-sp-card__title">Rattan Chair</p><p class="zy-sp-card__price">৳3,900</p></div></div>
+            <div class="zy-sp-card"><div class="zy-sp-card__img"></div><div class="zy-sp-card__body"><p class="zy-sp-card__title">Wool Throw</p><p class="zy-sp-card__price">৳1,120</p></div></div>
+            <div class="zy-sp-card"><div class="zy-sp-card__img"></div><div class="zy-sp-card__body"><p class="zy-sp-card__title">Wall Mirror</p><p class="zy-sp-card__price">৳2,650</p></div></div>
+            <div class="zy-sp-card"><div class="zy-sp-card__img"></div><div class="zy-sp-card__body"><p class="zy-sp-card__title">Jute Rug</p><p class="zy-sp-card__price">৳1,780</p></div></div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================================
+   MODE SWITCHER — Current vs Planned
+   ========================================================================= */
+const page = document.getElementById('sp-page');
+const container = document.getElementById('sp-container');
+
+const VALUES = {
+  current: {
+    label: 'Current — v2.4.9',
+    width: { desktop: '100% (no cap)', tablet: '98%', mobile: '98% (inherited)' },
+    side:  { desktop: '24px', tablet: '0px*', mobile: '0px*' },
+    sideNote: '*tablet/mobile use the 98%-width trick instead of padding — no true padding-based gap',
+    sectionGap: { desktop: '32px', tablet: '32px', mobile: '32px' },
+    sectionGapNote: 'flat value, no responsive tiers',
+    headingGap: { desktop: '16px', tablet: '16px', mobile: '16px' },
+    headingGapNote: 'flat value, no responsive tiers',
+    headingSize: { desktop: '28px', tablet: '22px', mobile: '19px' },
+    headingSizeNote: 'breakpoints at 1024px / 600px (does not match Store Page\\'s 640px tier)',
+  },
+  planned: {
+    label: 'Planned — v2.5.0 (matches Store Page exactly)',
+    width: { desktop: '100%', tablet: '100%', mobile: '100%' },
+    side:  { desktop: '32px', tablet: '8px', mobile: '4px' },
+    sideNote: 'true padding-based gap at every tier, same as Store Page',
+    sectionGap: { desktop: '32px', tablet: '20px', mobile: '16px' },
+    sectionGapNote: 'now responsive, matches Store Page\\'s .zy-section top-gap tiers',
+    headingGap: { desktop: '24px', tablet: '12px', mobile: '8px' },
+    headingGapNote: 'now responsive, matches Store Page\\'s .zy-section-content tiers',
+    headingSize: { desktop: '24px', tablet: '20px', mobile: '18px' },
+    headingSizeNote: 'breakpoints aligned to 640px / 1024px — Option A, matches Store Page exactly',
+  }
+};
+
+let currentViewport = 1200;
+
+function tierFor(px){
+  if (px >= 1024) return 'desktop';
+  if (px >= 640) return 'tablet';
+  return 'mobile';
+}
+
+function renderValuePanel(mode){
+  const v = VALUES[mode];
+  const tier = tierFor(currentViewport);
+  const panel = document.getElementById('value-panel');
+  const changed = mode === 'planned';
+  panel.innerHTML = `
+    <div class="zy-value-panel__item ${changed?'is-changed':''}"><b>Page width</b><span>${v.width[tier]}</span></div>
+    <div class="zy-value-panel__item ${changed?'is-changed':''}"><b>Side gap (${tier})</b><span>${v.side[tier]}</span></div>
+    <div class="zy-value-panel__item ${changed?'is-changed':''}"><b>Section-to-section gap</b><span>${v.sectionGap[tier]}</span></div>
+    <div class="zy-value-panel__item ${changed?'is-changed':''}"><b>Heading→grid gap</b><span>${v.headingGap[tier]}</span></div>
+    <div class="zy-value-panel__item ${changed?'is-changed':''}"><b>Heading font-size</b><span>${v.headingSize[tier]}</span></div>
+    <div class="zy-value-panel__note"><b style="display:inline;text-transform:none;">${v.label}.</b> ${v.sideNote} · ${v.sectionGapNote} · ${v.headingSizeNote}</div>
+  `;
+}
+
+function setGuideVars(mode){
+  const v = VALUES[mode];
+  const tier = tierFor(currentViewport);
+  const sidePx = parseInt(v.side[tier]) || 0;
+  container.style.setProperty('--gap-side', sidePx + 'px');
+
+  const sectionGapPx = parseInt(v.sectionGap[tier]) || 0;
+  document.querySelectorAll('[data-gap-label="section gap"]').forEach(el => {
+    el.style.setProperty('--gap-h', sectionGapPx + 'px');
+  });
+
+  const headingGapPx = parseInt(v.headingGap[tier]) || 0;
+  ['heading-gap-1','heading-gap-2'].forEach(id => {
+    document.getElementById(id).style.setProperty('--gap-h', headingGapPx + 'px');
+  });
+}
+
+document.querySelectorAll('[data-mode-btn]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const mode = btn.getAttribute('data-mode-btn');
+    document.querySelectorAll('[data-mode-btn]').forEach(b => b.classList.toggle('is-active', b === btn));
+    page.classList.remove('mode-current', 'mode-planned');
+    page.classList.add('mode-' + mode);
+    renderValuePanel(mode);
+    setGuideVars(mode);
+  });
+});
+
+/* =========================================================================
+   VIEWPORT SIMULATOR
+   ========================================================================= */
+const frame = document.getElementById('device-frame');
+const widthLabel = document.getElementById('viewport-width-label');
+const frameTag = document.getElementById('device-frame-tag');
+
+function describeTier(px){
+  if (px >= 1024) return { name: 'Desktop preview', tier: '≥1024px tier' };
+  if (px >= 640) return { name: 'Tablet preview', tier: '640–1023px tier' };
+  return { name: 'Mobile preview', tier: '<640px tier' };
+}
+
+function activeMode(){
+  return document.querySelector('[data-mode-btn].is-active').getAttribute('data-mode-btn');
+}
+
+document.querySelectorAll('[data-viewport-btn]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const px = parseInt(btn.getAttribute('data-viewport-btn'), 10);
+    document.querySelectorAll('[data-viewport-btn]').forEach(b => b.classList.toggle('is-active', b === btn));
+    frame.style.width = px + 'px';
+    currentViewport = px;
+    const info = describeTier(px);
+    widthLabel.textContent = px + 'px (' + info.tier + ')';
+    frameTag.textContent = info.name;
+    renderValuePanel(activeMode());
+    setGuideVars(activeMode());
+  });
+});
+
+/* =========================================================================
+   MEASUREMENT GUIDE TOGGLE
+   ========================================================================= */
+document.getElementById('measure-toggle').addEventListener('click', function(){
+  document.body.classList.toggle('show-measure');
+  this.classList.toggle('is-active');
+  this.textContent = document.body.classList.contains('show-measure') ? '📏 Hide measurement guides' : '📏 Show measurement guides';
+});
+
+/* Initial render */
+renderValuePanel('current');
+setGuideVars('current');
+</script>
+</body>
+</html>
