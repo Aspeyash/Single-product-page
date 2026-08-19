@@ -62,8 +62,52 @@
 
 .zymarg-single-product img { max-width: 100%; }
 .zymarg-single-product button { font-family: inherit; cursor: pointer; }
-.zymarg-single-product .container { max-width: 100%; margin: 0 auto; padding: 0 24px; }
-.zymarg-single-product section { margin-bottom: 32px; }
+
+/* v2.5.0 - Page width + side gap unified with ZYMARG Store Page's shared
+   .zy-section system, so both plugins render identical content width and
+   side gaps at every breakpoint. Width is 100% at every tier (was 98% on
+   tablet/mobile via a width-percentage trick); the gap now comes purely
+   from responsive padding instead, matching the pattern:
+     mobile (<640px):  4px   | tablet (640-1023px): 8px  | desktop (>=1024px): 32px
+   Untangling width from the gap this way also means tablet/mobile no
+   longer rely on a percentage-based width to create a visual gutter --
+   the .container element itself is always exactly the viewport's full
+   width, and the padding alone creates the side gap. */
+.zymarg-single-product .container {
+	max-width: 100%;
+	margin: 0 auto;
+	padding: 0 2rem; /* 32px — desktop */
+}
+
+@media (max-width: 1024px) {
+	.zymarg-single-product .container {
+		padding: 0 0.5rem; /* 8px — tablet */
+	}
+}
+
+@media (max-width: 640px) {
+	.zymarg-single-product .container {
+		padding: 0 0.25rem; /* 4px — mobile */
+	}
+}
+
+/* v2.5.0 - Section-to-section gap is now responsive, matching Store Page's
+   .zy-section top-padding tiers exactly. Previously a flat 32px on every
+   breakpoint. Applies uniformly to EVERY section on the page -- Product
+   Info/Buy Box, Seller Card, Description/Reviews Accordion, and both
+   product-grid sections alike. There is no "only sections with a heading
+   get the responsive gap" distinction; Store Page's own .zy-section rule
+   applies its gap to every section regardless of whether it has a
+   heading, and this mirrors that exactly. */
+.zymarg-single-product section { margin-bottom: 2rem; } /* 32px — desktop */
+
+@media (max-width: 1024px) {
+	.zymarg-single-product section { margin-bottom: 1.25rem; } /* 20px — tablet */
+}
+
+@media (max-width: 640px) {
+	.zymarg-single-product section { margin-bottom: 1rem; } /* 16px — mobile */
+}
 
 /* ── Breadcrumbs ─────────────────────────────────────────── */
 .zymarg-sp-breadcrumbs { padding: 16px 0 0; }
@@ -429,7 +473,14 @@ svg.zymarg-sp-star--empty, .zymarg-sp-star--empty svg { fill: var(--zymarg-borde
 .spec-table td:first-child { background: var(--zymarg-surface-alt); font-weight: 600; width: 35%; }
 
 /* ── Grid sections ───────────────────────────────────────── */
-.zymarg-sp-grid-section { margin-bottom: 32px; }
+/* v2.5.0 - This class-based rule used to set its own flat 32px, at higher
+   specificity (0-2-0) than the new responsive ".zymarg-single-product
+   section" rule (0-1-1) near the top of this file. Since .zymarg-sp-
+   grid-section is applied to an actual <section> element (see
+   templates/woocommerce/single-product.php), that flat rule would have
+   silently won on every breakpoint and defeated the new responsive
+   20px/16px tablet/mobile values. Removed so this element now falls
+   through to the shared responsive rule like every other section. */
 
 /* ── Sticky mobile bar ───────────────────────────────────── */
 /* v1.0.11 #1 — The sticky bar is rendered OUTSIDE .zymarg-single-product, so the
@@ -504,7 +555,11 @@ svg.zymarg-sp-star--empty, .zymarg-sp-star--empty svg { fill: var(--zymarg-borde
 
 /* ── Tablet: 2-col product section ──────────────────────── */
 @media (max-width: 1024px) {
-  .zymarg-single-product .container { max-width: 98%; padding: 0; margin: 0 auto; }
+  /* v2.5.0 - width/padding for .container now lives in the single
+     responsive block near the top of this file (search "Page width +
+     side gap unified"), replacing this old max-width:98%/padding:0
+     override. Kept this comment as a marker so a future search for
+     ".container" here finds the real rule instead of an empty gap. */
   .zymarg-sp-breadcrumbs { padding-left: 16px; padding-right: 16px; }
   .product-section, .card { border-radius: 0; }
   .product-section { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "gallery gallery" "info buybox"; } /* v1.0.10 #1 — minmax(0,...) stops the grid track being inflated to the thumbnail row's min-content width */
@@ -1254,7 +1309,19 @@ svg.zymarg-sp-star--empty, .zymarg-sp-star--empty svg { fill: var(--zymarg-borde
 	display: flex;
 	align-items: center;
 	gap: 16px;
-	margin: 0 0 16px;
+	margin: 0 0 1.5rem; /* 24px — desktop, v2.5.0: was flat 16px, now responsive (see below) */
+}
+
+/* v2.5.0 - heading-to-grid gap, matching Store Page's .zy-section-content
+   tiers exactly. Scoped to this engine-grid heading only, since it is the
+   only heading type on this page (Product Info, Seller Card, and the
+   Description/Reviews Accordion have none). */
+@media (max-width: 1024px) {
+	.zymarg-sp-grid-section--engine .zymarg-sp-section-head { margin-bottom: 0.75rem; } /* 12px — tablet */
+}
+
+@media (max-width: 640px) {
+	.zymarg-sp-grid-section--engine .zymarg-sp-section-head { margin-bottom: 0.5rem; } /* 8px — mobile */
 }
 
 /* min-width:0 is what allows the ellipsis to engage inside a flex row. */
@@ -1262,7 +1329,7 @@ svg.zymarg-sp-star--empty, .zymarg-sp-star--empty svg { fill: var(--zymarg-borde
 	flex: 1 1 auto;
 	min-width: 0;
 	margin: 0;
-	font-size: 28px;
+	font-size: 24px; /* v2.5.0 — was 28px; matches Store Page's .zy-section-heading desktop size */
 	line-height: 1.25;
 	font-weight: 700;
 	color: #9500a5;
@@ -1314,13 +1381,18 @@ svg.zymarg-sp-star--empty, .zymarg-sp-star--empty svg { fill: var(--zymarg-borde
 }
 
 @media (max-width: 1024px) {
-	.zymarg-sp-section-head__title { font-size: 22px; }
+	.zymarg-sp-section-head__title { font-size: 20px; } /* v2.5.0 — was 22px; matches Store Page's tablet size */
 	.zymarg-sp-section-head__link  { font-size: 13px; }
 }
 
-@media (max-width: 600px) {
+/* v2.5.0 - breakpoint moved from 600px to 640px (Option A), so this
+   heading switches to its mobile size at the exact same viewport width
+   Store Page's .zy-section-heading does. Every other rule in this block
+   (gap, __txt hide, __arw size) is unrelated to the spacing plan and is
+   preserved unchanged, just now firing at 640px instead of 600px. */
+@media (max-width: 640px) {
 	.zymarg-sp-grid-section--engine .zymarg-sp-section-head { gap: 10px; }
-	.zymarg-sp-section-head__title { font-size: 19px; }
+	.zymarg-sp-section-head__title { font-size: 18px; } /* v2.5.0 — was 19px; matches Store Page's mobile size */
 	.zymarg-sp-section-head__txt   { display: none; }
 	.zymarg-sp-section-head__arw   { font-size: 20px; }
 }
