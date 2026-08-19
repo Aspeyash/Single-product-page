@@ -78,6 +78,7 @@ img{max-width:100%;display:block;}
 .zy-value-panel__item span{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px;font-weight:700;color:var(--zym-primary);}
 .zy-value-panel__item.is-changed span{color:#1a7f37;}
 .zy-value-panel__note{grid-column:1/-1;font-size:11.5px;color:var(--zym-text);padding-top:8px;border-top:1px dashed var(--zym-border);margin-top:4px;}
+.zy-value-panel__note b.correction{color:#B3261E;}
 
 /* =========================================================================
    DEVICE FRAME SIMULATOR (container-query driven, same technique as the
@@ -133,6 +134,11 @@ body.show-measure .zy-guide-gap::before{
 @container zyvp (max-width:1023.98px){
   .mode-current .zy-sp-container{ max-width:98%; padding:0; }
 }
+/* CORRECTED: current code applies a flat 32px section gap to EVERY
+   section uniformly (heading or not) -- confirmed against Store Page's
+   .zy-section padding-top, which Single Product's flat margin-bottom:32px
+   mirrors today (just without responsive tiers yet). Applies to Product
+   Info/Seller Card/Accordion AND both product-grid sections alike. */
 .mode-current .zy-sp-section{ margin-bottom:32px; }
 .mode-current .zy-sp-grid-head{ margin-bottom:16px; }
 .mode-current .zy-sp-grid-head__title{ font-size:28px; }
@@ -152,6 +158,11 @@ body.show-measure .zy-guide-gap::before{
 @container zyvp (max-width:639.98px){
   .mode-planned .zy-sp-container{ padding:0 4px; }
 }
+/* CORRECTED: section-to-section gap now applies uniformly to EVERY
+   section -- Product Info, Seller Card, Accordion, AND both product-grid
+   sections alike -- matching Store Page's .zy-section rule exactly.
+   There is no "only sections with a heading get a gap" distinction;
+   that was a mockup/plan error caught in review. */
 .mode-planned .zy-sp-section{ margin-bottom:32px; }
 @container zyvp (max-width:1023.98px){
   .mode-planned .zy-sp-section{ margin-bottom:20px; }
@@ -236,7 +247,11 @@ body.show-measure .zy-guide-gap::before{
 .zy-sp-card__title{font-size:12px;font-weight:600;margin:0 0 4px;color:var(--zym-dark);}
 .zy-sp-card__price{font-size:13px;font-weight:800;color:var(--zym-primary);margin:0;}
 
-.zy-sp-nogap{margin-bottom:0 !important;}
+/* CORRECTED: removed -- grid sections must NOT be zeroed out. They get
+   the same section-to-section gap as every other section (see .zy-sp-section
+   above), both between each other and against the sections before them.
+   Kept here as documentation of the mistake, unused. */
+.zy-sp-nogap-REMOVED-DO-NOT-USE{margin-bottom:0;}
 </style>
 </head>
 <body>
@@ -284,37 +299,45 @@ body.show-measure .zy-guide-gap::before{
 
       <div class="zy-sp-container zy-guide zy-guide-side" id="sp-container" style="--gap-side:24px;">
 
-        <!-- SECTION 1: Product block (gallery + info + buybox) — NO heading, untouched -->
+        <!-- SECTION 1: Product block (gallery + info + buybox) — has no
+             heading, so heading font-size / heading→grid gap rules don't
+             apply to it. It STILL receives the shared section-to-section
+             gap update (visible in the "section gap" guide right below). -->
         <section class="zy-sp-section" id="sec-product">
           <div class="zy-sp-product-block">
             <div class="zy-sp-ph zy-sp-ph--tall">Gallery</div>
             <div class="zy-sp-ph zy-sp-ph--tall">Product Info + Swatches</div>
             <div class="zy-sp-ph zy-sp-ph--tall">Buy Box</div>
           </div>
-          <span class="zy-sp-untouched-badge">✓ Untouched — no heading, no spacing change</span>
+          <span class="zy-sp-untouched-badge">✓ No heading — but shares the section-to-section gap below</span>
         </section>
 
         <!-- Section gap indicator -->
         <div class="zy-guide-gap" data-gap-label="section gap" style="--gap-h:32px;"></div>
 
-        <!-- SECTION 2: Seller card — NO heading, untouched -->
+        <!-- SECTION 2: Seller card — no heading, still shares the gap -->
         <section class="zy-sp-section" id="sec-seller">
           <div class="zy-sp-ph zy-sp-ph--short">Seller Card</div>
-          <span class="zy-sp-untouched-badge">✓ Untouched — no heading, no spacing change</span>
+          <span class="zy-sp-untouched-badge">✓ No heading — but shares the section-to-section gap below</span>
         </section>
 
         <div class="zy-guide-gap" data-gap-label="section gap" style="--gap-h:32px;"></div>
 
-        <!-- SECTION 3: Description / Reviews accordion — NO heading, untouched -->
+        <!-- SECTION 3: Description / Reviews accordion — no heading, still
+             shares the gap -->
         <section class="zy-sp-section" id="sec-accordion">
           <div class="zy-sp-ph zy-sp-ph--short">Description / Reviews Accordion</div>
-          <span class="zy-sp-untouched-badge">✓ Untouched — no heading, no spacing change</span>
+          <span class="zy-sp-untouched-badge">✓ No heading — but shares the section-to-section gap below</span>
         </section>
 
         <div class="zy-guide-gap" data-gap-label="section gap" style="--gap-h:32px;"></div>
 
-        <!-- SECTION 4: Product Grid (has a heading — THIS is what changes) -->
-        <section class="zy-sp-section zy-sp-nogap" id="sec-grid-1">
+        <!-- SECTION 4: Product Grid — heading font-size + heading→grid gap
+             change here specifically; the section-to-section gap ABOVE
+             this section (shown by the "section gap" guide right before
+             it) is the SAME shared value as every other section, not a
+             special case. -->
+        <section class="zy-sp-section" id="sec-grid-1">
           <div class="zy-sp-grid-head" id="grid-head-1">
             <h2 class="zy-sp-grid-head__title" id="grid-title-1">You may also like</h2>
             <a href="#" class="zy-sp-grid-head__link">View all →</a>
@@ -331,8 +354,12 @@ body.show-measure .zy-guide-gap::before{
 
         <div class="zy-guide-gap" data-gap-label="section gap" style="--gap-h:32px;"></div>
 
-        <!-- SECTION 5: Second Product Grid (Related Products) -->
-        <section class="zy-sp-section zy-sp-nogap" id="sec-grid-2">
+        <!-- SECTION 5: Second Product Grid (Related Products) — note the
+             "section gap" guide directly above this section: this is the
+             gap BETWEEN the two grid sections, which the original mockup
+             incorrectly zeroed out entirely. It now uses the same shared
+             value as every other section-to-section gap on the page. -->
+        <section class="zy-sp-section" id="sec-grid-2">
           <div class="zy-sp-grid-head" id="grid-head-2">
             <h2 class="zy-sp-grid-head__title" id="grid-title-2">Related Products</h2>
             <a href="#" class="zy-sp-grid-head__link">View all →</a>
@@ -406,6 +433,7 @@ function renderValuePanel(mode){
     <div class="zy-value-panel__item ${changed?'is-changed':''}"><b>Heading→grid gap</b><span>${v.headingGap[tier]}</span></div>
     <div class="zy-value-panel__item ${changed?'is-changed':''}"><b>Heading font-size</b><span>${v.headingSize[tier]}</span></div>
     <div class="zy-value-panel__note"><b style="display:inline;text-transform:none;">${v.label}.</b> ${v.sideNote} · ${v.sectionGapNote} · ${v.headingSizeNote}</div>
+    <div class="zy-value-panel__note"><b class="correction" style="display:inline;text-transform:none;">Correction applied:</b> the section-to-section gap is the SAME shared value for every section on the page — Product Info, Seller Card, Accordion, and both product-grid sections all get it identically, whether or not they have a heading. An earlier draft of this plan incorrectly left "no-heading" sections untouched and zeroed out the gap between the two grid sections entirely.</div>
   `;
 }
 
