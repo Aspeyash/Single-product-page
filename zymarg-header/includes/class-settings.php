@@ -243,11 +243,48 @@ class Settings {
 	}
 
 	/**
+	 * Resolve a cart-style colour/background setting to a dark-mode-safe
+	 * CSS value.
+	 *
+	 * BUG THIS FIXES: cart_inline_css() below always called
+	 * self::get($key, $hardcoded_hex) — meaning on a site that has NEVER
+	 * saved these settings, the hardcoded hex default is STILL emitted
+	 * unconditionally, overriding the token-based (dark-mode-aware) rules
+	 * in the static stylesheet on every single page load, in every mode.
+	 * This is the actual cause of the mini-cart popup panel/rows/text
+	 * staying stuck in light-mode colours no matter what.
+	 *
+	 * Fix: if the saved value is empty OR exactly matches the plugin's own
+	 * known hardcoded default (case-insensitive), treat it as "never
+	 * customised" and return the theme-aware CSS token instead, so the
+	 * static stylesheet's dark-mode-aware rule governs. Only an
+	 * explicitly different admin-chosen colour is honoured verbatim.
+	 *
+	 * @param string $key         Settings key.
+	 * @param string $default_hex The plugin's original hardcoded default.
+	 * @param string $token_css   The dark-mode-aware CSS value to use
+	 *                            instead when not customised.
+	 * @return string
+	 */
+	private static function themed( string $key, string $default_hex, string $token_css ): string {
+		$val = (string) self::get( $key, $default_hex );
+		if ( '' === trim( $val ) || strtolower( trim( $val ) ) === strtolower( trim( $default_hex ) ) ) {
+			return $token_css;
+		}
+		return $val;
+	}
+
+	/**
 	 * Generate the inline <style> block for the cart widget based on
 	 * the admin-configured style settings. Scoped to .z-hdr-cart-root so
 	 * it never affects Theme Builder Cart widgets elsewhere on the page.
 	 *
 	 * Returns raw CSS — added via wp_add_inline_style( 'zymarg-cart', … ).
+	 *
+	 * All color/background values route through self::themed() so that
+	 * un-customised settings defer to the theme-aware --zc-* and --zym-*
+	 * tokens (correct in both light and dark mode) instead of permanently
+	 * baking in the plugin's original hardcoded light-mode hex.
 	 */
 	public static function cart_inline_css(): string {
 		$s   = '.z-hdr-cart-root';
@@ -258,7 +295,7 @@ class Settings {
 		 * keeping the cart icon visually consistent with Account/Wishlist.
 		 * Only the hover colour is set here so the admin can still adjust it.
 		 */
-		$css .= "{$s} .zymarg-tb-cart__trigger:hover .zymarg-tb-cart__icon,{$s} .zymarg-tb-cart__trigger:focus-visible .zymarg-tb-cart__icon{color:" . self::get( 'cart_icon_hover_color', '#9500a5' ) . "}\n";
+		$css .= "{$s} .zymarg-tb-cart__trigger:hover .zymarg-tb-cart__icon,{$s} .zymarg-tb-cart__trigger:focus-visible .zymarg-tb-cart__icon{color:" . self::themed( 'cart_icon_hover_color', '#9500a5', 'var(--zym-color-primary)' ) . "}\n";
 		$gap = (int) self::get( 'cart_trigger_gap', '2' );
 		$css .= "{$s} .zymarg-tb-cart__trigger{gap:{$gap}px}\n";
 		$pt  = (int) self::get( 'cart_trigger_padding_top', '0' );
@@ -277,21 +314,25 @@ class Settings {
 			$css .= "{$s} .zymarg-tb-cart__trigger{border-radius:{$tr}px}\n";
 		}
 
-		/* Badge */
+		/* Badge — background is the FIXED brand gradient (never changes
+		 * between modes, see zymarg-header.css comments), so its text
+		 * colour must stay fixed white too, not theme-reactive. */
 		$b_size    = (float) self::get( 'cart_badge_size', '17' );
 		$b_font    = (float) self::get( 'cart_badge_font_size', '9.5' );
 		$b_radius  = (int) self::get( 'cart_badge_radius', '20' );
 		$b_offset_x = (int) self::get( 'cart_badge_offset_x', '-8' );
 		$b_offset_y = (int) self::get( 'cart_badge_offset_y', '-6' );
-		$css .= "{$s} .zymarg-tb-cart__count{background:" . self::get( 'cart_badge_bg', 'linear-gradient(135deg,#9500a5 0%,#bd00d1 100%)' ) . ";color:" . self::get( 'cart_badge_color', '#ffffff' ) . ";min-width:{$b_size}px;height:{$b_size}px;font-size:{$b_font}px;border-radius:{$b_radius}px;--zc-badge-x:{$b_offset_x}px;--zc-badge-y:{$b_offset_y}px}\n";
+		$badge_bg    = self::themed( 'cart_badge_bg', 'linear-gradient(135deg,#9500a5 0%,#bd00d1 100%)', 'var(--zym-gradient)' );
+		$badge_color = self::themed( 'cart_badge_color', '#ffffff', '#fff' );
+		$css .= "{$s} .zymarg-tb-cart__count{background:{$badge_bg};color:{$badge_color};min-width:{$b_size}px;height:{$b_size}px;font-size:{$b_font}px;border-radius:{$b_radius}px;--zc-badge-x:{$b_offset_x}px;--zc-badge-y:{$b_offset_y}px}\n";
 
 		/* Text & subtotal */
-		$css .= "{$s} .zymarg-tb-cart__text{color:" . self::get( 'cart_text_color', '#131b2e' ) . "}\n";
-		$css .= "{$s} .zymarg-tb-cart__subtotal{color:" . self::get( 'cart_subtotal_color', '#9500a5' ) . "}\n";
+		$css .= "{$s} .zymarg-tb-cart__text{color:" . self::themed( 'cart_text_color', '#131b2e', 'var(--zc-text-body)' ) . "}\n";
+		$css .= "{$s} .zymarg-tb-cart__subtotal{color:" . self::themed( 'cart_subtotal_color', '#9500a5', 'var(--zc-primary)' ) . "}\n";
 
 		/* Panel */
-		$css .= "{$s} .zymarg-tb-cart__panel{background:" . self::get( 'cart_panel_bg', '#ffffff' ) . ";border-radius:" . (int) self::get( 'cart_panel_radius', '12' ) . "px}\n";
-		$css .= "{$s} .zymarg-tb-cart__panel-title{color:" . self::get( 'cart_panel_title_color', '#131b2e' ) . "}\n";
+		$css .= "{$s} .zymarg-tb-cart__panel{background:" . self::themed( 'cart_panel_bg', '#ffffff', 'var(--zc-surface-lowest)' ) . ";border-radius:" . (int) self::get( 'cart_panel_radius', '12' ) . "px}\n";
+		$css .= "{$s} .zymarg-tb-cart__panel-title{color:" . self::themed( 'cart_panel_title_color', '#131b2e', 'var(--zc-text-body)' ) . "}\n";
 		$shadow = (string) self::get( 'cart_panel_shadow', '0 8px 40px rgba(0,0,0,0.12)' );
 		if ( '' !== $shadow ) {
 			$css .= "{$s} .zymarg-tb-cart__panel{box-shadow:{$shadow}}\n";
@@ -301,7 +342,7 @@ class Settings {
 		if ( '' !== $b_color && $b_width > 0 ) {
 			$css .= "{$s} .zymarg-tb-cart__panel{border:{$b_width}px solid {$b_color}}\n";
 		}
-		$scroll = (string) self::get( 'cart_scrollbar_color', '#d8bfd3' );
+		$scroll = self::themed( 'cart_scrollbar_color', '#d8bfd3', 'var(--zc-outline-variant)' );
 		if ( '' !== $scroll ) {
 			$css .= "{$s} .zymarg-tb-cart__items{--zc-scroll:{$scroll}}\n";
 		}
@@ -315,23 +356,31 @@ class Settings {
 		}
 
 		/* Product rows */
-		$css .= "{$s} .zymarg-tb-cart__item-title{color:" . self::get( 'cart_item_title_color', '#131b2e' ) . "}\n";
-		$css .= "{$s} .zymarg-tb-cart__item-price{color:" . self::get( 'cart_item_price_color', '#9500a5' ) . "}\n";
-		$css .= "{$s} .zymarg-tb-cart__item{border-bottom-color:" . self::get( 'cart_item_divider_color', '#eaedff' ) . "}\n";
-		$css .= "{$s} .zymarg-tb-cart__qty-btn{color:" . self::get( 'cart_qty_color', '#9500a5' ) . "}\n";
+		$css .= "{$s} .zymarg-tb-cart__item-title{color:" . self::themed( 'cart_item_title_color', '#131b2e', 'var(--zc-text-body)' ) . "}\n";
+		$css .= "{$s} .zymarg-tb-cart__item-price{color:" . self::themed( 'cart_item_price_color', '#9500a5', 'var(--zc-primary)' ) . "}\n";
+		$css .= "{$s} .zymarg-tb-cart__item{border-bottom-color:" . self::themed( 'cart_item_divider_color', '#eaedff', 'var(--zc-surface-container)' ) . "}\n";
+		$css .= "{$s} .zymarg-tb-cart__qty-btn{color:" . self::themed( 'cart_qty_color', '#9500a5', 'var(--zc-primary)' ) . "}\n";
 
-		/* Footer buttons */
+		/* Footer buttons — checkout background is the FIXED brand gradient
+		 * (never changes between modes), text stays a fixed light pink,
+		 * matching the pairing used everywhere else the fixed gradient
+		 * appears. Hover keeps the same fixed gradient (no colour shift on
+		 * hover) since a theme-reactive hover colour would go pale/washed
+		 * out in dark mode against a gradient that never changes. */
 		$btn_r = (int) self::get( 'cart_btn_radius', '10' );
 		$css .= "{$s} .zymarg-tb-cart__btn{border-radius:{$btn_r}px}\n";
-		$css .= "{$s} .zymarg-tb-cart__btn--primary{background:" . self::get( 'cart_checkout_bg', '#9500a5' ) . ";color:" . self::get( 'cart_checkout_color', '#ffd6fb' ) . "}\n";
-		$css .= "{$s} .zymarg-tb-cart__btn--primary:hover,{$s} .zymarg-tb-cart__btn--primary:focus-visible{background:" . self::get( 'cart_checkout_hover_bg', '#bd00d1' ) . "}\n";
-		$vc_color = self::get( 'cart_viewcart_color', '#9500a5' );
+		$checkout_bg    = self::themed( 'cart_checkout_bg', '#9500a5', 'var(--zym-gradient)' );
+		$checkout_color = self::themed( 'cart_checkout_color', '#ffd6fb', '#ffd6fb' );
+		$css .= "{$s} .zymarg-tb-cart__btn--primary{background:{$checkout_bg};color:{$checkout_color}}\n";
+		$checkout_hover_bg = self::themed( 'cart_checkout_hover_bg', '#bd00d1', 'var(--zym-gradient)' );
+		$css .= "{$s} .zymarg-tb-cart__btn--primary:hover,{$s} .zymarg-tb-cart__btn--primary:focus-visible{background:{$checkout_hover_bg};opacity:.9}\n";
+		$vc_color = self::themed( 'cart_viewcart_color', '#9500a5', 'var(--zc-primary)' );
 		$css .= "{$s} .zymarg-tb-cart__btn--outline{color:{$vc_color};border-color:{$vc_color}}\n";
 
 		/* Empty state */
-		$css .= "{$s} .zymarg-tb-cart__empty-icon{color:" . self::get( 'cart_empty_icon_color', '#857183' ) . "}\n";
-		$css .= "{$s} .zymarg-tb-cart__empty-title{color:" . self::get( 'cart_empty_title_color', '#131b2e' ) . "}\n";
-		$css .= "{$s} .zymarg-tb-cart__empty-text{color:" . self::get( 'cart_empty_text_color', '#534152' ) . "}\n";
+		$css .= "{$s} .zymarg-tb-cart__empty-icon{color:" . self::themed( 'cart_empty_icon_color', '#857183', 'var(--zc-outline)' ) . "}\n";
+		$css .= "{$s} .zymarg-tb-cart__empty-title{color:" . self::themed( 'cart_empty_title_color', '#131b2e', 'var(--zc-text-body)' ) . "}\n";
+		$css .= "{$s} .zymarg-tb-cart__empty-text{color:" . self::themed( 'cart_empty_text_color', '#534152', 'var(--zc-text-muted)' ) . "}\n";
 
 		return $css;
 	}
