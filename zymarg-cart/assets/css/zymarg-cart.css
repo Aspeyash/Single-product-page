@@ -32,47 +32,54 @@
    ============================================================================= */
 
 :root {
-    /* Palette — aliases onto the shared --zym-color-* brand tokens in
-       zymarg-tokens.css (single source of truth). Declared here again
-       only because this file must stay self-sufficient even if loaded
-       without zymarg-cart-vars.css; values are NOT redefined, only
-       re-pointed at the shared tokens so dark mode (which flips the
-       underlying --zym-color-* values under prefers-color-scheme: dark
-       in zymarg-tokens.css) now actually reaches these rules too. */
+    /* Palette — aliases onto the REAL shared --zym-* tokens in
+       zymarg-tokens.css (the canonical file also used by Vendor
+       Dashboard, Store Page, Single Product, and Reviews Engine).
+       Declared here again only because this file must stay
+       self-sufficient even if loaded without zymarg-cart-vars.css;
+       values are NOT redefined, only re-pointed at the real shared
+       tokens so dark mode ([data-theme="dark"], the site's actual
+       theme-toggle attribute) reaches these rules too. */
     --zc-primary:           var(--zym-color-primary);
-    --zc-primary-fixed:     var(--zym-color-primary-fixed);
-    --zc-primary-container: var(--zym-color-primary-container);
-    --zc-inverse-primary:   var(--zym-color-inverse-primary);
-    --zc-on-primary-fixed:  var(--zym-color-on-primary-fixed);
-    --zc-secondary:         var(--zym-color-secondary-brand);
-    --zc-secondary-container: var(--zym-color-secondary-container);
+    --zc-primary-fixed:     #ffd6fb;
+    --zc-primary-container: var(--zym-color-secondary);
+    --zc-inverse-primary:   var(--zym-color-accent);
+    --zc-on-primary-fixed:  var(--zym-color-dark);
+    --zc-secondary:         #505f76;
+    --zc-secondary-container: #d0e1fb;
 
     /* Text */
-    --zc-text-body:   var(--zym-color-text-body);
-    --zc-text-muted:  var(--zym-color-text-muted-brand);
+    --zc-text-body:   var(--zym-color-dark);
+    --zc-text-muted:  var(--zym-color-text);
 
     /* Outline */
-    --zc-outline:         var(--zym-color-outline);
-    --zc-outline-variant: var(--zym-color-outline-variant);
+    --zc-outline:         var(--zym-color-neutral-text);
+    --zc-outline-variant: var(--zym-color-border);
 
     /* Surfaces */
-    --zc-surface:           var(--zym-color-surface-component);
-    --zc-surface-container: var(--zym-color-surface-container);
-    --zc-surface-lowest:    var(--zym-color-surface-lowest);
-    --zc-inverse-surface:   var(--zym-color-inverse-surface);
+    --zc-surface:           var(--zym-color-bg);
+    --zc-surface-container: var(--zym-color-container);
+    --zc-surface-lowest:    var(--zym-color-surface);
+    --zc-inverse-surface:   #283044;
 
     /* Semantic */
     --zc-success-text: var(--zym-color-success-text);
     --zc-success-bg:   var(--zym-color-success-bg);
-    --zc-error-text:   var(--zym-color-error-text);
+    --zc-error-text:   var(--zym-color-error);
     --zc-error-bg:      var(--zym-color-error-bg);
-    --zc-warning-text: var(--zym-color-warning-text);
-    --zc-warning-bg:   var(--zym-color-warning-bg);
+    --zc-warning-text: var(--zym-color-warning);
+    --zc-warning-bg:   #faeeda;
 
     /* Motion */
-    --zc-transition-fast:   0.15s ease;
-    --zc-transition-normal: 0.3s ease;
+    --zc-transition-fast:   var(--zym-motion-fast);
+    --zc-transition-normal: var(--zym-motion-standard);
 }
+
+/* Dark-mode text-on-hover fix (reported regression): the product-row
+   hover background below (var(--zc-surface)) now correctly resolves to
+   the dark surface value under [data-theme="dark"], since --zc-surface
+   aliases the real --zym-color-bg token which flips in zymarg-tokens.css.
+   No separate override needed here — this comment documents why. */
 
 /* =============================================================================
    2. Shared Base Utilities
@@ -175,7 +182,7 @@
 
 .zymarg-delete-btn:hover:not(:disabled) {
     background-color: var(--zc-error-text);
-    color: var(--zym-color-surface-lowest);
+    color: var(--zym-color-surface);
 }
 
 .zymarg-delete-btn:disabled {
@@ -1654,11 +1661,19 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
    ============================================================================= */
 
 /* ── Extra brand tokens ──────────────────────────────────────────────────── */
+/* v2.2.0 regression fix: --zym-color-primary-container / -fixed /
+   inverse-primary / surface-lowest never existed in the real canonical
+   zymarg-tokens.css shared across the ZYMARG plugin suite. Every gradient
+   and shadow below silently resolved to nothing (transparent / no shadow)
+   because of it. Rebuilt using the REAL shared tokens: --zym-gradient
+   (the brand's own 3-stop gradient) and --zym-shadow-card /
+   --zym-shadow-card-hover, per the Design Tokens system's own gradient
+   and shadow tokens. */
 :root {
-    --zc-gradient-primary:  linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-primary-container) 100%);
-    --zc-gradient-soft:     linear-gradient(135deg, var(--zym-color-primary-fixed) 0%, var(--zym-color-inverse-primary) 100%);
-    --zc-shadow-card:       0 2px 12px rgba(149, 0, 165, 0.07);
-    --zc-shadow-hover:      0 4px 20px rgba(149, 0, 165, 0.12);
+    --zc-gradient-primary:  var(--zym-gradient);
+    --zc-gradient-soft:     linear-gradient(135deg, #ffd6fb 0%, var(--zym-color-accent) 100%);
+    --zc-shadow-card:       var(--zym-shadow-card);
+    --zc-shadow-hover:      var(--zym-shadow-card-hover);
     --zc-shadow-total:      0 -2px 20px rgba(149, 0, 165, 0.08);
     --zc-primary-10:        rgba(149, 0, 165, 0.08);
     --zc-primary-15:        rgba(149, 0, 165, 0.12);
@@ -1666,22 +1681,27 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 
 /* ── Widget 1 — Cart Header ─────────────────────────────────────────────── */
 
-/* v2.1.0: flattened from a two-stop gradient to a single solid brand color
-   per design decision — the "My Cart" bar now uses --zym-color-primary
-   directly instead of a gradient. */
+/* v2.2.0: restored to the brand's gradient (--zym-gradient) instead of a
+   flat solid color. The flat-color regression in v2.1.0 also silently
+   broke because it depended on a token that did not exist; this restores
+   the original "beautiful" appearance the user reported losing. */
 .zymarg-cart-header {
-    background: var(--zym-color-primary);
+    background: var(--zym-gradient);
     border: none;
     border-radius: 14px;
-    box-shadow: 0 4px 20px rgba(149, 0, 165, 0.22);
+    box-shadow: var(--zym-shadow-card-hover);
 }
 
 .zymarg-cart-icon {
-    color: var(--zym-color-primary-fixed);
+    color: #ffd6fb;
 }
 
 .zymarg-cart-title {
-    color: var(--zym-color-surface-lowest);
+    /* Fixed white, not --zym-color-surface: this sits on the fixed
+       --zym-gradient header background, which never changes in dark
+       mode, so its text colour must not change either — otherwise it
+       goes dark-on-purple and becomes unreadable. */
+    color: #fff;
     font-weight: 600;
     font-size: 17px;
 }
@@ -1692,7 +1712,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 }
 
 .zymarg-edit-btn {
-    color: var(--zym-color-primary-fixed);
+    color: #ffd6fb;
     border-color: rgba(255, 255, 255, 0.45);
     background: rgba(255, 255, 255, 0.12);
     border-radius: 20px;
@@ -1708,7 +1728,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 }
 
 .zymarg-delete-btn {
-    color: var(--zym-color-primary-fixed);
+    color: #ffd6fb;
     border-color: rgba(255, 255, 255, 0.45);
     background: rgba(220, 53, 69, 0.25);
     border-radius: 20px;
@@ -1734,7 +1754,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 }
 
 .zymarg-vendor-row {
-    background: linear-gradient(135deg, #f3e8ff 0%, var(--zym-color-surface-container) 100%);
+    background: linear-gradient(135deg, #f3e8ff 0%, var(--zym-color-container) 100%);
     border-bottom: 0.5px solid #e4d4f0;
     padding: 11px 16px;
 }
@@ -1746,7 +1766,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 }
 
 .zymarg-vendor-link:hover {
-    color: var(--zym-color-primary-container);
+    color: var(--zym-color-secondary);
 }
 
 .zymarg-vendor-item-count {
@@ -1760,14 +1780,14 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 
 /* Vendor avatar ring */
 .zymarg-vendor-avatar {
-    border: 2px solid var(--zym-color-primary-fixed);
+    border: 2px solid #ffd6fb;
     box-shadow: 0 0 0 1px rgba(149, 0, 165, 0.15);
 }
 
 /* Static vendor icon — colored pill background */
 .zymarg-vendor-static-icon {
     color: var(--zym-color-primary);
-    background: linear-gradient(135deg, var(--zym-color-primary-fixed) 0%, var(--zym-color-inverse-primary) 100%);
+    background: linear-gradient(135deg, #ffd6fb 0%, var(--zym-color-accent) 100%);
     border-radius: 50%;
     width: 28px;
     height: 28px;
@@ -1788,14 +1808,14 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 /* ── Table headers ──────────────────────────────────────────────────────── */
 
 .zymarg-table-header {
-    background: var(--zym-color-surface-component);
+    background: var(--zym-color-bg);
     border-bottom: 0.5px solid #e8d5f5;
 }
 
 .zymarg-th {
     font-size: 11px;
     font-weight: 600;
-    color: var(--zym-color-outline);
+    color: var(--zym-color-neutral-text);
     letter-spacing: 0.04em;
     text-transform: uppercase;
 }
@@ -1819,14 +1839,14 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 }
 
 .zymarg-product-row:hover .zymarg-product-img-wrap {
-    border-color: var(--zym-color-outline-variant);
+    border-color: var(--zym-color-border);
     box-shadow: 0 2px 8px rgba(149, 0, 165, 0.10);
 }
 
 /* Product title */
 .zymarg-product-title {
     font-weight: 500;
-    color: var(--zym-color-text-body);
+    color: var(--zym-color-dark);
 }
 
 .zymarg-product-title:hover {
@@ -1848,9 +1868,9 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 
 /* Variation labels */
 .zymarg-variation-labels {
-    color: var(--zym-color-outline);
+    color: var(--zym-color-neutral-text);
     font-size: 11px;
-    background: var(--zym-color-surface-component);
+    background: var(--zym-color-bg);
     border: 0.5px solid #e8d5f5;
     border-radius: 4px;
     padding: 1px 6px;
@@ -1862,8 +1882,8 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 .zymarg-variation-select {
     border-color: #e0d0ea;
     border-radius: 8px;
-    background: var(--zym-color-surface-component);
-    color: var(--zym-color-text-muted-brand);
+    background: var(--zym-color-bg);
+    color: var(--zym-color-text);
     font-size: 12px;
 }
 
@@ -1880,7 +1900,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 }
 
 .zymarg-qty-btn {
-    background: linear-gradient(135deg, var(--zym-color-primary-fixed) 0%, #f5c8f8 100%);
+    background: linear-gradient(135deg, #ffd6fb 0%, #f5c8f8 100%);
     color: var(--zym-color-primary);
     width: 28px;
     height: 28px;
@@ -1889,8 +1909,8 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 }
 
 .zymarg-qty-btn:hover:not(:disabled) {
-    background: linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-primary-container) 100%);
-    color: var(--zym-color-primary-fixed);
+    background: linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-secondary) 100%);
+    color: #ffd6fb;
 }
 
 .zymarg-qty-value {
@@ -1898,8 +1918,8 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
     height: 28px;
     font-weight: 600;
     font-size: 13px;
-    color: var(--zym-color-on-primary-fixed);
-    background: var(--zym-color-surface-lowest);
+    color: var(--zym-color-dark);
+    background: var(--zym-color-surface);
     border-color: #e0d0ea;
 }
 
@@ -1912,7 +1932,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 
 /* Save for later */
 .zymarg-save-later-btn {
-    color: var(--zym-color-outline);
+    color: var(--zym-color-neutral-text);
     font-size: 11px;
     gap: 4px;
     transition: color var(--zc-transition-fast);
@@ -1926,19 +1946,19 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 .zymarg-coupon-toggle {
     color: var(--zym-color-primary);
     font-weight: 500;
-    text-decoration-color: var(--zym-color-outline-variant);
+    text-decoration-color: var(--zym-color-border);
 }
 
 .zymarg-coupon-toggle:hover {
-    color: var(--zym-color-primary-container);
-    text-decoration-color: var(--zym-color-primary-container);
+    color: var(--zym-color-secondary);
+    text-decoration-color: var(--zym-color-secondary);
 }
 
 /* Coupon input */
 .zymarg-coupon-input {
     border-color: #e0d0ea;
     border-radius: 8px;
-    background: var(--zym-color-surface-component);
+    background: var(--zym-color-bg);
 }
 
 .zymarg-coupon-input:focus {
@@ -1955,8 +1975,8 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 }
 
 .zymarg-coupon-apply:hover {
-    background: linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-primary-container) 100%);
-    color: var(--zym-color-primary-fixed);
+    background: linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-secondary) 100%);
+    color: #ffd6fb;
     border-color: transparent;
 }
 
@@ -1969,7 +1989,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 /* ── Vendor subtotal row ────────────────────────────────────────────────── */
 
 .zymarg-vendor-subtotal-row {
-    background: linear-gradient(135deg, #fdf6ff 0%, var(--zym-color-surface-component) 100%);
+    background: linear-gradient(135deg, #fdf6ff 0%, var(--zym-color-bg) 100%);
     border-top: 0.5px solid #e8d5f5;
     padding: 10px 18px;
 }
@@ -1977,7 +1997,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 .zymarg-vendor-subtotal-label {
     font-size: 12px;
     font-weight: 500;
-    color: var(--zym-color-outline);
+    color: var(--zym-color-neutral-text);
 }
 
 .zymarg-vendor-subtotal-value {
@@ -1995,19 +2015,19 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 }
 
 .zymarg-saved-header {
-    background: linear-gradient(135deg, #fdf6ff 0%, var(--zym-color-surface-component) 100%);
+    background: linear-gradient(135deg, #fdf6ff 0%, var(--zym-color-bg) 100%);
     border-bottom: 0.5px solid #e8d5f5;
 }
 
 .zymarg-saved-header .zymarg-saved-title {
     font-weight: 600;
-    color: var(--zym-color-on-primary-fixed);
+    color: var(--zym-color-dark);
     font-size: 13px;
 }
 
 .zymarg-saved-count-badge {
-    background: linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-primary-container) 100%);
-    color: var(--zym-color-primary-fixed);
+    background: linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-secondary) 100%);
+    color: #ffd6fb;
     font-size: 11px;
     font-weight: 700;
     min-width: 22px;
@@ -2032,7 +2052,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 
 .zymarg-saved-info .zymarg-saved-title {
     font-weight: 500;
-    color: var(--zym-color-text-body);
+    color: var(--zym-color-dark);
 }
 
 .zymarg-saved-info .zymarg-saved-title:hover {
@@ -2046,13 +2066,13 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 }
 
 .zymarg-saved-var-labels {
-    color: var(--zym-color-outline);
+    color: var(--zym-color-neutral-text);
     font-size: 11px;
 }
 
 .zymarg-move-to-cart-btn {
-    background: linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-primary-container) 100%);
-    color: var(--zym-color-primary-fixed);
+    background: linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-secondary) 100%);
+    color: #ffd6fb;
     border-radius: 10px;
     font-weight: 500;
     font-size: 12px;
@@ -2062,7 +2082,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 }
 
 .zymarg-move-to-cart-btn:hover:not(:disabled) {
-    background: linear-gradient(135deg, var(--zym-color-primary-container) 0%, var(--zym-color-primary) 100%);
+    background: linear-gradient(135deg, var(--zym-color-secondary) 0%, var(--zym-color-primary) 100%);
     box-shadow: 0 4px 14px rgba(149, 0, 165, 0.28);
     opacity: 1;
 }
@@ -2070,7 +2090,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 .zymarg-remove-saved-btn {
     border-color: #e0d0ea;
     border-radius: 8px;
-    color: var(--zym-color-outline);
+    color: var(--zym-color-neutral-text);
 }
 
 .zymarg-remove-saved-btn:hover {
@@ -2090,7 +2110,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 
 /* Subtotal bar — gradient accent */
 .zymarg-subtotal-bar {
-    background: linear-gradient(135deg, #f3e8ff 0%, var(--zym-color-surface-container) 100%);
+    background: linear-gradient(135deg, #f3e8ff 0%, var(--zym-color-container) 100%);
     border-bottom: 0.5px solid #e4d4f0;
     padding: 12px 20px;
     transition: background var(--zc-transition-fast);
@@ -2101,18 +2121,18 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 }
 
 .zymarg-subtotal-bar-left {
-    color: var(--zym-color-text-muted-brand);
+    color: var(--zym-color-text);
     font-weight: 500;
     font-size: 13px;
 }
 
 .zymarg-subtotal-bar-label {
     font-weight: 600;
-    color: var(--zym-color-on-primary-fixed);
+    color: var(--zym-color-dark);
 }
 
 .zymarg-subtotal-bar-count {
-    color: var(--zym-color-outline);
+    color: var(--zym-color-neutral-text);
     font-weight: 400;
 }
 
@@ -2128,7 +2148,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 
 /* Breakdown panel */
 .zymarg-breakdown-inner {
-    background: var(--zym-color-surface-lowest);
+    background: var(--zym-color-surface);
 }
 
 .zymarg-breakdown-panel.breakdown-open .zymarg-breakdown-inner {
@@ -2137,13 +2157,13 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 
 .zymarg-total-label {
     font-size: 13px;
-    color: var(--zym-color-text-muted-brand);
+    color: var(--zym-color-text);
     font-weight: 400;
 }
 
 .zymarg-total-value {
     font-size: 13px;
-    color: var(--zym-color-text-body);
+    color: var(--zym-color-dark);
     font-weight: 500;
 }
 
@@ -2155,7 +2175,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 .zymarg-total-row--grand .zymarg-total-label {
     font-size: 14px;
     font-weight: 700;
-    color: var(--zym-color-text-body);
+    color: var(--zym-color-dark);
 }
 
 .zymarg-total-row--grand .zymarg-total-value {
@@ -2192,14 +2212,14 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 
 /* Action bar */
 .zymarg-action-bar {
-    background: linear-gradient(135deg, #fdf6ff 0%, var(--zym-color-surface-component) 100%);
+    background: linear-gradient(135deg, #fdf6ff 0%, var(--zym-color-bg) 100%);
     border-top: 0.5px solid #e8d5f5;
     padding: 14px 20px;
 }
 
 .zymarg-selected-label {
     font-size: 12px;
-    color: var(--zym-color-outline);
+    color: var(--zym-color-neutral-text);
     font-weight: 500;
 }
 
@@ -2219,8 +2239,8 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 
 /* Checkout button — full gradient */
 .zymarg-checkout-btn {
-    background: linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-primary-container) 100%);
-    color: var(--zym-color-primary-fixed);
+    background: linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-secondary) 100%);
+    color: #ffd6fb;
     border-radius: 12px;
     font-size: 14px;
     font-weight: 600;
@@ -2233,7 +2253,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 }
 
 .zymarg-checkout-btn:hover:not(:disabled) {
-    background: linear-gradient(135deg, var(--zym-color-primary-container) 0%, var(--zym-color-primary) 100%);
+    background: linear-gradient(135deg, var(--zym-color-secondary) 0%, var(--zym-color-primary) 100%);
     box-shadow: 0 6px 24px rgba(149, 0, 165, 0.40);
     transform: translateY(-1px);
 }
@@ -2288,17 +2308,17 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 .zymarg-empty-message {
     font-size: 16px;
     font-weight: 600;
-    color: var(--zym-color-on-primary-fixed);
+    color: var(--zym-color-dark);
 }
 
 .zymarg-empty-sub {
-    color: var(--zym-color-outline);
+    color: var(--zym-color-neutral-text);
     font-size: 13px;
 }
 
 .zymarg-continue-shopping {
-    background: linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-primary-container) 100%);
-    color: var(--zym-color-primary-fixed);
+    background: linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-secondary) 100%);
+    color: #ffd6fb;
     border-radius: 12px;
     font-size: 14px;
     font-weight: 600;
@@ -2308,10 +2328,10 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 }
 
 .zymarg-continue-shopping:hover {
-    background: linear-gradient(135deg, var(--zym-color-primary-container) 0%, var(--zym-color-primary) 100%);
+    background: linear-gradient(135deg, var(--zym-color-secondary) 0%, var(--zym-color-primary) 100%);
     box-shadow: 0 6px 24px rgba(149, 0, 165, 0.38);
     transform: translateY(-1px);
-    color: var(--zym-color-primary-fixed);
+    color: #ffd6fb;
 }
 
 /* ── Edit mode visual update ────────────────────────────────────────────── */
@@ -2354,18 +2374,19 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
    ============================================================================= */
 
 /* ── Fix 1: Cart icon color on header background ────────────────────────────
-   The header background is a solid brand primary color (--zym-color-primary).
-   #ffd6fb (light pink) is too close to white and washes out against it.
-   White (--zym-color-surface-lowest) gives maximum contrast and looks clean. */
+   The header background is the fixed --zym-gradient (never changes between
+   light/dark mode). Fixed white (#fff), NOT --zym-color-surface: that
+   token flips to near-black in dark mode, which would put dark icons on
+   a still-purple gradient and make them disappear. */
 .zymarg-cart-header .zymarg-cart-icon {
-    color: var(--zym-color-surface-lowest);
+    color: #fff;
     opacity: 1;
 }
 
 /* Also ensure the icon SVG inherits the white */
 .zymarg-cart-header .zymarg-cart-icon svg {
-    color: var(--zym-color-surface-lowest);
-    stroke: var(--zym-color-surface-lowest);
+    color: #fff;
+    stroke: #fff;
 }
 
 /* ── Fix 2: Vendor row — center-align icon, avatar, and name vertically ─────

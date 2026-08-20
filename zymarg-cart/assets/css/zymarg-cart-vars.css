@@ -1,6 +1,6 @@
 /*
  * ZYMARG Cart — CSS Custom Properties
- * Standalone Cart Page Edition v2.0.0
+ * Standalone Cart Page Edition v2.2.0
  *
  * This file declares all CSS custom properties used throughout the plugin.
  * It is prepended to zymarg-cart.css via wp_enqueue_style dependency.
@@ -9,85 +9,90 @@
  *  - The page/body background is NOT set here. It inherits from the active
  *    WordPress theme (Astra) so the cart page adapts to your theme's colours.
  *  - All component-level colours (cards, buttons, rows) use --zc-* tokens,
- *    which are now thin aliases onto the shared --zym-color-* brand tokens
- *    declared in zymarg-tokens.css (single source of truth — see the
- *    ZYMARG Design Tokens doc). Never redefine a --zym-* value here.
- *  - Dark mode uses @media (prefers-color-scheme: dark) so it respects the
- *    visitor's OS/browser preference automatically. The dark values also
- *    come from the shared tokens file, which already flips automatically
- *    under the same media query.
+ *    which are thin aliases onto the REAL shared --zym-* tokens declared in
+ *    zymarg-tokens.css (the canonical file also used by ZYMARG Vendor
+ *    Dashboard, Store Page, Single Product, and Reviews Engine). Never
+ *    redefine a --zym-* value here, and never invent a --zym-* name that
+ *    does not exist in the canonical file — every ZYMARG plugin shares the
+ *    same `zymarg-tokens` enqueue handle, so whichever plugin loads first
+ *    "wins" and supplies the file for everyone else. A --zc-* alias
+ *    pointing at a token that does not exist in the canonical file
+ *    resolves to nothing (transparent), which is exactly what happened in
+ *    v2.1.0 and is fixed here.
+ *  - Dark mode is driven by [data-theme="dark"] on <html>, set by the
+ *    site's theme toggle (NOT the OS-level prefers-color-scheme, which is
+ *    an unrelated signal). The dark values live in zymarg-tokens.css and
+ *    flip automatically under that same selector.
  */
 
 /* ============================================================
-   Light mode tokens (default) — aliases onto shared --zym-* tokens
+   Light mode tokens (default) — aliases onto the REAL shared
+   --zym-* tokens in zymarg-tokens.css.
    ============================================================ */
 :root {
   /* ── Primary brand ─────────────────────────────────────── */
   --zc-primary:            var(--zym-color-primary);
-  --zc-primary-container:  var(--zym-color-primary-container);  /* hover / gradient end */
-  --zc-inverse-primary:    var(--zym-color-inverse-primary);    /* soft accent / on-dark */
-  --zc-primary-fixed:      var(--zym-color-primary-fixed);      /* stable tint surfaces  */
-  --zc-on-primary-fixed:   var(--zym-color-on-primary-fixed);   /* text on primary fixed  */
+  --zc-primary-container:  var(--zym-color-secondary);      /* hover / gradient end */
+  --zc-inverse-primary:    var(--zym-color-accent);         /* soft accent / on-dark */
+  --zc-primary-fixed:      #ffd6fb;                         /* stable tint surface — no canonical token, fixed brand value */
+  --zc-on-primary-fixed:   var(--zym-color-dark);           /* text on primary fixed */
 
   /* ── Secondary ─────────────────────────────────────────── */
-  --zc-secondary:           var(--zym-color-secondary-brand);
-  --zc-secondary-container: var(--zym-color-secondary-container);
+  --zc-secondary:           #505f76;   /* no canonical equivalent — unique to this plugin's neutral-blue accents */
+  --zc-secondary-container: #d0e1fb;
 
   /* ── Surface (components only — NOT the page background) ── */
-  --zc-surface:           var(--zym-color-surface-component);  /* widget containers      */
-  --zc-surface-container: var(--zym-color-surface-container);  /* vendor row bg, headers */
-  --zc-surface-lowest:    var(--zym-color-surface-lowest);     /* card / row bg          */
-  --zc-inverse-surface:   var(--zym-color-inverse-surface);    /* dark elements          */
+  --zc-surface:           var(--zym-color-bg);           /* widget containers      */
+  --zc-surface-container: var(--zym-color-container);    /* vendor row bg, headers */
+  --zc-surface-lowest:    var(--zym-color-surface);      /* card / row bg          */
+  --zc-inverse-surface:   #283044;                       /* dark elements — no canonical equivalent */
 
   /* ── Text ──────────────────────────────────────────────── */
-  --zc-text-body:  var(--zym-color-text-body);
-  --zc-text-muted: var(--zym-color-text-muted-brand);
+  --zc-text-body:  var(--zym-color-dark);
+  --zc-text-muted: var(--zym-color-text);
 
   /* ── Borders ────────────────────────────────────────────── */
-  --zc-outline:         var(--zym-color-outline);
-  --zc-outline-variant: var(--zym-color-outline-variant);
+  --zc-outline:         var(--zym-color-neutral-text);
+  --zc-outline-variant: var(--zym-color-border);
 
   /* ── Semantic / status ──────────────────────────────────── */
   --zc-success-bg:   var(--zym-color-success-bg);
   --zc-success-text: var(--zym-color-success-text);
   --zc-error-bg:     var(--zym-color-error-bg);
-  --zc-error-text:   var(--zym-color-error-text);
-  --zc-warning-bg:   var(--zym-color-warning-bg);
-  --zc-warning-text: var(--zym-color-warning-text);
+  --zc-error-text:   var(--zym-color-error);
+  --zc-warning-bg:   #faeeda;   /* no canonical warning-bg token */
+  --zc-warning-text: var(--zym-color-warning);
 
   /* ── Radii ──────────────────────────────────────────────── */
   --zc-radius-sm: 8px;   /* inputs, steppers */
-  --zc-radius-md: 12px;  /* cards, blocks    */
-  --zc-radius-lg: 20px;  /* pills, badges    */
+  --zc-radius-md: var(--zym-radius-card);  /* 16px — cards, blocks */
+  --zc-radius-lg: var(--zym-radius-pill);  /* pills, badges */
 
-  /* ── Elevation ──────────────────────────────────────────── */
-  --zc-shadow: 0 4px 20px rgba(149, 0, 165, 0.08);
+  /* ── Elevation — real shared shadow tokens (steering: use --zym-shadow-*) ── */
+  --zc-shadow: var(--zym-shadow-card);
 
   /* ── Transitions ────────────────────────────────────────── */
-  --zc-transition-fast:   0.15s ease;
-  --zc-transition-normal: 0.3s ease;
+  --zc-transition-fast:   var(--zym-motion-fast);
+  --zc-transition-normal: var(--zym-motion-standard);
   --zc-transition-slow:   0.5s ease;
 
-  /* ── Gradients (used in buttons, vendor headers) ─────────── */
-  --zc-gradient-primary: linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-primary-container) 100%);
-  --zc-gradient-soft:    linear-gradient(135deg, var(--zym-color-inverse-primary) 0%, var(--zym-color-primary-container) 100%);
+  /* ── Gradients — real shared gradient token (steering: use --zym-gradient) ── */
+  --zc-gradient-primary: var(--zym-gradient);
+  --zc-gradient-soft:    linear-gradient(135deg, var(--zym-color-accent) 0%, var(--zym-color-secondary) 100%);
   --zc-gradient-dark:    linear-gradient(135deg, #1a1a2e 0%, var(--zym-color-primary) 100%);
 }
 
 /* ============================================================
    Dark mode — the --zc-* aliases above already resolve to the
-   shared --zym-color-* dark values automatically, because
-   zymarg-tokens.css flips those tokens under the same
-   prefers-color-scheme: dark media query. No duplicate values
-   needed here. Only properties with NO --zym-* equivalent (the
-   gradient direction and the elevation shadow) are adjusted.
+   shared --zym-* dark values automatically, because
+   zymarg-tokens.css flips those tokens under [data-theme="dark"]
+   (the site's actual theme-toggle attribute). No duplicate
+   values needed here for anything with a canonical token.
    ============================================================ */
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* Gradient direction flips in dark mode (lighter end first) */
-    --zc-gradient-primary: linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-primary-container) 100%);
-    --zc-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
-  }
+[data-theme="dark"] {
+  --zc-shadow: var(--zym-shadow-card);
+  --zc-inverse-surface: #eaedff;
+  --zc-secondary-container: #2c2533;
 }
 
 /* ============================================================

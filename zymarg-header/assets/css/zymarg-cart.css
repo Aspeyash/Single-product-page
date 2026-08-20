@@ -34,25 +34,32 @@
 
 
 .z-hdr-cart-root .zymarg-tb-cart {
-	/* Aliases onto the shared --zym-color-* brand tokens in
-	   zymarg-tokens.css (single source of truth). Dark mode is inherited
-	   automatically since zymarg-tokens.css flips these values under
-	   prefers-color-scheme: dark. */
+	/* Aliases onto the REAL shared --zym-* brand tokens in
+	   zymarg-tokens.css (the canonical file also used by Vendor
+	   Dashboard / Store Page / Single Product / Reviews Engine). Dark
+	   mode is inherited automatically since zymarg-tokens.css flips
+	   these values under [data-theme="dark"] (the site's actual
+	   theme-toggle attribute, not the OS-level prefers-color-scheme).
+	   v1.3.0 regression fix: every --zc-* alias below previously pointed
+	   at a --zym-color-* name that does not exist in the canonical file
+	   (e.g. --zym-color-primary-fixed, --zym-color-text-body), so it
+	   resolved to nothing. That is why the cart trigger text and icon
+	   went invisible, especially in dark mode. */
 	--zc-primary: var(--zym-color-primary);
-	--zc-primary-fixed: var(--zym-color-primary-fixed);
-	--zc-primary-container: var(--zym-color-primary-container);
-	--zc-text-body: var(--zym-color-text-body);
-	--zc-text-muted: var(--zym-color-text-muted-brand);
-	--zc-outline: var(--zym-color-outline);
-	--zc-outline-variant: var(--zym-color-outline-variant);
-	--zc-surface: var(--zym-color-surface-component);
-	--zc-surface-container: var(--zym-color-surface-container);
-	--zc-surface-lowest: var(--zym-color-surface-lowest);
-	--zc-error-text: var(--zym-color-error-text);
+	--zc-primary-fixed: #ffd6fb;
+	--zc-primary-container: var(--zym-color-secondary);
+	--zc-text-body: var(--zym-color-dark);
+	--zc-text-muted: var(--zym-color-text);
+	--zc-outline: var(--zym-color-neutral-text);
+	--zc-outline-variant: var(--zym-color-border);
+	--zc-surface: var(--zym-color-bg);
+	--zc-surface-container: var(--zym-color-container);
+	--zc-surface-lowest: var(--zym-color-surface);
+	--zc-error-text: var(--zym-color-error);
 	--zc-error-bg: var(--zym-color-error-bg);
-	--zc-fast: 0.15s ease;
-	--zc-normal: 0.3s ease;
-	--zc-scroll: var(--zym-color-outline-variant);
+	--zc-fast: var(--zym-motion-fast);
+	--zc-normal: var(--zym-motion-standard);
+	--zc-scroll: var(--zym-color-border);
 	--zc-badge-x: -8px;
 	--zc-badge-y: -6px;
 
@@ -109,8 +116,12 @@
 	width: 22px; /* match Account / Wishlist icon size @since 1.1.7 */
 	height: 22px;
 	display: block;
-	/* Match Account / Wishlist icon stroke style @since 1.1.8 */
-	stroke: #4a2a50;
+	/* Match Account / Wishlist icon stroke style @since 1.1.8.
+	   Dark-mode fix: was a hardcoded hex (#4a2a50) that stayed dark and
+	   became invisible against a dark page. --zc-text-body now aliases
+	   the real --zym-color-dark token, which flips to a light value
+	   under [data-theme="dark"]. */
+	stroke: var(--zc-text-body);
 	fill: none;
 	stroke-width: 1.8;
 	stroke-linecap: round;
@@ -131,7 +142,11 @@
 
 .z-hdr-cart-root .zymarg-tb-cart__text {
 	font-size: 10.5px; /* match Account / Wishlist label size @since 1.1.7 */
-	color: #7a5a80; /* match Account / Wishlist label colour @since 1.1.8 */
+	/* Dark-mode fix: was a hardcoded hex (#7a5a80) that stayed dark and
+	   became invisible against a dark page. --zc-text-muted now aliases
+	   the real --zym-color-text token, which flips to a light value
+	   under [data-theme="dark"]. */
+	color: var(--zc-text-muted);
 	white-space: nowrap;
 }
 
@@ -169,8 +184,12 @@
 	font-size: 9.5px;
 	font-weight: 700;
 	line-height: 1;
-	color: var(--zym-color-surface-lowest);
-	background: linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-primary-container) 100%) !important;
+	/* Fixed white, not --zym-color-surface: this badge sits on the fixed
+	   brand gradient, which never changes in dark mode, so its text
+	   colour must stay fixed too (see .z-hdr-seller-btn comment in
+	   zymarg-header.css for the full explanation). */
+	color: #fff;
+	background: var(--zym-gradient) !important;
 	border-radius: 20px;
 	border: 2px solid #fff;
 	pointer-events: none;

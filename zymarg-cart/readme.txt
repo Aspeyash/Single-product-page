@@ -4,7 +4,7 @@ Tags: woocommerce, cart, multi-vendor, dokan, marketplace
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.1
-Stable tag: 2.1.0
+Stable tag: 2.2.0
 License: Proprietary
 
 A fully custom, standalone WooCommerce cart page for the ZYMARG multi-vendor marketplace.
@@ -32,6 +32,34 @@ Features:
 - i18n ready (.pot file included)
 
 == Changelog ==
+
+= 2.2.0 =
+* CRITICAL FIX: v2.1.0 introduced brand-new token names (e.g. --zym-color-primary-container,
+  --zym-color-surface-lowest, --zym-color-outline-variant) into this plugin's copy of the
+  shared zymarg-tokens.css that DO NOT EXIST in the real canonical file used by ZYMARG
+  Vendor Dashboard, Store Page, Single Product, and Reviews Engine. Because every ZYMARG
+  plugin shares one `zymarg-tokens` enqueue handle and WordPress loads only whichever
+  plugin registers it first, the real canonical file won on the live site and every
+  reference to an invented token resolved to nothing — causing missing backgrounds on
+  the "Become a Seller" pill, the wishlist/cart count badges, the header bar, the "My
+  Cart" bar, and the checkout button. Fixed by replacing zymarg-tokens.css with the
+  exact byte-identical canonical file, and remapping every --zc-* alias and inline
+  CSS reference to the REAL shared token names.
+* CRITICAL FIX: dark mode was wired to @media (prefers-color-scheme: dark) — the OS-level
+  preference — instead of [data-theme="dark"], which is the attribute the site's actual
+  theme toggle sets on <html>. Dark-mode color changes never activated on the real
+  toggle. Fixed to use [data-theme="dark"], matching the canonical token file.
+* Fixed: several places used a theme-reactive token (--zym-color-surface, which flips
+  to near-black in dark mode) as the text/icon color sitting on the FIXED brand
+  gradient (--zym-gradient, which never changes between light/dark mode by design).
+  In dark mode this produced near-invisible dark-on-purple text — affecting the
+  "Become a Seller" pill, wishlist/cart badges, and the "My Cart" bar title/icon.
+  Fixed to a permanently fixed white value for text/icons on the gradient.
+* Restored: the "My Cart" header bar background from a flat solid color back to the
+  brand's --zym-gradient (3-stop gradient), and restored --zym-shadow-card /
+  --zym-shadow-card-hover for card depth, per design token usage.
+* Fixed a PHP syntax error (unescaped apostrophe inside a single-quoted string)
+  introduced in the v2.1.0 admin CSS comment.
 
 = 2.1.0 =
 * Changed: All brand colors (--zc-* custom properties) are now thin aliases onto
