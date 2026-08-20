@@ -2,22 +2,33 @@
    ZYMARG Single Product — Admin CSS v1.0.0
    ============================================================ */
 
+/* v2.5.1 - colour / gradient / shadow values now resolve from the shared
+   ZYMARG Design Tokens (--zym-*), with the original literal kept as the
+   var() fallback so nothing changes if that stylesheet ever fails to load.
+   These tokens are declared in the SHARED :root block of zymarg-tokens.css,
+   which cascades into wp-admin the same as any other :root value - no
+   .zymarg-admin wrapper class is needed (that class is owned by the ZYMARG
+   Vendor Dashboard plugin; see zymarg-sp-admin.css's own scoping note in
+   the Store Page plugin, which this mirrors). Radius values are layout, not
+   colour, and are left exactly as they were. */
 :root {
-  --zsp-primary:      #9500a5;
-  --zsp-primary-hover:#bd00d1;
-  --zsp-primary-light:#fea9ff;
+  --zsp-primary:      var(--zym-color-primary, #9500a5);
+  --zsp-primary-hover:var(--zym-color-secondary, #bd00d1);
+  --zsp-primary-light:var(--zym-color-accent, #fea9ff);
+  /* No equivalent brand token exists for this exact shade - left literal. */
   --zsp-dark-purple:  #6b0077;
-  --zsp-surface:      #ffffff;
-  --zsp-surface-alt:  #f8f9fa;
-  --zsp-text:         #1a1a2e;
-  --zsp-text-muted:   #6c757d;
-  --zsp-border:       #dee2e6;
+  --zsp-surface:      var(--zym-color-surface, #ffffff);
+  --zsp-surface-alt:  var(--zym-color-surface-alt, #f8f9fa);
+  --zsp-text:         var(--zym-color-text, #1a1a2e);
+  --zsp-text-muted:   var(--zym-color-neutral-text, #6c757d);
+  --zsp-border:       var(--zym-color-border, #dee2e6);
+  /* No "success" token exists in the brand system - left literal. */
   --zsp-success:      #28a745;
   --zsp-radius-sm:    8px;
   --zsp-radius-md:    12px;
   --zsp-radius-lg:    20px;
-  --zsp-shadow:       0 4px 20px rgba(149,0,165,.1);
-  --zsp-grad:         linear-gradient(135deg,#9500a5 0%,#bd00d1 100%);
+  --zsp-shadow:       var(--zym-shadow-card, 0 4px 20px rgba(149,0,165,.1));
+  --zsp-grad:         var(--zym-gradient, linear-gradient(135deg,#9500a5 0%,#bd00d1 100%));
 }
 
 /* ── Wrapper ─────────────────────────────────────────────── */
@@ -30,11 +41,32 @@
 .zymarg-single-product-admin * { box-sizing: border-box; }
 
 /* ── Header ──────────────────────────────────────────────── */
+/* v2.5.1 - redesigned per ZYMARG Design Tokens Part 3, rule 4: "Never place
+   the Spark on a coloured or gradient background. It needs white or a light
+   tint to read." The header was previously a full-bleed gradient fill, which
+   is also its own separate violation of Part 2's HEADER component spec
+   ("Surface background... A 3px gradient strip across the top edge. Never a
+   full-bleed gradient bar."). Rebuilt to match Store Page's .zsp-header
+   exactly: white surface, 1px border, shadow, 3px gradient strip on the top
+   edge only via ::before. This is a deliberate, approved visual change
+   (Option A) -- the header goes from solid purple to white with a thin
+   purple top strip. Nothing below the header (tabs, panels, fields) changes. */
 .zymarg-single-product-admin__header {
-  background: var(--zsp-grad);
+  position: relative;
+  background: var(--zsp-surface);
+  border: 1px solid var(--zsp-border);
   border-radius: var(--zsp-radius-md);
+  box-shadow: var(--zsp-shadow);
   padding: 20px 28px;
-  margin-bottom: 0;
+  margin-bottom: 18px;
+  overflow: hidden;
+}
+.zymarg-single-product-admin__header::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: var(--zsp-grad);
 }
 .zymarg-single-product-admin__header-inner {
   display: flex;
@@ -44,21 +76,45 @@
   flex-wrap: wrap;
 }
 .zymarg-single-product-admin__logo { display: flex; align-items: center; gap: 14px; }
-.zymarg-single-product-admin__logo-icon { font-size: 2rem; line-height: 1; }
-.zymarg-single-product-admin__title { color: #fff; font-size: 1.4rem; font-weight: 800; margin: 0; padding: 0; border: none; line-height: 1.2; }
-.zymarg-single-product-admin__version { color: rgba(255,255,255,.7); font-size: .8rem; margin: 2px 0 0; }
+/* v2.5.1 - the emoji glyph is replaced by the Discovery Spark (rendered by
+   zymarg_sngl_spark() in class-admin.php); this class now sizes/positions
+   that mark instead of an icon font. Per Part 3 rule 5, size with
+   width/height, never transform: scale, which would leave the lens offset
+   behind -- the .zymarg-spark--header class (44x44) already does this. */
+.zymarg-single-product-admin__logo-icon { flex-shrink: 0; }
+.zymarg-single-product-admin__title { color: var(--zsp-primary); font-size: 1.4rem; font-weight: 800; margin: 0; padding: 0; border: none; line-height: 1.2; }
+.zymarg-single-product-admin__version { color: var(--zsp-text-muted); font-size: .8rem; margin: 2px 0 0; }
 
 .zymarg-single-product-admin__save-btn {
   display: inline-flex; align-items: center; gap: 8px;
-  background: #fff; color: var(--zsp-primary);
+  background: var(--zsp-grad); color: var(--zsp-surface);
   border: none; border-radius: var(--zsp-radius-lg);
   padding: 10px 22px; font-size: .9rem; font-weight: 700;
   cursor: pointer; transition: .2s;
-  box-shadow: 0 2px 8px rgba(0,0,0,.15);
+  box-shadow: 0 2px 8px rgba(149,0,165,.25);
 }
-.zymarg-single-product-admin__save-btn:hover { background: var(--zsp-primary-light); }
-.zymarg-single-product-admin__save-btn.is-saving { opacity: .7; pointer-events: none; }
+.zymarg-single-product-admin__save-btn:hover { filter: brightness(1.08); box-shadow: 0 4px 12px rgba(149,0,165,.32); }
+/* v2.5.1 - loading feedback while saving is a small Discovery Spark shown
+   BESIDE the button (see .zymarg-single-product-admin__save-loading below),
+   never inside it. The button itself is just disabled + dimmed, matching
+   ZYMARG Store Page's own save button ([disabled] { opacity: 0.6 }) --
+   the button's background is the brand gradient, and Design Tokens Part 3
+   rule 4 explicitly bans placing the Spark on a coloured or gradient
+   background ("It needs white or a light tint to read"). Putting it on
+   the header's white surface instead keeps the mark legible and animating,
+   per the rule that a static Spark is a bug. This also finally replaces the
+   `spin` keyframe that zymarg-single-product-admin.js referenced but that
+   was never defined anywhere in this file, so it had never actually run. */
+.zymarg-single-product-admin__save-btn.is-saving { opacity: .6; pointer-events: none; cursor: progress; }
 .zymarg-single-product-admin__save-btn svg { flex-shrink: 0; }
+
+.zymarg-single-product-admin__save-loading {
+  display: none;
+  align-items: center;
+  gap: 10px;
+}
+.zymarg-single-product-admin__save-loading.is-active { display: inline-flex; }
+.zymarg-single-product-admin__save-loading .zymarg-loading__text { color: var(--zsp-text-muted); }
 
 /* ── Status bar ──────────────────────────────────────────── */
 .zymarg-single-product-admin__status {
@@ -233,13 +289,15 @@
 }
 
 /* v2.0.0 - Reviews tab hand-off notes. */
+/* v2.5.1 - these were raw hex values with no variable at all, not even a
+   local --zsp-* one. Now resolve through the shared --zym-* tokens. */
 .zymarg-single-product-admin__note {
 	margin: 0 0 12px;
 	padding: 12px 14px;
 	border-radius: 10px;
-	background: #f7f7fb;
-	border-left: 3px solid #9500a5;
-	color: #1a1a2e;
+	background: var(--zym-color-surface-alt, #f7f7fb);
+	border-left: 3px solid var(--zym-color-primary, #9500a5);
+	color: var(--zym-color-text, #1a1a2e);
 	font-size: 13px;
 	line-height: 1.6;
 }
@@ -271,7 +329,7 @@
 .zymarg-sp-sections__list code,
 .zymarg-sp-sections__lede code {
 	background: #faf0fc;
-	color: #9500a5;
+	color: var(--zym-color-primary, #9500a5); /* v2.5.1 - was a raw hex with no variable */
 	padding: 2px 6px;
 	border-radius: 4px;
 	font-size: 12px;
@@ -287,14 +345,14 @@
 .zymarg-sp-section-row {
 	border: 1px solid #f0d6f3;
 	border-radius: 12px;
-	background: #fff;
+	background: var(--zym-color-surface, #fff); /* v2.5.1 - was a raw hex with no variable */
 	padding: 14px 16px;
 	box-shadow: 0 2px 10px rgba(149, 0, 165, 0.06);
 	transition: border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
 }
 
 .zymarg-sp-section-row:hover {
-	border-color: #bd00d1;
+	border-color: var(--zym-color-secondary, #bd00d1); /* v2.5.1 - was a raw hex with no variable */
 	box-shadow: 0 4px 16px rgba(149, 0, 165, 0.12);
 }
 
@@ -312,7 +370,7 @@
 
 .zymarg-sp-section-row__handle {
 	cursor: grab;
-	color: #9500a5;
+	color: var(--zym-color-primary, #9500a5); /* v2.5.1 - was a raw hex with no variable */
 	font-size: 18px;
 	letter-spacing: -3px;
 	user-select: none;
@@ -336,7 +394,7 @@
 .zymarg-sp-section-row__remove {
 	flex: 0 0 auto;
 	border: 1px solid #f0d6f3;
-	background: #fff;
+	background: var(--zym-color-surface, #fff); /* v2.5.1 - was a raw hex with no variable */
 	color: #b32d2e;
 	border-radius: 8px;
 	width: 30px;
@@ -360,7 +418,7 @@
 }
 
 .zymarg-sp-section-row__placeholder {
-	border: 2px dashed #bd00d1;
+	border: 2px dashed var(--zym-color-secondary, #bd00d1); /* v2.5.1 - was a raw hex with no variable */
 	border-radius: 12px;
 	background: #faf0fc;
 	margin-bottom: 12px;
@@ -370,8 +428,8 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
-	background: linear-gradient(135deg, #9500a5 0%, #bd00d1 100%);
-	color: #fff;
+	background: var(--zym-gradient, linear-gradient(135deg, #9500a5 0%, #bd00d1 100%)); /* v2.5.1 - was a raw hex gradient with no variable */
+	color: var(--zym-color-surface, #fff);
 	border: 0;
 	border-radius: 20px;
 	padding: 9px 20px;
@@ -396,7 +454,7 @@
 	border-radius: 20px;
 	background: #faf0fc;
 	border: 1px solid #f0d6f3;
-	color: #9500a5;
+	color: var(--zym-color-primary, #9500a5); /* v2.5.1 - was a raw hex with no variable */
 	font-family: Menlo, Consolas, monospace;
 	font-size: 11px;
 	font-weight: 600;
@@ -405,9 +463,9 @@
 
 .zymarg-sp-section-row__edit {
 	flex: 0 0 auto;
-	background: #fff;
-	border: 1px solid #9500a5;
-	color: #9500a5;
+	background: var(--zym-color-surface, #fff); /* v2.5.1 - was a raw hex with no variable */
+	border: 1px solid var(--zym-color-primary, #9500a5); /* v2.5.1 - was a raw hex with no variable */
+	color: var(--zym-color-primary, #9500a5); /* v2.5.1 - was a raw hex with no variable */
 	border-radius: 20px;
 	padding: 5px 16px;
 	font-size: 12px;
@@ -421,9 +479,9 @@
 }
 
 .zymarg-sp-section-row__edit.is-editing {
-	background: linear-gradient(135deg, #9500a5 0%, #bd00d1 100%);
+	background: var(--zym-gradient, linear-gradient(135deg, #9500a5 0%, #bd00d1 100%)); /* v2.5.1 - was a raw hex gradient with no variable */
 	border-color: transparent;
-	color: #fff;
+	color: var(--zym-color-surface, #fff); /* v2.5.1 - was a raw hex with no variable */
 }
 
 /* Locked rows read as documentation, not as a form. */
@@ -480,7 +538,7 @@
 
 .zymarg-sp-section-row__hint code {
 	background: #faf0fc;
-	color: #9500a5;
+	color: var(--zym-color-primary, #9500a5); /* v2.5.1 - was a raw hex with no variable */
 	padding: 1px 5px;
 	border-radius: 4px;
 	font-size: 11px;
@@ -510,7 +568,7 @@
 }
 
 .zymarg-sp-sections__restore {
-	background: #fff;
+	background: var(--zym-color-surface, #fff); /* v2.5.1 - was a raw hex with no variable */
 	border: 1px solid #dcdcde;
 	color: #50575e;
 	border-radius: 20px;
@@ -522,8 +580,8 @@
 }
 
 .zymarg-sp-sections__restore:hover {
-	border-color: #9500a5;
-	color: #9500a5;
+	border-color: var(--zym-color-primary, #9500a5); /* v2.5.1 - was a raw hex with no variable */
+	color: var(--zym-color-primary, #9500a5); /* v2.5.1 - was a raw hex with no variable */
 }
 
 .zymarg-sp-sections__restore:disabled {

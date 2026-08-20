@@ -4,7 +4,7 @@ Tags: woocommerce, single product, template, swatches, buy now, reviews
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.0
-Stable tag: 2.5.0
+Stable tag: 2.5.1
 WC requires at least: 8.0
 WC tested up to: 9.9
 License: GPL-2.0-or-later
@@ -43,6 +43,14 @@ Key features:
 3. Go to Single Product in the WordPress admin menu to configure settings
 
 == Changelog ==
+
+= 2.5.1 =
+* Changed: front-end colour, gradient and shadow values (`--zymarg-*` custom properties in `zymarg-sp.css`, including the sticky mobile action bar and the product-grid section headings) now resolve through the shared ZYMARG Design Tokens (`--zym-*`, via `zymarg-tokens.css`) instead of hardcoded literals, with the original values kept as `var()` fallbacks so nothing changes if the token stylesheet is ever unavailable. Layout, spacing and radius values are unaffected - this is a colour/gradient/shadow-only pass. A small number of values with no brand-token equivalent (an exact dark-purple shade, the "success" green, two decorative gradients) are intentionally left as literals.
+* Changed: admin settings screen colour, gradient and shadow values (`--zsp-*` custom properties and several raw hex values in `zymarg-single-product-admin.css`, including the Grid Sections repeater UI) now resolve the same way, through the shared `--zym-*` tokens.
+* Changed: the admin settings screen header is rebuilt from a full-bleed purple gradient fill to a white surface card with a 3px brand-gradient strip across the top edge, matching the design system's Header component spec and the header used by the other ZYMARG plugins (Store Page, Vendor Dashboard).
+* Added: the ZYMARG Discovery Spark (the brand mark and the system's only permitted loading indicator) now renders in the admin settings header at 44x44, replacing a static emoji icon, and as a "Saving" loading indicator beside the Save Settings button while a save is in progress.
+* Fixed: the Save Settings button's loading state referenced a `spin` CSS animation from `zymarg-single-product-admin.js` that was never defined anywhere in this plugin's CSS, so it had silently never played on any save. Replaced with the Spark-based loading indicator above.
+* Both stylesheet enqueues (`enqueue_frontend()` and `enqueue_admin()` in `class-assets.php`) now register/enqueue the shared `zymarg-tokens` handle (and, for admin, `zymarg-spark`) under the standard ZYMARG guarded-registration pattern, so the tokens referenced above actually resolve instead of silently falling back to their literal defaults.
 
 = 2.5.0 =
 * Changed: page width, side gap, section-to-section gap, and product-grid heading (gap + font-size) are now unified with ZYMARG Store Page's shared spacing system, so both plugins render identical content width and spacing at every breakpoint.
