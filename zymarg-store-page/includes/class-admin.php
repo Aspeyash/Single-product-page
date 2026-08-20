@@ -517,120 +517,142 @@ class ZYMARG_SP_Admin {
 							</div>
 							<h2><?php esc_html_e( 'Settings', 'zymarg-store-page' ); ?></h2>
 						</div>
+
+						<?php
+						/*
+						 * Tab navigation.
+						 *
+						 * Same pattern as ZYMARG Single Product's own admin
+						 * screen (tabs-nav / tab-btn / panel, click + arrow-key
+						 * switching, last-open tab remembered), renamed to this
+						 * file's zsp- prefix. JS lives in zymarg-sp-admin.js;
+						 * see initTabs() there. Order matches what the tabs
+						 * replace, top to bottom, on the pre-tab screen.
+						 */
+						$zsp_tabs = [
+							'general'     => [ 'icon' => '⚙',  'label' => __( 'General', 'zymarg-store-page' ) ],
+							'visibility'  => [ 'icon' => '👁', 'label' => __( 'Section Visibility', 'zymarg-store-page' ) ],
+							'search'      => [ 'icon' => '🔍', 'label' => __( 'Search', 'zymarg-store-page' ) ],
+							'flash_hero'  => [ 'icon' => '⚡', 'label' => __( 'Flash Sale Hero', 'zymarg-store-page' ) ],
+							'sections'    => [ 'icon' => '🧩', 'label' => __( 'Grid Sections', 'zymarg-store-page' ) ],
+						];
+						?>
+						<div class="zsp-tabs-nav" role="tablist" aria-label="<?php esc_attr_e( 'Settings tabs', 'zymarg-store-page' ); ?>">
+							<?php foreach ( $zsp_tabs as $zsp_tab_id => $zsp_tab ) : ?>
+								<button type="button"
+									class="zsp-tab-btn"
+									role="tab"
+									data-tab="<?php echo esc_attr( $zsp_tab_id ); ?>"
+									aria-controls="zsp-tab-<?php echo esc_attr( $zsp_tab_id ); ?>"
+									aria-selected="false"
+									id="zsp-tabnav-<?php echo esc_attr( $zsp_tab_id ); ?>">
+									<span class="zsp-tab-icon"><?php echo esc_html( $zsp_tab['icon'] ); ?></span>
+									<?php echo esc_html( $zsp_tab['label'] ); ?>
+								</button>
+							<?php endforeach; ?>
+						</div>
+
 						<div class="zsp-card__body">
 							<?php // action/nonce are kept so the form still saves if JavaScript is unavailable. ?>
 							<form method="post" action="options.php" id="zsp-settings-form">
 								<?php settings_fields( 'zymarg_sp_options' ); ?>
 
-								<!-- ── Products per page ── -->
-								<p class="zsp-section-label"><?php esc_html_e( 'Product Grid', 'zymarg-store-page' ); ?></p>
-								<div class="zsp-field">
-									<label class="zsp-label" for="zymarg_per_page">
-										<?php esc_html_e( 'Products per page', 'zymarg-store-page' ); ?>
-									</label>
-									<input type="number" id="zymarg_per_page" min="4" max="48" step="4"
-										name="zymarg_sp_options[products_per_page]"
-										value="<?php echo esc_attr( $ppv ); ?>" />
-									<p class="zsp-field-desc"><?php esc_html_e( 'How many products load per page. Multiple of 4 recommended. Default: 8.', 'zymarg-store-page' ); ?></p>
+								<!-- ── Tab: General ── -->
+								<div class="zsp-tab-panel" id="zsp-tab-general" role="tabpanel" aria-labelledby="zsp-tabnav-general">
+									<p class="zsp-section-label"><?php esc_html_e( 'Product Grid', 'zymarg-store-page' ); ?></p>
+									<div class="zsp-field">
+										<label class="zsp-label" for="zymarg_per_page">
+											<?php esc_html_e( 'Products per page', 'zymarg-store-page' ); ?>
+										</label>
+										<input type="number" id="zymarg_per_page" min="4" max="48" step="4"
+											name="zymarg_sp_options[products_per_page]"
+											value="<?php echo esc_attr( $ppv ); ?>" />
+										<p class="zsp-field-desc"><?php esc_html_e( 'How many products load per page. Multiple of 4 recommended. Default: 8.', 'zymarg-store-page' ); ?></p>
+									</div>
+
+									<div class="zsp-field">
+										<label class="zsp-label" for="zymarg_page_width">
+											<?php esc_html_e( 'Content Width', 'zymarg-store-page' ); ?>
+										</label>
+										<input type="number" id="zymarg_page_width" min="0" max="100" step="1"
+											name="zymarg_sp_options[page_width]"
+											value="<?php echo esc_attr( $pwv ); ?>" />
+										<p class="zsp-field-desc"><?php esc_html_e( 'How much of the screen width the page content uses, as a percentage of the viewport, on screens above 768px. 0 is the design as shipped, which caps content at a fixed 1280px - on a 2560px or 4K monitor that leaves roughly half the screen empty. Any other value is a percentage that keeps adjusting itself to whatever screen the page is opened on, so 92 fills 92 percent of a 1440px laptop and of an 8K display alike. 100 runs content to the very edges. Phones are unaffected. This is the same control, with the same numbers, as Content Width on the Homepage and Connection Engine plugins - set all three to the same value for a consistent site. Default: 0.', 'zymarg-store-page' ); ?></p>
+									</div>
 								</div>
 
-								<!-- ── Content width ── -->
-								<div class="zsp-field">
-									<label class="zsp-label" for="zymarg_page_width">
-										<?php esc_html_e( 'Content Width', 'zymarg-store-page' ); ?>
-									</label>
-									<input type="number" id="zymarg_page_width" min="0" max="100" step="1"
-										name="zymarg_sp_options[page_width]"
-										value="<?php echo esc_attr( $pwv ); ?>" />
-									<p class="zsp-field-desc"><?php esc_html_e( 'How much of the screen width the page content uses, as a percentage of the viewport, on screens above 768px. 0 is the design as shipped, which caps content at a fixed 1280px - on a 2560px or 4K monitor that leaves roughly half the screen empty. Any other value is a percentage that keeps adjusting itself to whatever screen the page is opened on, so 92 fills 92 percent of a 1440px laptop and of an 8K display alike. 100 runs content to the very edges. Phones are unaffected. This is the same control, with the same numbers, as Content Width on the Homepage and Connection Engine plugins - set all three to the same value for a consistent site. Default: 0.', 'zymarg-store-page' ); ?></p>
+								<!-- ── Tab: Section Visibility ── -->
+								<div class="zsp-tab-panel" id="zsp-tab-visibility" role="tabpanel" aria-labelledby="zsp-tabnav-visibility">
+									<p class="zsp-section-label"><?php esc_html_e( 'Section Visibility', 'zymarg-store-page' ); ?></p>
+
+									<?php
+									self::toggle_field(
+										'show_aura_search',
+										$show_aura,
+										__( 'AURA live-search bar', 'zymarg-store-page' ),
+										__( 'Show the AURA search bar in the sticky header. Queries the Dokan REST API with debounced live results.', 'zymarg-store-page' )
+									);
+
+									self::toggle_field(
+										'show_reviews',
+										$show_reviews,
+										__( 'Customer Reviews section', 'zymarg-store-page' ),
+										__( 'Show the "What buyers are saying" reviews section on the store page. When disabled the section is completely removed from the page output.', 'zymarg-store-page' )
+									);
+									?>
 								</div>
 
-								<div class="zsp-divider"></div>
-
-								<!-- ── Section visibility toggles ── -->
-								<p class="zsp-section-label"><?php esc_html_e( 'Section Visibility', 'zymarg-store-page' ); ?></p>
-
-								<?php
-								self::toggle_field(
-									'show_aura_search',
-									$show_aura,
-									__( 'AURA live-search bar', 'zymarg-store-page' ),
-									__( 'Show the AURA search bar in the sticky header. Queries the Dokan REST API with debounced live results.', 'zymarg-store-page' )
-								);
-
-								self::toggle_field(
-									'show_reviews',
-									$show_reviews,
-									__( 'Customer Reviews section', 'zymarg-store-page' ),
-									__( 'Show the "What buyers are saying" reviews section on the store page. When disabled the section is completely removed from the page output.', 'zymarg-store-page' )
-								);
-								?>
-
-								<div class="zsp-divider"></div>
-
-								<!-- ── No-results CTA slug ── -->
-								<p class="zsp-section-label"><?php esc_html_e( 'Search Empty State', 'zymarg-store-page' ); ?></p>
-								<div class="zsp-field">
-									<label class="zsp-label" for="zymarg_no_results_slug">
-										<?php esc_html_e( 'No-results CTA slug', 'zymarg-store-page' ); ?>
-									</label>
-									<input type="text" id="zymarg_no_results_slug" class="zsp-input--wide"
-										name="zymarg_sp_options[no_results_slug]"
-										value="<?php echo esc_attr( $no_results_slug ); ?>"
-										placeholder="community" />
-									<p class="zsp-field-desc"><?php esc_html_e( 'Page slug the "Request Here" button links to when a search returns zero results. Do not include leading or trailing slashes. Default: community.', 'zymarg-store-page' ); ?></p>
+								<!-- ── Tab: Search ── -->
+								<div class="zsp-tab-panel" id="zsp-tab-search" role="tabpanel" aria-labelledby="zsp-tabnav-search">
+									<p class="zsp-section-label"><?php esc_html_e( 'Search Empty State', 'zymarg-store-page' ); ?></p>
+									<div class="zsp-field">
+										<label class="zsp-label" for="zymarg_no_results_slug">
+											<?php esc_html_e( 'No-results CTA slug', 'zymarg-store-page' ); ?>
+										</label>
+										<input type="text" id="zymarg_no_results_slug" class="zsp-input--wide"
+											name="zymarg_sp_options[no_results_slug]"
+											value="<?php echo esc_attr( $no_results_slug ); ?>"
+											placeholder="community" />
+										<p class="zsp-field-desc"><?php esc_html_e( 'Page slug the "Request Here" button links to when a search returns zero results. Do not include leading or trailing slashes. Default: community.', 'zymarg-store-page' ); ?></p>
+									</div>
 								</div>
 
-								<div class="zsp-divider"></div>
+								<!-- ── Tab: Flash Sale Hero ── -->
+								<div class="zsp-tab-panel" id="zsp-tab-flash_hero" role="tabpanel" aria-labelledby="zsp-tabnav-flash_hero">
+									<?php
+									/*
+									 * The Flash Sale hero panel, rendered inside
+									 * this same form (now inside this tab panel
+									 * rather than inline in a single long form
+									 * body). Still one form, one Save button --
+									 * only the surrounding markup moved. The
+									 * hero's option is registered into this same
+									 * option group, which is what keeps the
+									 * no-JavaScript options.php path saving both
+									 * of them together.
+									 */
+									if ( class_exists( 'ZYMARG_SP_Flash_Hero' ) ) :
+										$zsp_flash_url = ZYMARG_SP_Flash_Sale::page_url();
+										?>
+										<p class="zsp-section-heading">
+											<span class="zsp-section-heading__mark" aria-hidden="true">
+												<svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg>
+											</span>
+											<?php esc_html_e( 'Flash Sale Hero', 'zymarg-store-page' ); ?>
+										</p>
 
-							<?php
-							/*
-							 * The Flash Sale hero panel, rendered inside this
-							 * same card and this same form.
-							 *
-							 * Not a sibling card, though visually that would be
-							 * tidier. The form opens inside this card's body, so
-							 * closing the card to start another one would put a
-							 * </div> in the middle of an open <form> and the
-							 * markup would be mis-nested. Browsers recover from
-							 * that by closing the form early, which would leave
-							 * every hero field outside it -- they would silently
-							 * never submit, and the screen would still report a
-							 * successful save.
-							 *
-							 * One form also means one Save button covers both
-							 * option groups, with no way to save half a screen.
-							 * The hero's option is registered into this group,
-							 * which is what keeps the no-JavaScript options.php
-							 * path saving both of them.
-							 */
-							if ( class_exists( 'ZYMARG_SP_Flash_Hero' ) ) :
-								$zsp_flash_url = ZYMARG_SP_Flash_Sale::page_url();
-								?>
-								<div class="zsp-divider"></div>
+										<p class="zsp-field-desc zsp-intro">
+											<?php esc_html_e( 'Everything about the banner at the top of your Flash Sale page. Every field is optional: leave one empty and the shipped design is used for it, so an untouched install looks exactly as it does today.', 'zymarg-store-page' ); ?>
+											<?php if ( '' !== $zsp_flash_url ) : ?>
+												<a href="<?php echo esc_url( $zsp_flash_url ); ?>" target="_blank" rel="noopener">
+													<?php esc_html_e( 'View the page', 'zymarg-store-page' ); ?>
+												</a>
+											<?php endif; ?>
+										</p>
 
-								<p class="zsp-section-heading">
-									<span class="zsp-section-heading__mark" aria-hidden="true">
-										<svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg>
-									</span>
-									<?php esc_html_e( 'Flash Sale Hero', 'zymarg-store-page' ); ?>
-								</p>
-
-								<p class="zsp-field-desc zsp-intro">
-									<?php esc_html_e( 'Everything about the banner at the top of your Flash Sale page. Every field is optional: leave one empty and the shipped design is used for it, so an untouched install looks exactly as it does today.', 'zymarg-store-page' ); ?>
-									<?php if ( '' !== $zsp_flash_url ) : ?>
-										<a href="<?php echo esc_url( $zsp_flash_url ); ?>" target="_blank" rel="noopener">
-											<?php esc_html_e( 'View the page', 'zymarg-store-page' ); ?>
-										</a>
+										<?php ZYMARG_SP_Flash_Hero::render_fields(); ?>
 									<?php endif; ?>
-								</p>
-
-								<?php
-								ZYMARG_SP_Flash_Hero::render_fields();
-
-								echo '<div class="zsp-divider"></div>';
-							endif;
-							?>
+								</div>
 
 								<div class="zsp-save-row">
 									<button type="submit" class="zsp-save-btn">
@@ -641,6 +663,34 @@ class ZYMARG_SP_Admin {
 									<span id="zsp-save-status" class="zsp-save-status" role="status" aria-live="polite"></span>
 								</div>
 							</form>
+
+							<?php
+							/*
+							 * Tab: Grid Sections.
+							 *
+							 * Deliberately rendered OUTSIDE </form> above, as a
+							 * sibling rather than nested inside it, even though
+							 * both live under this same .zsp-card__body and both
+							 * are switched by the exact same tab-nav/JS. The
+							 * section repeater's text/url inputs would otherwise
+							 * sit inside a form whose Enter key submits the
+							 * *Settings* form via its own Save Settings button --
+							 * an accidental-submit trap for anyone editing a
+							 * section's Heading or Link URL field. Nesting it
+							 * inside the settings form was tried first in this
+							 * exact spot and reverted for that reason.
+							 *
+							 * The tab-switcher JS finds panels by class/ID, not
+							 * by shared parentage, so this panel still opens and
+							 * closes identically to the four tabs above; it just
+							 * keeps its own independent Ajax save/add/restore
+							 * flow (zymarg-sp-store-sections.js) fully isolated,
+							 * exactly as it already was before tabs existed.
+							 */
+							?>
+							<div class="zsp-tab-panel" id="zsp-tab-sections" role="tabpanel" aria-labelledby="zsp-tabnav-sections">
+								<?php self::render_store_sections_fields(); ?>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -728,8 +778,6 @@ class ZYMARG_SP_Admin {
 				</div><!-- /.zsp-aside -->
 			</div><!-- /.zsp-layout -->
 
-			<?php self::render_store_sections_card(); ?>
-
 		</div><!-- /.zymarg-sp-admin -->
 		<?php
 	}
@@ -746,11 +794,19 @@ class ZYMARG_SP_Admin {
 	// ──────────────────────────────────────────────────────────────────────
 
 	/**
-	 * The Product Grid Sections card.
+	 * The Product Grid Sections tab contents.
+	 *
+	 * Was render_store_sections_card() — rendered its own full-width
+	 * .zsp-card / .zsp-card__head wrapper below the two-column settings
+	 * layout, back when there was no tabbed home for it. Now rendered inside
+	 * the "Grid Sections" tab panel instead (see render_settings_page()),
+	 * so the outer card/head chrome is dropped -- the tab panel already
+	 * provides that framing -- but every inner element below (IDs, classes,
+	 * copy) is unchanged, so zymarg-sp-store-sections.js needs zero changes.
 	 *
 	 * @return void
 	 */
-	private static function render_store_sections_card() {
+	private static function render_store_sections_fields() {
 		if ( ! class_exists( 'ZYMARG_SP_Store_Sections' ) ) {
 			return;
 		}
@@ -758,62 +814,50 @@ class ZYMARG_SP_Admin {
 		$sections = ZYMARG_SP_Store_Sections::get_all();
 		$backup   = get_option( ZYMARG_SP_Store_Sections::BACKUP_KEY, [] );
 		?>
-		<div class="zsp-card zsp-card--sections">
-			<div class="zsp-card__head">
-				<div class="zsp-card__icon" aria-hidden="true">
-					<svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"/></svg>
-				</div>
-				<h2><?php esc_html_e( 'Product Grid Sections', 'zymarg-store-page' ); ?></h2>
-			</div>
-			<div class="zsp-card__body">
+		<p class="zsp-field-desc zsp-sections__lede">
+			<?php esc_html_e( 'These sections render on the store page, above the category sidebar, in the order listed. Drag a row by its handle to move it up or down. Each row runs one ZYMARG Product Grid shortcode against this vendor\'s own products, so you can change the layout, limit or card without a plugin update.', 'zymarg-store-page' ); ?>
+		</p>
+		<p class="zsp-field-desc zsp-sections__lede">
+			<strong><?php esc_html_e( 'Rows open locked.', 'zymarg-store-page' ); ?></strong>
+			<?php esc_html_e( 'Press Edit on a row before anything in it can be changed, so simply visiting this screen cannot alter what shoppers see. Removing a row asks for confirmation, and the list from before your last save can be restored below.', 'zymarg-store-page' ); ?>
+		</p>
+		<p class="zsp-field-desc zsp-sections__lede">
+			<strong><?php esc_html_e( 'Every section must use source="current_vendor".', 'zymarg-store-page' ); ?></strong>
+			<?php esc_html_e( 'A store page always shows one vendor\'s own products, so that is the only source a row here can run. Available subsets: all, featured, trending, best_selling.', 'zymarg-store-page' ); ?>
+		</p>
+		<p class="zsp-field-desc zsp-sections__lede">
+			<strong><?php esc_html_e( 'One row is special.', 'zymarg-store-page' ); ?></strong>
+			<?php esc_html_e( 'Whichever enabled row uses current_vendor_subset="all" (the default when the attribute is left out) renders inside the existing category sidebar layout, with infinite scroll, instead of as a standalone block. Only the first such row is treated this way.', 'zymarg-store-page' ); ?>
+		</p>
 
-				<p class="zsp-field-desc zsp-sections__lede">
-					<?php esc_html_e( 'These sections render on the store page, above the category sidebar, in the order listed. Drag a row by its handle to move it up or down. Each row runs one ZYMARG Product Grid shortcode against this vendor\'s own products, so you can change the layout, limit or card without a plugin update.', 'zymarg-store-page' ); ?>
-				</p>
-				<p class="zsp-field-desc zsp-sections__lede">
-					<strong><?php esc_html_e( 'Rows open locked.', 'zymarg-store-page' ); ?></strong>
-					<?php esc_html_e( 'Press Edit on a row before anything in it can be changed, so simply visiting this screen cannot alter what shoppers see. Removing a row asks for confirmation, and the list from before your last save can be restored below.', 'zymarg-store-page' ); ?>
-				</p>
-				<p class="zsp-field-desc zsp-sections__lede">
-					<strong><?php esc_html_e( 'Every section must use source="current_vendor".', 'zymarg-store-page' ); ?></strong>
-					<?php esc_html_e( 'A store page always shows one vendor\'s own products, so that is the only source a row here can run. Available subsets: all, featured, trending, best_selling.', 'zymarg-store-page' ); ?>
-				</p>
-				<p class="zsp-field-desc zsp-sections__lede">
-					<strong><?php esc_html_e( 'One row is special.', 'zymarg-store-page' ); ?></strong>
-					<?php esc_html_e( 'Whichever enabled row uses current_vendor_subset="all" (the default when the attribute is left out) renders inside the existing category sidebar layout, with infinite scroll, instead of as a standalone block. Only the first such row is treated this way.', 'zymarg-store-page' ); ?>
-				</p>
+		<div id="zsp-store-sections" class="zsp-sections">
+			<?php foreach ( $sections as $row ) : ?>
+				<?php self::render_store_section_row( is_array( $row ) ? $row : [] ); ?>
+			<?php endforeach; ?>
+		</div>
 
-				<div id="zsp-store-sections" class="zsp-sections">
-					<?php foreach ( $sections as $row ) : ?>
-						<?php self::render_store_section_row( is_array( $row ) ? $row : [] ); ?>
-					<?php endforeach; ?>
-				</div>
+		<div class="zsp-sections__actions">
+			<button type="button" class="zsp-sections__add" id="zsp-add-store-section">
+				<span aria-hidden="true">+</span> <?php esc_html_e( 'Add Section', 'zymarg-store-page' ); ?>
+			</button>
 
-				<div class="zsp-sections__actions">
-					<button type="button" class="zsp-sections__add" id="zsp-add-store-section">
-						<span aria-hidden="true">+</span> <?php esc_html_e( 'Add Section', 'zymarg-store-page' ); ?>
-					</button>
+			<button type="button" class="zsp-sections__save" id="zsp-save-store-sections">
+				<?php esc_html_e( 'Save Sections', 'zymarg-store-page' ); ?>
+			</button>
 
-					<button type="button" class="zsp-sections__save" id="zsp-save-store-sections">
-						<?php esc_html_e( 'Save Sections', 'zymarg-store-page' ); ?>
-					</button>
+			<?php if ( is_array( $backup ) && ! empty( $backup ) ) : ?>
+				<button type="button" class="zsp-sections__restore" id="zsp-restore-store-sections">
+					<?php
+					printf(
+						/* translators: %d: number of sections in the rollback snapshot. */
+						esc_html__( 'Restore previous (%d sections)', 'zymarg-store-page' ),
+						count( $backup )
+					);
+					?>
+				</button>
+			<?php endif; ?>
 
-					<?php if ( is_array( $backup ) && ! empty( $backup ) ) : ?>
-						<button type="button" class="zsp-sections__restore" id="zsp-restore-store-sections">
-							<?php
-							printf(
-								/* translators: %d: number of sections in the rollback snapshot. */
-								esc_html__( 'Restore previous (%d sections)', 'zymarg-store-page' ),
-								count( $backup )
-							);
-							?>
-						</button>
-					<?php endif; ?>
-
-					<span id="zsp-sections-status" class="zsp-save-status" role="status" aria-live="polite"></span>
-				</div>
-
-			</div>
+			<span id="zsp-sections-status" class="zsp-save-status" role="status" aria-live="polite"></span>
 		</div>
 		<?php
 	}

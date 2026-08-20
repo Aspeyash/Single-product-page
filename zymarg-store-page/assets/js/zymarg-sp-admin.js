@@ -380,4 +380,85 @@
 				} );
 		} );
 	} );
+
+	/**
+	 * Settings tabs.
+	 *
+	 * Same click + arrow-key + last-open-tab-remembered pattern already
+	 * shipped in ZYMARG Single Product's own admin screen, renamed to this
+	 * file's zsp- prefix. A separate top-level DOMContentLoaded listener
+	 * rather than folded into the one above: that listener bails out early
+	 * whenever #zsp-settings-form is missing, but the tab nav has to work
+	 * regardless -- the "Grid Sections" tab panel is deliberately rendered
+	 * OUTSIDE that form (see class-admin.php), so tying tab init to the
+	 * form's presence would be an unrelated, accidental coupling.
+	 *
+	 * sessionStorage key is 'zymargSPStoreTab', distinct from Single
+	 * Product's own 'zymargSPTab', so the two plugins' remembered tabs never
+	 * collide when both are active for the same admin user.
+	 */
+	document.addEventListener( 'DOMContentLoaded', function () {
+		var nav = document.querySelector( '.zsp-tabs-nav' );
+		if ( ! nav ) {
+			return;
+		}
+
+		var btns   = Array.prototype.slice.call( nav.querySelectorAll( '.zsp-tab-btn' ) );
+		var panels = Array.prototype.slice.call( document.querySelectorAll( '.zsp-tab-panel' ) );
+
+		if ( ! btns.length || ! panels.length ) {
+			return;
+		}
+
+		function activateTab( id ) {
+			btns.forEach( function ( btn ) {
+				btn.setAttribute( 'aria-selected', btn.getAttribute( 'data-tab' ) === id ? 'true' : 'false' );
+			} );
+			panels.forEach( function ( panel ) {
+				panel.classList.toggle( 'is-active', panel.id === 'zsp-tab-' + id );
+			} );
+			try {
+				sessionStorage.setItem( 'zymargSPStoreTab', id );
+			} catch ( e ) {}
+		}
+
+		btns.forEach( function ( btn ) {
+			btn.addEventListener( 'click', function () {
+				activateTab( btn.getAttribute( 'data-tab' ) );
+			} );
+
+			btn.addEventListener( 'keydown', function ( e ) {
+				var idx = btns.indexOf( btn );
+				var next;
+
+				if ( 'ArrowRight' === e.key || 'ArrowDown' === e.key ) {
+					e.preventDefault();
+					next = btns[ ( idx + 1 ) % btns.length ];
+				} else if ( 'ArrowLeft' === e.key || 'ArrowUp' === e.key ) {
+					e.preventDefault();
+					next = btns[ ( idx - 1 + btns.length ) % btns.length ];
+				} else if ( 'Home' === e.key ) {
+					e.preventDefault();
+					next = btns[ 0 ];
+				} else if ( 'End' === e.key ) {
+					e.preventDefault();
+					next = btns[ btns.length - 1 ];
+				}
+
+				if ( next ) {
+					next.focus();
+					next.click();
+				}
+			} );
+		} );
+
+		var saved = '';
+		try {
+			saved = sessionStorage.getItem( 'zymargSPStoreTab' ) || '';
+		} catch ( e ) {}
+
+		var firstId  = btns[ 0 ].getAttribute( 'data-tab' );
+		var hasSaved = saved && nav.querySelector( '[data-tab="' + saved + '"]' );
+		activateTab( hasSaved ? saved : firstId );
+	} );
 }() );

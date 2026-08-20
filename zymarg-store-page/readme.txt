@@ -4,7 +4,7 @@ Tags:              dokan, vendor, store, marketplace, activewear
 Requires at least: 6.0
 Tested up to:      6.7
 Requires PHP:      7.4
-Stable tag:        1.28.4
+Stable tag:        1.29.0
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,6 +73,12 @@ Yes. Edit the `@theme` block inside `templates/store.php` to change the design t
 4. Admin settings page under Dokan → ZYMARG Store Page
 
 == Changelog ==
+
+= 1.29.0 — Settings screen reorganised into tabs =
+* Changed: the Settings screen's single long-scrolling form is now organised into 5 tabs — General (Products per page, Content Width), Section Visibility (AURA search, Reviews toggle), Search (No-results CTA slug), Flash Sale Hero, and Grid Sections. Same pattern already shipped in ZYMARG Single Product's own admin screen (click + arrow-key tab switching, last-open tab remembered per browser session), so the two plugins' settings screens now feel like the same control.
+* Changed: the Product Grid Sections repeater (Trending / Best Selling / All Products) moves from its own separate full-width card, previously rendered below the whole settings layout, into the new "Grid Sections" tab. Every field, ID, class, and its independent Add/Save/Restore Ajax flow are unchanged — only its position on the screen moved. `zymarg-sp-store-sections.js` required zero changes.
+* Unchanged: all 4 remaining tabs (General, Section Visibility, Search, Flash Sale Hero) still live inside the one Settings form with its one Save button and single Ajax save request, exactly as before. The Grid Sections tab is deliberately still a sibling of that form rather than nested inside it, so pressing Enter while editing a section's Heading or Link URL field cannot accidentally trigger the Settings form's own Save button.
+* No option keys, sanitisation, nonces, or saved data changed — this release is markup/CSS/JS restructuring only.
 
 = 1.28.4 — Mobile side gap reduced to 4px (tablet unchanged) =
 * Changed: every section built on the shared `.zy-section` system (Trending, All Products, Our Story + Reviews, and the Handpicked/Flash Sale/Trending premium sections via `.zsp-premium`) now uses **4px** left/right side gap on mobile, down from 8px. This was previously the same 8px value as tablet, since the shared `px-2` Tailwind utility has no separate mobile tier of its own.
@@ -502,6 +508,9 @@ until you deliberately edit it. Upgrading is visually a no-op.
 * Initial release.
 
 == Upgrade Notice ==
+
+= 1.29.0 =
+The Settings screen is now organised into tabs (General, Section Visibility, Search, Flash Sale Hero, Grid Sections) instead of one long scrolling form. No settings, saved data, or front-end behaviour changed — this only reorganises the admin screen.
 
 = 1.28.1 =
 Fixes two visual bugs in the 1.28.0 combined Reviews + Our Story split panel: the rating summary now sticks correctly while scrolling on desktop/tablet, and excess padding around the Reviews content is removed. Requires ZYMARG Reviews Engine 1.3.3+ for the companion media-strip scrollbar fix.

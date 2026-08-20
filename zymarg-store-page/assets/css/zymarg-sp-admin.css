@@ -250,6 +250,79 @@
 .zsp-card__body--tighter { padding: var(--zym-space-3) var(--zym-space-8); }
 
 /* ===========================================================================
+ * SETTINGS TABS
+ *
+ * Reuses the exact tab pattern already shipped in ZYMARG Single Product's own
+ * admin screen (zymarg-single-product-admin__tabs-nav / __tab-btn / __panel),
+ * so switching between this plugin's settings and Single Product's feels like
+ * the same control rather than two different UIs. Renamed to the zsp- prefix
+ * this file already uses everywhere else, and every value below is one of
+ * this file's existing --zym-* tokens -- no new raw colours/sizes introduced.
+ *
+ * The card head (icon + "Settings" title) stays exactly as it was; this nav
+ * sits directly below it, inside the same .zsp-card, so the tabs read as
+ * "sub-navigation for the Settings card" rather than a second card.
+ * ======================================================================== */
+
+.zsp-tabs-nav {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	padding: var(--zym-space-5) var(--zym-space-8) 0;
+	background: var(--zym-color-bg);
+	border-bottom: 1px solid var(--zym-color-border);
+}
+
+.zsp-tab-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	padding: var(--zym-space-4) var(--zym-space-6);
+	border: 1px solid transparent;
+	border-bottom: none;
+	border-radius: var(--zym-radius-chip) var(--zym-radius-chip) 0 0;
+	background: transparent;
+	color: var(--zym-color-neutral-text);
+	font-size: var(--zym-font-size-sm);
+	font-weight: var(--zym-font-weight-semibold);
+	cursor: pointer;
+	transition: background var(--zym-motion-input) var(--zym-ease),
+		color var(--zym-motion-input) var(--zym-ease),
+		border-color var(--zym-motion-input) var(--zym-ease);
+	position: relative;
+	bottom: -1px;
+}
+
+.zsp-tab-btn:hover {
+	background: var(--zym-color-surface);
+	color: var(--zym-color-primary);
+	border-color: var(--zym-color-border);
+}
+
+.zsp-tab-btn[aria-selected="true"] {
+	background: var(--zym-color-surface);
+	color: var(--zym-color-primary);
+	border-color: var(--zym-color-border);
+	border-bottom-color: var(--zym-color-surface);
+	font-weight: var(--zym-font-weight-bold);
+}
+
+.zsp-tab-btn:focus-visible {
+	outline: none;
+	box-shadow: var(--zym-focus-ring);
+}
+
+.zsp-tab-icon { font-size: 1rem; }
+
+.zsp-tab-panel { display: none; }
+.zsp-tab-panel.is-active { display: block; }
+
+@media (max-width: 768px) {
+	.zsp-tabs-nav { padding: var(--zym-space-4) var(--zym-space-5) 0; gap: 2px; }
+	.zsp-tab-btn { padding: var(--zym-space-3) var(--zym-space-4); font-size: 13px; }
+}
+
+/* ===========================================================================
  * SECTIONS + FIELDS
  * ======================================================================== */
 
@@ -880,7 +953,10 @@
  * repeater, translated to this screen's zsp- naming and --zym-* tokens.
  * ======================================================================== */
 
-.zsp-card--sections { margin-top: var(--zym-space-8); }
+/* .zsp-card--sections removed: the Product Grid Sections repeater now
+   renders inside the "Grid Sections" tab panel instead of its own
+   standalone full-width card, so this margin-top rule (which only ever
+   applied to that card) no longer matches anything in the markup. */
 
 .zsp-sections__lede {
 	max-width: 78ch;
