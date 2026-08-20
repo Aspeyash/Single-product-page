@@ -251,7 +251,6 @@
 .zymarg-single-product .price-row del .woocommerce-Price-amount { font-size: 1rem; font-weight: 400; color: var(--zymarg-text-muted); }
 .zymarg-sp-price__from-prefix { font-size: 1rem; font-weight: 400; color: var(--zymarg-text-muted); margin-right: 4px; }
 .zymarg-sp-price__range-sep { margin: 0 6px; color: var(--zymarg-text-muted); font-size: 1.4rem; }
-.zymarg-sp-price-block__heading { font-size: .78rem; font-weight: 700; color: var(--zymarg-primary); text-transform: uppercase; letter-spacing: .04em; margin: 0 0 4px; }
 .zymarg-sp-price__save-badge {
   display: inline-flex; align-items: center; gap: 4px;
   background: var(--zymarg-primary-light); color: var(--zymarg-dark-purple);
@@ -264,6 +263,91 @@
 }
 /* v1.1.10 - was `color:#fff` on a near-white background, which hid the badge text */
 [data-theme="dark"] .zymarg-sp-price__save-badge { color: #ff8a94; background: rgba(220, 53, 69, .22); }
+
+/* ==========================================================================
+   Smart Heading badge (v2.6.0)
+   Two states: out-of-stock (calm/neutral) and flash countdown (urgent,
+   reuses the exact gradient identity of the ZYMARG Template Pack's "flash"
+   card template: purple -> orange -> purple, animated, #D338E2 in dark mode).
+   ========================================================================== */
+
+.zymarg-sp-heading-badge {
+	--zsp-flash-purple: #9500A5;
+	--zsp-flash-orange: #FF6B00;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 4px 12px;
+	border-radius: 999px;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 1.4;
+	color: #fff;
+	white-space: nowrap;
+}
+
+.zymarg-sp-heading-badge__icon { width: 11px; height: 11px; flex: 0 0 auto; }
+.zymarg-sp-heading-badge__text { white-space: nowrap; }
+
+/* Out of stock: calm/neutral, not an alarm colour - a product being out of
+   stock is a normal, common state, not an error. */
+.zymarg-sp-heading-badge--oos {
+	background: var(--zymarg-dark-purple, #6b0077);
+}
+.zymarg-sp-heading-badge--oos .zymarg-sp-heading-badge__icon { fill: #fff; }
+
+/* Flash countdown: animated purple -> orange -> purple gradient, identical
+   to templates/flash/style.css's .zymarg-zc__badge--flash and
+   .zymarg-zc__timer-text-shimmer in the ZYMARG Template Pack, so the "this
+   is a flash deal" colour language matches everywhere on the site. */
+.zymarg-sp-heading-badge--flash {
+	background: linear-gradient(90deg, var(--zsp-flash-purple) 0%, var(--zsp-flash-orange) 50%, var(--zsp-flash-purple) 100%);
+	background-size: 200% 100%;
+	animation: zymargSpHeadingFlashFlow 4s linear infinite;
+}
+[data-theme="dark"] .zymarg-sp-heading-badge--flash {
+	--zsp-flash-purple: #D338E2;
+	background: linear-gradient(90deg, var(--zsp-flash-purple) 0%, var(--zsp-flash-orange) 50%, var(--zsp-flash-purple) 100%);
+	background-size: 200% 100%;
+}
+.zymarg-sp-heading-badge--flash .zymarg-sp-heading-badge__icon { fill: #FFE600; }
+
+@keyframes zymargSpHeadingFlashFlow {
+	0% { background-position: 200% 0; }
+	100% { background-position: -200% 0; }
+}
+
+.zymarg-sp-heading-badge__countdown {
+	display: inline-flex;
+	align-items: center;
+	gap: 2px;
+	font-variant-numeric: tabular-nums;
+}
+.zymarg-sp-heading-badge__unit {
+	display: inline-block;
+	min-width: 1.6em;
+	text-align: center;
+	padding: 1px 4px;
+	border-radius: 4px;
+	background: rgba(0, 0, 0, .15);
+	font-weight: 700;
+}
+.zymarg-sp-heading-badge__sep { opacity: .85; }
+
+@media (prefers-reduced-motion: reduce) {
+	.zymarg-sp-heading-badge--flash { animation: none; }
+}
+
+@media (max-width: 640px) {
+	.zymarg-sp-heading-badge {
+		gap: 4px;
+		padding: 3px 8px;
+		font-size: 11px;
+	}
+	.zymarg-sp-heading-badge__icon { width: 9px; height: 9px; }
+	.zymarg-sp-heading-badge__unit { padding: 1px 3px; min-width: 1.4em; }
+}
+
 .zymarg-sp-price__hint { font-size: .8rem; color: var(--zymarg-primary); margin: 6px 0 0; }
 .zymarg-sp-price__skeleton {
   height: 2.2rem; width: 140px;
@@ -874,13 +958,16 @@ svg.zymarg-sp-star--empty, .zymarg-sp-star--empty svg { fill: var(--zymarg-borde
 	   space between the price pair and the Save badge, tightened 10px -> 4px. */
 	gap: 6px 4px;
 }
-.zymarg-sp-price-block > .zymarg-sp-price-block__heading,
+.zymarg-sp-price-block > .zymarg-sp-heading-slot,
 .zymarg-sp-price-block > .zymarg-sp-price__hint,
 .zymarg-sp-price-block > .zymarg-sp-price__skeleton {
 	flex: 0 0 100%;
 	width: 100%;
 }
-.zymarg-sp-price-block__heading { margin: 0; }
+/* v2.6.0 - the slot itself carries no box; it collapses to nothing when
+   empty ('none' state) and simply hosts the badge otherwise. */
+.zymarg-sp-heading-slot:empty { display: none; }
+.zymarg-sp-heading-slot:not(:empty) { margin-bottom: 2px; }
 .zymarg-sp-price-block__price {
 	display: flex;
 	align-items: center; /* v2.4.3 - was baseline; centres the old price against the current price at every size */
