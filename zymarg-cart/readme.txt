@@ -4,7 +4,7 @@ Tags: woocommerce, cart, multi-vendor, dokan, marketplace
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.1
-Stable tag: 2.2.0
+Stable tag: 2.3.0
 License: Proprietary
 
 A fully custom, standalone WooCommerce cart page for the ZYMARG multi-vendor marketplace.
@@ -32,6 +32,44 @@ Features:
 - i18n ready (.pot file included)
 
 == Changelog ==
+
+= 2.3.0 =
+* CRITICAL FIX (Header plugin): the admin Settings::cart_inline_css() generator
+  always emitted the plugin's original hardcoded light-mode hex defaults for
+  every style field, even on installs that never touched the settings screen.
+  This inline <style> block loads after the main stylesheet and therefore
+  always won, permanently overriding every dark-mode-aware rule in the mini
+  cart popup — this was the actual cause of the popup panel, product rows,
+  and cart text staying stuck in light-mode colours regardless of the site's
+  dark-mode toggle. Fixed via a new Settings::themed() helper: an un-customised
+  setting now defers to the theme-aware --zc-*/--zym-* token instead of the
+  hardcoded hex, while an explicitly admin-chosen colour is still honoured.
+* Fixed: several duplicate CSS rules later in zymarg-cart.css re-declared
+  product-row / saved-item-row / subtotal-bar hover states with hardcoded
+  light-only hex, which always won on cascade order over the earlier
+  theme-aware token rules — this was the literal cause of rows staying white
+  in dark mode. Removed/aligned the duplicates to the theme-aware tokens.
+* Fixed: several gradients (vendor row, vendor subtotal footer, saved-section
+  header, action bar, subtotal bar) mixed a permanently-light hex with a
+  token that DOES flip dark, producing a muddy "light fading into near-black"
+  gradient in dark mode. Rebuilt entirely from theme-aware tokens.
+* Fixed: multiple buttons/badges (checkout, move-to-cart, coupon apply, saved
+  count badge, continue-shopping) used a 2-stop gradient built from
+  --zym-color-primary -> --zym-color-secondary, both of which lighten in dark
+  mode, paired with an already-light fixed text colour -- producing washed
+  out, low-contrast pale-on-pale buttons in dark mode ("gradient not eye
+  pleasant, text barely visible"). Restored to the brand's fixed 3-stop
+  --zym-gradient (which never changes between modes by design) with fixed
+  white/light-pink text, matching the header's Become a Seller / badge fix
+  from v2.2.0.
+* Fixed: several hover states (edit button, quantity stepper buttons,
+  Header's mini-cart quantity/outline buttons) used a fixed light-pink fill
+  under theme-reactive text that also lightens in dark mode -- low contrast.
+  Replaced with theme-aware surface tints.
+* Fixed: vendor static-icon badge text colour was theme-reactive
+  (--zym-color-primary lightens in dark mode) sitting on a permanently-light
+  pill background -- low contrast in dark mode. Fixed to a permanently dark
+  icon colour.
 
 = 2.2.0 =
 * CRITICAL FIX: v2.1.0 introduced brand-new token names (e.g. --zym-color-primary-container,

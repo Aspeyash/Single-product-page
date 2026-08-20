@@ -169,8 +169,11 @@
     border-color: var(--zc-primary);
 }
 
+/* Was a fixed light-pink hover fill under theme-reactive text
+   (--zc-primary lightens in dark mode) — low contrast in dark mode.
+   Theme-aware surface tint instead. */
 .zymarg-edit-btn:hover {
-    background-color: var(--zc-primary-fixed);
+    background-color: var(--zc-surface-container);
 }
 
 .zymarg-delete-btn {
@@ -633,8 +636,11 @@
     flex-shrink: 0;
 }
 
+/* Was a fixed light-pink hover fill under theme-reactive text
+   (--zc-primary lightens in dark mode) — low contrast in dark mode.
+   Theme-aware surface tint instead. */
 .zymarg-qty-btn:hover:not(:disabled) {
-    background-color: var(--zc-primary-fixed);
+    background-color: var(--zc-surface-container);
 }
 
 .zymarg-qty-btn:disabled {
@@ -1404,9 +1410,10 @@
     pointer-events: none;
 }
 
-/* Row hover in edit mode — red tint */
+/* Row hover in edit mode — red tint, theme-aware so it stays a red tint
+   (not a plain light-mode white) in dark mode too. */
 .zymarg-edit-mode .zymarg-product-row:hover {
-    background-color: #fff7f7;
+    background-color: var(--zc-error-bg);
 }
 
 /* Checkboxes in edit mode — red accent */
@@ -1753,9 +1760,13 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
     box-shadow: var(--zc-shadow-hover);
 }
 
+/* v2.3.0: rebuilt from a fixed light hex + a dark-flipping token — in
+   dark mode that produced a jarring light-lavender-fading-to-near-black
+   gradient. Rebuilt entirely from theme-aware tokens so the tint stays
+   consistent in both modes. */
 .zymarg-vendor-row {
-    background: linear-gradient(135deg, #f3e8ff 0%, var(--zym-color-container) 100%);
-    border-bottom: 0.5px solid #e4d4f0;
+    background: linear-gradient(135deg, var(--zc-surface) 0%, var(--zym-color-container) 100%);
+    border-bottom: 0.5px solid var(--zc-outline-variant);
     padding: 11px 16px;
 }
 
@@ -1784,9 +1795,15 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
     box-shadow: 0 0 0 1px rgba(149, 0, 165, 0.15);
 }
 
-/* Static vendor icon — colored pill background */
+/* Static vendor icon — colored pill background.
+   Background stays a fixed light-pink pair (both stops resolve to a
+   light pink in every mode, so this pairing was never the bug), but the
+   icon colour (--zym-color-primary) lightens to a pale pink in dark
+   mode, which then sat on a light-pink background — low contrast.
+   Fixed to a permanently dark, fixed icon colour so it always reads
+   against the fixed light pill. */
 .zymarg-vendor-static-icon {
-    color: var(--zym-color-primary);
+    color: #9500a5;
     background: linear-gradient(135deg, #ffd6fb 0%, var(--zym-color-accent) 100%);
     border-radius: 50%;
     width: 28px;
@@ -1821,20 +1838,25 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 }
 
 /* ── Product rows ───────────────────────────────────────────────────────── */
+/* v2.3.0: the hover/border rules that used to live here were duplicated
+   later in this file (Visual Enhancement Layer, ~line 1830) with hardcoded
+   light-only hex that always won on cascade order, permanently overriding
+   the theme-aware --zc-* tokens below regardless of dark mode. Removed the
+   duplicates; this is now the single source of truth for these rules. */
 
 .zymarg-product-row {
-    border-bottom: 0.5px solid #f0e6f8;
+    border-bottom: 0.5px solid var(--zc-outline-variant);
     transition: background-color var(--zc-transition-fast);
 }
 
 .zymarg-product-row:hover {
-    background-color: #fdf6ff;
+    background-color: var(--zc-surface);
 }
 
 /* Product image — soft brand shadow on hover */
 .zymarg-product-img-wrap {
     border-radius: 10px;
-    border: 1.5px solid #f0e6f8;
+    border: 1.5px solid var(--zc-outline-variant);
     transition: border-color var(--zc-transition-fast), box-shadow var(--zc-transition-fast);
 }
 
@@ -1909,7 +1931,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 }
 
 .zymarg-qty-btn:hover:not(:disabled) {
-    background: linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-secondary) 100%);
+    background: var(--zym-gradient);
     color: #ffd6fb;
 }
 
@@ -1975,7 +1997,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 }
 
 .zymarg-coupon-apply:hover {
-    background: linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-secondary) 100%);
+    background: var(--zym-gradient);
     color: #ffd6fb;
     border-color: transparent;
 }
@@ -1987,10 +2009,10 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 }
 
 /* ── Vendor subtotal row ────────────────────────────────────────────────── */
-
+/* v2.3.0: rebuilt fully from theme-aware tokens (see vendor row comment above). */
 .zymarg-vendor-subtotal-row {
-    background: linear-gradient(135deg, #fdf6ff 0%, var(--zym-color-bg) 100%);
-    border-top: 0.5px solid #e8d5f5;
+    background: linear-gradient(135deg, var(--zc-surface-container) 0%, var(--zym-color-bg) 100%);
+    border-top: 0.5px solid var(--zc-outline-variant);
     padding: 10px 18px;
 }
 
@@ -2014,9 +2036,10 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
     box-shadow: var(--zc-shadow-card);
 }
 
+/* v2.3.0: rebuilt fully from theme-aware tokens (see vendor row comment above). */
 .zymarg-saved-header {
-    background: linear-gradient(135deg, #fdf6ff 0%, var(--zym-color-bg) 100%);
-    border-bottom: 0.5px solid #e8d5f5;
+    background: linear-gradient(135deg, var(--zc-surface-container) 0%, var(--zym-color-bg) 100%);
+    border-bottom: 0.5px solid var(--zc-outline-variant);
 }
 
 .zymarg-saved-header .zymarg-saved-title {
@@ -2026,7 +2049,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 }
 
 .zymarg-saved-count-badge {
-    background: linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-secondary) 100%);
+    background: var(--zym-gradient);
     color: #ffd6fb;
     font-size: 11px;
     font-weight: 700;
@@ -2037,12 +2060,15 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 }
 
 .zymarg-saved-item-row {
-    border-bottom: 0.5px solid #f0e6f8;
+    border-bottom: 0.5px solid var(--zc-outline-variant);
     transition: background-color var(--zc-transition-fast);
 }
 
 .zymarg-saved-item-row:hover {
-    background: #fdf6ff;
+    /* Fixed light hex previously here always overrode the correct token
+       rule earlier in this file, keeping saved-item rows permanently
+       light in dark mode (part of the reported white-row bug). */
+    background: var(--zc-surface);
 }
 
 .zymarg-saved-img-wrap {
@@ -2071,7 +2097,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 }
 
 .zymarg-move-to-cart-btn {
-    background: linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-secondary) 100%);
+    background: var(--zym-gradient);
     color: #ffd6fb;
     border-radius: 10px;
     font-weight: 500;
@@ -2082,7 +2108,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 }
 
 .zymarg-move-to-cart-btn:hover:not(:disabled) {
-    background: linear-gradient(135deg, var(--zym-color-secondary) 0%, var(--zym-color-primary) 100%);
+    background: var(--zym-gradient);
     box-shadow: 0 4px 14px rgba(149, 0, 165, 0.28);
     opacity: 1;
 }
@@ -2108,16 +2134,23 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
     overflow: hidden;
 }
 
-/* Subtotal bar — gradient accent */
+/* Subtotal bar — gradient accent.
+   v2.3.0: rebuilt from a fixed-light-hex + dark-flipping-token gradient
+   (produced a muddy light-fading-to-black look in dark mode) to a
+   gradient built entirely from theme-aware tokens, so it stays a
+   consistent tint in both modes. */
 .zymarg-subtotal-bar {
-    background: linear-gradient(135deg, #f3e8ff 0%, var(--zym-color-container) 100%);
-    border-bottom: 0.5px solid #e4d4f0;
+    background: linear-gradient(135deg, var(--zym-color-container) 0%, var(--zc-surface) 100%);
+    border-bottom: 0.5px solid var(--zc-outline-variant);
     padding: 12px 20px;
     transition: background var(--zc-transition-fast);
 }
 
 .zymarg-subtotal-bar:hover {
-    background: linear-gradient(135deg, #ecdeff 0%, #e0e5ff 100%);
+    /* Fixed light hex previously here always overrode the correct token
+       rule earlier in this file (line ~1092), keeping this hover state
+       permanently light in dark mode. */
+    background: var(--zc-surface-container);
 }
 
 .zymarg-subtotal-bar-left {
@@ -2210,10 +2243,10 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
     font-size: 11px;
 }
 
-/* Action bar */
+/* Action bar — rebuilt fully from theme-aware tokens (see vendor row comment above). */
 .zymarg-action-bar {
-    background: linear-gradient(135deg, #fdf6ff 0%, var(--zym-color-bg) 100%);
-    border-top: 0.5px solid #e8d5f5;
+    background: linear-gradient(135deg, var(--zc-surface-container) 0%, var(--zym-color-bg) 100%);
+    border-top: 0.5px solid var(--zc-outline-variant);
     padding: 14px 20px;
 }
 
@@ -2239,7 +2272,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 
 /* Checkout button — full gradient */
 .zymarg-checkout-btn {
-    background: linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-secondary) 100%);
+    background: var(--zym-gradient);
     color: #ffd6fb;
     border-radius: 12px;
     font-size: 14px;
@@ -2253,7 +2286,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 }
 
 .zymarg-checkout-btn:hover:not(:disabled) {
-    background: linear-gradient(135deg, var(--zym-color-secondary) 0%, var(--zym-color-primary) 100%);
+    background: var(--zym-gradient);
     box-shadow: 0 6px 24px rgba(149, 0, 165, 0.40);
     transform: translateY(-1px);
 }
@@ -2317,7 +2350,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 }
 
 .zymarg-continue-shopping {
-    background: linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-secondary) 100%);
+    background: var(--zym-gradient);
     color: #ffd6fb;
     border-radius: 12px;
     font-size: 14px;
@@ -2328,16 +2361,18 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 }
 
 .zymarg-continue-shopping:hover {
-    background: linear-gradient(135deg, var(--zym-color-secondary) 0%, var(--zym-color-primary) 100%);
+    background: var(--zym-gradient);
     box-shadow: 0 6px 24px rgba(149, 0, 165, 0.38);
     transform: translateY(-1px);
     color: #ffd6fb;
 }
 
 /* ── Edit mode visual update ────────────────────────────────────────────── */
-
+/* Duplicate of the rule above (Row hover in edit mode) — fixed light hex
+   previously here always overrode it on cascade order. Now aligned to the
+   same theme-aware token. */
 .zymarg-edit-mode .zymarg-product-row:hover {
-    background-color: #fff5f5;
+    background-color: var(--zc-error-bg);
 }
 
 /* ── Focus outlines — brand color ───────────────────────────────────────── */
