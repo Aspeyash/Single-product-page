@@ -114,6 +114,10 @@ class Assets {
 		$js_opts = Options::all();
 
 		wp_localize_script( self::HANDLE_JS, 'zymargSP', [
+			// v2.6.0 - Smart Heading: everything the front end needs to keep
+			// the OOS / flash-countdown badge correct after a variation is
+			// selected, without another server round trip.
+			'heading'             => $wc_product ? Price_Renderer::get_localized_heading_data( $wc_product->get_id() ) : [],
 			'ajax_url'           => admin_url( 'admin-ajax.php' ),
 			// v1.0.11 #3 — WC-AJAX endpoint for WooCommerce's native add-to-cart
 			// handler. The front-end JS swaps %%endpoint%% for 'add_to_cart'.
