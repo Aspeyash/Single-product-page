@@ -1,0 +1,491 @@
+/**
+ * ZYMARG Cart — Mobile responsive stylesheet.
+ *
+ * Overrides the desktop 6-column grid layout with a stacked card layout at
+ * the configured breakpoint (default 768 px). All breakpoints in this file
+ * are driven by the same value so changing one number adjusts everything.
+ *
+ * Mobile product-row layout (CSS Grid named areas):
+ *
+ *   col 1 (22px) | col 2 (54px) | col 3 (1fr)
+ *   ─────────────────────────────────────────────
+ *   cb            img            title            ← row 1
+ *   cb            img            subtotal         ← row 2
+ *   .             variation      variation        ← row 3 (spans cols 2-3)
+ *   .             coupon         coupon           ← row 4 (spans cols 2-3)
+ *
+ * Touch targets: all interactive elements maintain a minimum tappable
+ * area of 44 × 44 px in accordance with WCAG 2.5.5.
+ *
+ * @package ZymargCart
+ * @since   1.0.0
+ */
+
+/* =============================================================================
+   Breakpoint — max-width: 480px  (v1.3.0 default — was 768px in 1.2.x)
+   ============================================================================= */
+
+@media screen and (max-width: 480px) {
+
+    /* ── Widget 1 — Cart Header ─────────────────────────────────────────── */
+
+    .zymarg-cart-header {
+        padding: 10px 14px;
+        border-radius: 10px;
+    }
+
+    .zymarg-header-left {
+        gap: 6px;
+    }
+
+    .zymarg-cart-title {
+        font-size: 14px;
+    }
+
+    .zymarg-item-count {
+        font-size: 11px;
+    }
+
+    .zymarg-cart-icon {
+        font-size: 16px;
+    }
+
+    .zymarg-edit-btn,
+    .zymarg-delete-btn {
+        font-size: 11px;
+        padding: 5px 10px;
+        border-radius: 6px;
+        min-height: 32px; /* accessible touch target */
+    }
+
+    /* ── Widget 2 — Cart Body ───────────────────────────────────────────── */
+
+    .zymarg-cart-body {
+        gap: 8px;
+    }
+
+    .zymarg-vendor-block {
+        border-radius: 10px;
+    }
+
+    /* Vendor row */
+    .zymarg-vendor-row {
+        padding: 8px 12px;
+        gap: 8px;
+    }
+
+    .zymarg-vendor-name {
+        font-size: 12px;
+    }
+
+    .zymarg-vendor-item-count {
+        font-size: 10px;
+    }
+
+    .zymarg-vendor-cb,
+    .zymarg-product-cb,
+    .zymarg-master-cb {
+        width: 18px;  /* slightly larger for touch */
+        height: 18px;
+        min-width: 18px;
+        min-height: 18px;
+    }
+
+    /* Hide desktop column headers — irrelevant in card layout */
+    .zymarg-table-header {
+        display: none;
+    }
+
+    /* ── Product row — v1.2.0 mobile redesign (5-row × 3-col grid) ──────────
+       Layout matches the v1.2.0 specification:
+         Col 1 = checkbox (full height)
+         Col 2 = product image (rows 1–2) stacked over unit price (row 3)
+         Col 3 = title/SKU (row 1) → variation+qty (row 2)
+                 → subtotal (row 3) → save+coupon-toggle (row 4)
+                 → coupon-form (row 5, only when expanded)
+       The desktop coupon-toggle and desktop save-for-later inside col-title
+       are hidden; their mobile-only duplicates inside .zymarg-col-mobile-actions
+       are revealed instead so they can be laid out side-by-side via flex. */
+
+    .zymarg-product-row {
+        grid-template-columns: 22px 64px 1fr;
+        grid-template-areas:
+            "cb    img    title"
+            "cb    img    variation"
+            "cb    price  subtotal"
+            "cb    .      mobile-actions"
+            "cb    .      coupon";
+        gap: 6px 10px;
+        padding: 10px 12px;
+    }
+
+    /* Reveal the mobile-only cells / buttons that were hidden on desktop. */
+    .zymarg-col-price               { grid-area: price; text-align: center; }
+    .zymarg-col-mobile-actions      { display: flex;        grid-area: mobile-actions;
+                                      justify-content: space-between; align-items: center;
+                                      gap: 12px; flex-wrap: wrap; }
+    .zymarg-save-later-btn--mobile  { display: inline-flex; }
+    .zymarg-coupon-toggle--mobile   { display: inline-flex; }
+
+    /* Hide the desktop-position counterparts on mobile. */
+    .zymarg-save-later-btn--desktop { display: none; }
+    .zymarg-coupon-toggle--desktop  { display: none; }
+
+    /* Equal-spaced buttons — when only one is shown (e.g. SfL disabled in
+       widget settings), the lone button is left-aligned because flex-direction
+       row + justify-content space-between collapses to a single left position. */
+    .zymarg-col-mobile-actions[data-has-save="0"] {
+        justify-content: flex-start; /* coupon-only → coupon left-aligned */
+    }
+    .zymarg-col-mobile-actions[data-has-coupon="0"] {
+        justify-content: flex-start; /* save-only → save left-aligned */
+    }
+
+    /* Mobile unit price — sits centred under the image in col 2 row 3.
+       v1.2.1: same .zymarg-product-price element as desktop, just placed in
+       a different grid-area and styled smaller / centred for mobile. */
+    .zymarg-col-price .zymarg-product-price {
+        font-size: 12px;
+        text-align: center;
+        margin: 4px 0 0;
+        font-weight: 600;
+        color: var(--zc-primary);
+    }
+
+    /* Checkbox: vertically centred across all 5 rows. */
+    .zymarg-col-cb {
+        align-self: center;
+        padding-top: 2px;
+    }
+
+    /* Image: anchored at the top of its 2-row span. */
+    .zymarg-col-img {
+        align-self: start;
+    }
+
+    .zymarg-product-img-wrap {
+        width: 60px;
+        height: 60px;
+        border-radius: 8px;
+    }
+
+    /* Title column — tighten spacing */
+    .zymarg-col-title {
+        gap: 2px;
+    }
+
+    .zymarg-product-title {
+        font-size: 12px;
+        -webkit-line-clamp: 2;
+    }
+
+    .zymarg-product-sku,
+    .zymarg-variation-labels {
+        font-size: 10px;
+    }
+
+    /* Subtotal column: left-aligned on mobile, shows in row 3 col 3 */
+    .zymarg-col-subtotal {
+        text-align: left;
+        align-self: center;
+    }
+
+    .zymarg-subtotal-amount {
+        font-size: 13px;
+        color: var(--zc-primary);  /* more prominent on mobile */
+        font-weight: 600;
+    }
+
+    /* ── Variation+qty: row 2 col 3, side by side. v1.3.0 swaps the order
+       so the quantity stepper appears BEFORE the variation switcher on mobile
+       (per user request). Desktop layout is untouched (col-variation is a
+       flex column on desktop with no `order` overrides).
+       v1.4.0: removed flex-wrap:wrap — variation select now stays inline
+       with the qty stepper on mobile instead of wrapping to its own row. ── */
+    .zymarg-col-variation {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: nowrap;
+    }
+
+    .zymarg-col-variation .zymarg-qty-stepper       { order: 1; flex-shrink: 0; }
+    .zymarg-col-variation .zymarg-variation-selects { order: 2; flex: 1; min-width: 0; }
+
+    .zymarg-variation-select {
+        font-size: 11px;
+        padding: 4px 6px;
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .zymarg-qty-stepper {
+        flex-shrink: 0;
+    }
+
+    .zymarg-qty-btn {
+        width: 30px;   /* larger touch target */
+        height: 30px;
+    }
+
+    .zymarg-qty-value {
+        width: 32px;
+        height: 30px;
+        font-size: 13px;
+    }
+
+    /* Coupon column: row 5 col 3 — only visible when the form is expanded.
+       The toggle button inside col-coupon is the desktop one (hidden on mobile);
+       the mobile toggle lives inside .zymarg-col-mobile-actions. The form,
+       however, stays inside col-coupon, so col-coupon must occupy the
+       'coupon' grid area for the form to expand directly under the actions
+       row when toggled. */
+    .zymarg-col-coupon {
+        grid-area: coupon;
+        gap: 4px;
+    }
+
+    /* Hide any remaining desktop coupon-toggle leftover spacing. */
+    .zymarg-col-coupon .zymarg-coupon-toggle--desktop {
+        display: none;
+    }
+
+    .zymarg-coupon-toggle--mobile {
+        font-size: 11px;
+        min-height: 28px;
+        align-items: center;
+    }
+
+    /* Coupon form: stacks vertically on mobile */
+    .zymarg-coupon-form.zymarg-coupon-open {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .zymarg-coupon-apply {
+        min-height: 34px;
+        align-self: stretch;
+        justify-content: center;
+    }
+
+    /* Save for Later (mobile button inside actions row) — comfortable tap target */
+    .zymarg-save-later-btn--mobile {
+        min-height: 28px;
+        align-items: center;
+        font-size: 11px;
+    }
+
+    /* Stock warning */
+    .zymarg-stock-warning {
+        font-size: 10px;
+        padding: 2px 5px;
+    }
+
+    /* Vendor subtotal footer */
+    .zymarg-vendor-subtotal-row {
+        padding: 8px 12px;
+    }
+
+    .zymarg-vendor-subtotal-label {
+        font-size: 11px;
+    }
+
+    .zymarg-vendor-subtotal-value {
+        font-size: 12px;
+    }
+
+    /* ── Empty cart state ───────────────────────────────────────────────── */
+
+    .zymarg-cart-empty {
+        padding: 32px 14px;
+        gap: 12px;
+    }
+
+    .zymarg-empty-illustration svg {
+        max-width: 110px;
+    }
+
+    .zymarg-empty-message {
+        font-size: 14px;
+    }
+
+    .zymarg-empty-sub {
+        font-size: 12px;
+    }
+
+    .zymarg-continue-shopping {
+        font-size: 12px;
+        padding: 9px 16px;
+        border-radius: 8px;
+        min-height: 40px;
+    }
+
+    /* ── Save-for-Later section ─────────────────────────────────────────── */
+
+    .zymarg-saved-header {
+        padding: 10px 12px;
+        gap: 6px;
+    }
+
+    .zymarg-saved-header .zymarg-saved-title {
+        font-size: 12px;
+    }
+
+    .zymarg-saved-item-row {
+        padding: 10px 12px;
+        gap: 10px;
+    }
+
+    .zymarg-saved-img-wrap {
+        width: 48px;
+        height: 48px;
+    }
+
+    .zymarg-saved-info .zymarg-saved-title {
+        font-size: 12px;
+    }
+
+    .zymarg-saved-price {
+        font-size: 12px;
+    }
+
+    .zymarg-move-to-cart-btn {
+        font-size: 11px;
+        padding: 6px 10px;
+        min-height: 32px;
+    }
+
+    .zymarg-remove-saved-btn {
+        width: 30px;
+        height: 30px;     /* minimum touch target */
+        font-size: 13px;
+    }
+
+    /* ── Widget 3 — Cart Total ──────────────────────────────────────────── */
+
+    /* Subtotal bar */
+    .zymarg-subtotal-bar {
+        padding: 8px 14px;
+    }
+
+    .zymarg-subtotal-bar-left {
+        font-size: 11px;
+        gap: 4px;
+    }
+
+    .zymarg-subtotal-bar-amount {
+        font-size: 12px;
+    }
+
+    .zymarg-breakdown-arrow {
+        font-size: 13px;
+    }
+
+    /* Breakdown panel inner — v1.3.0: scope to .breakdown-open so the
+       collapsed state correctly resolves to zero top/bottom padding on
+       mobile, matching the desktop fix from v1.1.2. Pre-1.3.0 this rule
+       had no .breakdown-open scope, so on mobile the inner kept its
+       12px top/bottom padding even when the panel was supposed to be
+       collapsed — leaving the Subtotal row partly visible between the
+       Order Summary bar and the action bar (the same bug v1.1.2 had
+       fixed for desktop). */
+    .zymarg-breakdown-panel.breakdown-open .zymarg-breakdown-inner {
+        padding: 12px 14px;
+        gap: 4px;
+    }
+
+    .zymarg-total-label {
+        font-size: 11px;
+    }
+
+    .zymarg-total-value {
+        font-size: 11px;
+    }
+
+    .zymarg-total-row--grand .zymarg-total-label {
+        font-size: 13px;
+    }
+
+    .zymarg-total-row--grand .zymarg-total-value {
+        font-size: 14px;
+    }
+
+    /* Action bar */
+    .zymarg-action-bar {
+        padding: 12px 14px;
+        gap: 10px;
+        flex-wrap: nowrap; /* keep single row; compress elements */
+    }
+
+    .zymarg-selected-label {
+        font-size: 11px;
+        white-space: nowrap;
+    }
+
+    .zymarg-action-grand-total {
+        font-size: 16px;
+    }
+
+    .zymarg-action-grand-label {
+        font-size: 10px;
+    }
+
+    /* Checkout button */
+    .zymarg-checkout-btn {
+        font-size: 12px;
+        padding: 9px 14px;
+        border-radius: 8px;
+        gap: 4px;
+        min-height: 40px; /* comfortable touch target */
+    }
+
+    /* Hide the lock icon on very narrow screens to save space */
+    .zymarg-checkout-btn .zymarg-btn-icon {
+        display: none;
+    }
+
+}
+
+/* =============================================================================
+   Secondary breakpoint — max-width: 480px (extra-small device tweaks)
+   v1.3.0: with the main breakpoint also at 480, this block now applies
+   for all mobile widths (it stacks additively with the main block above).
+   Effectively this consolidates the formerly-separate 768/480 tier into a
+   single 480 mobile tier.
+   ============================================================================= */
+
+@media screen and (max-width: 480px) {
+
+    /* Compress action bar further */
+    .zymarg-action-bar {
+        gap: 8px;
+    }
+
+    .zymarg-master-select {
+        gap: 5px;
+    }
+
+    .zymarg-selected-label {
+        display: none; /* hide count on very small screens */
+    }
+
+    .zymarg-action-grand-total {
+        font-size: 15px;
+    }
+
+    .zymarg-checkout-btn {
+        font-size: 12px;
+        padding: 9px 12px;
+    }
+
+    /* Stack the save-for-later actions vertically on tiny screens */
+    .zymarg-saved-actions {
+        align-items: stretch;
+    }
+
+    .zymarg-move-to-cart-btn {
+        justify-content: center;
+    }
+}

@@ -1,0 +1,2415 @@
+/**
+ * ZYMARG Cart — Main frontend stylesheet.
+ *
+ * Structure:
+ *   1.  CSS custom properties (brand tokens)
+ *   2.  Shared base utilities
+ *   3.  Widget 1 — Cart Header
+ *   4.  Widget 2 — Cart Body
+ *       4a. Vendor block + vendor row
+ *       4b. Table headers
+ *       4c. Product row (6-column grid)
+ *       4d. Column styles (cb, img, title, variation, subtotal, coupon)
+ *       4e. Vendor subtotal footer
+ *       4f. Empty cart state
+ *       4g. Save-for-Later section
+ *   5.  Widget 3 — Cart Total
+ *       5a. Subtotal bar
+ *       5b. Breakdown panel (Part A) — slide animation
+ *       5c. Applied coupons list
+ *       5d. Action bar (Part B)
+ *       5e. Checkout button + spinner
+ *   6.  Edit mode overrides (.zymarg-edit-mode on <body>)
+ *   7.  AJAX loading states
+ *   8.  Accessibility helpers
+ *
+ * @package ZymargCart
+ * @since   1.0.0
+ */
+
+/* =============================================================================
+   1. CSS Custom Properties — ZYMARG Brand Tokens
+   ============================================================================= */
+
+:root {
+    /* Palette — aliases onto the shared --zym-color-* brand tokens in
+       zymarg-tokens.css (single source of truth). Declared here again
+       only because this file must stay self-sufficient even if loaded
+       without zymarg-cart-vars.css; values are NOT redefined, only
+       re-pointed at the shared tokens so dark mode (which flips the
+       underlying --zym-color-* values under prefers-color-scheme: dark
+       in zymarg-tokens.css) now actually reaches these rules too. */
+    --zc-primary:           var(--zym-color-primary);
+    --zc-primary-fixed:     var(--zym-color-primary-fixed);
+    --zc-primary-container: var(--zym-color-primary-container);
+    --zc-inverse-primary:   var(--zym-color-inverse-primary);
+    --zc-on-primary-fixed:  var(--zym-color-on-primary-fixed);
+    --zc-secondary:         var(--zym-color-secondary-brand);
+    --zc-secondary-container: var(--zym-color-secondary-container);
+
+    /* Text */
+    --zc-text-body:   var(--zym-color-text-body);
+    --zc-text-muted:  var(--zym-color-text-muted-brand);
+
+    /* Outline */
+    --zc-outline:         var(--zym-color-outline);
+    --zc-outline-variant: var(--zym-color-outline-variant);
+
+    /* Surfaces */
+    --zc-surface:           var(--zym-color-surface-component);
+    --zc-surface-container: var(--zym-color-surface-container);
+    --zc-surface-lowest:    var(--zym-color-surface-lowest);
+    --zc-inverse-surface:   var(--zym-color-inverse-surface);
+
+    /* Semantic */
+    --zc-success-text: var(--zym-color-success-text);
+    --zc-success-bg:   var(--zym-color-success-bg);
+    --zc-error-text:   var(--zym-color-error-text);
+    --zc-error-bg:      var(--zym-color-error-bg);
+    --zc-warning-text: var(--zym-color-warning-text);
+    --zc-warning-bg:   var(--zym-color-warning-bg);
+
+    /* Motion */
+    --zc-transition-fast:   0.15s ease;
+    --zc-transition-normal: 0.3s ease;
+}
+
+/* =============================================================================
+   2. Shared Base Utilities
+   ============================================================================= */
+
+.screen-reader-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* =============================================================================
+   3. Widget 1 — Cart Header
+   ============================================================================= */
+
+.zymarg-cart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background-color: var(--zc-surface);
+    border: 0.5px solid var(--zc-outline-variant);
+    border-radius: 12px;
+    padding: 14px 20px;
+}
+
+.zymarg-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.zymarg-header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.zymarg-cart-icon {
+    font-size: 18px;
+    color: var(--zc-primary);
+    flex-shrink: 0;
+}
+
+.zymarg-cart-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--zc-text-body);
+    white-space: nowrap;
+}
+
+.zymarg-item-count {
+    font-size: 13px;
+    color: var(--zc-outline);
+    white-space: nowrap;
+}
+
+/* Edit / Delete buttons */
+.zymarg-edit-btn,
+.zymarg-delete-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 400;
+    border-radius: 8px;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: background-color var(--zc-transition-fast),
+                color var(--zc-transition-fast);
+    border: 0.5px solid;
+    background: transparent;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.zymarg-edit-btn {
+    color: var(--zc-primary);
+    border-color: var(--zc-primary);
+}
+
+.zymarg-edit-btn:hover {
+    background-color: var(--zc-primary-fixed);
+}
+
+.zymarg-delete-btn {
+    display: none; /* Revealed only in .zymarg-edit-mode */
+    color: var(--zc-error-text);
+    border-color: var(--zc-error-text);
+    background-color: var(--zc-error-bg);
+}
+
+.zymarg-delete-btn:hover:not(:disabled) {
+    background-color: var(--zc-error-text);
+    color: var(--zym-color-surface-lowest);
+}
+
+.zymarg-delete-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+/* =============================================================================
+   4. Widget 2 — Cart Body
+   ============================================================================= */
+
+.zymarg-cart-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* ─── 4a. Vendor block + row ─────────────────────────────────────────────── */
+
+.zymarg-vendor-block {
+    background-color: var(--zc-surface-lowest);
+    border: 0.5px solid var(--zc-outline-variant);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.zymarg-vendor-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    background-color: var(--zc-surface-container);
+    border-bottom: 0.5px solid var(--zc-outline-variant);
+}
+
+.zymarg-vendor-identity {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+}
+
+.zymarg-vendor-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+/* Vendor static icon (v1.3.1) — alternative to the per-vendor profile photo
+   when the cart-body widget's "Vendor Identity Icon" setting is set to
+   "static_icon". Sized to match the avatar (24px) so the layout shifts are
+   minimal regardless of which mode is active. The Elementor controls expose
+   color and size overrides. */
+.zymarg-vendor-static-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+    color: var(--zc-primary);
+}
+
+.zymarg-vendor-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--zc-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.zymarg-vendor-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    text-decoration: none;
+    transition: color var(--zc-transition-fast);
+}
+
+.zymarg-vendor-link:hover {
+    color: var(--zc-primary-container);
+}
+
+.zymarg-vendor-arrow {
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+.zymarg-vendor-item-count {
+    font-size: 11px;
+    color: var(--zc-outline);
+    margin-left: auto;
+    white-space: nowrap;
+}
+
+/* Vendor checkboxes */
+.zymarg-vendor-cb-wrap {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+}
+
+.zymarg-vendor-cb,
+.zymarg-product-cb,
+.zymarg-master-cb {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--zc-primary);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+/* ─── 4b. Table headers ──────────────────────────────────────────────────── */
+
+.zymarg-table-header {
+    display: grid;
+    /* v1.2.1: must match the 7-column .zymarg-product-row layout below
+       (added the `price` column between title and variation) so the column
+       headers stay aligned with the product-row cells. */
+    grid-template-columns: 36px 64px 1fr auto 180px 100px 160px;
+    gap: 10px;
+    padding: 8px 10px;
+    background-color: var(--zc-surface);
+    border-bottom: 0.5px solid var(--zc-outline-variant);
+}
+
+.zymarg-th {
+    font-size: 11px;
+    color: var(--zc-outline);
+    font-weight: 500;
+    text-transform: none;
+}
+
+/* ─── 4c. Product row — 6-column grid ───────────────────────────────────── */
+
+.zymarg-product-rows {
+    display: flex;
+    flex-direction: column;
+}
+
+.zymarg-product-row {
+    display: grid;
+    /* v1.2.1: added a `price` column between `title` and `variation` so the
+       unit-price element gets its own cell on desktop. The same .zymarg-col-price
+       cell is repositioned under the image on mobile via grid-area. */
+    grid-template-columns: 36px 64px 1fr auto 180px 100px 160px;
+    grid-template-areas: "cb img title price variation subtotal coupon";
+    align-items: start;
+    gap: 10px;
+    padding: 10px;
+    border-bottom: 0.5px solid var(--zc-surface-container);
+    transition: background-color var(--zc-transition-fast);
+    position: relative;
+}
+
+.zymarg-product-row:last-child {
+    border-bottom: none;
+}
+
+.zymarg-product-row:hover {
+    background-color: var(--zc-surface);
+}
+
+.zymarg-col-cb        { grid-area: cb;        align-self: center; }
+.zymarg-col-img       { grid-area: img; }
+.zymarg-col-title     { grid-area: title; }
+.zymarg-col-price     { grid-area: price;     align-self: center; text-align: right; }
+.zymarg-col-variation { grid-area: variation; }
+.zymarg-col-subtotal  { grid-area: subtotal;  text-align: right; align-self: center; }
+.zymarg-col-coupon    { grid-area: coupon; }
+
+/* ─── Simple-product alignment (v1.3.1, fixed in v1.3.2 — desktop only) ────
+   When a product row is for a simple (non-variable) product the variation
+   switcher is absent, so the .zymarg-col-variation cell only holds the qty
+   stepper. The user wants:
+     - Quantity stepper: horizontally LEFT (default), vertically CENTER
+       within its grid cell.
+     - Subtotal cell: both horizontally and vertically CENTERED.
+   For variable products the .zymarg-row-simple class is absent and the
+   default right-aligned subtotal + start-aligned variation column apply
+   unchanged.
+
+   v1.3.2: gated to (min-width: 481px) so mobile (≤480px) uses its own
+   v1.3.0 layout untouched. v1.3.1 incorrectly applied these rules on
+   every viewport, which broke mobile layout because col-variation is a
+   flex-ROW on mobile (so 'justify-content: center' became horizontal
+   center and 'align-items: flex-start' became vertical top — both
+   wrong). Also corrected the desktop rule to use 'align-self: center'
+   on the grid item instead of 'justify-content: center' on the flex
+   container — the latter was a no-op because the flex container has
+   only one child and no explicit height, so there was no extra space
+   to distribute. */
+@media (min-width: 481px) {
+    .zymarg-row-simple .zymarg-col-variation {
+        align-self: center;        /* vertical centre within the grid cell */
+    }
+
+    .zymarg-row-simple .zymarg-col-subtotal {
+        align-self: center;
+        text-align: right;
+    }
+}
+
+/* Mobile-only cells are placed in DOM at all times so the JS event delegation
+   works uniformly. They are hidden on desktop and only become visible inside
+   the mobile breakpoint media query in zymarg-cart-mobile.css (v1.2.0). */
+.zymarg-col-mobile-actions,
+.zymarg-save-later-btn--mobile,
+.zymarg-coupon-toggle--mobile {
+    display: none;
+}
+
+/* Product price element — single instance, shared between desktop (in its own
+   `.zymarg-col-price` column) and mobile (the same cell, repositioned under
+   the image via grid-area). v1.2.1 consolidated the previously-duplicated
+   .zymarg-product-price--desktop and .zymarg-product-price--mobile into a
+   single .zymarg-product-price element. */
+.zymarg-product-price {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--zc-primary);
+    line-height: 1.3;
+    white-space: nowrap;
+}
+
+/* ─── Product image ─────────────────────────────────────────────────────── */
+
+.zymarg-product-img-link {
+    display: block;
+    text-decoration: none;
+}
+
+.zymarg-product-img-wrap {
+    width: 54px;
+    height: 54px;
+    border-radius: 8px;
+    background-color: var(--zc-surface-container);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.zymarg-product-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* ─── Product title column ──────────────────────────────────────────────── */
+
+.zymarg-col-title {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.zymarg-product-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--zc-text-body);
+    text-decoration: none;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.4;
+    transition: color var(--zc-transition-fast);
+}
+
+.zymarg-product-title:hover {
+    color: var(--zc-primary);
+}
+
+.zymarg-product-sku {
+    font-size: 11px;
+    color: var(--zc-outline);
+}
+
+.zymarg-variation-labels {
+    font-size: 11px;
+    color: var(--zc-text-muted);
+}
+
+/* Stock warnings */
+.zymarg-stock-warning {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    width: fit-content;
+}
+
+.zymarg-stock-warning.zymarg-low-stock {
+    color: var(--zc-warning-text);
+    background-color: var(--zc-warning-bg);
+}
+
+.zymarg-stock-warning.zymarg-out-of-stock {
+    color: var(--zc-error-text);
+    background-color: var(--zc-error-bg);
+}
+
+/* Save for Later button */
+.zymarg-save-later-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 11px;
+    color: var(--zc-text-muted);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin-top: 4px;
+    width: fit-content;
+    transition: color var(--zc-transition-fast);
+}
+
+.zymarg-save-later-btn,
+.zymarg-save-later-btn:hover,
+.zymarg-save-later-btn:focus,
+.zymarg-save-later-btn:active,
+.zymarg-coupon-toggle,
+.zymarg-coupon-toggle:hover,
+.zymarg-coupon-toggle:focus,
+.zymarg-coupon-toggle:active {
+    /* v1.3.0 — kill the theme's default button hover effect on these two
+       buttons. The user wants identical styling on default / hover / focus /
+       active states. !important is necessary here because Astra and most
+       themes apply their own hover backgrounds, underlines, and box-shadows
+       to <button> elements via higher-specificity selectors that the plugin
+       cannot beat without the cascade override. The focus outline is left
+       alone so keyboard navigation still has a visible indicator. */
+    background-color: transparent !important;
+    text-decoration: none !important;
+    box-shadow: none !important;
+}
+
+/* ─── 4d. Inline-SVG icon system (v1.3.0) ──────────────────────────────────
+   Replaces the previous Tabler icon-font (`<i class="ti ti-X">`). Markup is
+   produced by `Zymarg_Cart_Helpers::icon( $name, $extra_classes )` which
+   returns:
+
+       <span class="zymarg-icon zymarg-icon-{name} {extra}" aria-hidden="true">
+           <svg ...><path ...></svg>
+       </span>
+
+   Each SVG is sized via `width: 1em; height: 1em` so the wrapper span's
+   `font-size` controls the rendered icon size, exactly like an icon-font
+   glyph. Color flows through `currentColor` so existing widget controls
+   targeting parent button color continue to work without modification. */
+
+.zymarg-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    vertical-align: middle;
+    flex-shrink: 0;
+    /* Default size — overridden by widget controls and per-icon mobile rules. */
+    font-size: 1em;
+}
+
+.zymarg-icon svg {
+    width: 1em;
+    height: 1em;
+    display: block;
+}
+
+/* ─── Variation dropdown + Qty stepper ──────────────────────────────────── */
+
+.zymarg-col-variation {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.zymarg-variation-selects {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.zymarg-variation-field {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.zymarg-variation-label {
+    font-size: 10px;
+    color: var(--zc-outline);
+}
+
+.zymarg-variation-select {
+    font-size: 12px;
+    color: var(--zc-text-muted);
+    border: 0.5px solid var(--zc-outline-variant);
+    border-radius: 6px;
+    padding: 5px 7px;
+    background-color: var(--zc-surface);
+    width: 100%;
+    cursor: pointer;
+    appearance: auto;
+    transition: border-color var(--zc-transition-fast);
+}
+
+.zymarg-variation-select:focus {
+    outline: none;
+    border-color: var(--zc-primary);
+}
+
+.zymarg-variation-static {
+    font-size: 12px;
+    color: var(--zc-text-muted);
+}
+
+/* Qty stepper */
+.zymarg-qty-stepper {
+    display: inline-flex;
+    align-items: center;
+    border: 0.5px solid var(--zc-outline-variant);
+    border-radius: 6px;
+    overflow: hidden;
+    width: fit-content;
+}
+
+.zymarg-qty-btn {
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--zc-surface-container);
+    color: var(--zc-primary);
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+    transition: background-color var(--zc-transition-fast);
+    flex-shrink: 0;
+}
+
+.zymarg-qty-btn:hover:not(:disabled) {
+    background-color: var(--zc-primary-fixed);
+}
+
+.zymarg-qty-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.zymarg-qty-value {
+    width: 30px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--zc-text-body);
+    background-color: var(--zc-surface-lowest);
+    text-align: center;
+    flex-shrink: 0;
+    border-left: 0.5px solid var(--zc-outline-variant);
+    border-right: 0.5px solid var(--zc-outline-variant);
+}
+
+/* ─── Subtotal column ───────────────────────────────────────────────────── */
+
+.zymarg-subtotal-amount {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--zc-text-body);
+}
+
+.zymarg-unit-price {
+    font-size: 11px;
+    color: var(--zc-outline);
+    margin-top: 2px;
+    white-space: nowrap;
+}
+
+/* ─── Coupon column hidden (v1.5.4) ────────────────────────────────────────
+   When the coupon field is disabled in the Cart Body widget
+   (data-coupon="no"), hide the coupon header + column and collapse the
+   grid from 7 to 6 columns. Desktop/tablet only (mobile uses a
+   completely different card-based layout where coupon is already
+   conditionally omitted from the DOM via PHP). */
+@media (min-width: 481px) {
+    .zymarg-cart-body[data-coupon="no"] .zymarg-th-coupon,
+    .zymarg-cart-body[data-coupon="no"] .zymarg-col-coupon {
+        display: none;
+    }
+
+    .zymarg-cart-body[data-coupon="no"] .zymarg-table-header {
+        grid-template-columns: 36px 64px 1fr auto 180px 100px;
+    }
+
+    .zymarg-cart-body[data-coupon="no"] .zymarg-product-row {
+        grid-template-columns: 36px 64px 1fr auto 180px 100px;
+        grid-template-areas: "cb img title price variation subtotal";
+    }
+}
+
+/* ─── Coupon column ─────────────────────────────────────────────────────── */
+
+.zymarg-col-coupon {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.zymarg-applied-coupon-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--zc-success-text);
+    background-color: var(--zc-success-bg);
+    border-radius: 4px;
+    padding: 3px 7px;
+    width: fit-content;
+}
+
+.zymarg-coupon-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 11px;
+    color: var(--zc-primary);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    width: fit-content;
+    transition: color var(--zc-transition-fast);
+}
+
+.zymarg-coupon-toggle:hover {
+    color: var(--zc-primary-container);
+}
+
+/* Coupon form — hidden behind toggle */
+.zymarg-coupon-form {
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.zymarg-coupon-form.zymarg-coupon-open {
+    display: flex;
+}
+
+.zymarg-coupon-input {
+    font-size: 11px;
+    border: 0.5px solid var(--zc-outline-variant);
+    border-radius: 6px;
+    padding: 5px 8px;
+    background-color: var(--zc-surface);
+    width: 100%;
+    transition: border-color var(--zc-transition-fast);
+}
+
+.zymarg-coupon-input:focus {
+    outline: none;
+    border-color: var(--zc-primary);
+}
+
+.zymarg-coupon-apply {
+    font-size: 11px;
+    color: var(--zc-primary);
+    border: 0.5px solid var(--zc-primary);
+    border-radius: 6px;
+    padding: 5px 10px;
+    background: transparent;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color var(--zc-transition-fast),
+                color var(--zc-transition-fast);
+    align-self: flex-start;
+}
+
+.zymarg-coupon-apply:hover {
+    background-color: var(--zc-primary);
+    color: var(--zc-primary-fixed);
+}
+
+/* Coupon feedback messages */
+.zymarg-coupon-feedback {
+    display: none;
+    font-size: 11px;
+    padding: 3px 6px;
+    border-radius: 4px;
+    line-height: 1.4;
+}
+
+.zymarg-coupon-feedback.zymarg-coupon-success {
+    display: block;
+    color: var(--zc-success-text);
+    background-color: var(--zc-success-bg);
+}
+
+.zymarg-coupon-feedback.zymarg-coupon-error {
+    display: block;
+    color: var(--zc-error-text);
+    background-color: var(--zc-error-bg);
+}
+
+/* ─── 4e. Vendor subtotal footer ────────────────────────────────────────── */
+
+.zymarg-vendor-subtotal-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    background-color: var(--zc-surface);
+    border-top: 0.5px solid var(--zc-outline-variant);
+}
+
+.zymarg-vendor-subtotal-label {
+    font-size: 12px;
+    color: var(--zc-text-muted);
+}
+
+.zymarg-vendor-subtotal-value {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--zc-text-body);
+}
+
+/* ─── 4f. Empty cart state ──────────────────────────────────────────────── */
+
+.zymarg-cart-empty {
+    text-align: center;
+    padding: 48px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.zymarg-empty-illustration svg {
+    max-width: 140px;
+    height: auto;
+}
+
+.zymarg-empty-message {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--zc-text-body);
+    margin: 0;
+}
+
+.zymarg-empty-sub {
+    font-size: 13px;
+    color: var(--zc-text-muted);
+    margin: 0;
+}
+
+.zymarg-continue-shopping {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--zc-primary-fixed);
+    background-color: var(--zc-primary);
+    border-radius: 10px;
+    padding: 10px 22px;
+    text-decoration: none;
+    transition: background-color var(--zc-transition-fast);
+}
+
+.zymarg-continue-shopping:hover {
+    background-color: var(--zc-primary-container);
+    color: var(--zc-primary-fixed);
+}
+
+/* ─── 4g. Save-for-Later section ────────────────────────────────────────── */
+
+.zymarg-saved-section {
+    background-color: var(--zc-surface-lowest);
+    border: 0.5px solid var(--zc-outline-variant);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.zymarg-saved-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border-bottom: 0.5px solid var(--zc-outline-variant);
+    background-color: var(--zc-surface);
+}
+
+.zymarg-saved-header .zymarg-saved-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--zc-text-body);
+}
+
+.zymarg-saved-count-badge {
+    background-color: var(--zc-primary);
+    color: var(--zc-primary-fixed);
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 10px;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.zymarg-saved-item-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 16px;
+    border-bottom: 0.5px solid var(--zc-surface-container);
+    transition: background-color var(--zc-transition-fast);
+}
+
+.zymarg-saved-item-row:last-child {
+    border-bottom: none;
+}
+
+.zymarg-saved-item-row:hover {
+    background-color: var(--zc-surface);
+}
+
+.zymarg-saved-img-link {
+    display: block;
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+.zymarg-saved-img-wrap {
+    width: 54px;
+    height: 54px;
+    border-radius: 8px;
+    background-color: var(--zc-surface-container);
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.zymarg-saved-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.zymarg-saved-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.zymarg-saved-info .zymarg-saved-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--zc-text-body);
+    text-decoration: none;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.4;
+    transition: color var(--zc-transition-fast);
+}
+
+.zymarg-saved-info .zymarg-saved-title:hover {
+    color: var(--zc-primary);
+}
+
+.zymarg-saved-var-labels {
+    font-size: 11px;
+    color: var(--zc-text-muted);
+}
+
+.zymarg-saved-price-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.zymarg-saved-price {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--zc-primary);
+}
+
+.zymarg-price-changed-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px;
+    color: var(--zc-warning-text);
+    background-color: var(--zc-warning-bg);
+    border-radius: 4px;
+    padding: 1px 5px;
+}
+
+.zymarg-saved-qty {
+    font-size: 11px;
+    color: var(--zc-outline);
+}
+
+.zymarg-saved-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.zymarg-move-to-cart-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    color: var(--zc-surface-lowest);
+    background-color: var(--zc-primary);
+    border: none;
+    border-radius: 8px;
+    padding: 6px 12px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color var(--zc-transition-fast);
+}
+
+.zymarg-move-to-cart-btn:hover:not(:disabled) {
+    background-color: var(--zc-primary-container);
+}
+
+.zymarg-move-to-cart-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.zymarg-remove-saved-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    font-size: 13px;
+    color: var(--zc-outline);
+    background: transparent;
+    border: 0.5px solid var(--zc-outline-variant);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: color var(--zc-transition-fast),
+                border-color var(--zc-transition-fast),
+                background-color var(--zc-transition-fast);
+    flex-shrink: 0;
+}
+
+.zymarg-remove-saved-btn:hover {
+    color: var(--zc-error-text);
+    border-color: var(--zc-error-text);
+    background-color: var(--zc-error-bg);
+}
+
+/* =============================================================================
+   5. Widget 3 — Cart Total
+   ============================================================================= */
+
+.zymarg-cart-total {
+    background-color: var(--zc-surface-lowest);
+    border: 0.5px solid var(--zc-outline-variant);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* ─── 5a. Subtotal bar ──────────────────────────────────────────────────── */
+
+.zymarg-subtotal-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 20px;
+    background-color: var(--zc-surface-container);
+    border-bottom: 0.5px solid var(--zc-outline-variant);
+    cursor: pointer;
+    user-select: none;
+    transition: background-color var(--zc-transition-fast);
+}
+
+.zymarg-subtotal-bar:hover {
+    background-color: #dde0f5;
+}
+
+.zymarg-subtotal-bar-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--zc-text-muted);
+    min-width: 0;
+}
+
+.zymarg-subtotal-bar-count {
+    color: var(--zc-outline);
+}
+
+.zymarg-subtotal-bar-right {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+}
+
+.zymarg-subtotal-bar-amount {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--zc-primary);
+}
+
+/* Arrow icon — rotates when panel opens.
+   Renders as inline SVG (sized via 1em so the existing font-size widget
+   control still works). Pre-1.1.0 used Tabler Icons which would silently
+   fail on sites where the icon font wasn't loaded. */
+.zymarg-breakdown-arrow {
+    font-size: 14px;
+    line-height: 1;
+    color: var(--zc-primary);
+    transition: transform var(--zc-transition-normal);
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.zymarg-breakdown-arrow svg {
+    width: 1em;
+    height: 1em;
+    display: block;
+}
+
+.breakdown-arrow-open {
+    transform: rotate(180deg);
+}
+
+/* ─── 5b. Breakdown panel (Part A) — modern CSS slide ───────────────────── */
+
+/* Animation uses grid-template-rows: 0fr → 1fr.
+   Defensive belt-and-suspenders for browsers/themes where the grid item's
+   intrinsic min-content size leaks through and leaves rows partly visible
+   after collapse:
+     - overflow: hidden on the panel itself guarantees clipping.
+     - min-height: 0 / min-block-size: 0 on the inner overrides the default
+       'min-height: auto' that grid items get.
+   This prevents the v1.0.x bug where the Subtotal row was still partly
+   visible after the bar was clicked to collapse. */
+.zymarg-breakdown-panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows var(--zc-transition-normal);
+    overflow: hidden;
+}
+
+.zymarg-breakdown-panel.breakdown-open {
+    grid-template-rows: 1fr;
+}
+
+.zymarg-breakdown-inner {
+    overflow: hidden;
+    min-height: 0;
+    min-block-size: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 0 20px; /* No top/bottom padding when collapsed — prevents ghost whitespace (v1.0.8) */
+    transition: padding var(--zc-transition-normal);
+}
+
+.zymarg-breakdown-panel.breakdown-open .zymarg-breakdown-inner {
+    padding: 14px 20px; /* Restore full padding when open (v1.0.8) */
+}
+
+/* Breakdown rows */
+.zymarg-total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.zymarg-total-label {
+    font-size: 12px;
+    color: var(--zc-text-muted);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.zymarg-total-value {
+    font-size: 12px;
+    color: var(--zc-text-body);
+    white-space: nowrap;
+}
+
+.zymarg-total-row--discount .zymarg-total-value {
+    color: var(--zc-success-text);
+}
+
+.zymarg-total-row--grand .zymarg-total-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--zc-text-body);
+}
+
+.zymarg-total-row--grand .zymarg-total-value {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--zc-primary);
+}
+
+.zymarg-breakdown-divider {
+    border: none;
+    border-top: 0.5px solid var(--zc-outline-variant);
+    margin: 4px 0;
+}
+
+.zymarg-coupon-code-badge {
+    font-size: 11px;
+    color: var(--zc-success-text);
+    font-weight: 500;
+}
+
+/* ─── 5c. Applied coupons list ──────────────────────────────────────────── */
+
+.zymarg-applied-coupons {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.zymarg-applied-coupon {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--zc-success-text);
+    background-color: var(--zc-success-bg);
+    border-radius: 4px;
+    padding: 4px 8px;
+}
+
+.zymarg-coupon-code {
+    font-weight: 500;
+}
+
+.zymarg-coupon-disc {
+    margin-left: auto;
+    white-space: nowrap;
+}
+
+.zymarg-remove-coupon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 14px;
+    height: 14px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--zc-success-text);
+    font-size: 12px;
+    padding: 0;
+    border-radius: 2px;
+    transition: color var(--zc-transition-fast);
+    flex-shrink: 0;
+}
+
+.zymarg-remove-coupon:hover {
+    color: var(--zc-error-text);
+}
+
+/* ─── 5d. Action bar (Part B) ───────────────────────────────────────────── */
+
+.zymarg-action-bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 20px;
+    background-color: var(--zc-surface);
+    border-top: 0.5px solid var(--zc-outline-variant);
+    flex-wrap: nowrap;
+}
+
+.zymarg-master-select {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.zymarg-selected-label {
+    font-size: 12px;
+    color: var(--zc-text-muted);
+    white-space: nowrap;
+}
+
+.zymarg-action-grand-wrap {
+    margin-left: auto;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.zymarg-action-grand-label {
+    font-size: 11px;
+    color: var(--zc-outline);
+    display: block;
+    line-height: 1.2;
+}
+
+.zymarg-action-grand-total {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--zc-primary);
+    display: block;
+    white-space: nowrap;
+}
+
+/* ─── 5e. Checkout button + spinner ─────────────────────────────────────── */
+
+.zymarg-checkout-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--zc-primary-fixed);
+    background-color: var(--zc-primary);
+    border: none;
+    border-radius: 10px;
+    padding: 10px 22px;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background-color var(--zc-transition-fast);
+    position: relative;
+}
+
+.zymarg-checkout-btn:hover:not(:disabled) {
+    background-color: var(--zc-primary-container);
+}
+
+.zymarg-checkout-btn:disabled,
+.zymarg-checkout-btn.zymarg-btn-loading {
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+/* Spinner */
+.zymarg-btn-spinner {
+    display: none;
+    width: 13px;
+    height: 13px;
+    border: 2px solid rgba(255, 214, 251, 0.35);
+    border-top-color: var(--zc-primary-fixed);
+    border-radius: 50%;
+    animation: zymarg-spin 0.75s linear infinite;
+    flex-shrink: 0;
+}
+
+.zymarg-btn-loading .zymarg-btn-spinner {
+    display: inline-block;
+}
+
+.zymarg-btn-loading .zymarg-btn-label,
+.zymarg-btn-loading .zymarg-btn-icon,
+.zymarg-btn-loading .zymarg-btn-arrow {
+    opacity: 0.5;
+}
+
+@keyframes zymarg-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* =============================================================================
+   6. Edit Mode — body.zymarg-edit-mode
+   ============================================================================= */
+
+/* Reveal delete button */
+.zymarg-edit-mode .zymarg-delete-btn {
+    display: inline-flex !important;
+}
+
+/* Hide checkout-irrelevant elements in edit mode */
+.zymarg-edit-mode .zymarg-save-later-btn {
+    display: none !important;
+}
+
+.zymarg-edit-mode .zymarg-coupon-toggle,
+.zymarg-edit-mode .zymarg-coupon-form,
+.zymarg-edit-mode .zymarg-applied-coupon-badge {
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* Row hover in edit mode — red tint */
+.zymarg-edit-mode .zymarg-product-row:hover {
+    background-color: #fff7f7;
+}
+
+/* Checkboxes in edit mode — red accent */
+.zymarg-edit-mode .zymarg-product-cb {
+    accent-color: var(--zc-error-text);
+}
+
+/* =============================================================================
+   7. AJAX Loading States
+   ============================================================================= */
+
+.zymarg-loading {
+    opacity: 0.55;
+    pointer-events: none;
+    position: relative;
+}
+
+/* Inline error banner */
+.zymarg-inline-error {
+    background-color: var(--zc-error-bg);
+    color: var(--zc-error-text);
+    border: 0.5px solid var(--zc-error-text);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    margin-bottom: 12px;
+}
+
+/* Row removal fade */
+.zymarg-removing {
+    transition: opacity 0.26s ease, transform 0.26s ease;
+    opacity: 1;
+}
+
+/* Restore sentinel (hidden by design, read by JS) */
+#zymarg-restore-sentinel {
+    display: none;
+    visibility: hidden;
+}
+
+/* =============================================================================
+   8. Accessibility Helpers
+   ============================================================================= */
+
+/* Focus-visible outlines */
+.zymarg-edit-btn:focus-visible,
+.zymarg-delete-btn:focus-visible,
+.zymarg-save-later-btn:focus-visible,
+.zymarg-coupon-toggle:focus-visible,
+.zymarg-coupon-apply:focus-visible,
+.zymarg-checkout-btn:focus-visible,
+.zymarg-qty-btn:focus-visible,
+.zymarg-move-to-cart-btn:focus-visible,
+.zymarg-remove-saved-btn:focus-visible,
+.zymarg-subtotal-bar:focus-visible {
+    outline: 2px solid var(--zc-primary);
+    outline-offset: 2px;
+}
+
+/* Rows that are out of stock — dim slightly */
+.zymarg-row-out-of-stock {
+    opacity: 0.75;
+}
+
+.zymarg-saved-out-of-stock {
+    opacity: 0.75;
+}
+
+
+/* =============================================================================
+   9. Sticky Cart Total + Popup (v1.5.0)
+   =============================================================================
+   Activated by zymarg-cart-sticky.js when a widget's data-sticky-{breakpoint}
+   matches the current viewport. The activation is per-widget, so multiple
+   instances on the same page can be configured independently.
+
+   Body class .zymarg-cart-sticky-active is added in tandem so the Cart Body
+   widget (Widget 2) can reserve matching padding-bottom. The actual height
+   value comes from the --zc-sticky-total-height CSS variable, which is
+   published by a ResizeObserver in the JS module.
+   ----------------------------------------------------------------------------- */
+
+/* ── 9.1 Sticky widget positioning ────────────────────────────────────────── */
+.zymarg-cart-total.zymarg-sticky-active {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9998;
+    background-color: var(--zc-surface-lowest, #ffffff);
+    box-shadow: 0 -2px 16px rgba(0, 0, 0, 0.1);
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    /* Slide-in animation when sticky first activates. Uses opacity only
+       (no transform) so we don't create a stacking/containing-block trap
+       for the absolutely-positioned popup that lives inside this element. */
+    animation: zymarg-sticky-fade-in 250ms ease-out;
+    /* iOS safe-area inset so the bar sits above the home-bar indicator. */
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    /* Allow the popup (absolute child) to overflow upward. */
+    overflow: visible;
+}
+
+@keyframes zymarg-sticky-fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* When sticky is active, the inline breakdown panel is replaced by the
+   popup. Force the inline panel collapsed and prevent CSS transitions from
+   reopening it (e.g. during an applyTotals refresh). */
+.zymarg-cart-total.zymarg-sticky-active .zymarg-breakdown-panel {
+    max-height: 0 !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+}
+
+/* ── 9.2 Cart Body padding so last product isn't hidden under sticky ─────── */
+/* The Cart Body widget itself (Widget 2) reserves padding equal to the
+   actual rendered height of the sticky cart total, published by JS as the
+   --zc-sticky-total-height CSS variable on <html>.
+
+   v1.5.3: the buffer (formerly hard-coded `+ 16px`) is now controlled by
+   the --zc-sticky-total-buffer CSS variable, default 0. Set it in your
+   own custom CSS if you want breathing room between the last product and
+   the sticky bar, e.g.:
+       :root { --zc-sticky-total-buffer: 12px; }
+*/
+body.zymarg-cart-sticky-active .zymarg-cart-body,
+body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
+    padding-bottom: calc(
+        var(--zc-sticky-total-height, 0px) +
+        var(--zc-sticky-total-buffer, 0px)
+    );
+}
+
+/* ── 9.3 Sticky popup (floats above the sticky widget) ────────────────────── */
+/* Uses position: absolute relative to the sticky widget (not position: fixed)
+   so we sidestep the containing-block trap that any transform / will-change
+   on the parent would otherwise create. The popup naturally sits directly
+   above the sticky widget via `bottom: 100%`. */
+.zymarg-sticky-popup {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 100%;   /* directly above the sticky widget */
+    background-color: var(--zc-surface-lowest, #ffffff);
+    box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.12);
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border: 1px solid var(--zc-outline-variant, #d8bfd3);
+    border-bottom: none;
+    /* Hidden by default — visibility + opacity + transform together so the
+       transition can animate AND screen readers / focus skip the element. */
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+    transition:
+        opacity 250ms ease-out,
+        transform 250ms ease-out,
+        visibility 0s linear 250ms;
+    /* Constrain so the popup never eats the whole screen. Internal scroll
+       if breakdown is unusually long (rare). */
+    max-height: 50vh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+.zymarg-sticky-popup.zymarg-sticky-popup--open {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+    transition:
+        opacity 250ms ease-out,
+        transform 250ms ease-out,
+        visibility 0s linear 0s;
+}
+
+.zymarg-sticky-popup-inner {
+    padding: 16px 20px;
+}
+
+.zymarg-sticky-popup-header {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--zc-text-muted, #534152);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--zc-outline-variant, #d8bfd3);
+}
+
+.zymarg-sticky-popup-body .zymarg-total-row {
+    padding: 6px 0;
+}
+
+/* ── 9.4 Final-note row ("Final price displayed at checkout") ─────────────── */
+.zymarg-total-row--final-note {
+    justify-content: flex-end;
+    padding-top: 6px !important;
+    border-top: 0 !important;
+}
+
+.zymarg-final-note {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--zc-text-muted, #534152);
+    font-style: italic;
+    text-align: right;
+    line-height: 1.4;
+}
+
+/* ── 9.5 Reduced motion — skip slide animations ───────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    .zymarg-cart-total.zymarg-sticky-active {
+        animation: none;
+    }
+    .zymarg-sticky-popup {
+        transition: opacity 100ms ease-out, visibility 0s linear 100ms;
+        transform: none;
+    }
+    .zymarg-sticky-popup.zymarg-sticky-popup--open {
+        transform: none;
+        transition: opacity 100ms ease-out, visibility 0s linear 0s;
+    }
+}
+
+/* ── 9.6 Small-screen tweaks ──────────────────────────────────────────────── */
+@media (max-width: 480px) {
+    .zymarg-sticky-popup-inner {
+        padding: 14px 16px;
+    }
+    .zymarg-sticky-popup {
+        max-height: 60vh;
+    }
+}
+
+/* =============================================================================
+   10. ZYMARG Visual Enhancement Layer v2.0.0
+   Brand color polish + visual attractiveness upgrade.
+   Pure CSS — zero functionality or layout changes.
+   Every rule overrides ONLY visual properties (color, background, shadow,
+   gradient, border, border-radius, font-weight, transition).
+   ============================================================================= */
+
+/* ── Extra brand tokens ──────────────────────────────────────────────────── */
+:root {
+    --zc-gradient-primary:  linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-primary-container) 100%);
+    --zc-gradient-soft:     linear-gradient(135deg, var(--zym-color-primary-fixed) 0%, var(--zym-color-inverse-primary) 100%);
+    --zc-shadow-card:       0 2px 12px rgba(149, 0, 165, 0.07);
+    --zc-shadow-hover:      0 4px 20px rgba(149, 0, 165, 0.12);
+    --zc-shadow-total:      0 -2px 20px rgba(149, 0, 165, 0.08);
+    --zc-primary-10:        rgba(149, 0, 165, 0.08);
+    --zc-primary-15:        rgba(149, 0, 165, 0.12);
+}
+
+/* ── Widget 1 — Cart Header ─────────────────────────────────────────────── */
+
+/* v2.1.0: flattened from a two-stop gradient to a single solid brand color
+   per design decision — the "My Cart" bar now uses --zym-color-primary
+   directly instead of a gradient. */
+.zymarg-cart-header {
+    background: var(--zym-color-primary);
+    border: none;
+    border-radius: 14px;
+    box-shadow: 0 4px 20px rgba(149, 0, 165, 0.22);
+}
+
+.zymarg-cart-icon {
+    color: var(--zym-color-primary-fixed);
+}
+
+.zymarg-cart-title {
+    color: var(--zym-color-surface-lowest);
+    font-weight: 600;
+    font-size: 17px;
+}
+
+.zymarg-item-count {
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 13px;
+}
+
+.zymarg-edit-btn {
+    color: var(--zym-color-primary-fixed);
+    border-color: rgba(255, 255, 255, 0.45);
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    backdrop-filter: blur(4px);
+    transition: background var(--zc-transition-fast), border-color var(--zc-transition-fast);
+}
+
+.zymarg-edit-btn:hover {
+    background: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.65);
+}
+
+.zymarg-delete-btn {
+    color: var(--zym-color-primary-fixed);
+    border-color: rgba(255, 255, 255, 0.45);
+    background: rgba(220, 53, 69, 0.25);
+    border-radius: 20px;
+}
+
+.zymarg-delete-btn:hover:not(:disabled) {
+    background: #dc3545;
+    color: #ffffff;
+    border-color: #dc3545;
+}
+
+/* ── Widget 2 — Vendor block ────────────────────────────────────────────── */
+
+.zymarg-vendor-block {
+    border: 0.5px solid var(--zc-outline-variant);
+    border-radius: 14px;
+    box-shadow: var(--zc-shadow-card);
+    transition: box-shadow var(--zc-transition-normal);
+}
+
+.zymarg-vendor-block:hover {
+    box-shadow: var(--zc-shadow-hover);
+}
+
+.zymarg-vendor-row {
+    background: linear-gradient(135deg, #f3e8ff 0%, var(--zym-color-surface-container) 100%);
+    border-bottom: 0.5px solid #e4d4f0;
+    padding: 11px 16px;
+}
+
+.zymarg-vendor-name {
+    color: var(--zym-color-primary);
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.zymarg-vendor-link:hover {
+    color: var(--zym-color-primary-container);
+}
+
+.zymarg-vendor-item-count {
+    background: rgba(149, 0, 165, 0.08);
+    color: var(--zym-color-primary);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 20px;
+}
+
+/* Vendor avatar ring */
+.zymarg-vendor-avatar {
+    border: 2px solid var(--zym-color-primary-fixed);
+    box-shadow: 0 0 0 1px rgba(149, 0, 165, 0.15);
+}
+
+/* Static vendor icon — colored pill background */
+.zymarg-vendor-static-icon {
+    color: var(--zym-color-primary);
+    background: linear-gradient(135deg, var(--zym-color-primary-fixed) 0%, var(--zym-color-inverse-primary) 100%);
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(149, 0, 165, 0.18);
+}
+
+/* Vendor arrow */
+.zymarg-vendor-arrow {
+    color: var(--zym-color-primary);
+    opacity: 0.7;
+}
+
+/* ── Table headers ──────────────────────────────────────────────────────── */
+
+.zymarg-table-header {
+    background: var(--zym-color-surface-component);
+    border-bottom: 0.5px solid #e8d5f5;
+}
+
+.zymarg-th {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--zym-color-outline);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+/* ── Product rows ───────────────────────────────────────────────────────── */
+
+.zymarg-product-row {
+    border-bottom: 0.5px solid #f0e6f8;
+    transition: background-color var(--zc-transition-fast);
+}
+
+.zymarg-product-row:hover {
+    background-color: #fdf6ff;
+}
+
+/* Product image — soft brand shadow on hover */
+.zymarg-product-img-wrap {
+    border-radius: 10px;
+    border: 1.5px solid #f0e6f8;
+    transition: border-color var(--zc-transition-fast), box-shadow var(--zc-transition-fast);
+}
+
+.zymarg-product-row:hover .zymarg-product-img-wrap {
+    border-color: var(--zym-color-outline-variant);
+    box-shadow: 0 2px 8px rgba(149, 0, 165, 0.10);
+}
+
+/* Product title */
+.zymarg-product-title {
+    font-weight: 500;
+    color: var(--zym-color-text-body);
+}
+
+.zymarg-product-title:hover {
+    color: var(--zym-color-primary);
+}
+
+/* Product price */
+.zymarg-product-price {
+    font-weight: 700;
+    color: var(--zym-color-primary);
+    font-size: 14px;
+}
+
+/* SKU */
+.zymarg-product-sku {
+    color: #a889b0;
+    font-size: 10px;
+}
+
+/* Variation labels */
+.zymarg-variation-labels {
+    color: var(--zym-color-outline);
+    font-size: 11px;
+    background: var(--zym-color-surface-component);
+    border: 0.5px solid #e8d5f5;
+    border-radius: 4px;
+    padding: 1px 6px;
+    display: inline-block;
+    margin-top: 1px;
+}
+
+/* Variation dropdown */
+.zymarg-variation-select {
+    border-color: #e0d0ea;
+    border-radius: 8px;
+    background: var(--zym-color-surface-component);
+    color: var(--zym-color-text-muted-brand);
+    font-size: 12px;
+}
+
+.zymarg-variation-select:focus {
+    border-color: var(--zym-color-primary);
+    box-shadow: 0 0 0 2px rgba(149, 0, 165, 0.10);
+}
+
+/* Qty stepper — brand style */
+.zymarg-qty-stepper {
+    border-color: #e0d0ea;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.zymarg-qty-btn {
+    background: linear-gradient(135deg, var(--zym-color-primary-fixed) 0%, #f5c8f8 100%);
+    color: var(--zym-color-primary);
+    width: 28px;
+    height: 28px;
+    font-size: 15px;
+    transition: background var(--zc-transition-fast), color var(--zc-transition-fast);
+}
+
+.zymarg-qty-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-primary-container) 100%);
+    color: var(--zym-color-primary-fixed);
+}
+
+.zymarg-qty-value {
+    width: 34px;
+    height: 28px;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--zym-color-on-primary-fixed);
+    background: var(--zym-color-surface-lowest);
+    border-color: #e0d0ea;
+}
+
+/* Subtotal amount */
+.zymarg-subtotal-amount {
+    font-weight: 700;
+    color: var(--zym-color-primary);
+    font-size: 14px;
+}
+
+/* Save for later */
+.zymarg-save-later-btn {
+    color: var(--zym-color-outline);
+    font-size: 11px;
+    gap: 4px;
+    transition: color var(--zc-transition-fast);
+}
+
+.zymarg-save-later-btn:hover {
+    color: var(--zym-color-primary);
+}
+
+/* Coupon toggle */
+.zymarg-coupon-toggle {
+    color: var(--zym-color-primary);
+    font-weight: 500;
+    text-decoration-color: var(--zym-color-outline-variant);
+}
+
+.zymarg-coupon-toggle:hover {
+    color: var(--zym-color-primary-container);
+    text-decoration-color: var(--zym-color-primary-container);
+}
+
+/* Coupon input */
+.zymarg-coupon-input {
+    border-color: #e0d0ea;
+    border-radius: 8px;
+    background: var(--zym-color-surface-component);
+}
+
+.zymarg-coupon-input:focus {
+    border-color: var(--zym-color-primary);
+    box-shadow: 0 0 0 2px rgba(149, 0, 165, 0.10);
+}
+
+/* Coupon apply button */
+.zymarg-coupon-apply {
+    border-radius: 8px;
+    font-weight: 500;
+    color: var(--zym-color-primary);
+    border-color: var(--zym-color-primary);
+}
+
+.zymarg-coupon-apply:hover {
+    background: linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-primary-container) 100%);
+    color: var(--zym-color-primary-fixed);
+    border-color: transparent;
+}
+
+/* Applied coupon badge */
+.zymarg-applied-coupon-badge {
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+/* ── Vendor subtotal row ────────────────────────────────────────────────── */
+
+.zymarg-vendor-subtotal-row {
+    background: linear-gradient(135deg, #fdf6ff 0%, var(--zym-color-surface-component) 100%);
+    border-top: 0.5px solid #e8d5f5;
+    padding: 10px 18px;
+}
+
+.zymarg-vendor-subtotal-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--zym-color-outline);
+}
+
+.zymarg-vendor-subtotal-value {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--zym-color-primary);
+}
+
+/* ── Save for Later section ─────────────────────────────────────────────── */
+
+.zymarg-saved-section {
+    border: 0.5px solid var(--zc-outline-variant);
+    border-radius: 14px;
+    box-shadow: var(--zc-shadow-card);
+}
+
+.zymarg-saved-header {
+    background: linear-gradient(135deg, #fdf6ff 0%, var(--zym-color-surface-component) 100%);
+    border-bottom: 0.5px solid #e8d5f5;
+}
+
+.zymarg-saved-header .zymarg-saved-title {
+    font-weight: 600;
+    color: var(--zym-color-on-primary-fixed);
+    font-size: 13px;
+}
+
+.zymarg-saved-count-badge {
+    background: linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-primary-container) 100%);
+    color: var(--zym-color-primary-fixed);
+    font-size: 11px;
+    font-weight: 700;
+    min-width: 22px;
+    height: 22px;
+    border-radius: 11px;
+    box-shadow: 0 2px 6px rgba(149, 0, 165, 0.25);
+}
+
+.zymarg-saved-item-row {
+    border-bottom: 0.5px solid #f0e6f8;
+    transition: background-color var(--zc-transition-fast);
+}
+
+.zymarg-saved-item-row:hover {
+    background: #fdf6ff;
+}
+
+.zymarg-saved-img-wrap {
+    border-radius: 10px;
+    border: 1.5px solid #f0e6f8;
+}
+
+.zymarg-saved-info .zymarg-saved-title {
+    font-weight: 500;
+    color: var(--zym-color-text-body);
+}
+
+.zymarg-saved-info .zymarg-saved-title:hover {
+    color: var(--zym-color-primary);
+}
+
+.zymarg-saved-price {
+    font-weight: 700;
+    color: var(--zym-color-primary);
+    font-size: 13px;
+}
+
+.zymarg-saved-var-labels {
+    color: var(--zym-color-outline);
+    font-size: 11px;
+}
+
+.zymarg-move-to-cart-btn {
+    background: linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-primary-container) 100%);
+    color: var(--zym-color-primary-fixed);
+    border-radius: 10px;
+    font-weight: 500;
+    font-size: 12px;
+    padding: 7px 14px;
+    box-shadow: 0 2px 8px rgba(149, 0, 165, 0.18);
+    transition: box-shadow var(--zc-transition-fast), opacity var(--zc-transition-fast);
+}
+
+.zymarg-move-to-cart-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--zym-color-primary-container) 0%, var(--zym-color-primary) 100%);
+    box-shadow: 0 4px 14px rgba(149, 0, 165, 0.28);
+    opacity: 1;
+}
+
+.zymarg-remove-saved-btn {
+    border-color: #e0d0ea;
+    border-radius: 8px;
+    color: var(--zym-color-outline);
+}
+
+.zymarg-remove-saved-btn:hover {
+    color: var(--zym-color-error-text);
+    border-color: #f5c1c1;
+    background: var(--zym-color-error-bg);
+}
+
+/* ── Widget 3 — Cart Total ──────────────────────────────────────────────── */
+
+.zymarg-cart-total {
+    border: 0.5px solid #e0d0ea;
+    border-radius: 14px;
+    box-shadow: 0 4px 24px rgba(149, 0, 165, 0.08);
+    overflow: hidden;
+}
+
+/* Subtotal bar — gradient accent */
+.zymarg-subtotal-bar {
+    background: linear-gradient(135deg, #f3e8ff 0%, var(--zym-color-surface-container) 100%);
+    border-bottom: 0.5px solid #e4d4f0;
+    padding: 12px 20px;
+    transition: background var(--zc-transition-fast);
+}
+
+.zymarg-subtotal-bar:hover {
+    background: linear-gradient(135deg, #ecdeff 0%, #e0e5ff 100%);
+}
+
+.zymarg-subtotal-bar-left {
+    color: var(--zym-color-text-muted-brand);
+    font-weight: 500;
+    font-size: 13px;
+}
+
+.zymarg-subtotal-bar-label {
+    font-weight: 600;
+    color: var(--zym-color-on-primary-fixed);
+}
+
+.zymarg-subtotal-bar-count {
+    color: var(--zym-color-outline);
+    font-weight: 400;
+}
+
+.zymarg-subtotal-bar-amount {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--zym-color-primary);
+}
+
+.zymarg-breakdown-arrow {
+    color: var(--zym-color-primary);
+}
+
+/* Breakdown panel */
+.zymarg-breakdown-inner {
+    background: var(--zym-color-surface-lowest);
+}
+
+.zymarg-breakdown-panel.breakdown-open .zymarg-breakdown-inner {
+    padding: 16px 20px;
+}
+
+.zymarg-total-label {
+    font-size: 13px;
+    color: var(--zym-color-text-muted-brand);
+    font-weight: 400;
+}
+
+.zymarg-total-value {
+    font-size: 13px;
+    color: var(--zym-color-text-body);
+    font-weight: 500;
+}
+
+.zymarg-total-row--discount .zymarg-total-value {
+    color: var(--zym-color-success-text);
+    font-weight: 600;
+}
+
+.zymarg-total-row--grand .zymarg-total-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--zym-color-text-body);
+}
+
+.zymarg-total-row--grand .zymarg-total-value {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--zym-color-primary);
+}
+
+.zymarg-breakdown-divider {
+    border-top: 0.5px solid #e8d5f5;
+    margin: 8px 0;
+}
+
+/* Applied coupons */
+.zymarg-applied-coupon {
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 5px 10px;
+}
+
+.zymarg-coupon-code {
+    font-weight: 600;
+}
+
+.zymarg-remove-coupon:hover {
+    color: var(--zym-color-error-text);
+}
+
+/* Final note */
+.zymarg-final-note {
+    color: #a889b0;
+    font-size: 11px;
+}
+
+/* Action bar */
+.zymarg-action-bar {
+    background: linear-gradient(135deg, #fdf6ff 0%, var(--zym-color-surface-component) 100%);
+    border-top: 0.5px solid #e8d5f5;
+    padding: 14px 20px;
+}
+
+.zymarg-selected-label {
+    font-size: 12px;
+    color: var(--zym-color-outline);
+    font-weight: 500;
+}
+
+.zymarg-action-grand-label {
+    font-size: 11px;
+    color: #a889b0;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+}
+
+.zymarg-action-grand-total {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--zym-color-primary);
+    letter-spacing: -0.01em;
+}
+
+/* Checkout button — full gradient */
+.zymarg-checkout-btn {
+    background: linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-primary-container) 100%);
+    color: var(--zym-color-primary-fixed);
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px 26px;
+    box-shadow: 0 4px 16px rgba(149, 0, 165, 0.30);
+    transition:
+        box-shadow var(--zc-transition-fast),
+        opacity var(--zc-transition-fast),
+        transform var(--zc-transition-fast);
+}
+
+.zymarg-checkout-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, var(--zym-color-primary-container) 0%, var(--zym-color-primary) 100%);
+    box-shadow: 0 6px 24px rgba(149, 0, 165, 0.40);
+    transform: translateY(-1px);
+}
+
+.zymarg-checkout-btn:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(149, 0, 165, 0.20);
+}
+
+/* ── Sticky popup visual ────────────────────────────────────────────────── */
+
+.zymarg-sticky-popup {
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    border-color: #e0d0ea;
+    box-shadow: 0 -6px 24px rgba(149, 0, 165, 0.12);
+}
+
+.zymarg-sticky-popup-header {
+    color: var(--zym-color-primary);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    border-bottom-color: #e8d5f5;
+}
+
+/* ── Stock warnings ─────────────────────────────────────────────────────── */
+
+.zymarg-stock-warning.zymarg-low-stock {
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.zymarg-stock-warning.zymarg-out-of-stock {
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+/* ── Price changed badge ────────────────────────────────────────────────── */
+
+.zymarg-price-changed-badge {
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+/* ── Empty cart state ───────────────────────────────────────────────────── */
+
+.zymarg-cart-empty {
+    padding: 56px 24px;
+}
+
+.zymarg-empty-message {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--zym-color-on-primary-fixed);
+}
+
+.zymarg-empty-sub {
+    color: var(--zym-color-outline);
+    font-size: 13px;
+}
+
+.zymarg-continue-shopping {
+    background: linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-primary-container) 100%);
+    color: var(--zym-color-primary-fixed);
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px 28px;
+    box-shadow: 0 4px 16px rgba(149, 0, 165, 0.28);
+    transition: box-shadow var(--zc-transition-fast), transform var(--zc-transition-fast);
+}
+
+.zymarg-continue-shopping:hover {
+    background: linear-gradient(135deg, var(--zym-color-primary-container) 0%, var(--zym-color-primary) 100%);
+    box-shadow: 0 6px 24px rgba(149, 0, 165, 0.38);
+    transform: translateY(-1px);
+    color: var(--zym-color-primary-fixed);
+}
+
+/* ── Edit mode visual update ────────────────────────────────────────────── */
+
+.zymarg-edit-mode .zymarg-product-row:hover {
+    background-color: #fff5f5;
+}
+
+/* ── Focus outlines — brand color ───────────────────────────────────────── */
+
+.zymarg-edit-btn:focus-visible,
+.zymarg-delete-btn:focus-visible,
+.zymarg-save-later-btn:focus-visible,
+.zymarg-coupon-toggle:focus-visible,
+.zymarg-coupon-apply:focus-visible,
+.zymarg-checkout-btn:focus-visible,
+.zymarg-qty-btn:focus-visible,
+.zymarg-move-to-cart-btn:focus-visible,
+.zymarg-remove-saved-btn:focus-visible,
+.zymarg-subtotal-bar:focus-visible {
+    outline: 2px solid var(--zym-color-primary);
+    outline-offset: 3px;
+    box-shadow: 0 0 0 4px rgba(149, 0, 165, 0.12);
+}
+
+/* ── Checkboxes — brand accent ──────────────────────────────────────────── */
+
+.zymarg-vendor-cb,
+.zymarg-product-cb,
+.zymarg-master-cb {
+    accent-color: var(--zym-color-primary);
+    width: 17px;
+    height: 17px;
+}
+
+/* =============================================================================
+   11. Visual Fix Layer v2.0.1
+   Fix: Cart icon visibility on gradient header background.
+   Fix: Vendor row icon + name vertical alignment.
+   ============================================================================= */
+
+/* ── Fix 1: Cart icon color on header background ────────────────────────────
+   The header background is a solid brand primary color (--zym-color-primary).
+   #ffd6fb (light pink) is too close to white and washes out against it.
+   White (--zym-color-surface-lowest) gives maximum contrast and looks clean. */
+.zymarg-cart-header .zymarg-cart-icon {
+    color: var(--zym-color-surface-lowest);
+    opacity: 1;
+}
+
+/* Also ensure the icon SVG inherits the white */
+.zymarg-cart-header .zymarg-cart-icon svg {
+    color: var(--zym-color-surface-lowest);
+    stroke: var(--zym-color-surface-lowest);
+}
+
+/* ── Fix 2: Vendor row — center-align icon, avatar, and name vertically ─────
+   The vendor identity block (.zymarg-vendor-identity) uses flex but the
+   items were not explicitly cross-axis centered. Force align-items: center
+   on the identity wrapper and on the row itself. */
+.zymarg-vendor-row {
+    align-items: center;
+}
+
+.zymarg-vendor-identity {
+    align-items: center;
+    display: flex;
+}
+
+/* Static icon — ensure it sits perfectly centered with the name */
+.zymarg-vendor-static-icon {
+    align-self: center;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Avatar — ensure it sits centered with the name */
+.zymarg-vendor-avatar {
+    align-self: center;
+    flex-shrink: 0;
+}
+
+/* Vendor name — ensure it is vertically centered */
+.zymarg-vendor-name {
+    align-self: center;
+    line-height: 1.2;
+}
+
+/* Vendor arrow — vertically centered */
+.zymarg-vendor-arrow {
+    align-self: center;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* Vendor checkbox wrap — vertically centered */
+.zymarg-vendor-cb-wrap {
+    align-self: center;
+}

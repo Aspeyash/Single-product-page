@@ -1,0 +1,115 @@
+/*
+ * ZYMARG Cart — CSS Custom Properties
+ * Standalone Cart Page Edition v2.0.0
+ *
+ * This file declares all CSS custom properties used throughout the plugin.
+ * It is prepended to zymarg-cart.css via wp_enqueue_style dependency.
+ *
+ * Design decisions:
+ *  - The page/body background is NOT set here. It inherits from the active
+ *    WordPress theme (Astra) so the cart page adapts to your theme's colours.
+ *  - All component-level colours (cards, buttons, rows) use --zc-* tokens,
+ *    which are now thin aliases onto the shared --zym-color-* brand tokens
+ *    declared in zymarg-tokens.css (single source of truth — see the
+ *    ZYMARG Design Tokens doc). Never redefine a --zym-* value here.
+ *  - Dark mode uses @media (prefers-color-scheme: dark) so it respects the
+ *    visitor's OS/browser preference automatically. The dark values also
+ *    come from the shared tokens file, which already flips automatically
+ *    under the same media query.
+ */
+
+/* ============================================================
+   Light mode tokens (default) — aliases onto shared --zym-* tokens
+   ============================================================ */
+:root {
+  /* ── Primary brand ─────────────────────────────────────── */
+  --zc-primary:            var(--zym-color-primary);
+  --zc-primary-container:  var(--zym-color-primary-container);  /* hover / gradient end */
+  --zc-inverse-primary:    var(--zym-color-inverse-primary);    /* soft accent / on-dark */
+  --zc-primary-fixed:      var(--zym-color-primary-fixed);      /* stable tint surfaces  */
+  --zc-on-primary-fixed:   var(--zym-color-on-primary-fixed);   /* text on primary fixed  */
+
+  /* ── Secondary ─────────────────────────────────────────── */
+  --zc-secondary:           var(--zym-color-secondary-brand);
+  --zc-secondary-container: var(--zym-color-secondary-container);
+
+  /* ── Surface (components only — NOT the page background) ── */
+  --zc-surface:           var(--zym-color-surface-component);  /* widget containers      */
+  --zc-surface-container: var(--zym-color-surface-container);  /* vendor row bg, headers */
+  --zc-surface-lowest:    var(--zym-color-surface-lowest);     /* card / row bg          */
+  --zc-inverse-surface:   var(--zym-color-inverse-surface);    /* dark elements          */
+
+  /* ── Text ──────────────────────────────────────────────── */
+  --zc-text-body:  var(--zym-color-text-body);
+  --zc-text-muted: var(--zym-color-text-muted-brand);
+
+  /* ── Borders ────────────────────────────────────────────── */
+  --zc-outline:         var(--zym-color-outline);
+  --zc-outline-variant: var(--zym-color-outline-variant);
+
+  /* ── Semantic / status ──────────────────────────────────── */
+  --zc-success-bg:   var(--zym-color-success-bg);
+  --zc-success-text: var(--zym-color-success-text);
+  --zc-error-bg:     var(--zym-color-error-bg);
+  --zc-error-text:   var(--zym-color-error-text);
+  --zc-warning-bg:   var(--zym-color-warning-bg);
+  --zc-warning-text: var(--zym-color-warning-text);
+
+  /* ── Radii ──────────────────────────────────────────────── */
+  --zc-radius-sm: 8px;   /* inputs, steppers */
+  --zc-radius-md: 12px;  /* cards, blocks    */
+  --zc-radius-lg: 20px;  /* pills, badges    */
+
+  /* ── Elevation ──────────────────────────────────────────── */
+  --zc-shadow: 0 4px 20px rgba(149, 0, 165, 0.08);
+
+  /* ── Transitions ────────────────────────────────────────── */
+  --zc-transition-fast:   0.15s ease;
+  --zc-transition-normal: 0.3s ease;
+  --zc-transition-slow:   0.5s ease;
+
+  /* ── Gradients (used in buttons, vendor headers) ─────────── */
+  --zc-gradient-primary: linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-primary-container) 100%);
+  --zc-gradient-soft:    linear-gradient(135deg, var(--zym-color-inverse-primary) 0%, var(--zym-color-primary-container) 100%);
+  --zc-gradient-dark:    linear-gradient(135deg, #1a1a2e 0%, var(--zym-color-primary) 100%);
+}
+
+/* ============================================================
+   Dark mode — the --zc-* aliases above already resolve to the
+   shared --zym-color-* dark values automatically, because
+   zymarg-tokens.css flips those tokens under the same
+   prefers-color-scheme: dark media query. No duplicate values
+   needed here. Only properties with NO --zym-* equivalent (the
+   gradient direction and the elevation shadow) are adjusted.
+   ============================================================ */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Gradient direction flips in dark mode (lighter end first) */
+    --zc-gradient-primary: linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-primary-container) 100%);
+    --zc-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  }
+}
+
+/* ============================================================
+   Cart wrapper — no background, let the theme show through.
+   1200px max-width matches your theme's --zymarg-content-width.
+   ============================================================ */
+.zymarg-cart-wrapper {
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 20px;
+  padding-right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  /* No background-color: inherits from your active theme */
+}
+
+@media (max-width: 768px) {
+  .zymarg-cart-wrapper {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}

@@ -1,0 +1,470 @@
+/**
+ * zymarg-header.css — Header base styles.
+ *
+ * Written to match the design reference mockup exactly.
+ * CSS class name mapping (mockup → plugin):
+ *   .z-header-wrap       → .z-hdr-wrap
+ *   .z-topbar            → .z-hdr-topbar (with .z-hdr-topbar__inner as padding wrapper)
+ *   .z-topbar__left/right→ .z-hdr-topbar__left / .z-hdr-topbar__right
+ *   .z-topbar__seller    → .z-hdr-seller-btn
+ *   .z-topbar__link      → .z-hdr-topbar__link
+ *   .z-topbar__divider   → .z-hdr-topbar__divider
+ *   .z-header            → .z-hdr-bar  (inner = .z-hdr-bar__inner)
+ *   .z-header__logo      → .z-hdr-logo / .z-hdr-logo__link / .z-hdr-logo__img
+ *   .z-header__search    → .z-hdr-search / .z-hdr-search__bar
+ *   .z-header__actions   → .z-hdr-actions
+ *   .z-action            → .z-hdr-action
+ *   .z-action__icon      → .z-hdr-action__icon
+ *   .z-action__label     → .z-hdr-action__label
+ *   .z-badge             → .z-hdr-badge / .z-hdr-wishlist-count
+ *
+ * @package ZymargHeader
+ * @since   1.1.2
+ */
+
+/* ── Reset ────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Body padding (header is position:fixed) ─────────────── */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  padding-top: 106px; /* 38px topbar + 68px header bar */
+}
+body.hdr-sticky {
+  padding-top: 68px;
+}
+
+/* ── Header wrapper ──────────────────────────────────────── */
+.z-hdr-wrap {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background: var(--zym-color-surface-lowest);
+}
+
+/* ══════════════════════════════════════════════════════════
+   TOP BAR
+   ══════════════════════════════════════════════════════════ */
+.z-hdr-topbar {
+  background: linear-gradient(135deg, #f9eeff 0%, #f0d8ff 100%);
+  border-bottom: 1px solid rgba(149, 0, 165, 0.13);
+  height: 38px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  transition: height 0.3s ease, opacity 0.25s ease;
+}
+.z-hdr-topbar__inner {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0 32px;
+}
+.z-hdr-topbar__left {
+  display: flex;
+  align-items: center;
+}
+.z-hdr-topbar__right {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+
+/* Become a Seller button */
+.z-hdr-seller-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-primary-container) 100%);
+  color: var(--zym-color-surface-lowest);
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 5px 16px;
+  border-radius: 20px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: opacity 0.2s;
+}
+.z-hdr-seller-btn:hover {
+  opacity: 0.87;
+}
+.z-hdr-seller-btn svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: var(--zym-color-surface-lowest);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+  display: block;
+}
+
+/* Top bar links */
+.z-hdr-topbar__link {
+  font-size: 12.5px;
+  color: #6b0077;
+  text-decoration: none;
+  padding: 0 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: color 0.15s;
+}
+.z-hdr-topbar__link:hover {
+  color: var(--zym-color-primary);
+}
+.z-hdr-topbar__divider {
+  width: 1px;
+  height: 14px;
+  background: rgba(149, 0, 165, 0.22);
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════════════════════════
+   HEADER BAR
+   ══════════════════════════════════════════════════════════ */
+.z-hdr-bar {
+  background: var(--zym-color-surface-lowest);
+  border-bottom: 1px solid rgba(149, 0, 165, 0.10);
+  height: 68px;
+  transition: box-shadow 0.3s ease;
+}
+.z-hdr-bar__inner {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 32px;
+  gap: 20px;
+}
+
+/* ── Logo ─────────────────────────────────────────────────── */
+.z-hdr-logo {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+.z-hdr-logo__link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+.z-hdr-logo__img,
+.z-hdr-logo .custom-logo {
+  height: 34px;
+  width: auto;
+  display: block;
+  max-width: none;
+}
+.z-hdr-logo__text {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--zym-color-primary);
+  text-decoration: none;
+  letter-spacing: -0.02em;
+}
+
+/* ── Search ───────────────────────────────────────────────── */
+.z-hdr-search {
+  flex: 1;
+  max-width: 540px;
+  margin: 0 auto;
+}
+.z-hdr-search__bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #faf6ff;
+  border: 1.5px solid rgba(149, 0, 165, 0.18);
+  border-radius: 24px;
+  padding: 0 18px;
+  height: 42px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.z-hdr-search__bar:focus-within {
+  border-color: #9500a5;
+  box-shadow: 0 0 0 3px rgba(149, 0, 165, 0.10);
+}
+.z-hdr-search__bar svg {
+  flex-shrink: 0;
+  display: block;
+  color: #a07aaa;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  width: 17px;
+  height: 17px;
+}
+.z-hdr-search__bar input,
+.z-hdr-search__bar form input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 13.5px;
+  color: #1a1a2e;
+  width: 100%;
+  font-family: inherit;
+}
+.z-hdr-search__bar input::placeholder {
+  color: #b08aaa;
+}
+.z-hdr-search__bar form {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+/* ── Actions ──────────────────────────────────────────────── */
+.z-hdr-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* Each action item */
+.z-hdr-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  text-decoration: none;
+  position: relative;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  transition: background 0.15s;
+  color: inherit;
+}
+.z-hdr-action:hover {
+  background: #f9eeff;
+}
+.z-hdr-action:hover .z-hdr-action__icon svg {
+  stroke: #9500a5;
+}
+
+/* Icon wrapper */
+.z-hdr-action__icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* All action SVGs — constrained to 22 × 22 px */
+.z-hdr-action__icon svg {
+  width: 22px;
+  height: 22px;
+  stroke: #4a2a50;
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  display: block;
+  transition: stroke 0.15s;
+}
+
+/* Label below icon */
+.z-hdr-action__label {
+  font-size: 10.5px;
+  color: #7a5a80;
+  white-space: nowrap;
+  font-weight: 500;
+  line-height: 1;
+}
+
+/* ── Badges ───────────────────────────────────────────────── */
+.z-hdr-badge,
+.z-hdr-wishlist-count {
+  position: absolute;
+  top: -5px;
+  right: -7px;
+  background: linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-primary-container) 100%);
+  color: var(--zym-color-surface-lowest);
+  font-size: 9.5px;
+  font-weight: 700;
+  min-width: 17px;
+  height: 17px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #fff;
+  line-height: 1;
+  padding: 0 3px;
+}
+.z-hdr-badge[hidden],
+.z-hdr-wishlist-count[hidden] {
+  display: none !important;
+}
+
+/* ══════════════════════════════════════════════════════════
+   CART INSIDE ACTIONS
+   .z-hdr-cart-root  →  outer scope wrapper
+   .zymarg-tb-cart   →  inner cart root (owns cart.js + scoped CSS)
+   The trigger <a> reuses .z-hdr-action styles above via dual
+   class="zymarg-tb-cart__trigger z-hdr-action z-hdr-action--cart"
+   The icon <span> reuses .z-hdr-action__icon via dual
+   class="zymarg-tb-cart__icon-wrap z-hdr-action__icon"
+   ══════════════════════════════════════════════════════════ */
+.z-hdr-actions .z-hdr-cart-root {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* The cart inner div must not expand beyond the trigger button */
+.z-hdr-actions .z-hdr-cart-root .zymarg-tb-cart {
+  position: static;
+}
+
+/* Cart icon SVG — sized by admin inline CSS (default 24 px via
+   Settings::cart_inline_css()); the header's .z-hdr-action__icon svg
+   rule above would apply if NOT overridden, so we keep parity. */
+
+/* Cart badge is managed by zymarg-cart.js + Settings::cart_inline_css().
+   Hide-when-zero is handled by the [hidden] attribute. */
+.z-hdr-actions .z-hdr-cart-root .zymarg-tb-cart__count[hidden] {
+  display: none !important;
+}
+
+/* Dropdown panel — absolute position below the trigger */
+.z-hdr-actions .z-hdr-cart-root .zymarg-tb-cart__panel--dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  left: auto;
+  z-index: 9999;
+}
+
+/* ══════════════════════════════════════════════════════════
+   STICKY STATE
+   ══════════════════════════════════════════════════════════ */
+.z-hdr-wrap.is-sticky .z-hdr-topbar {
+  height: 0;
+  opacity: 0;
+  border-bottom-color: transparent;
+  pointer-events: none;
+}
+.z-hdr-wrap.is-sticky .z-hdr-bar {
+  box-shadow: 0 4px 24px rgba(149, 0, 165, 0.16);
+}
+
+/* ══════════════════════════════════════════════════════════
+   MOBILE  (≤ 767 px)
+   ══════════════════════════════════════════════════════════ */
+@media (max-width: 767px) {
+  body {
+    padding-top: 56px;
+  }
+  body.hdr-sticky {
+    padding-top: 56px;
+  }
+
+  /* Hide top bar entirely on mobile */
+  .z-hdr-topbar {
+    display: none;
+  }
+
+  /* Compact header bar */
+  .z-hdr-bar {
+    height: 56px;
+  }
+  .z-hdr-bar__inner {
+    padding: 0 16px;
+    gap: 0;
+  }
+
+  /* Smaller logo */
+  .z-hdr-logo__img,
+  .z-hdr-logo .custom-logo {
+    height: 28px;
+  }
+
+  /* Hide search on mobile */
+  .z-hdr-search {
+    display: none;
+  }
+
+  /* Hide all action items, then selectively re-show cart */
+  .z-hdr-action {
+    display: none;
+  }
+  .z-hdr-action--cart {
+    display: flex !important;
+  }
+  .z-hdr-action__label {
+    display: none;
+  }
+
+  /* Desktop-only items (account, wishlist links) */
+  .z-hdr-desktop-only {
+    display: none !important;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════
+   WISHLIST BADGE — CONFIGURABLE ANIMATIONS
+   Class z-hdr-wishlist--badge-anim-{type} is set on the wishlist
+   <a> element by class-renderer.php from the admin setting.
+   JS adds .is-animating on every count change (no page reload).
+   @since 1.1.13
+   ══════════════════════════════════════════════════════════════ */
+
+/* Bounce */
+.z-hdr-wishlist--badge-anim-bounce .z-hdr-wishlist-count.is-animating {
+  animation: z-hdr-wishlist-bounce 0.5s ease;
+}
+@keyframes z-hdr-wishlist-bounce {
+  0%,  100% { transform: scale(1); }
+  30%        { transform: scale(1.45); }
+  60%        { transform: scale(1.1); }
+}
+
+/* Pulse */
+.z-hdr-wishlist--badge-anim-pulse .z-hdr-wishlist-count.is-animating {
+  animation: z-hdr-wishlist-pulse 0.6s ease;
+}
+@keyframes z-hdr-wishlist-pulse {
+  0%,  100% { box-shadow: 0 0 0 0 rgba(149,0,165,0.5); }
+  50%        { box-shadow: 0 0 0 8px rgba(149,0,165,0); }
+}
+
+/* Shake */
+.z-hdr-wishlist--badge-anim-shake .z-hdr-wishlist-count.is-animating {
+  animation: z-hdr-wishlist-shake 0.5s ease;
+}
+@keyframes z-hdr-wishlist-shake {
+  0%,  100% { margin-left: 0; }
+  20%, 60%   { margin-left: -3px; }
+  40%, 80%   { margin-left:  3px; }
+}
+
+/* Scale */
+.z-hdr-wishlist--badge-anim-scale .z-hdr-wishlist-count.is-animating {
+  animation: z-hdr-wishlist-scale 0.4s ease;
+}
+@keyframes z-hdr-wishlist-scale {
+  0%   { transform: scale(0.4); }
+  100% { transform: scale(1); }
+}
+
+/* Fade */
+.z-hdr-wishlist--badge-anim-fade .z-hdr-wishlist-count.is-animating {
+  animation: z-hdr-wishlist-fade 0.5s ease;
+}
+@keyframes z-hdr-wishlist-fade {
+  0%   { opacity: 0.2; }
+  100% { opacity: 1; }
+}

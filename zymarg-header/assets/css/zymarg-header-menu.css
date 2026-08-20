@@ -1,0 +1,70 @@
+/*
+ * Sidebar parent menu branding -- ZYMARG Design Tokens v3 section 2.16.
+ *
+ * DELIBERATE, SANCTIONED EXCEPTION to the "scope to admin wrapper" rule
+ * (2.10 rule 12). Scoped to a single ID that only exists because this
+ * plugin registered that menu. It cannot reach any other menu item, any
+ * other plugin, or the front end.
+ *
+ * The plugin ships a WordPress dashicon as its menu glyph. Dashicons are
+ * already monochrome, and WordPress core renders them as a font glyph
+ * inside .wp-menu-image::before. So there is no mask-image trick here:
+ * we paint the glyph in surface white and let core keep rendering it.
+ * If a future version of this plugin swaps to a custom SVG icon, add
+ * the @supports (mask-image) block from § 2.16 so the SVG can be
+ * repainted on top.
+ *
+ * Selector rule (§ 2.16): match `> a` directly. Do NOT scope on
+ * `> a.wp-has-submenu`. That class is unreliable for single-page
+ * plugins, and produces the "branding only appears after clicking"
+ * bug.
+ */
+
+#toplevel_page_zymarg-header > a,
+#toplevel_page_zymarg-header.wp-has-current-submenu > a,
+#toplevel_page_zymarg-header.current > a,
+#toplevel_page_zymarg-header > a:hover,
+#toplevel_page_zymarg-header > a:focus {
+	position: relative;
+	/* Never change the gradient angle between states. */
+	background: var(--zym-gradient) !important;
+	color:      var(--zym-color-surface);
+}
+
+/* Core paints the label per admin colour scheme and wins on specificity
+ * for the inner span, so the label is set explicitly in every state.
+ * !important defeats plugin-authored inline <style> that colours this
+ * label purple in older versions of the same plugin -- and stays scoped
+ * to this one ID, so it cannot reach any other menu item. */
+#toplevel_page_zymarg-header > a .wp-menu-name,
+#toplevel_page_zymarg-header.wp-has-current-submenu > a .wp-menu-name,
+#toplevel_page_zymarg-header.current > a .wp-menu-name,
+#toplevel_page_zymarg-header > a:hover .wp-menu-name,
+#toplevel_page_zymarg-header > a:focus .wp-menu-name {
+	color: var(--zym-color-surface) !important;
+}
+
+/* Keep the focus ring visible on the gradient. Keyboard users first. */
+#toplevel_page_zymarg-header > a:focus-visible {
+	box-shadow: var(--zym-focus-ring);
+	outline:    none;
+}
+
+/* Core prints a .wp-menu-arrow inside every top-level item that has a
+ * submenu. It is normally invisible because it is painted in the sidebar
+ * background colour -- once we put a gradient behind it, it stops
+ * matching and appears as a second, unrelated glyph. */
+#toplevel_page_zymarg-header .wp-menu-arrow,
+#toplevel_page_zymarg-header .wp-menu-arrow div {
+	display: none;
+}
+
+/* Dashicon glyph: paint it surface white in every state. WordPress core
+ * paints it per admin colour scheme, and its stateful selectors carry a
+ * :hover/:focus part that beats a plain ID selector on specificity, so
+ * !important is used here to defeat them without spelling out every
+ * state. The rule stays scoped to this one ID. */
+#toplevel_page_zymarg-header .wp-menu-image::before {
+	color:   var(--zym-color-surface) !important;
+	opacity: 1                       !important;
+}
