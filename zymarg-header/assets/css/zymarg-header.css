@@ -47,7 +47,7 @@ body.hdr-sticky {
   left: 0;
   right: 0;
   z-index: 9999;
-  background: var(--zym-color-surface-lowest);
+  background: var(--zym-color-surface);
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -78,29 +78,39 @@ body.hdr-sticky {
   margin-left: auto;
 }
 
-/* Become a Seller button */
+/* Become a Seller button — restored to the brand's real --zym-gradient
+   token (v1.3.0 regression fix). The previous version referenced
+   --zym-color-primary-container, which does not exist in the canonical
+   zymarg-tokens.css, so this pill rendered fully transparent.
+   Text/icon colour is a FIXED white (#fff), not --zym-color-surface: the
+   gradient background never changes between light/dark mode (per the
+   Design Tokens file's own rule — "the mark should read the same in both
+   modes"), but --zym-color-surface DOES flip to near-black in dark mode,
+   which made this text unreadable against the still-purple gradient. */
 .z-hdr-seller-btn {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  background: linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-primary-container) 100%);
-  color: var(--zym-color-surface-lowest);
+  background: var(--zym-gradient);
+  color: #fff;
   font-size: 12.5px;
   font-weight: 600;
   padding: 5px 16px;
   border-radius: 20px;
   text-decoration: none;
   white-space: nowrap;
-  transition: opacity 0.2s;
+  box-shadow: var(--zym-shadow-btn);
+  transition: opacity 0.2s, box-shadow 0.2s;
 }
 .z-hdr-seller-btn:hover {
   opacity: 0.87;
+  box-shadow: var(--zym-shadow-btn-hover);
 }
 .z-hdr-seller-btn svg {
   width: 14px;
   height: 14px;
   fill: none;
-  stroke: var(--zym-color-surface-lowest);
+  stroke: #fff;
   stroke-width: 1.8;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -132,7 +142,7 @@ body.hdr-sticky {
    HEADER BAR
    ══════════════════════════════════════════════════════════ */
 .z-hdr-bar {
-  background: var(--zym-color-surface-lowest);
+  background: var(--zym-color-surface);
   border-bottom: 1px solid rgba(149, 0, 165, 0.10);
   height: 68px;
   transition: box-shadow 0.3s ease;
@@ -252,7 +262,7 @@ body.hdr-sticky {
   background: #f9eeff;
 }
 .z-hdr-action:hover .z-hdr-action__icon svg {
-  stroke: #9500a5;
+  stroke: var(--zym-color-primary);
 }
 
 /* Icon wrapper */
@@ -262,11 +272,15 @@ body.hdr-sticky {
   align-items: center;
   justify-content: center;
 }
-/* All action SVGs — constrained to 22 × 22 px */
+/* All action SVGs — constrained to 22 × 22 px.
+   Dark-mode fix: was a hardcoded light-mode-only hex (#4a2a50), which
+   stayed dark and became invisible against a dark page background once
+   [data-theme="dark"] was active. --zym-color-dark flips to a near-white
+   value in dark mode, so this now stays visible in both modes. */
 .z-hdr-action__icon svg {
   width: 22px;
   height: 22px;
-  stroke: #4a2a50;
+  stroke: var(--zym-color-dark);
   fill: none;
   stroke-width: 1.8;
   stroke-linecap: round;
@@ -275,23 +289,31 @@ body.hdr-sticky {
   transition: stroke 0.15s;
 }
 
-/* Label below icon */
+/* Label below icon — dark-mode fix: was a hardcoded light-mode-only hex
+   (#7a5a80), same invisible-in-dark-mode bug as the icon above.
+   --zym-color-text flips to a light muted value in dark mode. */
 .z-hdr-action__label {
   font-size: 10.5px;
-  color: #7a5a80;
+  color: var(--zym-color-text);
   white-space: nowrap;
   font-weight: 500;
   line-height: 1;
 }
 
 /* ── Badges ───────────────────────────────────────────────── */
+/* Restored to --zym-gradient (v1.3.0 regression fix) — see .z-hdr-seller-btn
+   comment above for the root cause (a nonexistent token silently resolving
+   to transparent, which is why this wishlist/cart count badge lost its
+   background). Text colour is a fixed white (#fff), same reasoning as
+   .z-hdr-seller-btn above — the gradient never changes in dark mode, so
+   the text colour on top of it must not change either. */
 .z-hdr-badge,
 .z-hdr-wishlist-count {
   position: absolute;
   top: -5px;
   right: -7px;
-  background: linear-gradient(135deg, var(--zym-color-primary) 0%, var(--zym-color-primary-container) 100%);
-  color: var(--zym-color-surface-lowest);
+  background: var(--zym-gradient);
+  color: #fff;
   font-size: 9.5px;
   font-weight: 700;
   min-width: 17px;
