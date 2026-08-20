@@ -788,12 +788,6 @@ class Admin {
 						'range'  => __( 'Price range (low – high)', 'zymarg-single-product' ),
 					] );
 					$this->field_text( 'price_from_prefix', __( '"From" prefix text', 'zymarg-single-product' ), $o );
-					$this->field_radio( 'price_regular_position', __( 'Regular price position (on sale)', 'zymarg-single-product' ), $o, [
-						'inline' => __( 'Inline subscript', 'zymarg-single-product' ),
-						'beside' => __( 'Beside', 'zymarg-single-product' ),
-						'below'  => __( 'Below', 'zymarg-single-product' ),
-						'hide'   => __( 'Hide', 'zymarg-single-product' ),
-					] );
 					$this->field_radio( 'price_old_style', __( 'Old price style', 'zymarg-single-product' ), $o, [
 						'strikethrough' => __( 'Strikethrough', 'zymarg-single-product' ),
 						'underline'     => __( 'Underline', 'zymarg-single-product' ),
@@ -803,12 +797,17 @@ class Admin {
 
 				<div class="zymarg-single-product-admin__section">
 					<h2 class="zymarg-single-product-admin__section-title"><?php esc_html_e( 'Smart Heading', 'zymarg-single-product' ); ?></h2>
-					<p class="zymarg-single-product-admin__hint"><?php esc_html_e( 'A small label shown above the price that adapts to product state.', 'zymarg-single-product' ); ?></p>
+					<p class="zymarg-single-product-admin__hint"><?php esc_html_e( 'A small badge shown above the price that adapts to product state.', 'zymarg-single-product' ); ?></p>
 					<?php
-					$this->field_toggle_text( 'price_heading_on_sale',     'price_heading_sale_text',    __( 'When on sale', 'zymarg-single-product' ), $o );
-					$this->field_toggle_text( 'price_heading_ending_soon', 'price_heading_ending_text',  __( 'Sale ends within 24h', 'zymarg-single-product' ), $o, '{hours}' );
-					$this->field_toggle_text( 'price_heading_regular',     'price_heading_regular_text', __( 'Regular price', 'zymarg-single-product' ), $o );
-					$this->field_toggle_text( 'price_heading_oos',         'price_heading_oos_text',     __( 'Out of stock', 'zymarg-single-product' ), $o );
+					// v2.6.0 - "On sale" (always-on) and "Regular price" headings were
+					// removed. "Sale ends within 24h" is replaced by a flash-countdown
+					// badge that fires whenever the product (or, for variable products,
+					// the currently selected variation) is on sale AND has an end date -
+					// via either the Vendor Dashboard's Premium Flash Sale feature or a
+					// native WooCommerce scheduled sale - with no 24-hour cap. The label
+					// text is shared between both sources.
+					$this->field_toggle_text( 'price_heading_flash_enabled', 'price_heading_flash_text', __( 'On sale with a schedule (flash countdown)', 'zymarg-single-product' ), $o );
+					$this->field_toggle_text( 'price_heading_oos',           'price_heading_oos_text',   __( 'Out of stock', 'zymarg-single-product' ), $o );
 					?>
 				</div>
 

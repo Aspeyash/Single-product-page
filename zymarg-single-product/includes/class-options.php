@@ -105,16 +105,17 @@ class Options {
 			// ── Price ────────────────────────────────────────────────────────
 			'price_variable_display'    => 'lowest',
 			'price_from_prefix'         => 'From',
-			'price_regular_position'    => 'inline',
 			'price_old_style'           => 'strikethrough',
-			'price_heading_on_sale'     => true,
-			'price_heading_sale_text'   => 'Limited Time Offer',
-			'price_heading_ending_soon' => true,
-			'price_heading_ending_text' => 'Ends in {hours} hours!',
-			'price_heading_regular'     => false,
-			'price_heading_regular_text'=> 'Price',
+			// v2.6.0 - Smart Heading rework. "On sale" (always-on) and "Regular
+			// price" headings are removed entirely, along with the never-read
+			// price_regular_position setting. "On sale + ends soon" is replaced
+			// by a single "on sale + has a schedule" flash-countdown heading,
+			// shared between Vendor Dashboard Premium Flash Sale and native
+			// WooCommerce scheduled sales - see Price_Renderer::get_smart_heading_state().
 			'price_heading_oos'         => true,
 			'price_heading_oos_text'    => 'Currently Unavailable',
+			'price_heading_flash_enabled' => true,
+			'price_heading_flash_text'    => 'Flash Sale · Ends in',
 			'price_show_savings'        => true,
 			'price_savings_format'      => 'both',
 			'price_savings_prefix'      => 'Save',
