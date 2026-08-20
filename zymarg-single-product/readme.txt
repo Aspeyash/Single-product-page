@@ -4,7 +4,7 @@ Tags: woocommerce, single product, template, swatches, buy now, reviews
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.0
-Stable tag: 2.5.1
+Stable tag: 2.6.0
 WC requires at least: 8.0
 WC tested up to: 9.9
 License: GPL-2.0-or-later
@@ -43,6 +43,16 @@ Key features:
 3. Go to Single Product in the WordPress admin menu to configure settings
 
 == Changelog ==
+
+= 2.6.0 =
+* **Smart Heading rework.** The small label shown above the price now renders as a badge (icon + text, live countdown where applicable) instead of plain text, and its logic has changed:
+  * Removed entirely: the always-on "On sale" heading ("Limited Time Offer") and the "Regular price" heading ("Price"). Neither is configurable or renderable any more.
+  * Removed entirely: the "Regular price position" setting (Inline / Beside / Below / Hide). It was saved by the admin panel but never actually read anywhere in this plugin - changing it never did anything.
+  * Fixed: "Currently Unavailable" (out of stock) could silently stop rendering with no visible heading at all, on both simple and variable products, if its saved text was ever an empty string - `Options::get()` only falls back to the default text when the setting key is missing entirely, not when it is saved blank. The out-of-stock heading now always falls back to "Currently Unavailable" when its text is blank, and it live-updates the instant a shopper selects an out-of-stock variation instead of staying frozen at whatever the page showed on load.
+  * Replaced the old "sale ends within 24h" heading (capped at 24 hours, and broken for variable products because it always read the sale schedule off the parent product instead of the selected variation) with a single "on sale + has a schedule" flash-countdown badge, with no time cap - a sale ending in 6 days still counts down as a large hour number instead of switching to a days format. The countdown is always HH:MM:SS, ticking live every second.
+  * The new flash-countdown badge recognises TWO independent schedule sources, checked in this order (the first one that is live wins): 1) a seller's Vendor Dashboard Premium Flash Sale, if that plugin is active and the flash sale is currently live for this product: 2) a native WooCommerce scheduled sale, read from the product on page load / for simple products, and from the specific variation once one is selected (this is the fix for the previous parent-vs-variation bug). A product on sale with no end date set, from either source, shows no badge at all - a permanent/manual sale price is not treated as "flash".
+  * Visual design: the flash-countdown badge reuses the exact animated purple-to-orange-to-purple gradient identity (including the dark-mode colour swap) from the ZYMARG Template Pack's "flash" card template, so the same visual language for "this is a flash deal" now appears consistently across product grids and this single product page. The out-of-stock badge uses a calm, neutral dark pill instead, so a normal and common state (a product being temporarily out of stock) does not read as an alarm/error. Both badges shrink and simplify their padding/font-size on mobile (≤640px), and the countdown's shimmer animation is disabled under `prefers-reduced-motion`.
+  * New filter point: WooCommerce's variation data payload now also carries each variation's own native sale-end date (`zymarg_sale_end`, added via the `woocommerce_available_variation` filter), which the live-update JS reads to build the per-variation countdown described above.
 
 = 2.5.1 =
 * Changed: front-end colour, gradient and shadow values (`--zymarg-*` custom properties in `zymarg-sp.css`, including the sticky mobile action bar and the product-grid section headings) now resolve through the shared ZYMARG Design Tokens (`--zym-*`, via `zymarg-tokens.css`) instead of hardcoded literals, with the original values kept as `var()` fallbacks so nothing changes if the token stylesheet is ever unavailable. Layout, spacing and radius values are unaffected - this is a colour/gradient/shadow-only pass. A small number of values with no brand-token equivalent (an exact dark-purple shade, the "success" green, two decorative gradients) are intentionally left as literals.
