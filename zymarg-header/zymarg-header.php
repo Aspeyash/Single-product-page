@@ -3,7 +3,7 @@
  * Plugin Name: ZYMARG Header
  * Plugin URI:  https://zymarg.com.bd
  * Description: Standalone site header for ZYMARG — two-row layout (top bar + header bar), sticky on scroll, responsive. Self-contained cart mini-panel (live sync, remove, qty stepper, full admin controls). Integrates with ZYMARG Search System and WCPG Wishlist when active. No dependency on Theme Builder.
- * Version:     1.4.0
+ * Version:     1.5.0
  * Author:      ZYMARG
  * Author URI:  https://zymarg.com.bd
  * Text Domain: zymarg-header
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'ZYMARG_HEADER_VERSION', '1.4.0' );
+define( 'ZYMARG_HEADER_VERSION', '1.5.0' );
 define( 'ZYMARG_HEADER_FILE',    __FILE__ );
 define( 'ZYMARG_HEADER_DIR',     plugin_dir_path( __FILE__ ) );
 define( 'ZYMARG_HEADER_URL',     plugin_dir_url( __FILE__ ) );

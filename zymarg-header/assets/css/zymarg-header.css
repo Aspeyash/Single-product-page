@@ -82,9 +82,10 @@ body.hdr-sticky {
    token (v1.3.0 regression fix). The previous version referenced
    --zym-color-primary-container, which does not exist in the canonical
    zymarg-tokens.css, so this pill rendered fully transparent.
-   Text/icon colour is a FIXED white (#fff), not --zym-color-surface: the
-   gradient background never changes between light/dark mode (per the
-   Design Tokens file's own rule — "the mark should read the same in both
+   Text/icon colour uses the canonical --zym-color-on-gradient token
+   (added v2.2.0), a FIXED white, not --zym-color-surface: the gradient
+   background never changes between light/dark mode (per the Design
+   Tokens file's own rule — "the mark should read the same in both
    modes"), but --zym-color-surface DOES flip to near-black in dark mode,
    which made this text unreadable against the still-purple gradient. */
 .z-hdr-seller-btn {
@@ -92,7 +93,7 @@ body.hdr-sticky {
   align-items: center;
   gap: 7px;
   background: var(--zym-gradient);
-  color: #fff;
+  color: var(--zym-color-on-gradient);
   font-size: 12.5px;
   font-weight: 600;
   padding: 5px 16px;
@@ -110,7 +111,7 @@ body.hdr-sticky {
   width: 14px;
   height: 14px;
   fill: none;
-  stroke: #fff;
+  stroke: var(--zym-color-on-gradient);
   stroke-width: 1.8;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -313,7 +314,7 @@ body.hdr-sticky {
   top: -5px;
   right: -7px;
   background: var(--zym-gradient);
-  color: #fff;
+  color: var(--zym-color-on-gradient);
   font-size: 9.5px;
   font-weight: 700;
   min-width: 17px;
@@ -322,7 +323,7 @@ body.hdr-sticky {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid #fff;
+  border: 2px solid var(--zym-color-on-gradient);
   line-height: 1;
   padding: 0 3px;
 }

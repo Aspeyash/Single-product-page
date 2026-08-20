@@ -323,7 +323,7 @@ class Settings {
 		$b_offset_x = (int) self::get( 'cart_badge_offset_x', '-8' );
 		$b_offset_y = (int) self::get( 'cart_badge_offset_y', '-6' );
 		$badge_bg    = self::themed( 'cart_badge_bg', 'linear-gradient(135deg,#9500a5 0%,#bd00d1 100%)', 'var(--zym-gradient)' );
-		$badge_color = self::themed( 'cart_badge_color', '#ffffff', '#fff' );
+		$badge_color = self::themed( 'cart_badge_color', '#ffffff', 'var(--zym-color-on-gradient)' );
 		$css .= "{$s} .zymarg-tb-cart__count{background:{$badge_bg};color:{$badge_color};min-width:{$b_size}px;height:{$b_size}px;font-size:{$b_font}px;border-radius:{$b_radius}px;--zc-badge-x:{$b_offset_x}px;--zc-badge-y:{$b_offset_y}px}\n";
 
 		/* Text & subtotal */
@@ -370,7 +370,7 @@ class Settings {
 		$btn_r = (int) self::get( 'cart_btn_radius', '10' );
 		$css .= "{$s} .zymarg-tb-cart__btn{border-radius:{$btn_r}px}\n";
 		$checkout_bg    = self::themed( 'cart_checkout_bg', '#9500a5', 'var(--zym-gradient)' );
-		$checkout_color = self::themed( 'cart_checkout_color', '#ffd6fb', '#ffd6fb' );
+		$checkout_color = self::themed( 'cart_checkout_color', '#ffd6fb', 'var(--zym-color-primary-fixed)' );
 		$css .= "{$s} .zymarg-tb-cart__btn--primary{background:{$checkout_bg};color:{$checkout_color}}\n";
 		$checkout_hover_bg = self::themed( 'cart_checkout_hover_bg', '#bd00d1', 'var(--zym-gradient)' );
 		$css .= "{$s} .zymarg-tb-cart__btn--primary:hover,{$s} .zymarg-tb-cart__btn--primary:focus-visible{background:{$checkout_hover_bg};opacity:.9}\n";

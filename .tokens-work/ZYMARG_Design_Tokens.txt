@@ -1,0 +1,1496 @@
+==============================================================================
+ZYMARG DESIGN TOKENS
+==============================================================================
+
+Brand primary is #9500A5.
+Every purple in every ZYMARG surface resolves to this value or to its
+gradient siblings #BD00D1 and #FEA9FF.
+
+  PART 1   FRONT END DESIGN     everything the public sees
+  PART 2   BACK END DESIGN      every wp-admin screen
+  PART 3   DISCOVERY SPARK      the brand mark and the only loading indicator
+
+
+HOW TO USE THIS DOCUMENT
+---------------------------------------------------------------------------
+
+Every value in the brand has exactly ONE name. That name is the same in the
+front end and in the back end. Parts 1 and 2 list the values with their
+names; the full token file is in the section below.
+
+Do not invent a second name for a value that already has one. Do not write a
+raw colour or size inside a rule. If a value is not in this document, it is
+not in the brand.
+
+The front end and the back end differ only in WHERE the tokens are declared,
+and in a small set of deliberate overrides listed in section 2.9.
+
+Part 3 is literal code. The Discovery Spark must be pixel-identical
+everywhere, so it is copied, never adapted.
+
+
+THE SHARED FILES
+---------------------------------------------------------------------------
+
+Three files are shared by every ZYMARG plugin. Each is enqueued with the
+SAME handle in every plugin, so WordPress loads each one only once no matter
+how many plugins are active.
+
+File                  Handle            Contains
+---------------------------------------------------------------------------
+zymarg-tokens.css     zymarg-tokens     Every --zym-* value
+zymarg-spark.css      zymarg-spark      The Discovery Spark
+<your plugin>.css     per plugin        Only that plugin's own layout
+
+Rules
+
+1.  The handle must be spelled identically in every plugin. WordPress
+    deduplicates by handle, so a mismatch means two copies load and the
+    later one silently wins for every plugin on the page.
+2.  Version the shared files independently of any plugin. Bump the token
+    file version only when a token actually changes, not on every plugin
+    release.
+3.  The shared files are append-only in practice. Add tokens freely. Never
+    change or remove an existing value without shipping every plugin
+    together, or an out-of-date plugin will override the new value.
+4.  A plugin's own stylesheet declares zymarg-tokens as a dependency so the
+    tokens are always loaded first.
+5.  A plugin never redefines a --zym-* value. If a plugin needs something
+    the brand does not have, it belongs in this document first.
+
+Debug markers
+
+The token file carries its own version and the slug of the plugin that
+shipped the copy that won:
+
+  --zym-tokens-version: "2.2.0";
+  --zym-tokens-owner:   "zymarg-homepage";
+
+When a page looks wrong, one line in the browser console tells you which
+copy the browser actually used:
+
+  getComputedStyle(document.documentElement).getPropertyValue('--zym-tokens-owner')
+
+Use a custom property for this, not a comment banner. Comment banners are
+stripped by minifiers; custom properties survive.
+
+
+THE TOKEN FILE
+---------------------------------------------------------------------------
+
+This is the complete contents of zymarg-tokens.css. It is the only place any
+of these values is written down in code.
+
+Front end tokens are declared at document root. Back end tokens are declared
+on the admin wrapper, because anything at document root leaks into WordPress
+chrome and into the front end.
+
+/* --- shared by both systems ------------------------------------------ */
+
+:root,
+.zymarg-admin {
+  --zym-tokens-version:      "2.2.0";
+  --zym-tokens-owner:        "your-plugin-slug";
+
+  /* Brand */
+  --zym-color-primary:       #9500A5;
+  --zym-color-secondary:     #BD00D1;
+  --zym-color-accent:        #FEA9FF;
+  --zym-gradient:            linear-gradient(135deg, #9500A5 0%, #BD00D1 60%, #FEA9FF 130%);
+
+  /* Brand — FIXED, added v2.2.0. See 1.1a for the usage guide. These three
+     never appear in a dark-mode block and must never be added there. */
+  --zym-color-on-gradient:       #FFFFFF;
+  --zym-color-primary-fixed:    #FFD6FB;
+  --zym-color-on-primary-fixed: #36003D;
+
+  /* Neutrals */
+  --zym-color-dark:          #36003D;
+  --zym-color-text:          #534152;
+  --zym-color-border:        #D8BFD3;
+
+  /* Surfaces */
+  --zym-color-surface:       #FFFFFF;
+  --zym-color-bg:            #FAF5FB;
+  --zym-color-surface-alt:   #F8F9FF;
+  --zym-color-container:     #EAEDFF;
+
+  /* Type */
+  --zym-font-size-xxl:       30px;
+  --zym-font-size-xl:        24px;
+  --zym-font-size-lg:        20px;
+  --zym-font-size-md:        16px;
+  --zym-font-size-sm:        14px;
+  --zym-font-size-xs:        12px;
+  --zym-font-size-xxs:       10px;
+  --zym-font-weight-medium:  500;
+  --zym-font-weight-semibold:600;
+  --zym-font-weight-bold:    700;
+  --zym-font-weight-extrabold:800;
+  --zym-tracking-normal:     0.08em;
+  --zym-tracking-wide:       0.20em;
+  --zym-font-mono:           ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Spacing scale */
+  --zym-space-1:   2px;
+  --zym-space-2:   4px;
+  --zym-space-3:   8px;
+  --zym-space-4:  10px;
+  --zym-space-5:  12px;
+  --zym-space-6:  14px;
+  --zym-space-7:  16px;
+  --zym-space-8:  20px;
+  --zym-space-9:  24px;
+  --zym-space-10: 28px;
+  --zym-space-11: 32px;
+  --zym-space-12: 40px;
+  --zym-space-13: 48px;
+  --zym-space-14: 56px;
+  --zym-space-15: 64px;
+
+  /* Gaps */
+  --zym-gap-grid:  32px;
+  --zym-gap-card:  16px;
+  --zym-gap-small: 12px;
+  --zym-gap-tiny:   8px;
+
+  /* Radius */
+  --zym-radius-card:        16px;
+  --zym-radius-image:       16px;
+  --zym-radius-image-small: 12px;
+  --zym-radius-chip:         8px;
+  --zym-radius-pill:        9999px;
+
+  /* Motion */
+  --zym-motion-fast:      100ms;
+  --zym-motion-input:     180ms;
+  --zym-motion-standard:  300ms;
+  --zym-ease:             ease-in-out;
+  --zym-ease-spark:       cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* --- front end only ---------------------------------------------------- */
+
+:root {
+  --zym-font:                'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+
+  --zym-color-danger:        #E53E3E;
+  --zym-color-warning:       #ED8936;
+  --zym-color-star:          #F6AD55;
+
+  --zym-gradient-hero-overlay: linear-gradient(to bottom, rgba(54,0,61,0.80), transparent);
+
+  --zym-radius-button:       12px;
+  --zym-radius-input:        14px;
+
+  --zym-container:           1280px;
+  --zym-pad-mobile:          16px;
+  --zym-pad-tablet:          24px;
+  --zym-pad-desktop:         32px;
+
+  --zym-shadow-input:        0 2px 8px rgba(53,0,61,0.06);
+  --zym-shadow-dropdown:     0 12px 32px rgba(53,0,61,0.13), 0 2px 6px rgba(53,0,61,0.06);
+  --zym-shadow-card:         0 4px 24px rgba(53,0,61,0.10), 0 1px 4px rgba(53,0,61,0.06);
+  --zym-shadow-card-hover:   0 8px 40px rgba(53,0,61,0.16), 0 2px 8px rgba(53,0,61,0.08);
+  --zym-focus-ring:          0 0 0 4px rgba(149,0,165,0.15);
+
+  --zym-img-hover-scale:     1.05;
+}
+
+/* --- back end only ----------------------------------------------------- */
+/* Replace .zymarg-admin with your plugin's admin wrapper class.            */
+
+.zymarg-admin {
+  --zym-font:                -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                             "Helvetica Neue", "Noto Sans Bengali", Arial, sans-serif;
+
+  --zym-color-divider:       #F3ECF3;
+  --zym-color-success-bg:    #E6F4EA;
+  --zym-color-success-text:  #1A7F37;
+  --zym-color-error:         #B3261E;
+  --zym-color-error-bg:      #FDECEC;
+  --zym-color-error-hover:   #D43F3A;
+  --zym-color-error-text:    #FFFFFF;
+  --zym-color-neutral-bg:    #F0F0F1;
+  --zym-color-neutral-text:  #646970;
+
+  --zym-radius-control:      10px;
+
+  --zym-container:           1200px;
+
+  --zym-shadow-surface:      0 8px 24px rgba(19,27,46,0.06);
+  --zym-shadow-modal:        0 8px 24px rgba(19,27,46,0.25);
+  --zym-shadow-btn:          0 4px 10px rgba(149,0,165,0.25);
+  --zym-shadow-btn-hover:    0 6px 14px rgba(149,0,165,0.30);
+  --zym-focus-ring:          0 0 0 3px rgba(149,0,165,0.12);
+
+  margin: 16px 20px 40px 0;
+  max-width: var(--zym-container);
+  font-family: var(--zym-font);
+  color: var(--zym-color-text);
+  line-height: 1.5;
+}
+
+There is deliberately no spinner token. See PART 3.
+
+
+
+==============================================================================
+PART 1  -  FRONT END DESIGN
+==============================================================================
+
+Scope       Theme templates, shortcode output, homepage sections, search UI,
+            product cards, checkout. All public-facing markup.
+Placement   Document root.
+
+
+1.1  COLORS
+---------------------------------------------------------------------------
+
+Name          Token                      Value      Used for
+---------------------------------------------------------------------------
+Primary       --zym-color-primary        #9500A5    Links, active states,
+                                                    icons, price emphasis
+Secondary     --zym-color-secondary      #BD00D1    Gradient midpoint only
+Accent        --zym-color-accent         #FEA9FF    Gradient endpoint only
+Dark          --zym-color-dark           #36003D    Headings, strong text,
+                                                    hero overlay base
+Body text     --zym-color-text           #534152    All body copy
+Border        --zym-color-border         #D8BFD3    Borders and dividers
+Background    --zym-color-bg             #FAF5FB    Page background,
+                                                    section bands
+Surface       --zym-color-surface        #FFFFFF    Cards, panels, dropdowns
+Alt surface   --zym-color-surface-alt    #F8F9FF    Secondary panels,
+                                                    hover fills
+Container     --zym-color-container      #EAEDFF    Inset containers, chips
+Danger        --zym-color-danger         #E53E3E    Errors, destructive
+                                                    actions
+Warning       --zym-color-warning        #ED8936    Warnings, low stock
+Star          --zym-color-star           #F6AD55    Rating stars only
+
+Never introduce a new purple, red or orange.
+
+
+1.1a  FIXED TOKENS  -  TEXT AND SURFACES THAT SIT ON THE GRADIENT
+---------------------------------------------------------------------------
+
+Added in token file v2.2.0. These three are FIXED: their value never
+changes in dark mode, unlike every other colour in 1.1. Declared once in
+the shared block (both systems), not duplicated in the dark-mode block.
+
+Name                Token                          Value      Used for
+---------------------------------------------------------------------------
+On gradient         --zym-color-on-gradient        #FFFFFF    Text and
+                                                              icons drawn
+                                                              directly on
+                                                              --zym-gradient,
+                                                              or on any
+                                                              other fully
+                                                              saturated
+                                                              brand fill
+Primary fixed       --zym-color-primary-fixed      #FFD6FB    A permanently
+                                                              light pink
+                                                              tint: emphasis
+                                                              text sitting
+                                                              on the
+                                                              gradient,
+                                                              plus fixed
+                                                              light chips,
+                                                              rings or pills
+                                                              that must not
+                                                              react to dark
+                                                              mode
+On primary fixed    --zym-color-on-primary-fixed   #36003D    Text or icons
+                                                              placed ON TOP
+                                                              of a
+                                                              --zym-color-
+                                                              primary-fixed
+                                                              surface
+
+Why these exist: --zym-gradient is deliberately identical in light and dark
+mode (see 1.2 and the dark-mode block header comment: "the mark should read
+the same in both modes"). But nothing in the ORIGINAL token set named the
+text/icon colour that sits on top of it, so every plugin either hardcoded
+raw #fff (breaking rule 13 in 1.13 / rule 5 in 2.10, "no raw colour inside a
+rule") or aliased it to a theme-reactive token such as --zym-color-surface —
+which flips to a near-black value in dark mode and produces illegible
+dark-on-gradient text the moment a visitor switches themes. These three
+tokens close that gap with names, not raw values.
+
+When to use which:
+
+  Is the element sitting directly on --zym-gradient (or another fully
+  saturated brand fill, e.g. a solid --zym-color-primary button)?
+    -> Primary text/icon on it:      --zym-color-on-gradient   (#FFFFFF)
+    -> Secondary/muted text on it,
+       or a fixed light chip/ring
+       that must ignore dark mode:   --zym-color-primary-fixed (#FFD6FB)
+
+  Is the element sitting on a --zym-color-primary-fixed surface (the pink
+  chip/ring itself), not on the gradient directly?
+    -> Text/icon on that surface:    --zym-color-on-primary-fixed (#36003D)
+
+Never substitute --zym-color-surface or --zym-color-text for any of the
+three above. Those two DO react to dark mode; the fixed trio does not, by
+design, because the gradient behind them does not either.
+
+
+1.2  GRADIENTS
+---------------------------------------------------------------------------
+
+Primary gradient            --zym-gradient
+  135deg,  #9500A5 at 0%,  #BD00D1 at 60%,  #FEA9FF at 130%
+
+  The 130% end stop is deliberate. It keeps the pink out of the visible edge
+  on wide elements. Do not normalise it to 100%.
+  Never change the angle on hover.
+
+Hero overlay                --zym-gradient-hero-overlay
+  To bottom,  rgba(54,0,61,0.80)  to  transparent
+  Dark at the top, fading down. Do not invert it.
+
+
+1.3  TYPOGRAPHY
+---------------------------------------------------------------------------
+
+Font          --zym-font
+              Inter Variable, then ui-sans-serif, system-ui, sans-serif
+
+Size          Token                        Value
+---------------------------------------------------------------------------
+xxl           --zym-font-size-xxl          30px
+xl            --zym-font-size-xl           24px
+lg            --zym-font-size-lg           20px
+md            --zym-font-size-md           16px
+sm            --zym-font-size-sm           14px
+xs            --zym-font-size-xs           12px
+xxs           --zym-font-size-xxs          10px
+
+Weight        --zym-font-weight-medium     500
+              --zym-font-weight-semibold   600
+              --zym-font-weight-bold       700
+              --zym-font-weight-extrabold  800
+
+There is no 400 and no 300.
+
+Tracking      --zym-tracking-normal        0.08em   small uppercase labels
+              --zym-tracking-wide          0.20em   wide uppercase eyebrows
+              normal                                body copy
+
+
+1.4  SPACING SCALE
+---------------------------------------------------------------------------
+
+--zym-space-1 through --zym-space-15
+
+2   4   8   10   12   14   16   20   24   28   32   40   48   56   64
+
+Never use a value outside this scale.
+
+
+1.5  LAYOUT
+---------------------------------------------------------------------------
+
+Container max width    --zym-container        1280px
+
+Container padding      --zym-pad-mobile         16px
+                       --zym-pad-tablet         24px
+                       --zym-pad-desktop        32px
+
+Breakpoints            Tablet 768px, Desktop 1024px
+
+Grid gap               --zym-gap-grid           32px
+Card gap               --zym-gap-card           16px
+Small gap              --zym-gap-small          12px
+Tiny gap               --zym-gap-tiny            8px
+
+
+1.6  BORDER RADIUS
+---------------------------------------------------------------------------
+
+Cards            --zym-radius-card           16px
+Buttons          --zym-radius-button         12px
+Inputs           --zym-radius-input          14px
+Images           --zym-radius-image          16px
+Small images     --zym-radius-image-small    12px
+Badges           --zym-radius-pill           9999px
+
+Buttons and inputs differ on purpose on the front end.
+
+
+1.7  SHADOWS
+---------------------------------------------------------------------------
+
+Input        --zym-shadow-input
+             0 2px 8px rgba(53,0,61,0.06)
+
+Dropdown     --zym-shadow-dropdown
+             0 12px 32px rgba(53,0,61,0.13), 0 2px 6px rgba(53,0,61,0.06)
+
+Card         --zym-shadow-card
+             0 4px 24px rgba(53,0,61,0.10), 0 1px 4px rgba(53,0,61,0.06)
+
+Card hover   --zym-shadow-card-hover
+             0 8px 40px rgba(53,0,61,0.16), 0 2px 8px rgba(53,0,61,0.08)
+
+All shadows are purple-tinted. Never use a neutral grey shadow.
+
+
+1.8  BUTTONS
+---------------------------------------------------------------------------
+
+Primary
+  Background   --zym-gradient
+  Text         #FFFFFF
+  Border       none
+  Radius       --zym-radius-button    12px
+  Padding      10px 24px
+  Font         --zym-font-size-sm, --zym-font-weight-semibold
+  Hover        opacity 0.92, lift 1px
+  Focus        3px solid --zym-color-accent, offset 2px
+
+Secondary
+  Background   --zym-color-surface
+  Text         --zym-color-dark
+  Border       1px solid --zym-color-border
+  Radius       --zym-radius-button    12px
+  Padding      10px 24px
+  Font         --zym-font-size-sm, --zym-font-weight-semibold
+  Hover        border --zym-color-primary, --zym-shadow-input, lift 1px
+  Focus        3px solid --zym-color-primary, offset 2px
+
+
+1.9  INPUTS
+---------------------------------------------------------------------------
+
+Border        1.5px solid --zym-color-border
+Radius        --zym-radius-input     14px
+Background    --zym-color-surface
+Text          --zym-color-text
+Font          --zym-font-size-sm
+Shadow        --zym-shadow-input
+Transition    --zym-motion-input --zym-ease
+
+Focus         border --zym-color-primary plus --zym-focus-ring
+              The ring replaces the default outline. Do not remove both.
+
+Padding
+  Standard field   10px 14px, symmetric, from the spacing scale
+  Search field     10px 44px 10px 46px
+
+  The asymmetric padding is the SEARCH FIELD variant only. The wide left and
+  right padding reserves room for the leading search icon and the trailing
+  clear or submit control. Do not apply it to a plain text field.
+
+
+1.10  IMAGES
+---------------------------------------------------------------------------
+
+Fit             Cover
+Radius          --zym-radius-image         16px
+                --zym-radius-image-small   12px for thumbnails and tiles
+Hover scale     --zym-img-hover-scale      1.05
+Aspect ratio    4 / 3 for card images
+
+The wrapper must clip overflow, or the scaled image breaks the rounded
+corners.
+
+
+1.11  BADGES
+---------------------------------------------------------------------------
+
+Background    --zym-gradient
+Text          #FFFFFF
+Padding       2px 10px
+Radius        --zym-radius-pill
+Font          --zym-font-size-xs, --zym-font-weight-semibold,
+              --zym-tracking-normal
+
+
+1.12  ANIMATION
+---------------------------------------------------------------------------
+
+Fast        --zym-motion-fast       100ms   colour and opacity swaps
+Input       --zym-motion-input      180ms   focus rings, borders, fields
+Standard    --zym-motion-standard   300ms   hover lifts, image zoom, reveal
+Easing      --zym-ease              ease-in-out
+
+LOADING     Discovery Spark. See PART 3.
+            There is no spinner token in this system.
+
+All motion must be disabled under reduced-motion preference.
+
+
+1.13  STYLE RULES
+---------------------------------------------------------------------------
+
+1.  Large white surfaces
+2.  Soft shadows
+3.  Large rounded corners
+4.  Purple gradient highlights, used as accent rather than fill
+5.  Comfortable whitespace
+6.  Minimal layout
+7.  Premium appearance
+8.  Consistent spacing
+9.  Smooth hover animations
+
+If a screen feels crowded, loud or flat, it is failing this list before it
+is failing any single token.
+
+
+
+==============================================================================
+PART 2  -  BACK END DESIGN
+==============================================================================
+
+Scope       Every wp-admin screen rendered by any ZYMARG plugin.
+Placement   The plugin's admin wrapper class. NEVER document root, or the
+            styling leaks into WordPress chrome and into the front end.
+
+The back end uses the same tokens as the front end. Only the tokens listed
+in 2.1 as back-end-only, and the overrides in 2.9, are different.
+
+
+2.1  COLORS
+---------------------------------------------------------------------------
+
+Shared with the front end, unchanged:
+
+  --zym-color-primary      #9500A5   Wordmark, section titles, icons
+  --zym-color-secondary    #BD00D1   Gradient midpoint only
+  --zym-color-accent       #FEA9FF   Gradient endpoint only
+  --zym-color-dark         #36003D   Headings, strong text, code text
+  --zym-color-text         #534152   All body copy
+  --zym-color-border       #D8BFD3   Every border, every divider
+  --zym-color-surface      #FFFFFF   Cards, header, inputs, modals
+  --zym-color-bg           #FAF5FB   Table headers, empty states, hovers
+  --zym-color-surface-alt  #F8F9FF   Code block background
+  --zym-color-container    #EAEDFF   Code block border
+
+Also shared, FIXED (added v2.2.0 — see 1.1a for the full usage guide). Use
+these on the admin header's gradient strip/band and anywhere else the
+admin wrapper paints a full brand-fill surface, e.g. a gradient rule row
+or a gradient badge:
+
+  --zym-color-on-gradient       #FFFFFF   Text/icons directly on
+                                          --zym-gradient or another
+                                          saturated brand fill
+  --zym-color-primary-fixed     #FFD6FB   Fixed light-pink text/chip on
+                                          that fill, ignores dark mode
+  --zym-color-on-primary-fixed  #36003D   Text/icons on a
+                                          --zym-color-primary-fixed surface
+
+Back end only:
+
+Name            Token                       Value      Used for
+---------------------------------------------------------------------------
+Divider         --zym-color-divider         #F3ECF3    Inner dividers inside
+                                                       a card
+Success fill    --zym-color-success-bg      #E6F4EA    Success background
+Success text    --zym-color-success-text    #1A7F37    Success text
+Error           --zym-color-error           #B3261E    Danger
+Error fill      --zym-color-error-bg        #FDECEC    Danger background
+Error hover     --zym-color-error-hover     #D43F3A    Danger hover
+Error text      --zym-color-error-text      #FFFFFF    Text on danger
+Neutral fill    --zym-color-neutral-bg      #F0F0F1    Neutral chip fill
+Neutral text    --zym-color-neutral-text    #646970    Subtitles,
+                                                       placeholders, meta
+
+Never introduce a new purple, red or green.
+
+
+2.2  GRADIENT
+---------------------------------------------------------------------------
+
+--zym-gradient
+  135deg,  #9500A5 at 0%,  #BD00D1 at 60%,  #FEA9FF at 130%
+
+Identical to the front end gradient.
+
+
+2.3  TYPOGRAPHY
+---------------------------------------------------------------------------
+
+Font    --zym-font, redeclared on the admin wrapper as the system UI stack:
+        -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
+        Helvetica Neue, Noto Sans Bengali, Arial, sans-serif
+
+Mono    --zym-font-mono
+
+The back end uses the system UI stack, NOT Inter Variable. It sits next to
+WordPress chrome, and no webfont should be loaded into wp-admin.
+
+The size and weight scales are the shared ones from 1.3.
+
+Role                Size   Weight   Tracking            Colour
+---------------------------------------------------------------------------
+Page wordmark       22px   700      -0.01em             Primary
+Header subtitle     13px   400      normal              Neutral text
+Section title       12px   700      0.14em uppercase    Primary
+Table header cell   11px   700      0.12em uppercase    Primary
+Body                14px   400      normal              Text
+Form label          13px   600      normal              Dark
+Button              13px   600      normal              inherit
+Version badge       12px   700      0.04em              #FFFFFF
+Code                12px   400      normal              Dark
+
+Base line height 1.5. Multi-line text areas 1.6.
+
+The wordmark at 22px, the subtitle and label at 13px, and the table header
+at 11px sit outside the shared size scale. They are admin-specific and are
+written as literal values.
+
+
+2.4  SPACING AND SHELL
+---------------------------------------------------------------------------
+
+The shared spacing scale from 1.4 applies unchanged.
+
+Card padding      22px 24px
+Header padding    22px 26px
+Card bottom margin and gap between cards    18px
+
+Shell
+  Max width   --zym-container    1200px
+  Margin      16px 20px 40px 0
+
+The zero right margin is intentional so the panel aligns to the WordPress
+content column.
+
+
+2.5  BORDER RADIUS
+---------------------------------------------------------------------------
+
+Cards and header      --zym-radius-card       16px
+Inputs and buttons    --zym-radius-control    10px
+Pills and badges      --zym-radius-pill       999px
+Small chips           --zym-radius-chip         8px
+
+Inputs and buttons share one radius in the back end. On the front end they
+do not. See 2.9.
+
+
+2.6  SHADOWS
+---------------------------------------------------------------------------
+
+Resting surfaces    --zym-shadow-surface
+                    0 8px 24px rgba(19,27,46,0.06)
+
+Modals              --zym-shadow-modal
+                    0 8px 24px rgba(19,27,46,0.25)
+
+Buttons             --zym-shadow-btn
+                    0 4px 10px rgba(149,0,165,0.25)
+
+Button hover        --zym-shadow-btn-hover
+                    0 6px 14px rgba(149,0,165,0.30)
+
+Focus ring          --zym-focus-ring
+                    0 0 0 3px rgba(149,0,165,0.12)
+
+Exactly one layer on resting surfaces. Do not stack shadows on cards.
+
+
+2.7  ANIMATION
+---------------------------------------------------------------------------
+
+The shared motion tokens from 1.12 apply unchanged.
+
+LOADING     Discovery Spark. See PART 3.
+            There is no spinner token in this system.
+
+The Discovery Spark is the one exception to the easing rule. It uses
+--zym-ease-spark, cubic-bezier(0.25, 1, 0.5, 1).
+
+All motion must be disabled under reduced-motion preference.
+
+
+2.8  COMPONENTS
+---------------------------------------------------------------------------
+
+HEADER
+  One per screen, and IDENTICAL on every screen including submenu screens.
+  Surface background, 1px border, --zym-radius-card, --zym-shadow-surface,
+  22px 26px padding, 18px bottom margin.
+  A 3px gradient strip across the top edge. Never a full-bleed gradient bar.
+
+  Left group    Discovery Spark 44x44, then wordmark, then muted subtitle
+  Right group   version badge, then action buttons, pushed to the right edge
+
+WORDMARK
+  Solid --zym-color-primary. Never gradient-filled text.
+
+VERSION BADGE
+  Gradient pill, 6px 12px padding, white text, 700, 12px, 0.04em tracking,
+  shadow 0 2px 6px rgba(149,0,165,0.20).
+  Number only, for example v1.9.4. Never the word "Version".
+  Always right-aligned in the header. Never placed under the title.
+
+CARD
+  Surface background, 1px border, --zym-radius-card, --zym-shadow-surface,
+  22px 24px padding, 18px bottom margin.
+
+SECTION TITLE
+  12px, 700, uppercase, 0.14em tracking, --zym-color-primary.
+  Sits at the top of a card.
+
+PRIMARY BUTTON
+  --zym-gradient background, white text, no border, --zym-radius-control,
+  9px 18px padding, 13px, 600, --zym-shadow-btn.
+  Hover     lift 1px, --zym-shadow-btn-hover
+  Active    return to 0
+
+SECONDARY BUTTON
+  Surface background, primary text, 1px border.
+  Hover     --zym-color-bg fill, border turns --zym-color-primary
+
+DANGER BUTTON
+  --zym-color-error background, --zym-color-error-text.
+  Hover     --zym-color-error-hover
+
+SWITCH
+  Track 44x24, radius 24px.
+  Thumb 18x18, inset 3px, white.
+  Off       track --zym-color-border
+  On        track --zym-gradient, thumb travels 20px
+  Transition --zym-motion-input.
+
+TEXT INPUT, SELECT, TEXTAREA
+  Surface background, 1px border, --zym-radius-control,
+  10px 12px padding, 14px.
+  Focus     border --zym-color-primary plus --zym-focus-ring
+  Number inputs are narrow and weight 600.
+  Textareas minimum height 90px, resize vertical, line height 1.6.
+  Placeholders --zym-color-neutral-text at 0.7 opacity.
+
+CHECKBOX
+  18x18, 4px radius, accent colour --zym-color-primary.
+
+TABLE
+  Header cells on --zym-color-bg, --zym-color-primary, uppercase, 11px, 700,
+  0.12em tracking, 10px 12px padding, no text shadow.
+  Zebra rows --zym-color-bg.
+
+NOTICE
+  Tinted background, 1px border, --zym-radius-control, 12px 14px padding.
+  Info       purple tints
+  Success    --zym-color-success-bg with --zym-color-success-text
+  Error      --zym-color-error-bg with --zym-color-error
+
+CODE
+  8px 10px padding, --zym-color-surface-alt background,
+  1px --zym-color-container border, --zym-radius-chip,
+  --zym-font-mono 12px, --zym-color-dark text.
+
+EMPTY STATE
+  --zym-color-bg background, 1px DASHED --zym-color-border,
+  --zym-radius-control, 28px padding, centred muted text.
+
+MODAL
+  Surface background, --zym-radius-card, --zym-shadow-modal.
+  If JavaScript appends the modal to the page body, it lands outside the
+  admin wrapper and none of the scoped tokens reach it. Add its class to the
+  wrapper selector so the tokens follow it.
+
+LOADING STATE
+  Discovery Spark. Never a spinner. See PART 3.
+
+
+2.9  HOW THE BACK END DIFFERS FROM THE FRONT END
+---------------------------------------------------------------------------
+
+These overrides are deliberate. Do not "correct" them.
+
+Item              Front end        Back end        Reason
+---------------------------------------------------------------------------
+--zym-font        Inter Variable   System UI       Matches WordPress chrome,
+                                                   no webfont in wp-admin
+Button radius     12px             10px            Admin buttons are smaller
+                  radius-button    radius-control
+Input radius      14px             10px            Inputs and buttons share
+                  radius-input     radius-control  one radius in dense forms
+Input border      1.5px            1px             Matches card and table
+                                                   borders
+--zym-container   1280px           1200px          Fits the WordPress
+                                                   content column
+--zym-focus-ring  4px at 0.15      3px at 0.12     0.15 reads as a filled
+                                                   halo on admin grey
+Placement         Document root    Admin wrapper   Admin must not leak
+
+Shared and unchanged: the colour palette, the gradient, the type scale, the
+spacing scale, the card radius, the pill radius, the motion tokens, and the
+Discovery Spark.
+
+
+2.10  RULES
+---------------------------------------------------------------------------
+
+1.  Scope every back end rule to the plugin's admin wrapper.
+2.  Never declare back end tokens at document root.
+3.  Never redefine a --zym-* value inside a plugin. If you need something the
+    brand does not have, add it to this document first.
+4.  Class naming is BEM with one short prefix per plugin. Class prefixes are
+    per plugin; token names are not.
+5.  No raw colour or size inside a rule. Reference the token.
+6.  No inline styles in templates.
+7.  No forced overrides, except to reassert a value over a WordPress core
+    style. When you must, leave a comment naming the core rule you are
+    beating.
+8.  Focus styling applies to keyboard focus only, using --zym-focus-ring.
+    Never remove focus styling without replacing it.
+9.  Never signal state with colour alone. Pair it with a label, icon or text.
+10. Interactive targets are at least 32x32.
+11. Icon-only buttons carry an accessible label. Decorative graphics are
+    hidden from assistive technology.
+
+
+
+2.11  WORDPRESS CORE PRIMITIVES
+---------------------------------------------------------------------------
+
+A wp-admin screen is never all ZYMARG markup. Half of a typical settings
+screen is markup that WordPress itself emits: form_table rows, submit
+buttons, descriptions, notices, native checkboxes. That markup carries NO
+ZYMARG class, so nothing in 2.8 reaches it.
+
+This is the most common way a screen fails.
+
+  Removing hardcoded colour from a screen does not brand it.
+  It hands the screen back to the wp-admin defaults.
+
+A screen can contain zero inline styles and zero raw hex and still render
+as stock WordPress grey with a blue primary button. Every primitive below
+must be branded, scoped to the plugin's admin wrapper. These are the
+sanctioned exception to rule 7 in 2.10: you are reasserting a value over a
+WordPress core style, so leave the comment that rule asks for.
+
+Primitive                     Treatment
+---------------------------------------------------------------------------
+table.form-table              Card per 2.8: surface, 1px border,
+                              --zym-radius-card, --zym-shadow-surface,
+                              22px 24px padding
+.form-table th                Label: 13px, 600, --zym-color-dark, top
+                              aligned
+.form-table td                14px, --zym-color-text
+p.description                 13px, --zym-color-neutral-text, 6px top
+                              margin. Never the core italic grey.
+input[type=text], [email],    TEXT INPUT per 2.8: surface, 1px border,
+[url], [password],            --zym-radius-control, 10px 12px, 14px.
+[number], [search],           Focus: border --zym-color-primary plus
+textarea, select              --zym-focus-ring
+input[type=checkbox],         18x18, accent-color --zym-color-primary,
+input[type=radio]             1px --zym-color-border. Core draws a blue
+                              dashicon tick -- replace it, do not tint it.
+.button-primary               PRIMARY BUTTON per 2.8. Core ships this
+                              WordPress blue; it is never left as-is.
+.button, .button-secondary    SECONDARY BUTTON per 2.8
+.button:disabled              Reduced emphasis, no shadow, no hover lift
+p.submit                      No core margin. Space with the scale.
+.notice, .updated, .error     --zym-radius-control, 1px border, brand
+                              success and error tokens from 2.1
+code, kbd                     --zym-font-mono, --zym-color-container
+                              background, --zym-radius-chip
+hr                            1px --zym-color-divider
+a                             --zym-color-primary, hover
+                              --zym-color-secondary
+
+Two WordPress functions emit these without you writing any markup:
+
+  submit_button()    outputs .button-primary
+  settings_errors()  outputs .notice
+
+Notices injected by OTHER plugins render above your wrapper and are outside
+your scope. Do not chase them.
+
+If a screen renders a core primitive that is not in this table, brand it to
+the nearest 2.8 component before shipping, and add it to this table.
+
+
+
+2.12  SCREEN ACCEPTANCE CHECKLIST
+---------------------------------------------------------------------------
+
+A screen is not done because it was written against this document. It is
+done when it passes this list.
+
+  WARNING. "No inline styles and no raw hex" is necessary but NOT
+  sufficient. It measures code cleanliness, not brand compliance. A screen
+  can pass both and still be entirely off-brand. Never use it alone as the
+  definition of done.
+
+Structure
+  1.  Header matches the reference in 2.14 exactly: Spark, wordmark,
+      subtitle, version badge.
+  2.  The Spark is present and animating. A static Spark is a bug.
+  3.  No spinner anywhere on the screen or in its JavaScript.
+  4.  No full-bleed gradient bar.
+
+Coverage
+  5.  List every WordPress core primitive the screen renders and confirm
+      each one is branded per 2.11. Do this by reading the rendered page,
+      not the source.
+  6.  Every component matches its 2.8 definition in shape, not only in
+      colour.
+
+Code
+  7.  Every rule scoped to the plugin's admin wrapper. Nothing at document
+      root.
+  8.  No inline style attributes and no <style> blocks.
+  9.  No raw colour or size inside any rule.
+  10. Every var(--zym-*) used resolves against the token file. Diff the
+      names you used against the names defined; do not eyeball it.
+
+Accessibility
+  11. Keyboard focus visible on every interactive element.
+  12. No state signalled by colour alone.
+  13. Interactive targets at least 32x32; icon-only buttons labelled.
+  14. prefers-reduced-motion respected, including the Spark.
+
+Integration
+  15. Viewed side by side with an existing compliant screen. If it looks
+      like a different product, it is.
+  16. Tested with a second ZYMARG plugin active, to prove the shared
+      handles deduplicate.
+  17. Tested with the zymarg-os theme both active and inactive, to prove
+      the Spark delegation in 3.9 falls back correctly.
+
+
+
+2.13  RETROFITTING AN EXISTING SCREEN
+---------------------------------------------------------------------------
+
+This document reads as though every screen is new. Most are not. Converting
+an existing screen fails in its own particular way:
+
+  Swapping hex values for tokens recolours a component.
+  It does not rebuild it.
+
+The result is a screen that passes every code check while keeping the wrong
+shape, the wrong header and the wrong proportions.
+
+  If a retrofitted screen looks essentially unchanged, the retrofit has not
+  happened yet. A correct retrofit is visibly different.
+
+Order of work
+
+  1.  Inventory. List every component on the screen and every core
+      primitive from 2.11 that it renders.
+  2.  Replace the header with the reference in 2.14. Do not adapt the old
+      one.
+  3.  Rebuild each component to its 2.8 definition, shape first.
+  4.  Brand every core primitive per 2.11.
+  5.  Remove inline styles and <style> blocks last, once the classes that
+      replace them exist.
+  6.  Run 2.12.
+
+Step 5 is last on purpose. Stripping inline styles first leaves the screen
+relying on wp-admin defaults, which looks worse than where you started and
+hides what still needs doing.
+
+
+
+2.14  REFERENCE HEADER
+---------------------------------------------------------------------------
+
+2.8 describes the header in prose. Prose produces a different header per
+developer, and the header is the one component required to be IDENTICAL on
+every screen. Copy this instead.
+
+Substitute your plugin's class prefix for zvd- and its Spark wrapper for
+zymarg_vd_spark(). Everything else is fixed.
+
+Markup
+
+  <div class="zvd-header">
+    <div class="zvd-header__left">
+      <?php
+      // The Spark renders at 44x44 directly on white, no container, no tint.
+      echo zymarg_vd_spark(
+          array( 'size' => 'header', 'label' => 'ZYMARG' )
+      );
+      ?>
+      <div class="zvd-header__text">
+        <h1 class="zvd-wordmark"><?php echo esc_html( $title ); ?></h1>
+        <p class="zvd-subtitle"><?php echo esc_html( $subtitle ); ?></p>
+      </div>
+    </div>
+    <div class="zvd-header__right">
+      <span class="zvd-version">v<?php
+        echo esc_html( PLUGIN_VERSION );
+      ?></span>
+    </div>
+  </div>
+
+Stylesheet
+
+  .zvd-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--zym-gap-card);
+    flex-wrap: wrap;
+    padding: 22px 26px;
+    margin-bottom: 18px;
+    background: var(--zym-color-surface);
+    border: 1px solid var(--zym-color-border);
+    border-radius: var(--zym-radius-card);
+    box-shadow: var(--zym-shadow-surface);
+    overflow: hidden;
+  }
+
+  /* 3px gradient strip on the top edge. Never a full-bleed gradient bar. */
+  .zvd-header::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 3px;
+    background: var(--zym-gradient);
+  }
+
+  .zvd-header__left  { display: flex; align-items: center;
+                       gap: var(--zym-gap-small); flex-wrap: wrap;
+                       min-width: 0; }
+  .zvd-header__text  { min-width: 0; }
+  .zvd-header__right { display: flex; align-items: center;
+                       gap: var(--zym-gap-tiny); margin-left: auto;
+                       flex-shrink: 0; }
+
+  /* Wordmark: solid primary. Never gradient-filled text. */
+  .zvd-wordmark {
+    margin: 0;
+    font-size: 22px;
+    font-weight: var(--zym-font-weight-bold);
+    letter-spacing: -0.01em;
+    color: var(--zym-color-primary);
+    line-height: 1.5;
+  }
+
+  .zvd-subtitle {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--zym-color-neutral-text);
+    line-height: 1.5;
+  }
+
+  /* Version badge: gradient pill, number only, always right-aligned. */
+  .zvd-version {
+    display: inline-block;
+    padding: 6px var(--zym-space-5);
+    background: var(--zym-gradient);
+    color: var(--zym-color-surface);
+    font-size: var(--zym-font-size-xs);
+    font-weight: var(--zym-font-weight-bold);
+    letter-spacing: 0.04em;
+    border-radius: var(--zym-radius-pill);
+    box-shadow: 0 2px 6px rgba(149, 0, 165, 0.20);
+    white-space: nowrap;
+  }
+
+The Spark is sized by the .zymarg-spark--header class at 44x44 with a
+1.10px offset, per the size matrix in 3.3. Never size it with transform:
+scale, which leaves the lens offset behind.
+
+
+
+2.15  ENVIRONMENT SUPPORT
+---------------------------------------------------------------------------
+
+BROWSER BASELINE
+
+  The last two major versions of Chrome, Edge, Firefox and Safari.
+
+  Allowed without a fallback:
+    custom properties, color-mix(), clamp(), :is(), :where(), flex gap,
+    inset shorthand, accent-color
+
+  Not allowed without a fallback:
+    native CSS nesting, @container, :has() where it carries layout
+
+  color-mix() is the sanctioned way to derive a translucent or tinted
+  variant of an existing token, for example a white overlay on the
+  gradient. Deriving from a token is not the same as inventing one, and
+  does not breach rule 3 in 2.10. Never hand-write the resulting rgba.
+
+WP-ADMIN COLOUR SCHEMES
+
+  Users can change their admin colour scheme in their profile. Default,
+  Light, Midnight, Ectoplasm and the rest all repaint WordPress chrome.
+
+  ZYMARG screens do not adapt to the scheme. Everything inside the plugin
+  wrapper is brand-coloured and self-contained, so it looks the same on
+  every scheme. Two things sit OUTSIDE the wrapper and will change:
+
+    - the admin sidebar, including the plugin's own menu highlight
+    - core notices rendered above the wrapper
+
+  Never depend on a core scheme colour for contrast. Test each screen on
+  Default and on Midnight, which are the two extremes.
+
+DIRECTION
+
+  Prefer logical properties -- margin-inline, padding-inline, inset-inline
+  -- over left and right, so screens survive an RTL locale.
+
+
+
+==============================================================================
+PART 3  -  DISCOVERY SPARK
+==============================================================================
+
+The ZYMARG Discovery Spark is the brand mark. It has two jobs:
+
+  1.  The logo, in every admin header and wherever the brand mark appears.
+  2.  THE LOADING INDICATOR, everywhere, on both the front end and the
+      back end.
+
+It lives in one shared file, zymarg-spark.css, enqueued with the handle
+zymarg-spark. It is never copied into a plugin and never renamed. The class
+names below are brand identity, not plugin styling, so the per-plugin class
+prefix rule does NOT apply to them.
+
+
+3.1  THE NO SPINNER RULE
+---------------------------------------------------------------------------
+
+  ZYMARG DOES NOT USE LOADING SPINNERS.
+
+Not allowed, anywhere, on any surface:
+
+  - Rotating rings or arcs
+  - CSS border spinners
+  - Bouncing or pulsing dots
+  - The WordPress core .spinner element
+  - Any spinner shipped by a third-party library or theme
+
+Wherever a loading state is needed, render the Discovery Spark instead. Its
+sequential lens pulse IS the loading animation. It already loops infinitely,
+so nothing needs to be added to it.
+
+Why: the Spark is the only motion in the brand. A generic spinner beside it
+makes the product look assembled from parts rather than designed. The Spark
+also earns brand recall during the exact moment the user is forced to wait.
+
+There is no spinner token anywhere in this system. If you find one in a
+codebase it is a leftover and must be removed.
+
+When auditing, search for the word "spinner", not just for a CSS custom
+property name. Spinner definitions hide in PHP constants and JavaScript as
+well as in stylesheets.
+
+
+3.2  ANATOMY
+---------------------------------------------------------------------------
+
+A 24x24 viewBox SVG containing three groups, drawn back to front:
+
+  accent      the small lens, top left
+  companion   the medium lens, lower left
+  hero        the large lens, right
+
+Each group holds two shapes: a purple lens and a gold core.
+The purple lenses animate. The gold cores never animate.
+
+Colours
+  Lens purple   --zym-color-primary      #9500A5
+  Gold core     --zym-spark-gold         #FFD166
+  Glow          rgba(149, 0, 165, 0.25)
+
+The lens reads the brand primary token, so recolouring the brand recolours
+the Spark. The glow is expressed as the same RGB triplet in one variable, so
+the fill and the glow cannot drift apart.
+
+
+3.3  SIZE MATRIX
+---------------------------------------------------------------------------
+
+Class                   Offset     Size
+---------------------------------------------------------------------------
+.zymarg-spark--sm       0.55px     20px     inside a button
+.zymarg-spark--md       0.70px     24px     default inline and loading size
+.zymarg-spark--lg       0.90px     32px     panel or card
+.zymarg-spark--xl       1.20px     48px     full page or modal
+.zymarg-spark--xxl      1.50px     60px     splash and marketing
+
+The admin header uses a 44px slot with an offset of 1.1px, interpolated
+between lg and xl.
+
+The offset exists because the purple lenses are drawn slightly up and left
+of the gold cores; the translate re-centres them. The offset MUST scale with
+the size or the two layers visibly separate.
+
+Always size the Spark with a size class. Never with a transform scale, which
+leaves the offset behind.
+
+
+3.4  MARKUP
+---------------------------------------------------------------------------
+
+Copy this exactly. Do not re-path it, do not merge the groups, and do not
+run it through an SVG optimiser. The group classes drive the animation and
+an optimiser will strip them.
+
+<span class="zymarg-spark zymarg-spark--md">
+  <svg class="zymarg-spark__svg"
+       viewBox="0 0 24 24"
+       xmlns="http://www.w3.org/2000/svg"
+       role="img"
+       aria-label="ZYMARG Discovery Spark"
+       focusable="false">
+
+    <g class="zymarg-spark-group--accent">
+      <path class="zymarg-spark-item--purple"
+            d="M10.4 5.4c0 1.32-0.24 2.4-1.44 2.4 1.2 0 1.44 1.08 1.44 2.4 0-1.32 0.24-2.4 1.44-2.4-1.2 0-1.44-1.08-1.44-2.4z"/>
+      <path class="zymarg-spark-item--gold"
+            d="M10.4 6.0c0 0.96-0.18 1.8-1.08 1.8 0.9 0 1.08 0.84 1.08 1.8 0-0.9 0.18-1.8 1.08-1.8-0.9 0-1.08-0.84-1.08-1.8z"/>
+    </g>
+
+    <g class="zymarg-spark-group--companion">
+      <path class="zymarg-spark-item--purple"
+            d="M9.5 10.92c0 2.25-0.45 4.12-2.4 4.12 1.95 0 2.4 1.87 2.4 4.12 0-2.25 0.45-4.12 2.4-4.12-1.95 0-2.4-1.87-2.4-4.12z"/>
+      <path class="zymarg-spark-item--gold"
+            d="M9.5 11.5c0 1.9-0.38 3.54-2.0 3.54 1.62 0 2.0 1.64 2.0 3.54 0-1.9 0.38-3.54 2.0-3.54-1.62 0-2.0-1.64-2.0-3.54z"/>
+    </g>
+
+    <g class="zymarg-spark-group--hero">
+      <path class="zymarg-spark-item--purple"
+            d="M15.2 5.6c0 3.45-0.69 6.3-4.08 6.3 3.39 0 4.08 2.85 4.08 6.3 0-3.45 0.69-6.3 4.08-6.3-3.39 0-4.08-2.85-4.08-6.3z"/>
+      <path class="zymarg-spark-item--gold"
+            d="M15.2 6.5c0 2.9-0.58 5.4-3.39 5.4 2.81 0 3.39 2.5 3.39 5.4 0-2.9 0.58-5.4 3.39-5.4-2.81 0-3.39-2.5-3.39-5.4z"/>
+    </g>
+
+  </svg>
+</span>
+
+
+3.5  STYLESHEET
+---------------------------------------------------------------------------
+
+The complete contents of zymarg-spark.css. Timings, keyframe percentages and
+transform origins are fixed. Do not change them.
+
+The fallbacks after each var() are there so the Spark still renders correctly
+if it is ever loaded without the token file.
+
+.zymarg-spark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+
+  --zym-spark-purple: var(--zym-color-primary, #9500A5);
+  --zym-spark-gold:   #FFD166;
+  --zym-spark-glow:   149, 0, 165;
+  --zym-spark-offset: 0.7px;
+  --zym-spark-ease:   var(--zym-ease-spark, cubic-bezier(0.25, 1, 0.5, 1));
+}
+
+.zymarg-spark--sm  { --zym-spark-offset: 0.55px; width: 20px; height: 20px; }
+.zymarg-spark--md  { --zym-spark-offset: 0.70px; width: 24px; height: 24px; }
+.zymarg-spark--lg  { --zym-spark-offset: 0.90px; width: 32px; height: 32px; }
+.zymarg-spark--xl  { --zym-spark-offset: 1.20px; width: 48px; height: 48px; }
+.zymarg-spark--xxl { --zym-spark-offset: 1.50px; width: 60px; height: 60px; }
+
+.zymarg-spark__svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+/* Sequential pulse in even thirds: accent -> companion -> hero */
+
+@keyframes zymarg-spark-lens--accent {
+  0%,    0%    { opacity: 0;    transform: scale(0.90); filter: drop-shadow(0 0 0px   rgba(var(--zym-spark-glow), 0)); }
+  8.3%,  25%   { opacity: 0.95; transform: scale(1.03); filter: drop-shadow(0 0 1.5px rgba(var(--zym-spark-glow), 0.25)); }
+  33.3%, 100%  { opacity: 0;    transform: scale(0.90); filter: drop-shadow(0 0 0px   rgba(var(--zym-spark-glow), 0)); }
+}
+
+@keyframes zymarg-spark-lens--companion {
+  0%,    33.3% { opacity: 0;    transform: scale(0.90); filter: drop-shadow(0 0 0px   rgba(var(--zym-spark-glow), 0)); }
+  41.6%, 58.3% { opacity: 0.95; transform: scale(1.03); filter: drop-shadow(0 0 1.5px rgba(var(--zym-spark-glow), 0.25)); }
+  66.6%, 100%  { opacity: 0;    transform: scale(0.90); filter: drop-shadow(0 0 0px   rgba(var(--zym-spark-glow), 0)); }
+}
+
+@keyframes zymarg-spark-lens--hero {
+  0%,    66.6% { opacity: 0;    transform: scale(0.90); filter: drop-shadow(0 0 0px   rgba(var(--zym-spark-glow), 0)); }
+  75%,   91.6% { opacity: 0.95; transform: scale(1.03); filter: drop-shadow(0 0 1.5px rgba(var(--zym-spark-glow), 0.25)); }
+  100%,  100%  { opacity: 0;    transform: scale(0.90); filter: drop-shadow(0 0 0px   rgba(var(--zym-spark-glow), 0)); }
+}
+
+.zymarg-spark-item--purple {
+  fill: var(--zym-spark-purple);
+  transform: translate(var(--zym-spark-offset), var(--zym-spark-offset));
+}
+
+.zymarg-spark-item--gold {
+  fill: var(--zym-spark-gold);
+  animation: none !important;
+}
+
+/* Origins are each shape's own geometric centre, so each lens pulses in place */
+
+.zymarg-spark-group--accent .zymarg-spark-item--purple {
+  animation: zymarg-spark-lens--accent 0.20s var(--zym-spark-ease) infinite;
+  transform-origin: 9.68px 7.8px;
+}
+
+.zymarg-spark-group--companion .zymarg-spark-item--purple {
+  animation: zymarg-spark-lens--companion 0.40s var(--zym-spark-ease) infinite;
+  transform-origin: 8.3px 15.04px;
+}
+
+.zymarg-spark-group--hero .zymarg-spark-item--purple {
+  animation: zymarg-spark-lens--hero 0.40s var(--zym-spark-ease) infinite;
+  transform-origin: 13.16px 11.9px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zymarg-spark-item--purple {
+    animation: none !important;
+    opacity: 0.7;
+  }
+}
+
+
+3.6  LOADING USAGE
+---------------------------------------------------------------------------
+
+The visible text is required. Under reduced motion the pulse is suppressed,
+so without text the user gets no feedback at all. It also gives screen
+readers something to announce.
+
+<div class="zymarg-loading" role="status" aria-live="polite">
+  <span class="zymarg-spark zymarg-spark--md">
+    ... svg exactly as in 3.4 ...
+  </span>
+  <span class="zymarg-loading__text">Loading</span>
+</div>
+
+.zymarg-loading {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.zymarg-loading__text {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--zym-color-text);
+}
+
+Inside the admin wrapper, override the text colour to
+var(--zym-color-neutral-text).
+
+Which size to use
+  Inside a button        sm, 20px, replacing the label or sitting before it
+  Inline or in a field   md, 24px
+  Panel or card          lg, 32px
+  Full page or modal     xl, 48px, centred, with the text below it
+
+
+3.7  RULES
+---------------------------------------------------------------------------
+
+1.  Never use a spinner. The Spark is the only loading indicator.
+2.  One shared file, one handle. Never copy the Spark into a plugin and
+    never rename its classes. Two copies is how the fill and the glow drift
+    apart.
+3.  A static Spark is a bug. In the admin header and in every loading state
+    it must be animating.
+4.  Never place the Spark on a coloured or gradient background. It needs
+    white or a light tint to read.
+5.  Never size it with a transform scale. Use a size class.
+6.  Never speed it up or slow it down to suggest progress. If you need
+    progress, use a progress bar with the gradient fill and leave the Spark
+    out of it.
+7.  One Spark per loading region. Do not put a Spark in every skeleton row.
+8.  In the admin header it renders at 44x44 directly on white, with no
+    container, no chip and no letter mark beside it.
+9.  Never animate the gold cores.
+10. The Spark's reduced-motion rule must come after any global
+    reduced-motion block, or the global rule wins and the Spark keeps
+    animating.
+
+
+3.8  UPSTREAM WARNING
+---------------------------------------------------------------------------
+
+The mark originates from the Discovery Spark package. That package ships the
+lens purple as #6833EA, a blue-violet roughly 37 degrees off the brand hue,
+and hardcodes the same value into the drop-shadow glow.
+
+If you pull or update from upstream you MUST recolour both:
+
+  lens fill   #6833EA      ->  #9500A5
+  glow        104, 51, 234 ->  149, 0, 165
+
+Recolouring only the fill and leaving the glow behind is the common mistake.
+The stylesheet above avoids it by reading the fill from --zym-color-primary
+and keeping the glow in a single variable. Pin any upstream change with a
+comment so the next update does not silently revert it.
+
+
+
+3.9  NAMING -- THE REDECLARE HAZARD
+---------------------------------------------------------------------------
+
+Read this before writing any PHP that touches the Spark. Getting it wrong
+takes the whole site down, not just a screen.
+
+The zymarg-os THEME declares these functions WITHOUT a function_exists
+guard:
+
+  zymarg_discovery_spark()    inc/discovery-spark.php
+  zymarg_loading()
+
+Plugins load BEFORE the theme. So if a plugin declares either name, the
+plugin's definition lands first, and then the theme's bare declaration
+fatals the site:
+
+  Fatal error: Cannot redeclare zymarg_discovery_spark()
+
+  A function_exists guard on the PLUGIN side does not prevent this. The
+  guard protects the declaration it wraps. The unguarded declaration is the
+  theme's, and it is the one that fatals.
+
+Rules
+
+  1.  A plugin NEVER declares a shared ZYMARG global name. Every global
+      function a plugin declares carries that plugin's own prefix:
+      zymarg_vd_ for Vendor Dashboard, zymarg_sp_ for Store Page.
+  2.  Reach the Spark through a prefixed wrapper that delegates in order:
+      the theme's helper if it exists, then another ZYMARG plugin's
+      wrapper, then a local fallback copy.
+  3.  Stylesheet HANDLES are the opposite case. WordPress deduplicates
+      styles by handle, so handles stay shared and identical across every
+      plugin, guarded with wp_style_is(). Shared handles, prefixed
+      functions.
+  4.  Never "simplify" a prefixed wrapper back to the shared name. It will
+      look like harmless cleanup and it will fatal the site.
+
+The delegation pattern
+
+  function zymarg_xx_spark( $args = array() ) {
+      // The theme owns the mark. Hand off whenever it is loaded.
+      if ( function_exists( 'zymarg_discovery_spark' ) ) {
+          return zymarg_discovery_spark( $args );
+      }
+      // Then any sibling ZYMARG plugin.
+      if ( function_exists( 'zymarg_vd_spark' ) ) {
+          return zymarg_vd_spark( $args );
+      }
+      // Then the local fallback copy.
+      return zymarg_xx_spark_fallback( $args );
+  }
+
+Before shipping, scan the plugin and confirm every global function it
+declares carries the plugin prefix:
+
+  grep -rhoE '^\s*function\s+[a-zA-Z0-9_]+' --include='*.php' .
+
+
+==============================================================================
+END
+==============================================================================

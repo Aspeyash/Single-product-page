@@ -13,7 +13,7 @@
 
 :root,
 .zymarg-admin {
-  --zym-tokens-version:      "2.1.0";
+  --zym-tokens-version:      "2.2.0";
   --zym-tokens-owner:        "zymarg-vendor-dashboard";
 
   /* Brand */
@@ -21,6 +21,33 @@
   --zym-color-secondary:     #BD00D1;
   --zym-color-accent:        #FEA9FF;
   --zym-gradient:            linear-gradient(135deg, #9500A5 0%, #BD00D1 60%, #FEA9FF 130%);
+
+  /* Brand — FIXED (added v2.2.0).
+     --zym-gradient never changes between light and dark mode by design
+     (see 1.2/2.2: "the mark should read the same in both modes"). Parts
+     1.8 and 1.11 of this document specify text/icons ON that gradient as
+     the literal value #FFFFFF, with no token to reference — every plugin
+     that needed it either hardcoded #fff raw (breaking rule 1.13/2.10.5,
+     "no raw colour inside a rule") or, worse, aliased it to a
+     theme-reactive token like --zym-color-surface, which flips dark and
+     produces illegible dark-on-gradient text once dark mode activates.
+     These three tokens close that gap. They are FIXED: they do not
+     appear in the dark-mode block below, and must never be added there.
+       --zym-color-on-gradient        text/icons directly on --zym-gradient
+                                       or any other saturated brand fill
+       --zym-color-primary-fixed      a permanently light pink tint —
+                                       secondary text on the gradient,
+                                       fixed light chips/rings/pills that
+                                       must not react to dark mode
+       --zym-color-on-primary-fixed   text/icons sitting ON TOP of a
+                                       --zym-color-primary-fixed surface
+     Matches the values already used ad hoc as --color-primary-fixed /
+     --color-on-primary-fixed in zymarg-vendor-dashboard's own local
+     token layer and as a raw fallback in zymarg-store-page's dark-mode
+     CSS — formalised here as the canonical, shared names. */
+  --zym-color-on-gradient:      #FFFFFF;
+  --zym-color-primary-fixed:    #FFD6FB;
+  --zym-color-on-primary-fixed: #36003D;
 
   /* Neutrals */
   --zym-color-dark:          #36003D;

@@ -123,7 +123,19 @@ final class Zymarg_Cart_Admin {
 			'total'  => '💳 Total',
 		];
 		?>
-		<div class="zc-admin-wrap">
+		<?php
+		/*
+		 * "zymarg-admin" (in addition to this plugin's own "zc-admin-wrap")
+		 * is the literal wrapper class the shared ZYMARG Design Tokens file
+		 * scopes every back-end-only --zym-* token to (--zym-shadow-btn,
+		 * --zym-shadow-btn-hover, --zym-shadow-surface, --zym-shadow-modal,
+		 * --zym-color-divider, --zym-radius-control, the admin --zym-font
+		 * stack, etc.). Without it, those tokens silently resolve to
+		 * nothing wherever this admin CSS references them — this plugin
+		 * previously had no element carrying that class at all.
+		 */
+		?>
+		<div class="zc-admin-wrap zymarg-admin">
 
 			<?php if ( $saved ) : ?>
 				<div class="zc-notice zc-notice--success" id="zc-save-notice">
@@ -630,15 +642,15 @@ final class Zymarg_Cart_Admin {
 .zc-admin-header { display: flex; align-items: center; justify-content: space-between; background: var(--zym-gradient); border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; box-shadow: var(--zym-shadow-btn); }
 .zc-admin-logo { display: flex; align-items: center; gap: 14px; }
 .zc-logo-icon { font-size: 28px; }
-.zc-logo-title { font-size: 18px; font-weight: 800; color: #fff; letter-spacing: -0.02em; }
+.zc-logo-title { font-size: 18px; font-weight: 800; color: var(--zym-color-on-gradient); letter-spacing: -0.02em; }
 .zc-logo-version { font-size: 11px; color: rgba(255,255,255,0.75); margin-top: 2px; }
-.zc-preview-btn { background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.35); color: #fff; border-radius: 8px; padding: 8px 16px; font-size: 13px; text-decoration: none; font-weight: 500; }
+.zc-preview-btn { background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.35); color: var(--zym-color-on-gradient); border-radius: 8px; padding: 8px 16px; font-size: 13px; text-decoration: none; font-weight: 500; }
 .zc-admin-tabs { display: flex; gap: 4px; margin-bottom: 0; border-bottom: 2px solid var(--zym-color-border); }
 .zc-tab { display: inline-flex; align-items: center; padding: 10px 20px; font-size: 13px; font-weight: 500; color: var(--zym-color-text); background: transparent; border: none; border-radius: 8px 8px 0 0; border-bottom: 2px solid transparent; margin-bottom: -2px; cursor: pointer; transition: color .15s, border-color .15s, background .15s; font-family: inherit; line-height: 1; }
 .zc-tab:hover { color: var(--zym-color-primary); background: rgba(149,0,165,0.04); }
 .zc-tab:focus-visible { outline: 2px solid var(--zym-color-primary); outline-offset: 2px; }
 .zc-tab--active { color: var(--zym-color-primary); border-bottom-color: var(--zym-color-primary); font-weight: 600; }
-.zc-admin-form { background: #fff; border: 1px solid var(--zym-color-border); border-top: none; border-radius: 0 0 12px 12px; }
+.zc-admin-form { background: var(--zym-color-surface); border: 1px solid var(--zym-color-border); border-top: none; border-radius: 0 0 12px 12px; }
 .zc-tab-panel { display: none; padding: 28px 28px 0; }
 .zc-tab-panel--active { display: block; animation: zcFadeIn .18s ease; }
 @keyframes zcFadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
@@ -659,7 +671,7 @@ final class Zymarg_Cart_Admin {
 .zc-toggle-switch input[type="hidden"] { display: none; }
 .zc-toggle-switch input[type="checkbox"] { position: absolute; opacity: 0; width: 0; height: 0; }
 .zc-toggle-track { display: block; width: 40px; height: 22px; background: var(--zym-color-border); border-radius: 11px; transition: background .2s; position: relative; }
-.zc-toggle-thumb { position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; background: #fff; border-radius: 50%; transition: transform .2s; box-shadow: 0 1px 4px rgba(0,0,0,0.15); }
+.zc-toggle-thumb { position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; background: var(--zym-color-surface); border-radius: 50%; transition: transform .2s; box-shadow: 0 1px 4px rgba(0,0,0,0.15); }
 .zc-toggle-switch input:checked + .zc-toggle-track { background: var(--zym-color-primary); }
 .zc-toggle-switch input:checked + .zc-toggle-track .zc-toggle-thumb { transform: translateX(18px); }
 /* Radio */
@@ -669,7 +681,7 @@ final class Zymarg_Cart_Admin {
 /* Save bar */
 .zc-save-bar { padding: 20px 28px; border-top: 1px solid var(--zym-color-container); margin-top: 8px; background: var(--zym-color-bg); border-radius: 0 0 12px 12px; display: flex; align-items: center; gap: 16px; }
 .zc-save-hint { font-size: 12px; color: var(--zym-color-neutral-text); }
-.zc-save-btn { background: var(--zym-gradient); color: #ffd6fb; border: none; border-radius: 8px; padding: 10px 28px; font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity .15s; box-shadow: var(--zym-shadow-btn); }
+.zc-save-btn { background: var(--zym-gradient); color: var(--zym-color-primary-fixed); border: none; border-radius: 8px; padding: 10px 28px; font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity .15s; box-shadow: var(--zym-shadow-btn); }
 .zc-save-btn:hover { opacity: 0.9; box-shadow: var(--zym-shadow-btn-hover); }
 		';
 	}
