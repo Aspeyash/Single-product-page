@@ -515,7 +515,21 @@ class Admin {
 			<div class="zymarg-single-product-admin__header">
 				<div class="zymarg-single-product-admin__header-inner">
 					<div class="zymarg-single-product-admin__logo">
-						<span class="zymarg-single-product-admin__logo-icon">🛍</span>
+						<span class="zymarg-single-product-admin__logo-icon">
+							<?php
+							// v2.5.1 - the ZYMARG Discovery Spark is the brand mark AND the
+							// only loading indicator; it renders here at 44x44 directly on
+							// white, with no container or tint, per Design Tokens Part 3.
+							if ( function_exists( 'zymarg_sngl_spark' ) ) {
+								echo zymarg_sngl_spark( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+									[
+										'size'  => 'header',
+										'label' => 'ZYMARG',
+									]
+								);
+							}
+							?>
+						</span>
 						<div>
 							<h1 class="zymarg-single-product-admin__title">ZYMARG Single Product</h1>
 							<p class="zymarg-single-product-admin__version">v<?php echo esc_html( ZYMARG_SNGL_VERSION ); ?></p>
@@ -527,6 +541,28 @@ class Admin {
 						</svg>
 						<?php esc_html_e( 'Save Settings', 'zymarg-single-product' ); ?>
 					</button>
+					<?php
+					// v2.5.1 - loading feedback per Design Tokens Part 3: the Spark is
+					// the only allowed loading indicator, never a spinner. Rendered
+					// beside the button rather than inside it, since the button's
+					// background is the brand gradient and rule 4 bans placing the
+					// Spark on a coloured/gradient background -- this white header
+					// surface keeps it legible. Hidden by default; the AJAX save JS
+					// toggles the is-active class alongside the button's is-saving.
+					?>
+					<span id="zymarg-sp-save-loading" class="zymarg-single-product-admin__save-loading zymarg-loading" role="status" aria-live="polite">
+						<?php
+						if ( function_exists( 'zymarg_sngl_spark' ) ) {
+							echo zymarg_sngl_spark( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								[
+									'size'  => 'sm',
+									'label' => __( 'Saving', 'zymarg-single-product' ),
+								]
+							);
+						}
+						?>
+						<span class="zymarg-loading__text"><?php esc_html_e( 'Saving', 'zymarg-single-product' ); ?></span>
+					</span>
 				</div>
 			</div>
 

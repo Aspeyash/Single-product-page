@@ -139,7 +139,15 @@
 				if (!window.confirm(head + '\n\n\u2022 ' + changes.join('\n\u2022 '))) { return; }
 			}
 
-			$btn.addClass('is-saving').find('svg').css('animation', 'spin .7s linear infinite');
+			// v2.5.1 - loading feedback is the ZYMARG Discovery Spark, rendered
+			// beside the button (#zymarg-sp-save-loading), never a spinner and
+			// never animated with a `spin` keyframe -- that keyframe was
+			// referenced here but never defined anywhere in the plugin's CSS,
+			// so it had silently never run. The Spark's own CSS animation is
+			// always running; showing/hiding its wrapper is all that is needed.
+			const $loading = $('#zymarg-sp-save-loading');
+			$btn.addClass('is-saving');
+			$loading.addClass('is-active');
 
 			const settings = collectSettings();
 
@@ -152,7 +160,8 @@
 					settings: settings,
 				},
 				success: function (res) {
-					$btn.removeClass('is-saving').find('svg').css('animation', '');
+					$btn.removeClass('is-saving');
+					$loading.removeClass('is-active');
 					if (res.success) {
 						showStatus(Admin.saved_text || 'Settings saved!', false);
 
@@ -167,7 +176,8 @@
 					}
 				},
 				error: function () {
-					$btn.removeClass('is-saving').find('svg').css('animation', '');
+					$btn.removeClass('is-saving');
+					$loading.removeClass('is-active');
 					showStatus(Admin.error_text || 'Error saving. Please try again.', true);
 				},
 			});
