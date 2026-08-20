@@ -1,0 +1,631 @@
+# Copyright (C) 2025 ZYMARG
+# This file is distributed under the same license as the ZYMARG Cart plugin.
+# ZYMARG <hello@zymarg.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: ZYMARG Cart 1.0.0\n"
+"Report-Msgid-Bugs-To: https://zymarg.com/support\n"
+"POT-Creation-Date: 2025-06-01T00:00:00+08:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2025-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"X-Generator: ZYMARG Cart 1.0.0\n"
+"X-Domain: zymarg-cart\n"
+
+#. Plugin Name of the plugin
+msgid "ZYMARG Cart"
+msgstr ""
+
+#. Plugin URI of the plugin
+msgid "https://zymarg.com"
+msgstr ""
+
+#. Description of the plugin
+msgid "A fully customizable multi-vendor cart plugin for ZYMARG marketplace. Built for WordPress, WooCommerce, Elementor, and Dokan Pro. Features 3 interconnected Elementor widgets, partial checkout, Save for Later (hybrid), and ~300 responsive Elementor controls. Works with the free Elementor plugin (Elementor Pro not required)."
+msgstr ""
+
+#. Author of the plugin
+msgid "ZYMARG"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "ZYMARG Cart requires PHP %s or higher. Please upgrade your PHP version."
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "ZYMARG Cart cannot run because the following required plugins are missing or outdated: %s"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "WooCommerce %s or higher (not installed / not active)"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "Elementor %s or higher (not installed / not active)"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "Dokan Pro %s or higher (not installed / not active)"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "%s has been activated. Open any page in Elementor and search for \"ZYMARG Cart\" in the widget panel to get started."
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "%1$s requires PHP %2$s or higher. Your server is running PHP %3$s. Please upgrade your PHP version and try again."
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "Plugin activation failed"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "ZYMARG Cart"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+#: assets/js/zymarg-cart-ajax.js
+msgid "Save for Later"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "Saved"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "Move to Cart"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "Remove"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "Delete"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "Edit"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "Done"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "Apply"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "Have a coupon?"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "Coupon applied"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "Invalid coupon code"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "Coupon expired"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "Out of stock — remove to proceed"
+msgstr ""
+
+#. translators: %d: Number of items remaining in stock.
+#: includes/class-zymarg-cart.php
+msgid "Only %d left"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "Continue Shopping"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "Your cart is empty"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "Looks like you haven't added anything yet."
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "Proceed to Checkout"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "Are you sure you want to remove the selected items?"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "Select All"
+msgstr ""
+
+#. translators: 1: Selected count, 2: Total count.
+#: includes/class-zymarg-cart.php
+msgid "%1$d of %2$d selected"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "Calculating…"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "Updating…"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "Restoring your cart…"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "Calculated at checkout"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "Price changed"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "No saved items"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "Something went wrong. Please try again."
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "Visit store"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "Subtotal"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "Discount"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "Shipping"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "Tax (6% SST)"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+#: widgets/class-widget-cart-total.php
+#: templates/cart-total.php
+msgid "VAT"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "Grand Total"
+msgstr ""
+
+#: includes/class-zymarg-cart.php
+msgid "Order Summary"
+msgstr ""
+
+#: includes/class-zymarg-cart-ajax.php
+msgid "Security check failed. Please refresh the page and try again."
+msgstr ""
+
+#: includes/class-zymarg-cart-ajax.php
+msgid "Invalid request."
+msgstr ""
+
+#: includes/class-zymarg-cart-ajax.php
+msgid "Cart item not found."
+msgstr ""
+
+#: includes/class-zymarg-cart-ajax.php
+msgid "This item is currently out of stock."
+msgstr ""
+
+#. translators: %d: Available stock quantity.
+#: includes/class-zymarg-cart-ajax.php
+msgid "Only %d available. Please reduce the quantity."
+msgstr ""
+
+#: includes/class-zymarg-cart-ajax.php
+msgid "Invalid variation request."
+msgstr ""
+
+#: includes/class-zymarg-cart-ajax.php
+msgid "Invalid variation for this product."
+msgstr ""
+
+#: includes/class-zymarg-cart-ajax.php
+msgid "Selected variation is out of stock."
+msgstr ""
+
+#: includes/class-zymarg-cart-ajax.php
+msgid "Could not update variation. Please try again."
+msgstr ""
+
+#: includes/class-zymarg-cart-ajax.php
+msgid "Invalid cart item."
+msgstr ""
+
+#: includes/class-zymarg-cart-ajax.php
+msgid "Please enter a coupon code."
+msgstr ""
+
+#: includes/class-zymarg-cart-ajax.php
+msgid "Invalid item key."
+msgstr ""
+
+#: includes/class-zymarg-cart-ajax.php
+msgid "Saved item not found."
+msgstr ""
+
+#: includes/class-zymarg-cart-ajax.php
+msgid "Could not save item. You may have reached the maximum saved items limit."
+msgstr ""
+
+#: includes/class-zymarg-cart-ajax.php
+msgid "Item saved for later."
+msgstr ""
+
+#: includes/class-zymarg-cart-ajax.php
+msgid "Could not add item to cart. It may be out of stock."
+msgstr ""
+
+#: includes/class-zymarg-cart-ajax.php
+msgid "Item moved to cart."
+msgstr ""
+
+#: includes/class-zymarg-cart-ajax.php
+msgid "Saved item not found."
+msgstr ""
+
+#: includes/class-zymarg-cart-ajax.php
+msgid "Item removed."
+msgstr ""
+
+#: includes/class-zymarg-cart-ajax.php
+msgid "Please select at least one item to checkout."
+msgstr ""
+
+#: includes/class-zymarg-cart-ajax.php
+msgid "Cart unavailable. Please refresh."
+msgstr ""
+
+#: includes/class-zymarg-cart-ajax.php
+msgid "One or more selected items are no longer in your cart. Please refresh."
+msgstr ""
+
+#. translators: %s: Product name.
+#: includes/class-zymarg-cart-ajax.php
+msgid "\"%s\" is out of stock and cannot be checked out."
+msgstr ""
+
+#: includes/class-zymarg-cart-ajax.php
+msgid "Could not initiate checkout. Please refresh and try again."
+msgstr ""
+
+#: includes/class-zymarg-cart-ajax.php
+msgid "Redirecting to checkout…"
+msgstr ""
+
+#: includes/class-zymarg-cart-dokan.php
+msgid "Unknown Store"
+msgstr ""
+
+#: includes/class-zymarg-cart-dokan.php
+msgid "Store"
+msgstr ""
+
+#. translators: %s: Store name.
+#: includes/class-zymarg-cart-dokan.php
+msgid "Shipping (%s)"
+msgstr ""
+
+#: includes/class-zymarg-cart-dokan.php
+msgid "Shipping"
+msgstr ""
+
+#: includes/class-zymarg-cart-dokan.php
+msgid "Coupon not found."
+msgstr ""
+
+#: includes/class-zymarg-cart-dokan.php
+msgid "This coupon has expired."
+msgstr ""
+
+#: includes/class-zymarg-cart-dokan.php
+msgid "This coupon is already applied."
+msgstr ""
+
+#. translators: %s: Coupon code.
+#: includes/class-zymarg-cart-dokan.php
+msgid "Coupon \"%s\" applied successfully."
+msgstr ""
+
+#. translators: %s: Coupon code.
+#: includes/class-zymarg-cart-dokan.php
+msgid "Coupon \"%s\" removed."
+msgstr ""
+
+#: includes/class-zymarg-cart-partial.php
+msgid "Your cart has been restored."
+msgstr ""
+
+#: includes/class-zymarg-cart-helpers.php
+msgid "SKU: "
+msgstr ""
+
+#: widgets/class-widget-cart-header.php
+msgid "Cart Header"
+msgstr ""
+
+#: widgets/class-widget-cart-header.php
+msgid "Content"
+msgstr ""
+
+#: widgets/class-widget-cart-header.php
+msgid "Cart Title"
+msgstr ""
+
+#: widgets/class-widget-cart-header.php
+msgid "My Cart"
+msgstr ""
+
+#: widgets/class-widget-cart-header.php
+msgid "Edit Button Label"
+msgstr ""
+
+#: widgets/class-widget-cart-header.php
+msgid "Edit"
+msgstr ""
+
+#: widgets/class-widget-cart-header.php
+msgid "Done Button Label (exit edit mode)"
+msgstr ""
+
+#: widgets/class-widget-cart-header.php
+msgid "Done"
+msgstr ""
+
+#: widgets/class-widget-cart-header.php
+msgid "Delete Button Label"
+msgstr ""
+
+#: widgets/class-widget-cart-header.php
+msgid "Delete"
+msgstr ""
+
+#: widgets/class-widget-cart-body.php
+msgid "Cart Body"
+msgstr ""
+
+#: widgets/class-widget-cart-body.php
+msgid "\"Have a coupon?\" Text"
+msgstr ""
+
+#: widgets/class-widget-cart-body.php
+msgid "Save for Later Label"
+msgstr ""
+
+#: widgets/class-widget-cart-body.php
+msgid "Move to Cart Label"
+msgstr ""
+
+#: widgets/class-widget-cart-body.php
+msgid "Saved Section Title"
+msgstr ""
+
+#: widgets/class-widget-cart-body.php
+msgid "Empty Cart Message"
+msgstr ""
+
+#: widgets/class-widget-cart-body.php
+msgid "Your cart is empty."
+msgstr ""
+
+#: widgets/class-widget-cart-body.php
+msgid "Continue Shopping Button Text"
+msgstr ""
+
+#: widgets/class-widget-cart-body.php
+msgid "Continue Shopping URL"
+msgstr ""
+
+#: widgets/class-widget-cart-total.php
+msgid "Cart Total"
+msgstr ""
+
+#: widgets/class-widget-cart-total.php
+msgid "Order Summary Label"
+msgstr ""
+
+#: widgets/class-widget-cart-total.php
+msgid "Order Summary"
+msgstr ""
+
+#: widgets/class-widget-cart-total.php
+msgid "Tax Line Label"
+msgstr ""
+
+#: widgets/class-widget-cart-total.php
+msgid "Grand Total Label"
+msgstr ""
+
+#: widgets/class-widget-cart-total.php
+msgid "Checkout Button Text"
+msgstr ""
+
+#: widgets/class-widget-cart-total.php
+msgid "Proceed to Checkout"
+msgstr ""
+
+#: templates/cart-header.php
+msgid "Shopping cart header"
+msgstr ""
+
+#: templates/cart-header.php
+msgid "Cart item count"
+msgstr ""
+
+#. translators: %d: Number of items in cart.
+#: templates/cart-header.php
+msgid "(%d item)"
+msgid_plural "(%d items)"
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/cart-body-vendor-group.php
+msgid "Store"
+msgstr ""
+
+#. translators: %s: Store name.
+#: templates/cart-body-vendor-group.php
+msgid "Select all products from %s"
+msgstr ""
+
+#. translators: %d: Number of items.
+#: templates/cart-body-vendor-group.php
+msgid "%d item"
+msgid_plural "%d items"
+msgstr[0] ""
+msgstr[1] ""
+
+#: templates/cart-body-vendor-group.php
+msgid "Product"
+msgstr ""
+
+#: templates/cart-body-vendor-group.php
+msgid "Variation / Qty"
+msgstr ""
+
+#: templates/cart-body-vendor-group.php
+msgid "Subtotal"
+msgstr ""
+
+#: templates/cart-body-vendor-group.php
+msgid "Coupon"
+msgstr ""
+
+#. translators: %s: Store name.
+#: templates/cart-body-vendor-group.php
+msgid "%s subtotal"
+msgstr ""
+
+#. translators: %s: Product title.
+#: templates/cart-body-product-row.php
+msgid "Select %s"
+msgstr ""
+
+#: templates/cart-body-product-row.php
+msgid "Coupon code"
+msgstr ""
+
+#: templates/cart-body-product-row.php
+msgid "Enter coupon code"
+msgstr ""
+
+#: templates/cart-body-product-row.php
+msgid "Apply"
+msgstr ""
+
+#: templates/cart-body-product-row.php
+msgid "Decrease quantity"
+msgstr ""
+
+#: templates/cart-body-product-row.php
+msgid "Increase quantity"
+msgstr ""
+
+#: templates/cart-body-product-row.php
+msgid "Current quantity"
+msgstr ""
+
+#: templates/cart-body-product-row.php
+msgid "Quantity"
+msgstr ""
+
+#. translators: %s: Product title.
+#: templates/cart-body-product-row.php
+msgid "Save %s for later"
+msgstr ""
+
+#. translators: %s: Coupon code.
+#: templates/cart-body-product-row.php
+msgid "Remove coupon %s"
+msgstr ""
+
+#: templates/cart-body-empty.php
+msgid "Your cart is empty."
+msgstr ""
+
+#: templates/cart-body-empty.php
+msgid "Looks like you haven't added anything yet."
+msgstr ""
+
+#: templates/cart-body-empty.php
+msgid "Continue Shopping"
+msgstr ""
+
+#: templates/cart-body-saved-items.php
+msgid "Saved for Later"
+msgstr ""
+
+#: templates/cart-body-saved-items.php
+msgid "Saved for later items"
+msgstr ""
+
+#. translators: %s: Product title.
+#: templates/cart-body-saved-item-row.php
+msgid "Move %s to cart"
+msgstr ""
+
+#. translators: %s: Product title.
+#: templates/cart-body-saved-item-row.php
+msgid "Remove %s from saved list"
+msgstr ""
+
+#: templates/cart-body-saved-item-row.php
+msgid "Out of stock"
+msgstr ""
+
+#: templates/cart-body-saved-item-row.php
+msgid "Price changed"
+msgstr ""
+
+#. translators: %s: Original price.
+#: templates/cart-body-saved-item-row.php
+msgid "Was %s"
+msgstr ""
+
+#. translators: %d: Quantity.
+#: templates/cart-body-saved-item-row.php
+msgid "Qty: %d"
+msgstr ""
+
+#: templates/cart-body-saved-item-row.php
+msgid "Remove"
+msgstr ""
+
+#: templates/cart-total.php
+msgid "Toggle order summary"
+msgstr ""
+
+#: templates/cart-total.php
+msgid "Select all items"
+msgstr ""
+
+#. translators: 1: Selected count, 2: Total count.
+#: templates/cart-total.php
+msgid "%1$d of %2$d selected"
+msgstr ""

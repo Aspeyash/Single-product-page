@@ -1,0 +1,232 @@
+/*
+ * ZYMARG shared design tokens.
+ * Handle: zymarg-tokens   Version: 2.0.0
+ * Generated verbatim from ZYMARG_Design_Tokens.txt (THE TOKEN FILE section).
+ * Never edit per-plugin. Never redefine a --zym-* value inside a plugin.
+ */
+
+/* --- shared by both systems ------------------------------------------ */
+
+:root,
+.zymarg-admin {
+  --zym-tokens-version:      "2.0.0";
+  --zym-tokens-owner:        "zymarg-media-optimizer";
+
+  /* Brand */
+  --zym-color-primary:       #9500A5;
+  --zym-color-secondary:     #BD00D1;
+  --zym-color-accent:        #FEA9FF;
+  --zym-gradient:            linear-gradient(135deg, #9500A5 0%, #BD00D1 60%, #FEA9FF 130%);
+
+  /* Neutrals */
+  --zym-color-dark:          #36003D;
+  --zym-color-text:          #534152;
+  --zym-color-border:        #D8BFD3;
+
+  /* Surfaces */
+  --zym-color-surface:       #FFFFFF;
+  --zym-color-bg:            #FAF5FB;
+  --zym-color-surface-alt:   #F8F9FF;
+  --zym-color-container:     #EAEDFF;
+
+  /* Type */
+  --zym-font-size-xxl:       30px;
+  --zym-font-size-xl:        24px;
+  --zym-font-size-lg:        20px;
+  --zym-font-size-md:        16px;
+  --zym-font-size-sm:        14px;
+  --zym-font-size-xs:        12px;
+  --zym-font-size-xxs:       10px;
+  --zym-font-weight-medium:  500;
+  --zym-font-weight-semibold:600;
+  --zym-font-weight-bold:    700;
+  --zym-font-weight-extrabold:800;
+  --zym-tracking-normal:     0.08em;
+  --zym-tracking-wide:       0.20em;
+  --zym-font-mono:           ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Spacing scale */
+  --zym-space-1:   2px;
+  --zym-space-2:   4px;
+  --zym-space-3:   8px;
+  --zym-space-4:  10px;
+  --zym-space-5:  12px;
+  --zym-space-6:  14px;
+  --zym-space-7:  16px;
+  --zym-space-8:  20px;
+  --zym-space-9:  24px;
+  --zym-space-10: 28px;
+  --zym-space-11: 32px;
+  --zym-space-12: 40px;
+  --zym-space-13: 48px;
+  --zym-space-14: 56px;
+  --zym-space-15: 64px;
+
+  /* Gaps */
+  --zym-gap-grid:  32px;
+  --zym-gap-card:  16px;
+  --zym-gap-small: 12px;
+  --zym-gap-tiny:   8px;
+
+  /* Radius */
+  --zym-radius-card:        16px;
+  --zym-radius-image:       16px;
+  --zym-radius-image-small: 12px;
+  --zym-radius-chip:         8px;
+  --zym-radius-pill:        9999px;
+
+  /* Motion */
+  --zym-motion-fast:      100ms;
+  --zym-motion-input:     180ms;
+  --zym-motion-standard:  300ms;
+  --zym-ease:             ease-in-out;
+  --zym-ease-spark:       cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* --- front end only ---------------------------------------------------- */
+
+:root {
+  --zym-font:                'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+
+  --zym-color-danger:        #E53E3E;
+  --zym-color-warning:       #ED8936;
+  --zym-color-star:          #F6AD55;
+
+  --zym-gradient-hero-overlay: linear-gradient(to bottom, rgba(54,0,61,0.80), transparent);
+
+  --zym-radius-button:       12px;
+  --zym-radius-input:        14px;
+
+  --zym-container:           1280px;
+  --zym-pad-mobile:          16px;
+  --zym-pad-tablet:          24px;
+  --zym-pad-desktop:         32px;
+
+  --zym-shadow-input:        0 2px 8px rgba(53,0,61,0.06);
+  --zym-shadow-dropdown:     0 12px 32px rgba(53,0,61,0.13), 0 2px 6px rgba(53,0,61,0.06);
+  --zym-shadow-card:         0 4px 24px rgba(53,0,61,0.10), 0 1px 4px rgba(53,0,61,0.06);
+  --zym-shadow-card-hover:   0 8px 40px rgba(53,0,61,0.16), 0 2px 8px rgba(53,0,61,0.08);
+  --zym-focus-ring:          0 0 0 4px rgba(149,0,165,0.15);
+
+  --zym-img-hover-scale:     1.05;
+}
+
+/* ==========================================================================
+ * ZYMARG COMPONENT COLOR TOKENS — v2.1.0
+ *
+ * Formalizes the richer Material-style palette that ZYMARG Cart and
+ * ZYMARG Header already used internally (as literal hex values under the
+ * --zc-* custom property namespace). This section makes that palette the
+ * single shared source of truth so every plugin can reference the same
+ * values instead of duplicating hex codes.
+ *
+ * These are ADDITIVE to the tokens above — nothing existing is renamed,
+ * removed, or given a different value. Per the token-file rules: "the
+ * shared files are append-only in practice."
+ *
+ * Includes light values (front end, :root) and dark values (activated
+ * automatically under prefers-color-scheme: dark). The dark values were
+ * previously hardcoded only inside ZYMARG Cart's own stylesheet; they are
+ * promoted here, unchanged, so any plugin can opt into dark-mode support.
+ * ========================================================================== */
+
+:root {
+  /* Brand / primary */
+  --zym-color-primary-container:  #BD00D1;  /* hover / gradient end */
+  --zym-color-inverse-primary:    #FEA9FF;  /* soft accent / on-dark */
+  --zym-color-primary-fixed:      #FFD6FB;  /* stable tint surfaces */
+  --zym-color-on-primary-fixed:   #36003D;  /* text on primary fixed */
+
+  /* Secondary */
+  --zym-color-secondary-brand:    #505F76;
+  --zym-color-secondary-container:#D0E1FB;
+
+  /* Surfaces (component-level — not the page background) */
+  --zym-color-surface-component:  #FAF8FF;
+  --zym-color-surface-container:  #EAEDFF;
+  --zym-color-surface-lowest:     #FFFFFF;
+  --zym-color-inverse-surface:    #283044;
+
+  /* Text */
+  --zym-color-text-body:          #131B2E;
+  --zym-color-text-muted-brand:   #534152;
+
+  /* Outline */
+  --zym-color-outline:            #857183;
+  --zym-color-outline-variant:    #D8BFD3;
+
+  /* Semantic / status */
+  --zym-color-success-bg:         #EAF3DE;
+  --zym-color-success-text:       #3B6D11;
+  --zym-color-error-bg:           #FCEBEB;
+  --zym-color-error-text:         #A32D2D;
+  --zym-color-warning-bg:         #FAEEDA;
+  --zym-color-warning-text:       #854F0B;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Brand / primary */
+    --zym-color-primary:            #BD00D1;
+    --zym-color-primary-container:  #9500A5;
+    --zym-color-inverse-primary:    #FEA9FF;
+    --zym-color-primary-fixed:      #36003D;
+    --zym-color-on-primary-fixed:   #FFD6FB;
+
+    /* Surfaces */
+    --zym-color-surface-component:  #1A1A2E;
+    --zym-color-surface-container:  #283044;
+    --zym-color-surface-lowest:     #12121F;
+    --zym-color-inverse-surface:    #EAEDFF;
+
+    /* Text */
+    --zym-color-text-body:          #E8E8E8;
+    --zym-color-text-muted-brand:   #A0A0A0;
+
+    /* Outline */
+    --zym-color-outline:            #5A5A7A;
+    --zym-color-outline-variant:    #3D3D5C;
+
+    /* Semantic — slightly desaturated for dark backgrounds */
+    --zym-color-success-bg:         #1A3A10;
+    --zym-color-success-text:       #7ECB5A;
+    --zym-color-error-bg:           #3A1010;
+    --zym-color-error-text:         #F08080;
+    --zym-color-warning-bg:         #3A2A00;
+    --zym-color-warning-text:       #F0C060;
+  }
+}
+
+/* --- back end only ----------------------------------------------------- */
+/* Replace .zymarg-admin with your plugin's admin wrapper class.            */
+
+.zymarg-admin {
+  --zym-font:                -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                             "Helvetica Neue", "Noto Sans Bengali", Arial, sans-serif;
+
+  --zym-color-divider:       #F3ECF3;
+  --zym-color-success-bg:    #E6F4EA;
+  --zym-color-success-text:  #1A7F37;
+  --zym-color-error:         #B3261E;
+  --zym-color-error-bg:      #FDECEC;
+  --zym-color-error-hover:   #D43F3A;
+  --zym-color-error-text:    #FFFFFF;
+  --zym-color-neutral-bg:    #F0F0F1;
+  --zym-color-neutral-text:  #646970;
+
+  --zym-radius-control:      10px;
+
+  --zym-container:           1200px;
+
+  --zym-shadow-surface:      0 8px 24px rgba(19,27,46,0.06);
+  --zym-shadow-modal:        0 8px 24px rgba(19,27,46,0.25);
+  --zym-shadow-btn:          0 4px 10px rgba(149,0,165,0.25);
+  --zym-shadow-btn-hover:    0 6px 14px rgba(149,0,165,0.30);
+  --zym-focus-ring:          0 0 0 3px rgba(149,0,165,0.12);
+
+  margin: 16px 20px 40px 0;
+  max-width: var(--zym-container);
+  font-family: var(--zym-font);
+  color: var(--zym-color-text);
+  line-height: 1.5;
+}

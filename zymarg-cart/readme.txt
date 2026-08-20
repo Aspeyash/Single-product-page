@@ -1,0 +1,140 @@
+=== ZYMARG Cart ===
+Contributors: zymarg
+Tags: woocommerce, cart, multi-vendor, dokan, marketplace
+Requires at least: 6.0
+Tested up to: 6.7
+Requires PHP: 8.1
+Stable tag: 2.1.0
+License: Proprietary
+
+A fully custom, standalone WooCommerce cart page for the ZYMARG multi-vendor marketplace.
+Zero Elementor dependency. Admin-configurable. Dokan Pro integrated.
+
+== Description ==
+
+ZYMARG Cart v2.0.0 is a complete rewrite of the original Elementor widget plugin into a
+self-contained standalone cart page plugin. It overrides the WooCommerce default cart page
+with a fully featured custom experience — without depending on Elementor or any page builder.
+
+Features:
+- Partial checkout (select which items to purchase)
+- Save for Later (hybrid session + usermeta, auto-merge on login)
+- Per-product coupons with inline feedback
+- Dokan Pro vendor grouping with per-vendor subtotals
+- Sticky Cart Total with slide-up popup (mobile default ON)
+- 11 AJAX actions (quantity, variation switch, coupons, SFL, partial checkout, restore)
+- WP Admin settings panel — 3 tabs: Header / Body / Total
+- Uses the shared ZYMARG Design Tokens system for all brand colors, including
+  automatic dark mode support (no per-site color overrides — colors are
+  centrally managed across the ZYMARG plugin suite)
+- Page background inherits from active theme (no hardcoded colours)
+- HPOS compatible
+- i18n ready (.pot file included)
+
+== Changelog ==
+
+= 2.1.0 =
+* Changed: All brand colors (--zc-* custom properties) are now thin aliases onto
+  the shared ZYMARG Design Tokens (--zym-color-* in zymarg-tokens.css) instead of
+  duplicated literal hex values. Zero visual change in light mode.
+* Changed: The "My Cart" header bar (.zymarg-cart-header) background is now a
+  solid brand primary color instead of a two-stop gradient.
+* Added: Dark mode now actually works. Previously the @media (prefers-color-scheme:
+  dark) override only updated --zc-* variables, but a duplicate :root block later
+  in the stylesheet silently redeclared the same variables with light-mode hex
+  values, so dark mode had no visible effect. Both blocks now alias onto the
+  shared tokens, which correctly flip under dark mode.
+* Removed: The admin "🎨 Style" tab (Light Mode Colors, Dark Mode Overrides, and
+  Border Radius fields) has been removed. Brand colors are now managed centrally
+  via the shared ZYMARG Design Tokens system rather than per-site overrides.
+  Settings panel is now 3 tabs: Header / Body / Total.
+* No changes to structural layout, markup, or functionality — colors only.
+
+= 2.0.3 =
+* Fix: Cart icon now white (#ffffff) on gradient header for proper contrast — was #ffd6fb (near-invisible against dark purple gradient).
+* Fix: Vendor row icon, avatar, and name now vertically center-aligned. Static icon, profile photo, vendor name, and arrow icon are all on the same baseline.
+* Version bump: pure visual fixes, zero functionality changes.
+
+= 2.0.0 =
+* MAJOR: Converted from Elementor widget plugin to standalone cart page plugin.
+* REMOVED: All three Elementor widget classes (cart-header, cart-body, cart-total).
+* REMOVED: Elementor dependency entirely — plugin works without Elementor installed.
+* ADDED: class-zymarg-cart-page.php — WooCommerce cart page override via hooks.
+* ADDED: class-zymarg-cart-admin.php — WordPress Admin settings panel with 4 tabs.
+* ADDED: class-zymarg-cart-settings.php — Single settings store using get_option/update_option.
+* ADDED: assets/css/zymarg-cart-vars.css — Full CSS custom property declaration file.
+* ADDED: Admin Style tab — color pickers for primary, surface, text, border, and dark mode tokens.
+* CHANGED: All Elementor $settings[] reads now come from Zymarg_Cart_Settings::get_*().
+* CHANGED: Template docblocks updated (Zymarg_Cart_Page instead of Zymarg_Widget_*).
+* CHANGED: Selected product rows no longer change background colour (removed selected row highlight).
+* KEPT: All 7 backend PHP classes unchanged (AJAX, Dokan, session, usermeta, merge, partial, helpers).
+* KEPT: All 6 JavaScript modules unchanged.
+* KEPT: All 3 CSS stylesheets unchanged (main, mobile, editor removed).
+* KEPT: All 9 PHP templates unchanged (settings key names are identical).
+* KEPT: All 11 AJAX actions, complete functionality, all icon SVGs.
+* KEPT: WooCommerce HPOS compatibility declaration.
+
+= 1.5.6 =
+* Fix: Subtotal column price vertically centered in grid cell on desktop/tablet.
+
+= 1.5.5 =
+* Fix: Subtotal column alignment inconsistency between simple and variable product rows.
+
+= 1.5.4 =
+* Fix: Subtotal column vertical alignment.
+* Fix: Coupon column now fully hidden when coupon feature is disabled.
+
+= 1.5.3 =
+* UX: Removed extra gap between Cart Body and sticky Cart Total.
+
+= 1.5.2 =
+* Fix: Subtotal bar count and amount now update live on every change.
+
+= 1.5.1 =
+* Fix: Sticky popup not appearing (CSS containing-block issue).
+* Fix: Popup visibility transition on first open.
+
+= 1.5.0 =
+* Feature: Sticky Cart Total with slide-up popup.
+* Feature: Per-breakpoint sticky toggles (Desktop/Tablet/Mobile).
+* Feature: ResizeObserver for Cart Body bottom padding.
+* Feature: Footer note in popup.
+* Feature: iOS safe-area-inset support.
+* Feature: Reduced-motion support.
+
+= 1.4.4 =
+* Defaults: Tax line hidden by default; label changed to "VAT".
+
+= 1.4.3 =
+* Change: Elementor Pro dependency removed (free Elementor only).
+
+= 1.4.2 =
+* Fix: HPOS compatibility declared unconditionally.
+
+= 1.3.0 =
+* Architecture: All icons converted from Tabler Icons web font to inline SVG.
+* Change: Mobile breakpoint default changed from 768px to 480px.
+
+== Installation ==
+
+1. Deactivate and delete the old ZYMARG Cart widget plugin (v1.x).
+2. Upload this plugin folder to /wp-content/plugins/zymarg-cart/
+3. Activate via WordPress Plugins screen.
+4. Go to WP Admin → ZYMARG Cart → Settings to configure.
+5. Your WooCommerce cart page will automatically use the new cart.
+
+== Malaysian Tax Configuration ==
+
+To show the correct tax label for Malaysia (SST), add this to your theme's functions.php:
+
+    add_filter( 'zymarg_cart_tax_label', fn() => 'Tax (6% SST)' );
+
+Or set it via WP Admin → ZYMARG Cart → Settings → Total → Tax Label.
+
+== Notes ==
+
+- Requires WooCommerce 9.0+ and Dokan Pro 3.0+.
+- PHP 8.1 or higher required.
+- The cart page background inherits from your active Astra theme automatically.
+- All style overrides in the Admin Style tab are output as CSS custom property
+  overrides in wp_head, sitting on top of the plugin's token defaults.

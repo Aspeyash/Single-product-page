@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none" role="img" aria-label="Empty shopping cart">
+  <!-- Background circle -->
+  <circle cx="100" cy="100" r="96" fill="#eaedff"/>
+
+  <!-- Soft inner glow -->
+  <circle cx="100" cy="100" r="72" fill="#ffd6fb" opacity="0.35"/>
+
+  <!-- Cart body -->
+  <rect x="58" y="80" width="84" height="52" rx="10" fill="#ffffff" stroke="#9500a5" stroke-width="2.5"/>
+
+  <!-- Cart handle / hook -->
+  <path d="M46 68 L58 68 L72 118" stroke="#9500a5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+  <!-- Cart basket lines (shelves) -->
+  <line x1="70" y1="95" x2="130" y2="95" stroke="#d8bfd3" stroke-width="1.5" stroke-linecap="round"/>
+  <line x1="70" y1="107" x2="130" y2="107" stroke="#d8bfd3" stroke-width="1.5" stroke-linecap="round"/>
+
+  <!-- Vertical bars inside cart -->
+  <line x1="88"  y1="80" x2="88"  y2="132" stroke="#d8bfd3" stroke-width="1.2" stroke-linecap="round"/>
+  <line x1="112" y1="80" x2="112" y2="132" stroke="#d8bfd3" stroke-width="1.2" stroke-linecap="round"/>
+
+  <!-- Cart wheels -->
+  <circle cx="74"  cy="136" r="7" fill="#9500a5"/>
+  <circle cx="74"  cy="136" r="3" fill="#ffd6fb"/>
+  <circle cx="120" cy="136" r="7" fill="#9500a5"/>
+  <circle cx="120" cy="136" r="3" fill="#ffd6fb"/>
+
+  <!-- Sad face inside cart -->
+  <circle cx="100" cy="103" r="14" fill="#faf8ff" stroke="#d8bfd3" stroke-width="1"/>
+  <!-- Eyes -->
+  <circle cx="95"  cy="100" r="1.8" fill="#857183"/>
+  <circle cx="105" cy="100" r="1.8" fill="#857183"/>
+  <!-- Frown -->
+  <path d="M94 108 Q100 104 106 108" stroke="#857183" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+
+  <!-- Sparkles / decorative dots — ZYMARG primary -->
+  <!-- Top-left sparkle -->
+  <g transform="translate(42, 52)">
+    <line x1="0" y1="-7" x2="0" y2="7"  stroke="#9500a5" stroke-width="1.8" stroke-linecap="round"/>
+    <line x1="-7" y1="0" x2="7" y2="0"  stroke="#9500a5" stroke-width="1.8" stroke-linecap="round"/>
+    <line x1="-5" y1="-5" x2="5" y2="5" stroke="#9500a5" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/>
+    <line x1="5" y1="-5" x2="-5" y2="5" stroke="#9500a5" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/>
+  </g>
+
+  <!-- Top-right sparkle (smaller) -->
+  <g transform="translate(154, 46)">
+    <line x1="0" y1="-5" x2="0" y2="5"  stroke="#bd00d1" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="-5" y1="0" x2="5" y2="0"  stroke="#bd00d1" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- Bottom-right sparkle -->
+  <g transform="translate(158, 148)">
+    <line x1="0" y1="-6" x2="0" y2="6"  stroke="#9500a5" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="-6" y1="0" x2="6" y2="0"  stroke="#9500a5" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="-4" y1="-4" x2="4" y2="4" stroke="#9500a5" stroke-width="1" stroke-linecap="round" opacity="0.5"/>
+    <line x1="4" y1="-4" x2="-4" y2="4" stroke="#9500a5" stroke-width="1" stroke-linecap="round" opacity="0.5"/>
+  </g>
+
+  <!-- Floating dots -->
+  <circle cx="48"  cy="130" r="3" fill="#9500a5" opacity="0.4"/>
+  <circle cx="152" cy="72"  r="4" fill="#bd00d1" opacity="0.3"/>
+  <circle cx="160" cy="112" r="2.5" fill="#9500a5" opacity="0.5"/>
+  <circle cx="38"  cy="88"  r="2"   fill="#9500a5" opacity="0.3"/>
+</svg>
