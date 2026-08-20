@@ -4,7 +4,7 @@ Tags: woocommerce, cart, multi-vendor, dokan, marketplace
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.1
-Stable tag: 2.3.0
+Stable tag: 2.4.0
 License: Proprietary
 
 A fully custom, standalone WooCommerce cart page for the ZYMARG multi-vendor marketplace.
@@ -32,6 +32,32 @@ Features:
 - i18n ready (.pot file included)
 
 == Changelog ==
+
+= 2.4.0 =
+* Fix: the shared zymarg-tokens.css was missing a canonical name for text and
+  icons drawn directly on the fixed brand gradient (--zym-gradient never
+  changes between light/dark mode by design). Every plugin previously either
+  hardcoded raw #fff (breaking the "no raw colour inside a rule" rule) or
+  aliased it to a theme-reactive token that goes dark and produces illegible
+  text once dark mode activates. Added three new FIXED tokens to the
+  canonical file, propagated byte-identical to all 6 ZYMARG plugins:
+  --zym-color-on-gradient (#FFFFFF), --zym-color-primary-fixed (#FFD6FB),
+  --zym-color-on-primary-fixed (#36003D). Documented with a full usage guide
+  in the ZYMARG Design Tokens reference doc.
+* Fix: this plugin's admin settings screen used class="zc-admin-wrap" for its
+  wrapper, which does not match the literal ".zymarg-admin" selector the
+  shared token file scopes every back-end-only token to. Every back-end-only
+  token referenced in this plugin's admin CSS (--zym-shadow-btn,
+  --zym-shadow-surface, --zym-color-divider, etc.) was silently resolving to
+  nothing. Added class="zymarg-admin" alongside the existing wrapper class
+  (additive only, no selectors removed) so those tokens now resolve.
+* Fix: replaced every raw hex value this plugin had introduced (color:#fff,
+  color:#ffd6fb, stroke:#fff, and one color:#9500a5) with the matching
+  --zym-* token, verified byte-for-byte identical to the value it replaced —
+  zero visual change, only the underlying mechanism moved from a literal hex
+  to a shared token reference. Pre-existing decorative colours with no
+  canonical token equivalent (e.g. #e0d0ea, #e8d5f5, #a889b0, #dc3545,
+  #f5c8f8) were deliberately left untouched.
 
 = 2.3.0 =
 * CRITICAL FIX (Header plugin): the admin Settings::cart_inline_css() generator

@@ -41,7 +41,7 @@
        tokens so dark mode ([data-theme="dark"], the site's actual
        theme-toggle attribute) reaches these rules too. */
     --zc-primary:           var(--zym-color-primary);
-    --zc-primary-fixed:     #ffd6fb;
+    --zc-primary-fixed:     var(--zym-color-primary-fixed);
     --zc-primary-container: var(--zym-color-secondary);
     --zc-inverse-primary:   var(--zym-color-accent);
     --zc-on-primary-fixed:  var(--zym-color-dark);
@@ -1678,7 +1678,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
    and shadow tokens. */
 :root {
     --zc-gradient-primary:  var(--zym-gradient);
-    --zc-gradient-soft:     linear-gradient(135deg, #ffd6fb 0%, var(--zym-color-accent) 100%);
+    --zc-gradient-soft:     linear-gradient(135deg, var(--zym-color-primary-fixed) 0%, var(--zym-color-accent) 100%);
     --zc-shadow-card:       var(--zym-shadow-card);
     --zc-shadow-hover:      var(--zym-shadow-card-hover);
     --zc-shadow-total:      0 -2px 20px rgba(149, 0, 165, 0.08);
@@ -1700,7 +1700,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 }
 
 .zymarg-cart-icon {
-    color: #ffd6fb;
+    color: var(--zym-color-primary-fixed);
 }
 
 .zymarg-cart-title {
@@ -1708,7 +1708,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
        --zym-gradient header background, which never changes in dark
        mode, so its text colour must not change either — otherwise it
        goes dark-on-purple and becomes unreadable. */
-    color: #fff;
+    color: var(--zym-color-on-gradient);
     font-weight: 600;
     font-size: 17px;
 }
@@ -1719,7 +1719,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 }
 
 .zymarg-edit-btn {
-    color: #ffd6fb;
+    color: var(--zym-color-primary-fixed);
     border-color: rgba(255, 255, 255, 0.45);
     background: rgba(255, 255, 255, 0.12);
     border-radius: 20px;
@@ -1735,7 +1735,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 }
 
 .zymarg-delete-btn {
-    color: #ffd6fb;
+    color: var(--zym-color-primary-fixed);
     border-color: rgba(255, 255, 255, 0.45);
     background: rgba(220, 53, 69, 0.25);
     border-radius: 20px;
@@ -1791,7 +1791,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 
 /* Vendor avatar ring */
 .zymarg-vendor-avatar {
-    border: 2px solid #ffd6fb;
+    border: 2px solid var(--zym-color-primary-fixed);
     box-shadow: 0 0 0 1px rgba(149, 0, 165, 0.15);
 }
 
@@ -1803,8 +1803,8 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
    Fixed to a permanently dark, fixed icon colour so it always reads
    against the fixed light pill. */
 .zymarg-vendor-static-icon {
-    color: #9500a5;
-    background: linear-gradient(135deg, #ffd6fb 0%, var(--zym-color-accent) 100%);
+    color: var(--zym-color-on-primary-fixed);
+    background: linear-gradient(135deg, var(--zym-color-primary-fixed) 0%, var(--zym-color-accent) 100%);
     border-radius: 50%;
     width: 28px;
     height: 28px;
@@ -1922,7 +1922,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 }
 
 .zymarg-qty-btn {
-    background: linear-gradient(135deg, #ffd6fb 0%, #f5c8f8 100%);
+    background: linear-gradient(135deg, var(--zym-color-primary-fixed) 0%, #f5c8f8 100%);
     color: var(--zym-color-primary);
     width: 28px;
     height: 28px;
@@ -1932,7 +1932,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 
 .zymarg-qty-btn:hover:not(:disabled) {
     background: var(--zym-gradient);
-    color: #ffd6fb;
+    color: var(--zym-color-primary-fixed);
 }
 
 .zymarg-qty-value {
@@ -1998,7 +1998,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 
 .zymarg-coupon-apply:hover {
     background: var(--zym-gradient);
-    color: #ffd6fb;
+    color: var(--zym-color-primary-fixed);
     border-color: transparent;
 }
 
@@ -2050,7 +2050,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 
 .zymarg-saved-count-badge {
     background: var(--zym-gradient);
-    color: #ffd6fb;
+    color: var(--zym-color-primary-fixed);
     font-size: 11px;
     font-weight: 700;
     min-width: 22px;
@@ -2098,7 +2098,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 
 .zymarg-move-to-cart-btn {
     background: var(--zym-gradient);
-    color: #ffd6fb;
+    color: var(--zym-color-primary-fixed);
     border-radius: 10px;
     font-weight: 500;
     font-size: 12px;
@@ -2273,7 +2273,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 /* Checkout button — full gradient */
 .zymarg-checkout-btn {
     background: var(--zym-gradient);
-    color: #ffd6fb;
+    color: var(--zym-color-primary-fixed);
     border-radius: 12px;
     font-size: 14px;
     font-weight: 600;
@@ -2351,7 +2351,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 
 .zymarg-continue-shopping {
     background: var(--zym-gradient);
-    color: #ffd6fb;
+    color: var(--zym-color-primary-fixed);
     border-radius: 12px;
     font-size: 14px;
     font-weight: 600;
@@ -2364,7 +2364,7 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
     background: var(--zym-gradient);
     box-shadow: 0 6px 24px rgba(149, 0, 165, 0.38);
     transform: translateY(-1px);
-    color: #ffd6fb;
+    color: var(--zym-color-primary-fixed);
 }
 
 /* ── Edit mode visual update ────────────────────────────────────────────── */
@@ -2410,18 +2410,18 @@ body.zymarg-cart-sticky-active .zymarg-widget-cart-body {
 
 /* ── Fix 1: Cart icon color on header background ────────────────────────────
    The header background is the fixed --zym-gradient (never changes between
-   light/dark mode). Fixed white (#fff), NOT --zym-color-surface: that
-   token flips to near-black in dark mode, which would put dark icons on
-   a still-purple gradient and make them disappear. */
+   light/dark mode). --zym-color-on-gradient (fixed white) is used, NOT
+   --zym-color-surface: that token flips to near-black in dark mode, which
+   would put dark icons on a still-purple gradient and make them disappear. */
 .zymarg-cart-header .zymarg-cart-icon {
-    color: #fff;
+    color: var(--zym-color-on-gradient);
     opacity: 1;
 }
 
 /* Also ensure the icon SVG inherits the white */
 .zymarg-cart-header .zymarg-cart-icon svg {
-    color: #fff;
-    stroke: #fff;
+    color: var(--zym-color-on-gradient);
+    stroke: var(--zym-color-on-gradient);
 }
 
 /* ── Fix 2: Vendor row — center-align icon, avatar, and name vertically ─────

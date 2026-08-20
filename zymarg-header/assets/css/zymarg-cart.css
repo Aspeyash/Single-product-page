@@ -46,7 +46,7 @@
 	   resolved to nothing. That is why the cart trigger text and icon
 	   went invisible, especially in dark mode. */
 	--zc-primary: var(--zym-color-primary);
-	--zc-primary-fixed: #ffd6fb;
+	--zc-primary-fixed: var(--zym-color-primary-fixed);
 	--zc-primary-container: var(--zym-color-secondary);
 	--zc-text-body: var(--zym-color-dark);
 	--zc-text-muted: var(--zym-color-text);
@@ -187,11 +187,12 @@
 	/* Fixed white, not --zym-color-surface: this badge sits on the fixed
 	   brand gradient, which never changes in dark mode, so its text
 	   colour must stay fixed too (see .z-hdr-seller-btn comment in
-	   zymarg-header.css for the full explanation). */
-	color: #fff;
+	   zymarg-header.css for the full explanation). Uses the canonical
+	   --zym-color-on-gradient token (added v2.2.0) instead of raw #fff. */
+	color: var(--zym-color-on-gradient);
 	background: var(--zym-gradient) !important;
 	border-radius: 20px;
-	border: 2px solid #fff;
+	border: 2px solid var(--zym-color-on-gradient);
 	pointer-events: none;
 }
 
@@ -686,12 +687,12 @@
    low-contrast checkout button. */
 .z-hdr-cart-root .zymarg-tb-cart__btn--primary {
 	background: var(--zym-gradient);
-	color: #ffd6fb;
+	color: var(--zym-color-primary-fixed);
 }
 
 .z-hdr-cart-root .zymarg-tb-cart__btn--primary:hover, .z-hdr-cart-root .zymarg-tb-cart__btn--primary:focus-visible {
 	background: var(--zym-gradient);
-	color: #ffd6fb;
+	color: var(--zym-color-primary-fixed);
 	opacity: 0.9;
 }
 

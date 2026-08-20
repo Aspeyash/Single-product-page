@@ -423,7 +423,7 @@ class Admin {
 			<th scope="row"><?php echo esc_html( $label ); ?></th>
 			<td>
 				<input type="number" min="<?php echo esc_attr( $min ); ?>" max="<?php echo esc_attr( $max ); ?>" step="any" style="width:80px" name="<?php echo esc_attr( $k ); ?>" value="<?php echo esc_attr( $val ); ?>">
-				<span style="margin-left:4px;color:#646970"><?php echo esc_html( $unit ); ?></span>
+				<span style="margin-left:4px;color:var(--zym-color-neutral-text)"><?php echo esc_html( $unit ); ?></span>
 				<?php if ( $desc ) : ?><p class="description"><?php echo esc_html( $desc ); ?></p><?php endif; ?>
 			</td>
 		</tr>
@@ -462,47 +462,54 @@ class Admin {
 		?>
 		<style>
 		/* ── ZYMARG Admin — branded styles ──────────────────────────── */
+		/* Uses the REAL shared --zym-* tokens from zymarg-tokens.css (the
+		   canonical file shared with Vendor Dashboard / Store Page / Single
+		   Product / Reviews Engine / ZYMARG Cart). Colors that sit directly
+		   on the fixed --zym-gradient use --zym-color-on-gradient (fixed
+		   white, added v2.2.0) rather than a theme-reactive token, per the
+		   token doc's own rule that the gradient never changes between
+		   light and dark mode. */
 		.zymarg-admin-wrap { max-width: 900px; }
 
 		/* Branded header */
 		.zymarg-admin-header {
 			display: flex; align-items: center; gap: 14px;
-			background: linear-gradient(135deg,#2d0033 0%,#9500a5 60%,#bd00d1 100%);
+			background: var(--zym-gradient);
 			border-radius: 10px; padding: 18px 28px; margin-bottom: 0;
-			box-shadow: 0 4px 20px rgba(149,0,165,0.25);
+			box-shadow: var(--zym-shadow-btn-hover);
 		}
 		.zymarg-admin-brand {
-			font-size: 22px; font-weight: 800; color: #fff;
+			font-size: 22px; font-weight: 800; color: var(--zym-color-on-gradient);
 			letter-spacing: 2px; font-family: 'Segoe UI',sans-serif;
 		}
-		.zymarg-admin-brand span { color: #ffd6fb; }
+		.zymarg-admin-brand span { color: var(--zym-color-primary-fixed); }
 		.zymarg-admin-subtitle {
 			font-size: 13px; color: rgba(255,255,255,0.75);
 			font-weight: 400; letter-spacing: 0.5px;
 		}
 		.zymarg-admin-badge {
 			margin-left: auto; background: rgba(255,255,255,0.15);
-			color: #ffd6fb; font-size: 11px; font-weight: 600;
+			color: var(--zym-color-primary-fixed); font-size: 11px; font-weight: 600;
 			padding: 3px 10px; border-radius: 20px; letter-spacing: 0.5px;
 		}
 
 		/* Tab navigation */
 		.zymarg-tab-nav {
 			display: flex; gap: 0;
-			border-bottom: 2px solid #e2d5e8;
-			margin-bottom: 0; background: #fff;
+			border-bottom: 2px solid var(--zym-color-border);
+			margin-bottom: 0; background: var(--zym-color-surface);
 			border-radius: 0; padding: 0 4px;
 		}
 		.zymarg-tab-btn {
 			background: none; border: none; cursor: pointer;
 			padding: 14px 22px; font-size: 13px; font-weight: 600;
-			color: #534152; border-bottom: 3px solid transparent;
+			color: var(--zym-color-text); border-bottom: 3px solid transparent;
 			margin-bottom: -2px; transition: color 0.15s, border-color 0.15s;
 			letter-spacing: 0.2px; position: relative; top: 0;
 		}
-		.zymarg-tab-btn:hover { color: #9500a5; }
+		.zymarg-tab-btn:hover { color: var(--zym-color-primary); }
 		.zymarg-tab-btn.is-active {
-			color: #9500a5; border-bottom-color: #9500a5;
+			color: var(--zym-color-primary); border-bottom-color: var(--zym-color-primary);
 		}
 
 		/* Tab panels */
@@ -510,10 +517,10 @@ class Admin {
 
 		/* Section headers */
 		.zymarg-section {
-			font-size: 13px; font-weight: 700; color: #9500a5;
+			font-size: 13px; font-weight: 700; color: var(--zym-color-primary);
 			text-transform: uppercase; letter-spacing: 1px;
 			padding: 0 0 8px 14px; margin: 28px 0 4px;
-			border-left: 4px solid #9500a5;
+			border-left: 4px solid var(--zym-color-primary);
 		}
 		.zymarg-section:first-of-type { margin-top: 0; }
 
@@ -525,18 +532,18 @@ class Admin {
 
 		/* Submit row */
 		.zymarg-submit-row {
-			padding: 24px 0 8px; border-top: 1px solid #e2d5e8; margin-top: 32px;
+			padding: 24px 0 8px; border-top: 1px solid var(--zym-color-border); margin-top: 32px;
 			display: flex; align-items: center; gap: 16px;
 		}
 		.zymarg-submit-row .button-primary {
-			background: #9500a5 !important; border-color: #7a008c !important;
+			background: var(--zym-color-primary) !important; border-color: #7a008c !important;
 			box-shadow: 0 2px 8px rgba(149,0,165,0.3) !important;
 			font-weight: 600 !important; padding: 8px 28px !important;
 			font-size: 14px !important; height: auto !important;
 			transition: background 0.15s, opacity 0.15s !important;
 		}
 		.zymarg-submit-row .button-primary:hover {
-			background: #bd00d1 !important; border-color: #9500a5 !important;
+			background: var(--zym-color-secondary) !important; border-color: var(--zym-color-primary) !important;
 		}
 		.zymarg-submit-row .button-primary:disabled {
 			opacity: 0.6 !important; cursor: not-allowed !important;
@@ -549,14 +556,26 @@ class Admin {
 			font-weight: 600; border-left: 4px solid;
 		}
 		#zymarg-ajax-notice.is-success {
-			background: #f0faf3; border-color: #28a745; color: #1a6b2e;
+			background: var(--zym-color-success-bg); border-color: var(--zym-color-success-text); color: var(--zym-color-success-text);
 		}
 		#zymarg-ajax-notice.is-error {
-			background: #fdf2f2; border-color: #dc3545; color: #8b1a1a;
+			background: var(--zym-color-error-bg); border-color: var(--zym-color-error); color: var(--zym-color-error);
 		}
 		</style>
 
-		<div class="wrap zymarg-admin-wrap">
+		<?php
+		/*
+		 * "zymarg-admin" (in addition to this plugin's own "zymarg-admin-wrap")
+		 * is the literal wrapper class the shared ZYMARG Design Tokens file
+		 * scopes every back-end-only --zym-* token to (--zym-shadow-btn,
+		 * --zym-shadow-btn-hover, --zym-shadow-surface, --zym-shadow-modal,
+		 * --zym-color-divider, --zym-radius-control, the admin --zym-font
+		 * stack, etc.). Without it, those tokens silently resolve to
+		 * nothing wherever this admin CSS references them — this plugin
+		 * previously had no element carrying that class at all.
+		 */
+		?>
+		<div class="wrap zymarg-admin-wrap zymarg-admin">
 
 			<!-- AJAX toast notice (shown/hidden by JS — no reload needed) -->
 			<div id="zymarg-ajax-notice" role="status" aria-live="polite"></div>
@@ -654,7 +673,7 @@ class Admin {
 					</table>
 
 					<div class="zymarg-section"><?php esc_html_e( 'Conditions', 'zymarg-header' ); ?></div>
-					<p style="color:#534152;margin:0 0 16px">
+					<p style="color:var(--zym-color-text);margin:0 0 16px">
 						<?php esc_html_e( 'Rules use OR logic — the header shows/hides if ANY condition matches. Ignored when "Show on all pages" is selected.', 'zymarg-header' ); ?>
 					</p>
 
@@ -668,23 +687,23 @@ class Admin {
 					<div id="zymarg-rules-list" style="margin-bottom:12px"></div>
 
 					<button type="button" id="zymarg-add-rule"
-						style="background:#9500a5;color:#fff;border:none;padding:8px 18px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600">
+						style="background:var(--zym-color-primary);color:var(--zym-color-on-gradient);border:none;padding:8px 18px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600">
 						+ <?php esc_html_e( 'Add Condition', 'zymarg-header' ); ?>
 					</button>
 
 					<style>
 					.zymarg-rule-row {
 						display:flex;align-items:center;gap:10px;
-						background:#faf8ff;border:1px solid #e2d5e8;
+						background:var(--zym-color-bg);border:1px solid var(--zym-color-border);
 						border-radius:8px;padding:10px 14px;margin-bottom:8px;
 					}
-					.zymarg-rule-type { min-width:200px;border-radius:4px;border:1px solid #c3a7cc;padding:6px 8px }
-					.zymarg-rule-value { flex:1;border-radius:4px;border:1px solid #c3a7cc;padding:6px 8px }
+					.zymarg-rule-type { min-width:200px;border-radius:4px;border:1px solid var(--zym-color-border);padding:6px 8px }
+					.zymarg-rule-value { flex:1;border-radius:4px;border:1px solid var(--zym-color-border);padding:6px 8px }
 					.zymarg-rule-remove {
-						background:none;border:none;color:#a32d2d;cursor:pointer;
+						background:none;border:none;color:var(--zym-color-error);cursor:pointer;
 						font-size:18px;line-height:1;padding:2px 6px;border-radius:4px;
 					}
-					.zymarg-rule-remove:hover { background:#fcebeb }
+					.zymarg-rule-remove:hover { background:var(--zym-color-error-bg) }
 					</style>
 
 				</div><!-- /tab display -->
@@ -815,7 +834,7 @@ class Admin {
 										name="<?php echo $ok; ?>[cart_trigger_padding_<?php echo $side; ?>]"
 										value="<?php echo esc_attr( Settings::get( "cart_trigger_padding_{$side}", '0' ) ); ?>">
 								<?php endforeach; ?>
-								<span style="color:#646970">px</span>
+								<span style="color:var(--zym-color-neutral-text)">px</span>
 							</td>
 						</tr>
 						<?php $this->color_row( __( 'Background', 'zymarg-header' ), 'cart_trigger_bg', '' ); ?>

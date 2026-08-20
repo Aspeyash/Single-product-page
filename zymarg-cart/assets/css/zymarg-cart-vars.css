@@ -34,7 +34,7 @@
   --zc-primary:            var(--zym-color-primary);
   --zc-primary-container:  var(--zym-color-secondary);      /* hover / gradient end */
   --zc-inverse-primary:    var(--zym-color-accent);         /* soft accent / on-dark */
-  --zc-primary-fixed:      #ffd6fb;                         /* stable tint surface — no canonical token, fixed brand value */
+  --zc-primary-fixed:      var(--zym-color-primary-fixed);  /* stable tint surface — canonical shared token (added v2.2.0) */
   --zc-on-primary-fixed:   var(--zym-color-dark);           /* text on primary fixed */
 
   /* ── Secondary ─────────────────────────────────────────── */

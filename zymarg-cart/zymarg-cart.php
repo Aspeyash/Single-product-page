@@ -3,7 +3,7 @@
  * Plugin Name:       ZYMARG Cart
  * Plugin URI:        https://zymarg.com
  * Description:       A standalone multi-vendor cart page for ZYMARG marketplace. Overrides the WooCommerce default cart page with a fully featured custom cart — partial checkout, Save for Later (hybrid session/usermeta), per-product coupons, Dokan vendor grouping, sticky totals, and an admin settings panel. Zero Elementor dependency.
- * Version:           2.3.0
+ * Version:           2.4.0
  * Author:            ZYMARG
  * Author URI:        https://zymarg.com
  * Text Domain:       zymarg-cart
@@ -43,7 +43,7 @@ if ( version_compare( PHP_VERSION, '8.1', '<' ) ) {
 }
 
 // ── Constants ──────────────────────────────────────────────────────────────
-define( 'ZYMARG_CART_VERSION',  '2.3.0' );
+define( 'ZYMARG_CART_VERSION',  '2.4.0' );
 define( 'ZYMARG_CART_FILE',     __FILE__ );
 define( 'ZYMARG_CART_PATH',     plugin_dir_path( __FILE__ ) );
 define( 'ZYMARG_CART_URL',      plugin_dir_url( __FILE__ ) );
