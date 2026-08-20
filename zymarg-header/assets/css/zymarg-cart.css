@@ -492,8 +492,11 @@
 	transition: background-color var(--zc-fast);
 }
 
+/* Was a fixed light-pink hover fill under a theme-reactive text colour
+   (--zc-primary, which lightens in dark mode) — low contrast in dark
+   mode. Theme-aware surface tint keeps contrast in both modes. */
 .z-hdr-cart-root .zymarg-tb-cart__qty-btn:hover:not(:disabled) {
-	background: var(--zc-primary-fixed);
+	background: var(--zym-color-container);
 }
 
 .z-hdr-cart-root .zymarg-tb-cart__qty-btn:disabled {
@@ -675,14 +678,21 @@
 }
 
 
+/* Checkout button — the fixed brand gradient (never changes between
+   modes) paired with a fixed light-pink text. Previously used a
+   theme-reactive solid background (--zc-primary, which lightens to
+   #f0b0ff in dark mode) with the fixed light-pink text — in dark mode
+   that was light-on-light, nearly invisible, matching the reported
+   low-contrast checkout button. */
 .z-hdr-cart-root .zymarg-tb-cart__btn--primary {
-	background: var(--zc-primary);
-	color: var(--zc-primary-fixed);
+	background: var(--zym-gradient);
+	color: #ffd6fb;
 }
 
 .z-hdr-cart-root .zymarg-tb-cart__btn--primary:hover, .z-hdr-cart-root .zymarg-tb-cart__btn--primary:focus-visible {
-	background: var(--zc-primary-container);
-	color: var(--zc-primary-fixed);
+	background: var(--zym-gradient);
+	color: #ffd6fb;
+	opacity: 0.9;
 }
 
 
@@ -692,8 +702,13 @@
 	border-color: var(--zc-primary);
 }
 
+/* Hover fill was a fixed light-pink (--zc-primary-fixed) paired with a
+   theme-reactive text colour (--zc-primary, which lightens in dark mode)
+   — light text on a light fill, low contrast. Use the theme-aware
+   surface-container tint instead, which stays a visible contrast against
+   --zc-primary text in both modes. */
 .z-hdr-cart-root .zymarg-tb-cart__btn--outline:hover, .z-hdr-cart-root .zymarg-tb-cart__btn--outline:focus-visible {
-	background: var(--zc-primary-fixed);
+	background: var(--zc-surface-container);
 }
 
 
