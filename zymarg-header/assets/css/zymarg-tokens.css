@@ -1,16 +1,20 @@
-/*
- * ZYMARG shared design tokens.
- * Handle: zymarg-tokens   Version: 2.0.0
- * Generated verbatim from ZYMARG_Design_Tokens.txt (THE TOKEN FILE section).
- * Never edit per-plugin. Never redefine a --zym-* value inside a plugin.
+/**
+ * ZYMARG DESIGN TOKENS  --  zymarg-tokens.css
+ *
+ * Shared by every ZYMARG plugin. Enqueued with the handle `zymarg-tokens`,
+ * so WordPress loads it only once no matter how many ZYMARG plugins are
+ * active. Never redefine a --zym-* value inside a plugin.
+ *
+ * Token file version is independent of any plugin version. Bump it only when
+ * a token actually changes.
  */
 
 /* --- shared by both systems ------------------------------------------ */
 
 :root,
 .zymarg-admin {
-  --zym-tokens-version:      "2.0.0";
-  --zym-tokens-owner:        "zymarg-media-optimizer";
+  --zym-tokens-version:      "2.1.0";
+  --zym-tokens-owner:        "zymarg-vendor-dashboard";
 
   /* Brand */
   --zym-color-primary:       #9500A5;
@@ -28,6 +32,22 @@
   --zym-color-bg:            #FAF5FB;
   --zym-color-surface-alt:   #F8F9FF;
   --zym-color-container:     #EAEDFF;
+
+  /* Status / neutral.
+     These used to live ONLY in the .zymarg-admin block below, which meant
+     any front-end stylesheet referencing them resolved to nothing at all --
+     no colour, no background, silently. They belong to both systems, so
+     they are declared here. The admin block still repeats them; the values
+     are identical, so admin rendering is unchanged. */
+  --zym-color-divider:       #F3ECF3;
+  --zym-color-success-bg:    #E6F4EA;
+  --zym-color-success-text:  #1A7F37;
+  --zym-color-error:         #B3261E;
+  --zym-color-error-bg:      #FDECEC;
+  --zym-color-error-hover:   #D43F3A;
+  --zym-color-error-text:    #FFFFFF;
+  --zym-color-neutral-bg:    #F0F0F1;
+  --zym-color-neutral-text:  #646970;
 
   /* Type */
   --zym-font-size-xxl:       30px;
@@ -111,94 +131,8 @@
   --zym-img-hover-scale:     1.05;
 }
 
-/* ==========================================================================
- * ZYMARG COMPONENT COLOR TOKENS — v2.1.0
- *
- * Formalizes the richer Material-style palette that ZYMARG Cart and
- * ZYMARG Header already used internally (as literal hex values under the
- * --zc-* custom property namespace). This section makes that palette the
- * single shared source of truth so every plugin can reference the same
- * values instead of duplicating hex codes.
- *
- * These are ADDITIVE to the tokens above — nothing existing is renamed,
- * removed, or given a different value. Per the token-file rules: "the
- * shared files are append-only in practice."
- *
- * Includes light values (front end, :root) and dark values (activated
- * automatically under prefers-color-scheme: dark). The dark values were
- * previously hardcoded only inside ZYMARG Cart's own stylesheet; they are
- * promoted here, unchanged, so any plugin can opt into dark-mode support.
- * ========================================================================== */
-
-:root {
-  /* Brand / primary */
-  --zym-color-primary-container:  #BD00D1;  /* hover / gradient end */
-  --zym-color-inverse-primary:    #FEA9FF;  /* soft accent / on-dark */
-  --zym-color-primary-fixed:      #FFD6FB;  /* stable tint surfaces */
-  --zym-color-on-primary-fixed:   #36003D;  /* text on primary fixed */
-
-  /* Secondary */
-  --zym-color-secondary-brand:    #505F76;
-  --zym-color-secondary-container:#D0E1FB;
-
-  /* Surfaces (component-level — not the page background) */
-  --zym-color-surface-component:  #FAF8FF;
-  --zym-color-surface-container:  #EAEDFF;
-  --zym-color-surface-lowest:     #FFFFFF;
-  --zym-color-inverse-surface:    #283044;
-
-  /* Text */
-  --zym-color-text-body:          #131B2E;
-  --zym-color-text-muted-brand:   #534152;
-
-  /* Outline */
-  --zym-color-outline:            #857183;
-  --zym-color-outline-variant:    #D8BFD3;
-
-  /* Semantic / status */
-  --zym-color-success-bg:         #EAF3DE;
-  --zym-color-success-text:       #3B6D11;
-  --zym-color-error-bg:           #FCEBEB;
-  --zym-color-error-text:         #A32D2D;
-  --zym-color-warning-bg:         #FAEEDA;
-  --zym-color-warning-text:       #854F0B;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* Brand / primary */
-    --zym-color-primary:            #BD00D1;
-    --zym-color-primary-container:  #9500A5;
-    --zym-color-inverse-primary:    #FEA9FF;
-    --zym-color-primary-fixed:      #36003D;
-    --zym-color-on-primary-fixed:   #FFD6FB;
-
-    /* Surfaces */
-    --zym-color-surface-component:  #1A1A2E;
-    --zym-color-surface-container:  #283044;
-    --zym-color-surface-lowest:     #12121F;
-    --zym-color-inverse-surface:    #EAEDFF;
-
-    /* Text */
-    --zym-color-text-body:          #E8E8E8;
-    --zym-color-text-muted-brand:   #A0A0A0;
-
-    /* Outline */
-    --zym-color-outline:            #5A5A7A;
-    --zym-color-outline-variant:    #3D3D5C;
-
-    /* Semantic — slightly desaturated for dark backgrounds */
-    --zym-color-success-bg:         #1A3A10;
-    --zym-color-success-text:       #7ECB5A;
-    --zym-color-error-bg:           #3A1010;
-    --zym-color-error-text:         #F08080;
-    --zym-color-warning-bg:         #3A2A00;
-    --zym-color-warning-text:       #F0C060;
-  }
-}
-
 /* --- back end only ----------------------------------------------------- */
-/* Replace .zymarg-admin with your plugin's admin wrapper class.            */
+/* Scoped to the admin wrapper so nothing leaks into WordPress chrome.      */
 
 .zymarg-admin {
   --zym-font:                -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
@@ -229,4 +163,72 @@
   font-family: var(--zym-font);
   color: var(--zym-color-text);
   line-height: 1.5;
+}
+
+/* --- dark mode --------------------------------------------------------- */
+/*                                                                          */
+/* The THEME owns the switch: it puts data-theme="dark" on the page. This    */
+/* file owns the VALUES. Because every ZYMARG plugin reads the same         */
+/* --zym-* names from this one shared file, adding dark values here turns   */
+/* every tokenised plugin dark at once -- front end and wp-admin both,      */
+/* which a theme stylesheet could never do because themes do not load in    */
+/* wp-admin.                                                                */
+/*                                                                          */
+/* CAVEAT worth knowing: this only reaches CSS that USES tokens. Any file    */
+/* still holding raw hex values stays light. store-page.css has 103 such    */
+/* values and will need a separate pass.                                    */
+/*                                                                          */
+/* The brand gradient is deliberately NOT changed. The mark should read the */
+/* same in both modes; only the surfaces around it move.                    */
+
+[data-theme="dark"],
+[data-theme="dark"] .zymarg-admin {
+  color-scheme: dark;
+
+  /* Brand -- primary is lightened because it is used as TEXT and BORDER,
+     never as a background behind white text. #9500A5 on a dark surface is
+     unreadable; the gradient buttons are unaffected. */
+  --zym-color-primary:       #f0b0ff;
+  --zym-color-secondary:     #e29bff;
+  --zym-color-accent:        #ffd6fb;
+
+  /* Neutrals -- `dark` is the strong heading colour, so it INVERTS to near
+     white. The name refers to its role, not its value. */
+  --zym-color-dark:          #e8e2ec;
+  --zym-color-text:          #c3b6c6;
+  --zym-color-border:        #4d444c;
+
+  /* Surfaces -- surface sits ABOVE bg, so it is the lighter of the two. */
+  --zym-color-surface:       #15111a;
+  --zym-color-bg:            #0d0a10;
+  --zym-color-surface-alt:   #1c1622;
+  --zym-color-container:     #211b28;
+
+  /* Status */
+  --zym-color-divider:       #2c2533;
+  --zym-color-success-bg:    #10331D;
+  --zym-color-success-text:  #6FDCA0;
+  --zym-color-error:         #F2756B;
+  --zym-color-error-bg:      #3A1614;
+  --zym-color-error-hover:   #FF8A80;
+  --zym-color-error-text:    #0d0a10;
+  --zym-color-neutral-bg:    #2c2533;
+  --zym-color-neutral-text:  #9a8c98;
+  --zym-color-danger:        #F2756B;
+  --zym-color-warning:       #F0A860;
+  --zym-color-star:          #F6AD55;
+
+  --zym-gradient-hero-overlay: linear-gradient(to bottom, rgba(0,0,0,0.85), transparent);
+
+  /* Shadows -- a soft purple shadow is invisible on a dark surface, so
+     these go to true black and get deeper to keep cards separated. */
+  --zym-shadow-input:        0 2px 8px rgba(0,0,0,0.4);
+  --zym-shadow-dropdown:     0 16px 48px rgba(0,0,0,0.5);
+  --zym-shadow-card:         0 8px 30px rgba(0,0,0,0.45);
+  --zym-shadow-card-hover:   0 16px 48px rgba(0,0,0,0.5);
+  --zym-shadow-surface:      0 8px 30px rgba(0,0,0,0.45);
+  --zym-shadow-modal:        0 24px 60px rgba(0,0,0,0.55);
+  --zym-shadow-btn:          0 2px 8px rgba(0,0,0,0.4);
+  --zym-shadow-btn-hover:    0 8px 30px rgba(0,0,0,0.45);
+  --zym-focus-ring:          0 0 0 4px rgba(240,176,255,0.30);
 }
