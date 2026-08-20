@@ -41,6 +41,10 @@ class Plugin {
 		Buy_Now::instance()->init();
 		Wishlist_Ajax::instance()->init();
 		Admin::instance()->init();
+		// v2.6.0 - exposes each variation's own native sale-end date to the
+		// front end, so the Smart Heading countdown can follow the selected
+		// variation instead of always reading the parent product.
+		Price_Renderer::init();
 
 		// v1.0.13 - suppress WooCommerce's default AJAX add-to-cart notice for our flagged requests.
 		add_action( 'wc_ajax_add_to_cart', [ $this, 'suppress_ajax_atc_notice' ], 0 );
