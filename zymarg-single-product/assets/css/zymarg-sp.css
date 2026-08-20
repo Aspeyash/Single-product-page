@@ -5,24 +5,32 @@
    ============================================================ */
 
 /* ── Brand Tokens (inherit from theme if present, else own) ── */
+/* v2.5.1 - colour / gradient / shadow values now resolve from the shared
+   ZYMARG Design Tokens (--zym-*) via zymarg-tokens.css, with the original
+   literal kept as the var() fallback so nothing changes if that stylesheet
+   ever fails to load. Layout-affecting values (radius, spacing) are left
+   exactly as they were - this pass only touches colour/gradient/shadow. */
 .zymarg-single-product {
-  --zymarg-primary: #9500a5;
-  --zymarg-primary-hover: #bd00d1;
-  --zymarg-primary-light: #fea9ff;
+  --zymarg-primary: var(--zym-color-primary, #9500a5);
+  --zymarg-primary-hover: var(--zym-color-secondary, #bd00d1);
+  --zymarg-primary-light: var(--zym-color-accent, #fea9ff);
+  /* No equivalent brand token exists for this exact shade - left literal. */
   --zymarg-dark-purple: #6b0077;
-  --zymarg-surface: #ffffff;
-  --zymarg-surface-alt: #f8f9fa;
-  --zymarg-text: #1a1a2e;
-  --zymarg-text-muted: #6c757d;
-  --zymarg-border: #dee2e6;
+  --zymarg-surface: var(--zym-color-surface, #ffffff);
+  --zymarg-surface-alt: var(--zym-color-surface-alt, #f8f9fa);
+  --zymarg-text: var(--zym-color-text, #1a1a2e);
+  --zymarg-text-muted: var(--zym-color-neutral-text, #6c757d);
+  --zymarg-border: var(--zym-color-border, #dee2e6);
+  /* No "success" token exists in the brand system - left literal. */
   --zymarg-success: #28a745;
-  --zymarg-warning: #ffc107;
-  --zymarg-error: #dc3545;
+  --zymarg-warning: var(--zym-color-warning, #ffc107);
+  --zymarg-error: var(--zym-color-danger, #dc3545);
   --zymarg-radius-sm: 8px;
   --zymarg-radius-md: 12px;
   --zymarg-radius-lg: 20px;
-  --zymarg-shadow: 0 4px 20px rgba(149,0,165,.1);
-  --zymarg-grad-primary: linear-gradient(135deg,#9500a5 0%,#bd00d1 100%);
+  --zymarg-shadow: var(--zym-shadow-card, 0 4px 20px rgba(149,0,165,.1));
+  --zymarg-grad-primary: var(--zym-gradient, linear-gradient(135deg,#9500a5 0%,#bd00d1 100%));
+  /* No token equivalent for these two gradients - left literal. */
   --zymarg-grad-soft: linear-gradient(135deg,#fea9ff 0%,#bd00d1 100%);
   --zymarg-grad-dark: linear-gradient(135deg,#1a1a2e 0%,#9500a5 100%);
 }
@@ -490,20 +498,23 @@ svg.zymarg-sp-star--empty, .zymarg-sp-star--empty svg { fill: var(--zymarg-borde
    existing sticky-bar rules below paint exactly like the mockup. */
 .sticky-bar, .sticky-bar * { box-sizing: border-box; }
 .sticky-bar {
-  --zymarg-primary: #9500a5;
-  --zymarg-primary-hover: #bd00d1;
-  --zymarg-primary-light: #fea9ff;
+  /* v2.5.1 - same --zym-* remap as .zymarg-single-product above; kept in
+     sync deliberately since this block exists only because the sticky bar
+     renders outside that wrapper and cannot inherit its custom properties. */
+  --zymarg-primary: var(--zym-color-primary, #9500a5);
+  --zymarg-primary-hover: var(--zym-color-secondary, #bd00d1);
+  --zymarg-primary-light: var(--zym-color-accent, #fea9ff);
   --zymarg-dark-purple: #6b0077;
-  --zymarg-surface: #ffffff;
-  --zymarg-surface-alt: #f8f9fa;
-  --zymarg-text: #1a1a2e;
-  --zymarg-text-muted: #6c757d;
-  --zymarg-border: #dee2e6;
+  --zymarg-surface: var(--zym-color-surface, #ffffff);
+  --zymarg-surface-alt: var(--zym-color-surface-alt, #f8f9fa);
+  --zymarg-text: var(--zym-color-text, #1a1a2e);
+  --zymarg-text-muted: var(--zym-color-neutral-text, #6c757d);
+  --zymarg-border: var(--zym-color-border, #dee2e6);
   --zymarg-radius-sm: 8px;
   --zymarg-radius-md: 12px;
   --zymarg-radius-lg: 20px;
-  --zymarg-shadow: 0 4px 20px rgba(149,0,165,.1);
-  --zymarg-grad-primary: linear-gradient(135deg,#9500a5 0%,#bd00d1 100%);
+  --zymarg-shadow: var(--zym-shadow-card, 0 4px 20px rgba(149,0,165,.1));
+  --zymarg-grad-primary: var(--zym-gradient, linear-gradient(135deg,#9500a5 0%,#bd00d1 100%));
 }
 [data-theme="dark"] .sticky-bar {
   --zymarg-primary: #bd00d1;
@@ -1332,7 +1343,7 @@ svg.zymarg-sp-star--empty, .zymarg-sp-star--empty svg { fill: var(--zymarg-borde
 	font-size: 24px; /* v2.5.0 — was 28px; matches Store Page's .zy-section-heading desktop size */
 	line-height: 1.25;
 	font-weight: 700;
-	color: #9500a5;
+	color: var(--zym-color-primary, #9500a5); /* v2.5.1 - was a literal hex, bypassing the token/variable system entirely */
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -1346,7 +1357,7 @@ svg.zymarg-sp-star--empty, .zymarg-sp-star--empty svg { fill: var(--zymarg-borde
 	white-space: nowrap;
 	font-size: 14px;
 	font-weight: 600;
-	color: #9500a5;
+	color: var(--zym-color-primary, #9500a5); /* v2.5.1 - was a literal hex, bypassing the token/variable system entirely */
 	text-decoration: none;
 	transition: color .18s ease, gap .18s ease;
 }
@@ -1362,13 +1373,13 @@ svg.zymarg-sp-star--empty, .zymarg-sp-star--empty svg { fill: var(--zymarg-borde
 }
 
 .zymarg-sp-section-head__link:hover {
-	color: #bd00d1;
+	color: var(--zym-color-secondary, #bd00d1); /* v2.5.1 - was a literal hex */
 	gap: 10px;
 }
 
 /* Keyboard focus stays visible even though hover has no underline. */
 .zymarg-sp-section-head__link:focus-visible {
-	outline: 2px solid #bd00d1;
+	outline: 2px solid var(--zym-color-secondary, #bd00d1); /* v2.5.1 - was a literal hex */
 	outline-offset: 3px;
 	border-radius: 3px;
 }

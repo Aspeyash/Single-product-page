@@ -54,10 +54,26 @@ class Assets {
 		}
 
 		// ── CSS ──────────────────────────────────────────────────────────────
+		// v2.5.1 - register the shared ZYMARG Design Tokens stylesheet under its
+		// canonical handle so this plugin's own colour/gradient/shadow custom
+		// properties (below) can resolve against --zym-* instead of only their
+		// literal fallback. Guarded with wp_style_is() per the shared-handle
+		// convention: whichever ZYMARG plugin registers first supplies the file,
+		// every other plugin just enqueues the same handle.
+		if ( ! wp_style_is( 'zymarg-tokens', 'registered' ) ) {
+			wp_register_style(
+				'zymarg-tokens',
+				ZYMARG_SNGL_ASSETS . 'css/zymarg-tokens.css',
+				[],
+				ZYMARG_SNGL_VERSION
+			);
+		}
+		wp_enqueue_style( 'zymarg-tokens' );
+
 		wp_enqueue_style(
 			self::HANDLE_CSS,
 			ZYMARG_SNGL_ASSETS . 'css/zymarg-sp.css',
-			[],
+			[ 'zymarg-tokens' ],
 			ZYMARG_SNGL_VERSION
 		);
 
@@ -256,10 +272,32 @@ class Assets {
 			return;
 		}
 
+		// v2.5.1 - register the shared ZYMARG Design Tokens + Discovery Spark
+		// stylesheets under their canonical handles so this plugin's admin
+		// colour/gradient/shadow custom properties (in
+		// zymarg-single-product-admin.css) can resolve against --zym-* instead
+		// of only their literal fallback, and so the Spark markup rendered by
+		// zymarg_sngl_spark() in class-admin.php has something to paint with.
+		// Same guarded pattern already used in enqueue_menu_branding() and
+		// enqueue_frontend() above; the Spark registration itself lives in
+		// zymarg_sngl_register_shared_brand_assets() (includes/spark.php),
+		// which is already hooked to admin_enqueue_scripts at priority 1, so
+		// it has run before this method fires.
+		if ( ! wp_style_is( 'zymarg-tokens', 'registered' ) ) {
+			wp_register_style(
+				'zymarg-tokens',
+				ZYMARG_SNGL_ASSETS . 'css/zymarg-tokens.css',
+				[],
+				ZYMARG_SNGL_VERSION
+			);
+		}
+		wp_enqueue_style( 'zymarg-tokens' );
+		wp_enqueue_style( 'zymarg-spark' );
+
 		wp_enqueue_style(
 			self::HANDLE_ADMIN,
 			ZYMARG_SNGL_ASSETS . 'css/zymarg-single-product-admin.css',
-			[],
+			[ 'zymarg-tokens', 'zymarg-spark' ],
 			ZYMARG_SNGL_VERSION
 		);
 
