@@ -419,7 +419,13 @@
 	box-sizing: border-box;
 	display: flex;
 	flex-wrap: nowrap;
-	align-items: flex-start;
+	/* v2.7.4 - was flex-start (pinned both columns to the top of the band).
+	   center vertically centers the price/save column AND the label/
+	   countdown column within the band's height, per explicit request -
+	   the right-aligned flash label + countdown stays right-aligned
+	   (justify-content/text-align are unchanged) but is now centered
+	   top-to-bottom instead of sitting flush against the top edge. */
+	align-items: center;
 	justify-content: space-between;
 	gap: 10px 16px;
 	/* v2.7.3 - horizontal padding matches .product-section's OWN padding
@@ -502,6 +508,23 @@
 	align-items: flex-start;
 	gap: 4px;
 	min-width: 0;
+}
+/* v2.7.4 - fixes the Save badge sitting out of alignment with the price
+   above it. .zymarg-sp-price-savings / .zymarg-sp-price-block__savings
+   carry `align-self: center` (see the shared rule further down this file),
+   written for the ORIGINAL PILL layout where price + savings sit in ONE
+   horizontal flex row and align-self there means "center vertically
+   against the price line" (the cross axis of a row is vertical). Inside
+   .zymarg-sp-price-band__left, flex-direction is COLUMN, so the cross axis
+   is HORIZONTAL instead - the exact same align-self: center rule instead
+   centers the badge horizontally within the column, pulling it away from
+   the left edge the price above it is aligned to. Overridden back to
+   flex-start here so the badge stays left-aligned with the price,
+   matching the approved mockup, without touching the shared rule's
+   behaviour in the original pill layout. */
+.zymarg-sp-price-band__left > .zymarg-sp-price-savings,
+.zymarg-sp-price-band__left > .zymarg-sp-price-block__savings {
+	align-self: flex-start;
 }
 .zymarg-sp-price-band__right {
 	display: flex;
