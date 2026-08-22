@@ -4,7 +4,7 @@ Tags: woocommerce, single product, template, swatches, buy now, reviews
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.0
-Stable tag: 2.7.2
+Stable tag: 2.7.3
 WC requires at least: 8.0
 WC tested up to: 9.9
 License: GPL-2.0-or-later
@@ -43,6 +43,10 @@ Key features:
 3. Go to Single Product in the WordPress admin menu to configure settings
 
 == Changelog ==
+
+= 2.7.3 =
+* **Fixed: band layout's price/save text did not align with the title, rating and swatches rows above/below it.** The band's own horizontal padding (16px) did not match `.product-section`'s actual padding (24px desktop/tablet, 16px mobile) - the value everything else on the page is indented by. Now that the band bleeds to the true card edge, its own padding is the ONLY thing controlling that indent, so it now matches `.product-section`'s padding exactly at every breakpoint (24px desktop/tablet, 16px mobile), lining the price and label text up with everything else in the column.
+* **Fixed: excessive vertical gap above and below the band on mobile.** Two pre-existing mobile-only rules for the original pill layout (`.price-row { margin-top: 8px; }` and `.zymarg-single-product .price-row { padding: 10px 0; }`) were still applying to the band case and stacking on top of the band's own margin, because the previous fix's selector did not carry enough specificity to override the second one. The override now wins unconditionally, and the band's own mobile vertical padding/margin is also tightened (14px -> 8px padding, 14px -> 6px margin-bottom) to further minimise the gap per user request.
 
 = 2.7.2 =
 * **Fixed: the 2.7.1 full-bleed fix bled asymmetrically** - a visible gap remained on the left edge while the right edge sat flush, instead of the band reaching both edges evenly (confirmed against the approved mockup, which shows even edges on both sides).
