@@ -392,11 +392,25 @@
    exactly as intended. .price-row's flex-only properties (align-items,
    gap, flex-wrap) are inert once display is no longer flex, so nothing
    else needs to be reset alongside this. */
-.price-row:has(.zymarg-sp-price-block--band) {
+/* v2.7.3 - selector prefixed with .zymarg-single-product (was just
+   .price-row:has(...)) specifically to WIN, on specificity alone regardless
+   of source order, against two pre-existing mobile-only pill-layout rules
+   that were silently re-adding vertical space around the band:
+     .price-row { margin-top: 8px; }                      (unprefixed, 0-1-0)
+     .zymarg-single-product .price-row { padding: 10px 0; } (prefixed, 0-2-0)
+   The second one carries the SAME specificity as the original unprefixed
+   :has() override below it in the file (0-2-0 vs 0-2-0) and appears LATER,
+   so it was winning purely on source order and re-introducing 10px top +
+   10px bottom padding this rule was supposed to remove. Prefixing bumps
+   this rule to 0-3-0, so it now wins unconditionally, and margin:0 here
+   also cancels the unprefixed margin-top:8px rule outright (different
+   property, same idea - explicit beats implicit-via-absence). */
+.zymarg-single-product .price-row:has(.zymarg-sp-price-block--band) {
 	display: block;
+	margin: 0;
+	padding: 0;
 	border-top: none;
 	border-bottom: none;
-	padding: 0;
 }
 
 .zymarg-sp-price-band {
@@ -408,7 +422,18 @@
 	align-items: flex-start;
 	justify-content: space-between;
 	gap: 10px 16px;
-	padding: 14px 16px;
+	/* v2.7.3 - horizontal padding matches .product-section's OWN padding
+	   (24px desktop/tablet) exactly, not an arbitrary 16px. .col-info has no
+	   padding of its own - title, rating row, category row and swatches are
+	   all indented purely by .product-section's ambient 24px padding. Once
+	   the band bleeds out to the true card edge (see margin-left/-right
+	   below), its inner padding IS the only thing setting the price/label
+	   text's indent from that edge - so it must equal 24px too, or the band's
+	   content sits closer to the edge than every other row on the page,
+	   which is exactly the misalignment reported against this screenshot.
+	   Vertical padding (14px) is unrelated to this and stays as authored -
+	   it is the band's own internal breathing room, not an alignment value. */
+	padding: 14px 24px;
 	border-radius: 0; /* explicit — full-width band never has rounded corners */
 	margin-bottom: 14px;
 	/* v2.7.1 - true full-bleed fix. The band lives inside .product-section
@@ -548,10 +573,15 @@
 	color: #fff;
 }
 
-/* Tablet: tighten padding/gap and font size slightly. The label text and
-   countdown are resized, never hidden. */
+/* Tablet: tighten VERTICAL padding/gap and font size slightly. Horizontal
+   padding is intentionally left at the base rule's 24px (not reduced here)
+   because .product-section keeps its 24px side padding through the entire
+   tablet range too - only its grid layout changes at this breakpoint (see
+   ".product-section { grid-template-columns: ... }" in the max-width:1024px
+   block). Reducing horizontal padding here would reintroduce the same
+   misalignment against the title/rating/swatches rows this fix corrects. */
 @media (min-width: 641px) and (max-width: 1024px) {
-	.zymarg-sp-price-band { padding: 12px 14px; gap: 8px 12px; }
+	.zymarg-sp-price-band { padding: 12px 24px; gap: 8px 12px; }
 	.zymarg-sp-heading-badge--band .zymarg-sp-heading-badge__label-row,
 	.zymarg-sp-heading-badge__countdown-row { font-size: 11.5px; }
 }
@@ -564,7 +594,16 @@
 @media (max-width: 640px) {
 	.zymarg-sp-price-band {
 		flex-wrap: wrap;
-		padding: 10px 12px;
+		/* v2.7.3 - horizontal padding matches .product-section's mobile
+		   padding (16px, not the earlier 12px) so the band's price/label
+		   text lines up with the title/rating/swatches rows above and
+		   below it - same alignment principle as the desktop/tablet fix
+		   above. Vertical padding tightened to 8px (was 10px), and
+		   margin-bottom tightened to 6px (was 14px, inherited unchanged
+		   from the base rule) - both as part of minimising the total gap
+		   the band adds above/below itself on mobile per user request. */
+		padding: 8px 16px;
+		margin-bottom: 6px;
 		gap: 6px 10px;
 		/* v2.7.1 - .product-section's own horizontal padding drops to 16px at
 		   this breakpoint (see the .product-section padding:16px rule
