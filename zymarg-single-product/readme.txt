@@ -4,7 +4,7 @@ Tags: woocommerce, single product, template, swatches, buy now, reviews
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.0
-Stable tag: 2.7.0
+Stable tag: 2.7.1
 WC requires at least: 8.0
 WC tested up to: 9.9
 License: GPL-2.0-or-later
@@ -43,6 +43,11 @@ Key features:
 3. Go to Single Product in the WordPress admin menu to configure settings
 
 == Changelog ==
+
+= 2.7.1 =
+* **Fixed: the 2.7.0 band layout did not reach the true full width of its parent card.** The band lives inside `.product-section`, which carries its own horizontal padding (24px on desktop/tablet, 16px on mobile), so the band's background previously stopped short of the real card edges by exactly that amount on every device.
+* The band now bleeds past that padding with a matching negative margin at each breakpoint (desktop/tablet: -24px, mobile: -16px), so the coloured background reaches the true edge of its parent container, edge-to-edge, on desktop, tablet and mobile alike. The band's own internal padding (used for the price/label text inset) is unchanged, so nothing about the text position shifted — only the background now actually fills the container.
+* Fixed: the "no sale, in stock" state (band layout on, nothing to show) no longer inherits the bleed's negative margin. Previously this would have shifted a plain price 24px out of alignment with the title/rating rows above it, even though it renders no background.
 
 = 2.7.0 =
 * **New: full-width background band layout for the Smart Heading (opt-in, off by default).** Settings → Price → Smart Heading Layout → "Use full-width background band layout".
