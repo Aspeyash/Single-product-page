@@ -812,6 +812,23 @@ class Admin {
 				</div>
 
 				<div class="zymarg-single-product-admin__section">
+					<h2 class="zymarg-single-product-admin__section-title"><?php esc_html_e( 'Smart Heading Layout', 'zymarg-single-product' ); ?></h2>
+					<p class="zymarg-single-product-admin__hint"><?php esc_html_e( 'Choose how the badge above appears relative to the price.', 'zymarg-single-product' ); ?></p>
+					<?php
+					// v2.7.0 - single on/off switch between the two presentations.
+					// Both states (out-of-stock and flash) share whichever layout is
+					// selected here; there is no per-state override, since a mixed
+					// pill/band page would look inconsistent every time stock or a
+					// sale schedule changed.
+					$this->field_toggle( 'price_heading_band_layout', __( 'Use full-width background band layout', 'zymarg-single-product' ), $o );
+					?>
+					<p class="zymarg-single-product-admin__hint">
+						<?php esc_html_e( 'Off (default): the badge stays a small pill above the price, exactly as before.', 'zymarg-single-product' ); ?><br>
+						<?php esc_html_e( 'On: the badge\'s color becomes the background of the entire price section (square corners, full width). Price and savings sit on the left; the icon, label and countdown sit on the right, on every screen size.', 'zymarg-single-product' ); ?>
+					</p>
+				</div>
+
+				<div class="zymarg-single-product-admin__section">
 					<h2 class="zymarg-single-product-admin__section-title"><?php esc_html_e( 'You-Save Indicator', 'zymarg-single-product' ); ?></h2>
 					<?php
 					$this->field_toggle( 'price_show_savings', __( 'Show savings badge on sale', 'zymarg-single-product' ), $o );
