@@ -385,7 +385,6 @@
 	--zsp-flash-purple: #9500A5;
 	--zsp-flash-orange: #FF6B00;
 	box-sizing: border-box;
-	width: 100%;
 	display: flex;
 	flex-wrap: nowrap;
 	align-items: flex-start;
@@ -394,13 +393,42 @@
 	padding: 14px 16px;
 	border-radius: 0; /* explicit — full-width band never has rounded corners */
 	margin-bottom: 14px;
+	/* v2.7.1 - true full-bleed fix. The band lives inside .product-section
+	   (.price-row > .col-info > .product-section), and .product-section
+	   carries its OWN horizontal padding (24px desktop/tablet, 16px mobile -
+	   see the .product-section rule and its max-width:640px override
+	   near the top of this file). Without cancelling that ambient padding,
+	   the band could only ever fill its parent's content box and stopped
+	   short of the real card edges by exactly that padding amount, which is
+	   why it visually failed to reach full width. margin-left/right here is
+	   set to the EXACT NEGATIVE of whichever padding value is active at each
+	   breakpoint (24px below; 16px inside the existing max-width:640px
+	   block further down), so the band's background now bleeds truly
+	   edge-to-edge of the white card at every breakpoint. The band's own
+	   padding-left/right (16px desktop, 14px tablet, 12px mobile - set
+	   below and in the existing breakpoint blocks) is left exactly as
+	   authored, so the *visual* inset of the price/label text from the
+	   true card edge is unchanged from the original design - only the
+	   coloured background itself now actually reaches the edge. */
+	margin-left: -24px;
+	margin-right: -24px;
+	width: calc(100% + 48px);
 }
 
 /* No sale / in stock: behaves exactly like the un-banded layout - no fill,
-   no right column, so a normal product never shows an empty coloured bar. */
+   no right column, so a normal product never shows an empty coloured bar.
+   v2.7.1 - also cancels the base rule's bleed (negative margin + expanded
+   width): with no background to bleed, keeping the bleed here would shift
+   the price text 24px further left/right than the title, rating row, etc.
+   above it, which stay at the ordinary .col-info inset. margin/width are
+   reset to normal so this state lines up with the rest of the column
+   exactly as before the band layout existed. */
 .zymarg-sp-price-band--none {
 	background: none;
 	padding: 12px 0;
+	margin-left: 0;
+	margin-right: 0;
+	width: 100%;
 }
 .zymarg-sp-price-band--none .zymarg-sp-price-band__right { display: none; }
 
@@ -520,6 +548,13 @@
 		flex-wrap: wrap;
 		padding: 10px 12px;
 		gap: 6px 10px;
+		/* v2.7.1 - .product-section's own horizontal padding drops to 16px at
+		   this breakpoint (see the .product-section padding:16px rule
+		   inside this same max-width:640px block further up this file), so
+		   the bleed amount must match: -16px / +32px, not the desktop -24px. */
+		margin-left: -16px;
+		margin-right: -16px;
+		width: calc(100% + 32px);
 	}
 	.zymarg-sp-price-band__left,
 	.zymarg-sp-price-band__right {
