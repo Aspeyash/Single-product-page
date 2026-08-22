@@ -4,7 +4,7 @@ Tags: woocommerce, single product, template, swatches, buy now, reviews
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.0
-Stable tag: 2.7.4
+Stable tag: 2.7.5
 WC requires at least: 8.0
 WC tested up to: 9.9
 License: GPL-2.0-or-later
@@ -43,6 +43,10 @@ Key features:
 3. Go to Single Product in the WordPress admin menu to configure settings
 
 == Changelog ==
+
+= 2.7.5 =
+* **Fixed: no gap between the thumbnail rail and the price band on mobile for products with no swatches (simple, grouped, external).** The mobile block-reorder feature (v2.3.0) lifts `.zymarg-sp-variations-slot` above the price row using flex `order`. For variable products this slot contains the swatches form (`.zymarg-sp-swatch-wrap`), whose own `margin-bottom: 18px` is what creates the gap seen there. For simple products the same slot only renders two hidden `product_id`/`variation_id` inputs (no visible content, no margin), so the slot contributed zero spacing and the thumbnails sat flush against the price band.
+* Fix is scoped precisely to `.zymarg-sp-variations-slot:not(:has(.zymarg-sp-swatch-wrap))` - i.e. only when no swatches form is present - so **variable products are completely unaffected and keep their existing, confirmed-correct layout and spacing exactly as-is.**
 
 = 2.7.4 =
 * **Fixed: the Save indicator inside the band layout was not aligned with the price above it.** Root cause: the shared `.zymarg-sp-price-savings` rule carries `align-self: center`, written for the original pill layout where price + savings sit in one horizontal row (there, `align-self` centers the badge vertically against the price line). Inside the band's left column, which lays out vertically, the exact same rule instead centers the badge horizontally, pulling it away from the left edge the price is aligned to. The Save badge is now explicitly kept left-aligned inside the band, matching the price above it, without touching the original pill layout's behaviour.

@@ -1811,6 +1811,25 @@ svg.zymarg-sp-star--empty, .zymarg-sp-star--empty svg { fill: var(--zymarg-borde
   /* v2.4.3 - mobile only: WooCommerce's own form.cart margin left a gap below
      the variations/swatches form; removed entirely on mobile per user request. */
   .zymarg-single-product .variations_form.cart { margin: 0; }
+
+  /* v2.7.5 - restores a small gap before the price row for product types
+     that render NO swatches form inside .zymarg-sp-variations-slot (simple
+     products render only two hidden <product_id>/<variation_id> inputs
+     there - see templates/woocommerce/single-product.php - which take up
+     zero visual height and contribute no spacing of their own; grouped/
+     external products land here too via the same slot's final else-branch).
+     Variable products are EXCLUDED via :not(:has(...)) and are completely
+     untouched by this rule - their gap already comes from
+     .zymarg-sp-swatch-wrap's own margin-bottom (18px, see the Native
+     swatches block earlier in this file) and that spacing is confirmed
+     correct, so it must not be doubled up or altered here. Because .col-info
+     is display:flex (see rule above), margins between its children are
+     flex-item margins and never collapse, so this margin-bottom reliably
+     creates real visible space between the gallery/thumbnails above and the
+     price band below, exactly where variable products already have one. */
+  .zymarg-single-product .col-info > .zymarg-sp-variations-slot:not(:has(.zymarg-sp-swatch-wrap)) {
+    margin-bottom: 10px;
+  }
 }
 
 /* --------------------------------------------------------------------------

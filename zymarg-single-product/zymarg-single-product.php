@@ -3,7 +3,7 @@
  * Plugin Name:       ZYMARG Single Product
  * Plugin URI:        https://github.com/Aspeyash/zymarg-single-product
  * Description:       Standalone single product page template for ZYMARG Marketplace. Overrides WooCommerce default single product template with a fully custom layout including gallery, swatches, price display, add to cart, buy now, seller card, and reviews (rendered by ZYMARG Reviews Engine). All sections are configurable from the admin panel.
- * Version:           2.7.4
+ * Version:           2.7.5
  * Author:            ZYMARG
  * Author URI:        https://github.com/Aspeyash
  * License:           GPL-2.0-or-later
@@ -67,7 +67,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 // Guarded with if ( ! defined() ) as defense-in-depth against any future
 // third plugin picking the same name.
 if ( ! defined( 'ZYMARG_SNGL_VERSION' ) ) {
-	define( 'ZYMARG_SNGL_VERSION',   '2.7.4' );
+	define( 'ZYMARG_SNGL_VERSION',   '2.7.5' );
 }
 if ( ! defined( 'ZYMARG_SNGL_FILE' ) ) {
 	define( 'ZYMARG_SNGL_FILE',      __FILE__ );
