@@ -4,7 +4,7 @@ Tags: woocommerce, single product, template, swatches, buy now, reviews
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.0
-Stable tag: 2.6.0
+Stable tag: 2.7.0
 WC requires at least: 8.0
 WC tested up to: 9.9
 License: GPL-2.0-or-later
@@ -43,6 +43,16 @@ Key features:
 3. Go to Single Product in the WordPress admin menu to configure settings
 
 == Changelog ==
+
+= 2.7.0 =
+* **New: full-width background band layout for the Smart Heading (opt-in, off by default).** Settings → Price → Smart Heading Layout → "Use full-width background band layout".
+  * Off (default, unchanged behaviour): the Smart Heading badge stays exactly as it was in 2.6.0 - a small pill above the price, no background on the price section itself.
+  * On: the badge's own colour (the calm dark fill for Out of Stock, the animated purple→orange→purple gradient for the flash countdown) becomes the background of the ENTIRE price section - full width, square corners, no border-radius - instead of staying limited to a small pill.
+  * Layout inside the band: current price + old price on line 1, the Save badge on line 2, both left-aligned. Icon + label on line 1, "Ends in" + live countdown on line 2 (flash state only), both right-aligned.
+  * Both Smart Heading states (Out of Stock and on-sale-with-a-schedule) share this one layout - only the fill colour, icon and label text differ between them - so switching stock/sale state never produces a visually inconsistent page.
+  * The label text ("Flash Sale", "Currently Unavailable", etc.) is never hidden, truncated or clipped at any breakpoint. On narrow mobile widths the band wraps to two stacked rows (price row, then label/countdown row) instead of hiding either side.
+  * Live variation selection on variable products keeps the band's background in sync with the selected variation's stock/sale state (`zymarg-sp-price.js`), matching the existing pill layout's live-update behaviour.
+  * The toggle is a single site-wide switch - both Smart Heading states always render in whichever layout (band or pill) is selected; there is no per-state mix.
 
 = 2.6.0 =
 * **Smart Heading rework.** The small label shown above the price now renders as a badge (icon + text, live countdown where applicable) instead of plain text, and its logic has changed:
