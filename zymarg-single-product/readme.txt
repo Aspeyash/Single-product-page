@@ -4,7 +4,7 @@ Tags: woocommerce, single product, template, swatches, buy now, reviews
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.0
-Stable tag: 2.7.1
+Stable tag: 2.7.2
 WC requires at least: 8.0
 WC tested up to: 9.9
 License: GPL-2.0-or-later
@@ -43,6 +43,11 @@ Key features:
 3. Go to Single Product in the WordPress admin menu to configure settings
 
 == Changelog ==
+
+= 2.7.2 =
+* **Fixed: the 2.7.1 full-bleed fix bled asymmetrically** - a visible gap remained on the left edge while the right edge sat flush, instead of the band reaching both edges evenly (confirmed against the approved mockup, which shows even edges on both sides).
+* Root cause: `.price-row` (the band's grandparent) is `display: flex` in the original pill layout, and that was never switched off for the band case. That left the band's direct parent as a FLEX ITEM of `.price-row`. A flex item's width is resolved against its flex-basis, not against a normal block box's width/margin equation - so the v2.7.1 fix's `width: calc(100% + 48px)` plus negative `margin-left`/`margin-right` (correct maths for an ordinary block box) rendered unevenly once actually laid out as a flex item, growing the band rightward only.
+* Fix: `.price-row` now switches to `display: block` whenever the band layout is present, removing it from flex layout entirely, so the band is sized as a normal block box and the bleed applies symmetrically on both the left and right edge, matching the approved mockup.
 
 = 2.7.1 =
 * **Fixed: the 2.7.0 band layout did not reach the true full width of its parent card.** The band lives inside `.product-section`, which carries its own horizontal padding (24px on desktop/tablet, 16px on mobile), so the band's background previously stopped short of the real card edges by exactly that amount on every device.

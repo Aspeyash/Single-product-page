@@ -374,8 +374,26 @@
 
 /* .price-row itself supplies the pill layout's top/bottom rule + vertical
    padding; the band becomes the price section's own bordered/padded surface
-   instead, so those are switched off whenever a band is present. */
+   instead, so those are switched off whenever a band is present.
+   v2.7.2 - display:block ALSO overridden here, and this is the real fix for
+   the band bleeding asymmetrically (gap on the left, flush on the right) in
+   v2.7.1. .price-row's base rule is `display: flex`. That was never reset
+   for the band case, so .zymarg-sp-price-block--band (the band's own
+   parent) remained a FLEX ITEM of .price-row. A flex item's width is
+   resolved against flex-basis (default: auto -> content size), not against
+   a normal block box's width/margin equation - so the band's
+   `width: calc(100% + 48px)` + negative margin-left/-right bled correctly
+   in the maths for an ordinary block box, but produced unpredictable,
+   asymmetric results once actually laid out as a flex item (Chrome grew it
+   rightward only instead of bleeding evenly on both sides). Forcing
+   .price-row to plain `display: block` for the band case removes it from
+   flex layout entirely, so its single child (.zymarg-sp-price-block--band)
+   is sized as a normal block box and the bleed math applies symmetrically,
+   exactly as intended. .price-row's flex-only properties (align-items,
+   gap, flex-wrap) are inert once display is no longer flex, so nothing
+   else needs to be reset alongside this. */
 .price-row:has(.zymarg-sp-price-block--band) {
+	display: block;
 	border-top: none;
 	border-bottom: none;
 	padding: 0;
