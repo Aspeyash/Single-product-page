@@ -4,7 +4,7 @@ Tags: woocommerce, single product, template, swatches, buy now, reviews
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 8.0
-Stable tag: 2.7.3
+Stable tag: 2.7.4
 WC requires at least: 8.0
 WC tested up to: 9.9
 License: GPL-2.0-or-later
@@ -43,6 +43,10 @@ Key features:
 3. Go to Single Product in the WordPress admin menu to configure settings
 
 == Changelog ==
+
+= 2.7.4 =
+* **Fixed: the Save indicator inside the band layout was not aligned with the price above it.** Root cause: the shared `.zymarg-sp-price-savings` rule carries `align-self: center`, written for the original pill layout where price + savings sit in one horizontal row (there, `align-self` centers the badge vertically against the price line). Inside the band's left column, which lays out vertically, the exact same rule instead centers the badge horizontally, pulling it away from the left edge the price is aligned to. The Save badge is now explicitly kept left-aligned inside the band, matching the price above it, without touching the original pill layout's behaviour.
+* **Changed: both columns inside the band (price/save on the left, flash label/countdown on the right) are now vertically centered within the band's height**, per request - previously both were pinned to the top edge. The right column's own alignment (right-aligned label + countdown) is unchanged.
 
 = 2.7.3 =
 * **Fixed: band layout's price/save text did not align with the title, rating and swatches rows above/below it.** The band's own horizontal padding (16px) did not match `.product-section`'s actual padding (24px desktop/tablet, 16px mobile) - the value everything else on the page is indented by. Now that the band bleeds to the true card edge, its own padding is the ONLY thing controlling that indent, so it now matches `.product-section`'s padding exactly at every breakpoint (24px desktop/tablet, 16px mobile), lining the price and label text up with everything else in the column.
