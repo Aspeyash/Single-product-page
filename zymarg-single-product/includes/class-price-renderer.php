@@ -76,40 +76,89 @@ class Price_Renderer {
 			? '<div class="zymarg-sp-price__skeleton" aria-hidden="true"></div>'
 			: '';
 
+		// ── Heading layout (v2.7.0) ────────────────────────────────────────────
+		// 'band' - opt-in admin toggle. The heading's own colour (the OOS pill's
+		// dark fill, or the flash pill's animated gradient) becomes the FULL
+		// price section's background, square corners, full width, instead of
+		// staying a small pill above the price. Price + savings sit left,
+		// icon/label(+countdown) sit right - on every breakpoint.
+		// 'pill' - the original v2.6.0 presentation, unchanged.
+		//
+		// The band wrapper is ALWAYS printed once this layout is selected, even
+		// for the 'none' state (no sale, in stock), the same "always print the
+		// slot" reasoning as the heading-slot below: the JS live-update path
+		// (variation select) only ever needs to swap a modifier class and the
+		// slot's inner HTML, never insert or remove the wrapper itself.
+		$band_layout   = (bool) Options::get( 'price_heading_band_layout' );
+		$heading_type  = $heading['type'] ?? 'none';
+
 		$block_classes = trim( 'zymarg-sp-price-block ' . $anim_class . ' ' . $oldstyle_cls );
+		if ( $band_layout ) {
+			$block_classes .= ' zymarg-sp-price-block--band';
+		}
 		?>
 		<div class="<?php echo esc_attr( $block_classes ); ?>"
 			data-product-id="<?php echo esc_attr( $product->get_id() ); ?>"
 			data-is-variable="<?php echo $is_variable ? '1' : '0'; ?>"
 			data-price-anim="<?php echo esc_attr( $anim ); ?>"
+			data-heading-layout="<?php echo $band_layout ? 'band' : 'pill'; ?>"
 			data-savings-format="<?php echo esc_attr( Options::get( 'price_savings_format', 'both' ) ); ?>"
 			data-savings-prefix="<?php echo esc_attr( Options::get( 'price_savings_prefix', 'Save' ) ); ?>"
 			data-initial-current="<?php echo esc_attr( (string) $parts['current'] ); ?>"
 			data-initial-regular="<?php echo esc_attr( (string) $parts['regular'] ); ?>"
 			data-initial-on-sale="<?php echo $parts['on_sale'] ? '1' : '0'; ?>">
 
-			<?php
-			// v2.6.0 - always print the slot, even when there is nothing to show
-			// right now (type 'none'), so the JS live-update path in
-			// zymarg-sp-price.js has a stable element to insert/replace/remove
-			// the badge in after a variation is selected, without having to
-			// create the wrapper itself.
-			?>
-			<div class="zymarg-sp-heading-slot"><?php echo self::render_heading_badge( $heading ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built entirely from escaped parts, see render_heading_badge(). ?></div>
-
 			<?php echo $skeleton; // phpcs:ignore ?>
 
-			<div class="zymarg-sp-price-block__price" data-price-wrapper>
-				<?php echo wp_kses_post( $parts['current_html'] ); ?>
-				<?php echo wp_kses_post( $parts['was_html'] ); ?>
-			</div>
+			<?php if ( $band_layout ) : ?>
 
-			<?php if ( $savings_html ) : ?>
-				<div class="zymarg-sp-price-block__savings zymarg-sp-price-savings">
-					<?php echo wp_kses_post( $savings_html ); ?>
+				<div class="zymarg-sp-price-band zymarg-sp-price-band--<?php echo esc_attr( $heading_type ); ?>" data-band-type="<?php echo esc_attr( $heading_type ); ?>">
+
+					<div class="zymarg-sp-price-band__left">
+						<div class="zymarg-sp-price-block__price" data-price-wrapper>
+							<?php echo wp_kses_post( $parts['current_html'] ); ?>
+							<?php echo wp_kses_post( $parts['was_html'] ); ?>
+						</div>
+
+						<?php if ( $savings_html ) : ?>
+							<div class="zymarg-sp-price-block__savings zymarg-sp-price-savings">
+								<?php echo wp_kses_post( $savings_html ); ?>
+							</div>
+						<?php else : ?>
+							<div class="zymarg-sp-price-block__savings zymarg-sp-price-savings" style="display:none;"></div>
+						<?php endif; ?>
+					</div>
+
+					<div class="zymarg-sp-price-band__right">
+						<?php
+						// v2.6.0 - always print the slot, even when there is nothing to
+						// show right now (type 'none'), so the JS live-update path in
+						// zymarg-sp-price.js has a stable element to insert/replace/remove
+						// the badge in after a variation is selected, without having to
+						// create the wrapper itself.
+						?>
+						<div class="zymarg-sp-heading-slot"><?php echo self::render_heading_badge( $heading, true ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built entirely from escaped parts, see render_heading_badge(). ?></div>
+					</div>
+
 				</div>
+
 			<?php else : ?>
-				<div class="zymarg-sp-price-block__savings zymarg-sp-price-savings" style="display:none;"></div>
+
+				<div class="zymarg-sp-heading-slot"><?php echo self::render_heading_badge( $heading, false ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built entirely from escaped parts, see render_heading_badge(). ?></div>
+
+				<div class="zymarg-sp-price-block__price" data-price-wrapper>
+					<?php echo wp_kses_post( $parts['current_html'] ); ?>
+					<?php echo wp_kses_post( $parts['was_html'] ); ?>
+				</div>
+
+				<?php if ( $savings_html ) : ?>
+					<div class="zymarg-sp-price-block__savings zymarg-sp-price-savings">
+						<?php echo wp_kses_post( $savings_html ); ?>
+					</div>
+				<?php else : ?>
+					<div class="zymarg-sp-price-block__savings zymarg-sp-price-savings" style="display:none;"></div>
+				<?php endif; ?>
+
 			<?php endif; ?>
 
 			<?php echo $hint_html; // phpcs:ignore ?>
@@ -365,36 +414,78 @@ class Price_Renderer {
 	 * Render the heading state as a badge (icon + text + optional live
 	 * countdown). Returns '' for the 'none' state.
 	 *
-	 * @param array $state Return value of get_heading_state().
+	 * @param array $state    Return value of get_heading_state().
+	 * @param bool  $for_band v2.7.0 - true renders the two-line variant used
+	 *                        inside the full-width band layout (icon + label
+	 *                        on line 1, "Ends in" + countdown on line 2, both
+	 *                        right-aligned); false renders the original
+	 *                        single-line pill variant, unchanged from v2.6.0.
 	 * @return string
 	 */
-	private static function render_heading_badge( array $state ): string {
+	private static function render_heading_badge( array $state, bool $for_band = false ): string {
 		$type = $state['type'] ?? 'none';
 		if ( 'none' === $type ) {
 			return '';
 		}
 
 		$is_flash = ( 'flash' === $type );
+		$has_end  = ( $is_flash && ! empty( $state['end'] ) );
 		$classes  = 'zymarg-sp-heading-badge zymarg-sp-heading-badge--' . $type;
-		$end_attr = ( $is_flash && ! empty( $state['end'] ) )
+		if ( $for_band ) {
+			$classes .= ' zymarg-sp-heading-badge--band';
+		}
+		$end_attr = $has_end
 			? ' data-end="' . esc_attr( (string) $state['end'] ) . '"'
 			: '';
 
 		ob_start();
 		?>
 		<div class="<?php echo esc_attr( $classes ); ?>" data-heading-type="<?php echo esc_attr( $type ); ?>"<?php echo $end_attr; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built via esc_attr() above. ?>>
-			<?php echo $is_flash ? self::icon_bolt() : self::icon_oos(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG, no user data. ?>
-			<span class="zymarg-sp-heading-badge__text"><?php echo esc_html( $state['text'] ); ?></span>
-			<?php if ( $is_flash && ! empty( $state['end'] ) ) : ?>
-				<span class="zymarg-sp-heading-badge__countdown" aria-hidden="true">
-					<span class="zymarg-sp-heading-badge__unit" data-unit="h">00</span><span class="zymarg-sp-heading-badge__sep">:</span>
-					<span class="zymarg-sp-heading-badge__unit" data-unit="m">00</span><span class="zymarg-sp-heading-badge__sep">:</span>
-					<span class="zymarg-sp-heading-badge__unit" data-unit="s">00</span>
+			<span class="zymarg-sp-heading-badge__label-row">
+				<?php echo $is_flash ? self::icon_bolt() : self::icon_oos(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG, no user data. ?>
+				<span class="zymarg-sp-heading-badge__text"><?php echo esc_html( $for_band ? self::band_label_text( $state['text'] ) : $state['text'] ); ?></span>
+				<?php if ( $has_end && ! $for_band ) : ?>
+					<span class="zymarg-sp-heading-badge__countdown" aria-hidden="true">
+						<span class="zymarg-sp-heading-badge__unit" data-unit="h">00</span><span class="zymarg-sp-heading-badge__sep">:</span>
+						<span class="zymarg-sp-heading-badge__unit" data-unit="m">00</span><span class="zymarg-sp-heading-badge__sep">:</span>
+						<span class="zymarg-sp-heading-badge__unit" data-unit="s">00</span>
+					</span>
+				<?php endif; ?>
+			</span>
+			<?php if ( $has_end && $for_band ) : ?>
+				<span class="zymarg-sp-heading-badge__countdown-row">
+					<span class="zymarg-sp-heading-badge__ends-label"><?php esc_html_e( 'Ends in', 'zymarg-single-product' ); ?></span>
+					<span class="zymarg-sp-heading-badge__countdown" aria-hidden="true">
+						<span class="zymarg-sp-heading-badge__unit" data-unit="h">00</span><span class="zymarg-sp-heading-badge__sep">:</span>
+						<span class="zymarg-sp-heading-badge__unit" data-unit="m">00</span><span class="zymarg-sp-heading-badge__sep">:</span>
+						<span class="zymarg-sp-heading-badge__unit" data-unit="s">00</span>
+					</span>
 				</span>
 			<?php endif; ?>
 		</div>
 		<?php
 		return trim( (string) ob_get_clean() );
+	}
+
+	/**
+	 * Derive the band layout's line-1 label from the admin-configured flash
+	 * text, without introducing a second settings field.
+	 *
+	 * The shared `price_heading_flash_text` setting defaults to
+	 * "Flash Sale · Ends in", written for the single-line pill where the
+	 * countdown numbers follow immediately after. The band layout instead
+	 * prints "Ends in" as its own line-2 label ahead of the countdown (see
+	 * render_heading_badge() above), so re-using the full string on line 1
+	 * too would repeat "Ends in" twice. When the configured text contains a
+	 * middle-dot separator, only the segment before it is used as the line-1
+	 * label; a custom text with no separator is used exactly as typed.
+	 *
+	 * @param string $text Configured flash heading text.
+	 * @return string
+	 */
+	private static function band_label_text( string $text ): string {
+		$parts = preg_split( '/\s*·\s*/u', $text, 2 );
+		return trim( $parts[0] ?? $text );
 	}
 
 	/**
@@ -442,6 +533,13 @@ class Price_Renderer {
 			'flash_text'    => self::flash_text(),
 			'flash_live'    => $flash_enabled && ( null !== $flash_end ),
 			'flash_end'     => $flash_end ?? 0,
+			// v2.7.0 - tells the JS live-update path (variation select) which
+			// badge markup shape to build: the two-line band variant or the
+			// original single-line pill. See render_heading_badge().
+			'band_layout'   => (bool) Options::get( 'price_heading_band_layout' ),
+			'band_ends_label' => __( 'Ends in', 'zymarg-single-product' ),
+			'band_oos_label'  => self::band_label_text( self::oos_text() ),
+			'band_flash_label' => self::band_label_text( self::flash_text() ),
 		];
 	}
 

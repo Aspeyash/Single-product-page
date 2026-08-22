@@ -116,6 +116,17 @@ class Options {
 			'price_heading_oos_text'    => 'Currently Unavailable',
 			'price_heading_flash_enabled' => true,
 			'price_heading_flash_text'    => 'Flash Sale · Ends in',
+			// v2.7.0 - opt-in alternate presentation for both Smart Heading
+			// states. Off by default so no existing site's price section
+			// changes appearance until the admin switches it on. See
+			// Price_Renderer::render_heading_badge() for the layout this
+			// produces: one full-width, square-cornered band that becomes the
+			// price section's own background (the out-of-stock badge's calm
+			// dark fill, or the flash badge's animated gradient), with price +
+			// savings left-aligned and the icon/label (+ countdown, flash
+			// only) right-aligned inside it - instead of the badge floating
+			// above the price as its own small pill.
+			'price_heading_band_layout'   => false,
 			'price_show_savings'        => true,
 			'price_savings_format'      => 'both',
 			'price_savings_prefix'      => 'Save',

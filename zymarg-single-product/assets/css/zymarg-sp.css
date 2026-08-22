@@ -348,6 +348,188 @@
 	.zymarg-sp-heading-badge__unit { padding: 1px 3px; min-width: 1.4em; }
 }
 
+/* ==========================================================================
+   Smart Heading — full-width BAND layout (v2.7.0, opt-in via admin toggle
+   "Use full-width background band layout"). Off by default; when off, the
+   original pill markup/CSS above is used untouched.
+
+   Both Smart Heading states (out-of-stock and on-sale-with-schedule) share
+   this one layout - only the background fill, icon and label text differ:
+     - the badge's own colour becomes the ENTIRE price section's background
+       (square corners, no border-radius, edge-to-edge of the price section)
+     - price + old price + Save badge are left-aligned
+     - icon + label (+ live countdown for the flash state) are right-aligned
+   The label text is never hidden, truncated or ellipsis-clipped at ANY
+   breakpoint - on very narrow screens the band wraps to two stacked rows
+   (left row, then right row) instead, so "Flash Sale" / "Currently
+   Unavailable" always stays fully readable on mobile, tablet and desktop.
+   ========================================================================== */
+
+/* Selector doubled (.zymarg-sp-price-block.zymarg-sp-price-block--band) so
+   this wins on specificity (0-2-0) over the later, equally-ordered base rule
+   `.zymarg-sp-price-block { display: flex; ... }` further down this file -
+   without the doubled selector the base rule would win purely on source
+   order and silently put the band back into a flex row. */
+.zymarg-sp-price-block.zymarg-sp-price-block--band { display: block; }
+
+/* .price-row itself supplies the pill layout's top/bottom rule + vertical
+   padding; the band becomes the price section's own bordered/padded surface
+   instead, so those are switched off whenever a band is present. */
+.price-row:has(.zymarg-sp-price-block--band) {
+	border-top: none;
+	border-bottom: none;
+	padding: 0;
+}
+
+.zymarg-sp-price-band {
+	--zsp-flash-purple: #9500A5;
+	--zsp-flash-orange: #FF6B00;
+	box-sizing: border-box;
+	width: 100%;
+	display: flex;
+	flex-wrap: nowrap;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 10px 16px;
+	padding: 14px 16px;
+	border-radius: 0; /* explicit — full-width band never has rounded corners */
+	margin-bottom: 14px;
+}
+
+/* No sale / in stock: behaves exactly like the un-banded layout - no fill,
+   no right column, so a normal product never shows an empty coloured bar. */
+.zymarg-sp-price-band--none {
+	background: none;
+	padding: 12px 0;
+}
+.zymarg-sp-price-band--none .zymarg-sp-price-band__right { display: none; }
+
+/* Out of stock: same calm/neutral dark fill as the pill state, now sized to
+   the whole price section instead of a small badge. */
+.zymarg-sp-price-band--oos {
+	background: var(--zymarg-dark-purple, #6b0077);
+}
+
+/* Flash countdown: same animated purple → orange → purple gradient identity
+   as the pill state (and the ZYMARG Template Pack's "flash" card template),
+   now filling the whole price section. */
+.zymarg-sp-price-band--flash {
+	background: linear-gradient(90deg, var(--zsp-flash-purple) 0%, var(--zsp-flash-orange) 50%, var(--zsp-flash-purple) 100%);
+	background-size: 200% 100%;
+	animation: zymargSpHeadingFlashFlow 4s linear infinite;
+}
+[data-theme="dark"] .zymarg-sp-price-band--flash {
+	--zsp-flash-purple: #D338E2;
+}
+@media (prefers-reduced-motion: reduce) {
+	.zymarg-sp-price-band--flash { animation: none; }
+}
+
+.zymarg-sp-price-band__left {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 4px;
+	min-width: 0;
+}
+.zymarg-sp-price-band__right {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	text-align: right;
+	gap: 4px;
+	flex: 0 0 auto;
+	min-width: 0;
+}
+
+/* Price + savings switch to white/translucent-white so they stay legible on
+   both the dark out-of-stock fill and the gradient flash fill. */
+.zymarg-sp-price-band--oos .zymarg-sp-price-current,
+.zymarg-sp-price-band--flash .zymarg-sp-price-current { color: #fff; }
+.zymarg-sp-price-band--oos .zymarg-sp-price-was,
+.zymarg-sp-price-band--flash .zymarg-sp-price-was { color: rgba(255,255,255,.75); }
+.zymarg-sp-price-band--oos .zymarg-sp-price__from-prefix,
+.zymarg-sp-price-band--flash .zymarg-sp-price__from-prefix { color: rgba(255,255,255,.8); }
+.zymarg-sp-price-band--oos .zymarg-sp-price__range-sep,
+.zymarg-sp-price-band--flash .zymarg-sp-price__range-sep { color: rgba(255,255,255,.8); }
+.zymarg-sp-price-band--oos .zymarg-sp-price__save-badge,
+.zymarg-sp-price-band--flash .zymarg-sp-price__save-badge {
+	color: #fff;
+	background: rgba(255,255,255,.22);
+}
+
+/* Right column badge — band variant: the band wrapper itself supplies the
+   colour, so the badge no longer paints its own pill background, and stacks
+   its label row / countdown row as two right-aligned lines. */
+.zymarg-sp-heading-badge--band {
+	background: none !important;
+	animation: none !important; /* the wrapper's own animation is the single source of the gradient motion */
+	padding: 0;
+	border-radius: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 4px;
+	color: #fff;
+}
+.zymarg-sp-heading-badge--band .zymarg-sp-heading-badge__label-row {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	font-size: 12px;
+	font-weight: 700;
+	line-height: 1.3;
+	text-transform: uppercase;
+	letter-spacing: .02em;
+	white-space: nowrap;
+}
+.zymarg-sp-heading-badge--band .zymarg-sp-heading-badge__icon { width: 11px; height: 11px; }
+.zymarg-sp-heading-badge--band.zymarg-sp-heading-badge--flash .zymarg-sp-heading-badge__icon { fill: #FFE600; }
+.zymarg-sp-heading-badge--band.zymarg-sp-heading-badge--oos .zymarg-sp-heading-badge__icon { fill: #fff; }
+
+.zymarg-sp-heading-badge__countdown-row {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	font-size: 12px;
+	line-height: 1.3;
+	color: rgba(255,255,255,.9);
+	white-space: nowrap;
+}
+.zymarg-sp-heading-badge__ends-label { font-weight: 500; white-space: nowrap; }
+.zymarg-sp-heading-badge--band .zymarg-sp-heading-badge__countdown .zymarg-sp-heading-badge__unit {
+	background: rgba(0,0,0,.2);
+	color: #fff;
+}
+
+/* Tablet: tighten padding/gap and font size slightly. The label text and
+   countdown are resized, never hidden. */
+@media (min-width: 641px) and (max-width: 1024px) {
+	.zymarg-sp-price-band { padding: 12px 14px; gap: 8px 12px; }
+	.zymarg-sp-heading-badge--band .zymarg-sp-heading-badge__label-row,
+	.zymarg-sp-heading-badge__countdown-row { font-size: 11.5px; }
+}
+
+/* Mobile: the band is allowed to wrap into two stacked rows (left row, then
+   right row) if the viewport is too narrow for both columns on one line -
+   this is a wrap, not a hide/truncate, so the label text ("Flash Sale",
+   "Currently Unavailable", etc.) is always fully visible and never clipped
+   or removed on mobile, matching tablet and desktop. */
+@media (max-width: 640px) {
+	.zymarg-sp-price-band {
+		flex-wrap: wrap;
+		padding: 10px 12px;
+		gap: 6px 10px;
+	}
+	.zymarg-sp-price-band__left,
+	.zymarg-sp-price-band__right {
+		flex: 1 1 auto;
+	}
+	.zymarg-sp-heading-badge--band .zymarg-sp-heading-badge__label-row,
+	.zymarg-sp-heading-badge__countdown-row { font-size: 11px; }
+	.zymarg-sp-heading-badge--band .zymarg-sp-heading-badge__icon { width: 9px; height: 9px; }
+}
+
 .zymarg-sp-price__hint { font-size: .8rem; color: var(--zymarg-primary); margin: 6px 0 0; }
 .zymarg-sp-price__skeleton {
   height: 2.2rem; width: 140px;

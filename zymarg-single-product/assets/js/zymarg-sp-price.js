@@ -100,29 +100,64 @@
 			.replace(/"/g, '&quot;');
 	}
 
+	// Static countdown fragment shared by both badge shapes.
+	const COUNTDOWN_HTML = '<span class="zymarg-sp-heading-badge__countdown" aria-hidden="true">'
+		+ '<span class="zymarg-sp-heading-badge__unit" data-unit="h">00</span><span class="zymarg-sp-heading-badge__sep">:</span>'
+		+ '<span class="zymarg-sp-heading-badge__unit" data-unit="m">00</span><span class="zymarg-sp-heading-badge__sep">:</span>'
+		+ '<span class="zymarg-sp-heading-badge__unit" data-unit="s">00</span>'
+		+ '</span>';
+
+	/**
+	 * Build the badge markup for a heading state.
+	 *
+	 * v2.7.0 - HEADING.band_layout picks between the original single-line
+	 * pill (icon + label + inline countdown, one row) and the band layout's
+	 * two-line variant (icon + label on row 1, "Ends in" + countdown on row
+	 * 2) - mirrors class-price-renderer.php's render_heading_badge()/
+	 * band_label_text() exactly, so a variation change never produces markup
+	 * different from what the server would have rendered for the same state.
+	 *
+	 * @param {string} type 'oos' | 'flash'.
+	 * @param {string} text Full configured heading text (pill uses as-is).
+	 * @param {number} end  Unix end timestamp (flash only).
+	 */
 	function buildBadgeHtml(type, text, end) {
-		const safeText = escapeHtml(text);
+		const isFlash  = ('flash' === type);
+		const isBand   = !!HEADING.band_layout;
+		const hasEnd   = isFlash && !!end;
+		const bandCls  = isBand ? ' zymarg-sp-heading-badge--band' : '';
+		const icon     = isFlash ? ICON_BOLT : ICON_OOS;
 
-		if ('oos' === type) {
-			return '<div class="zymarg-sp-heading-badge zymarg-sp-heading-badge--oos" data-heading-type="oos">'
-				+ ICON_OOS
-				+ '<span class="zymarg-sp-heading-badge__text">' + safeText + '</span>'
-				+ '</div>';
+		// Band label uses the short line-1 text (pre-computed server-side,
+		// same split rule as band_label_text()); pill keeps the full text.
+		const label = isBand
+			? escapeHtml(isFlash ? (HEADING.band_flash_label || text) : (HEADING.band_oos_label || text))
+			: escapeHtml(text);
+
+		if ('oos' !== type && 'flash' !== type) {
+			return '';
 		}
 
-		if ('flash' === type) {
-			return '<div class="zymarg-sp-heading-badge zymarg-sp-heading-badge--flash" data-heading-type="flash" data-end="' + (parseInt(end, 10) || 0) + '">'
-				+ ICON_BOLT
-				+ '<span class="zymarg-sp-heading-badge__text">' + safeText + '</span>'
-				+ '<span class="zymarg-sp-heading-badge__countdown" aria-hidden="true">'
-				+ '<span class="zymarg-sp-heading-badge__unit" data-unit="h">00</span><span class="zymarg-sp-heading-badge__sep">:</span>'
-				+ '<span class="zymarg-sp-heading-badge__unit" data-unit="m">00</span><span class="zymarg-sp-heading-badge__sep">:</span>'
-				+ '<span class="zymarg-sp-heading-badge__unit" data-unit="s">00</span>'
-				+ '</span>'
-				+ '</div>';
-		}
+		const endAttr = hasEnd ? ' data-end="' + (parseInt(end, 10) || 0) + '"' : '';
 
-		return '';
+		let html = '<div class="zymarg-sp-heading-badge zymarg-sp-heading-badge--' + type + bandCls + '" data-heading-type="' + type + '"' + endAttr + '>';
+		html += '<span class="zymarg-sp-heading-badge__label-row">';
+		html += icon;
+		html += '<span class="zymarg-sp-heading-badge__text">' + label + '</span>';
+		if (hasEnd && !isBand) {
+			html += COUNTDOWN_HTML;
+		}
+		html += '</span>';
+		if (hasEnd && isBand) {
+			const endsLabel = escapeHtml(HEADING.band_ends_label || 'Ends in');
+			html += '<span class="zymarg-sp-heading-badge__countdown-row">';
+			html += '<span class="zymarg-sp-heading-badge__ends-label">' + endsLabel + '</span>';
+			html += COUNTDOWN_HTML;
+			html += '</span>';
+		}
+		html += '</div>';
+
+		return html;
 	}
 
 	function pad2(n) {
@@ -189,16 +224,38 @@
 	 * @param {jQuery} $slot     The .zymarg-sp-heading-slot element.
 	 * @param {Object} variation WooCommerce's found_variation payload.
 	 */
+	/**
+	 * v2.7.0 - when the band layout is active, the coloured background lives
+	 * on the .zymarg-sp-price-band wrapper (one level up from the heading
+	 * slot), not on the badge itself - so a variation change must also swap
+	 * that wrapper's zymarg-sp-price-band--{type} modifier class, or the
+	 * background would stay stuck on whatever state the page loaded with.
+	 * No-op when the band layout is off; that markup does not exist then.
+	 *
+	 * @param {jQuery} $slot The .zymarg-sp-heading-slot element.
+	 * @param {string} type  'oos' | 'flash' | 'none'.
+	 */
+	function setBandType($slot, type) {
+		if (!HEADING.band_layout) return;
+		const $band = $slot.closest('.zymarg-sp-price-band');
+		if (!$band.length) return;
+		$band.removeClass('zymarg-sp-price-band--oos zymarg-sp-price-band--flash zymarg-sp-price-band--none')
+			.addClass('zymarg-sp-price-band--' + type)
+			.attr('data-band-type', type);
+	}
+
 	function updateHeadingForVariation($slot, variation) {
 		const inStock = !!variation.is_in_stock;
 
 		if (!inStock && HEADING.oos_enabled) {
+			setBandType($slot, 'oos');
 			$slot.html(buildBadgeHtml('oos', HEADING.oos_text));
 			return;
 		}
 
 		if (HEADING.flash_enabled) {
 			if (HEADING.flash_live && HEADING.flash_end) {
+				setBandType($slot, 'flash');
 				$slot.html(buildBadgeHtml('flash', HEADING.flash_text, HEADING.flash_end));
 				ensureHeadingTicker();
 				return;
@@ -211,12 +268,14 @@
 			const now     = Math.floor(Date.now() / 1000);
 
 			if (onSale && end > now) {
+				setBandType($slot, 'flash');
 				$slot.html(buildBadgeHtml('flash', HEADING.flash_text, end));
 				ensureHeadingTicker();
 				return;
 			}
 		}
 
+		setBandType($slot, 'none');
 		$slot.empty();
 	}
 
@@ -227,8 +286,15 @@
 		const $headingSlot = $('.zymarg-sp-heading-slot').first();
 		if ($headingSlot.length) {
 			// Snapshot the server-rendered state so reset_data can restore it
-			// exactly, without recomputing anything client-side.
+			// exactly, without recomputing anything client-side. v2.7.0 - also
+			// snapshot the band wrapper's initial modifier class/attribute, so
+			// reset_data can put the band background back the way it loaded in,
+			// not just the badge markup inside it.
 			$headingSlot.data('initial-html', $headingSlot.html());
+			const $initialBand = $headingSlot.closest('.zymarg-sp-price-band');
+			if ($initialBand.length) {
+				$headingSlot.data('initial-band-type', $initialBand.attr('data-band-type') || 'none');
+			}
 			if ($headingSlot.find('.zymarg-sp-heading-badge--flash[data-end]').length) {
 				ensureHeadingTicker();
 			}
@@ -253,6 +319,7 @@
 		$form.on('reset_data', function () {
 			if ($headingSlot.length) {
 				$headingSlot.html($headingSlot.data('initial-html'));
+				setBandType($headingSlot, $headingSlot.data('initial-band-type') || 'none');
 				if ($headingSlot.find('.zymarg-sp-heading-badge--flash[data-end]').length) {
 					ensureHeadingTicker();
 				}
